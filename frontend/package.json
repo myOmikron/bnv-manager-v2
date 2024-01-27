@@ -3,6 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "license": "AGPL-3",
+  "prettier": {
+    "useTabs": false,
+    "tabWidth": 4,
+    "printWidth": 120
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
