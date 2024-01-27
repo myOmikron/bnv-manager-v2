@@ -1,0 +1,40 @@
+[package]
+name = "bnv-manager-v2"
+version = "0.1.0"
+edition = "2021"
+description = "Manager for the BNV"
+license = "AGPL-3"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Webframework
+axum = { version = "~0.7" }
+# Session middleware
+tower-sessions = { version = "~0.10" }
+
+# Serialization
+serde = { version = "~1", features = ["derive"] }
+toml = { version = "~0.8" }
+
+# Error handling
+thiserror = { version = "~1" }
+
+# Logging
+tracing = { version = "~0.1" }
+tracing-subscriber = { version = "~0.3" }
+
+# Async runtime
+tokio = { version = ">=1.23.1", features = ["macros", "rt-multi-thread", "sync"] }
+
+# rorm
+rorm = { version = "~0.6", default-features = false, features = ["postgres-only", "tokio", "rustls", "cli", "uuid", "time"] }
+
+# Ldap
+ldap3 = { version = "~0.11", default-features = false, features = ["tls-rustls"] }
+
+# HTTP client
+reqwest = { version = "~0.11", features = ["rustls-tls-native-roots"] }
+
+[features]
+rorm-main = []
