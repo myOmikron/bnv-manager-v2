@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Manager for the BNV"
 license = "AGPL-3"
+authors = ["Niklas Pfister <git@omikron.dev>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -12,10 +13,16 @@ license = "AGPL-3"
 axum = { version = "~0.7" }
 # Session middleware
 tower-sessions = { version = "~0.10" }
+# openapi generator
+swaggapi = { version = "*", git = "https://github.com/gammelalf/swaggapi", features = ["axum"] }
+
+# CLI parser
+clap = { version = "~4", features = ["derive"] }
 
 # Serialization
 serde = { version = "~1", features = ["derive"] }
 toml = { version = "~0.8" }
+url = { version = "~2", features = ["serde"] }
 
 # Error handling
 thiserror = { version = "~1" }
@@ -23,6 +30,11 @@ thiserror = { version = "~1" }
 # Logging
 tracing = { version = "~0.1" }
 tracing-subscriber = { version = "~0.3" }
+tracing-opentelemetry = { version = "~0.22" }
+opentelemetry = { version = "~0.21" }
+opentelemetry_sdk = { version = "~0.21", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "~0.14" }
+opentelemetry-semantic-conventions = { version = "~0.13" }
 
 # Async runtime
 tokio = { version = ">=1.23.1", features = ["macros", "rt-multi-thread", "sync"] }
