@@ -13,8 +13,6 @@ authors = ["Niklas Pfister <git@omikron.dev>"]
 axum = { version = "~0.7" }
 # Session middleware
 tower-sessions = { version = "~0.10" }
-# openapi generator
-swaggapi = { version = "*", git = "https://github.com/gammelalf/swaggapi", features = ["axum"] }
 
 # CLI parser
 clap = { version = "~4", features = ["derive"] }
