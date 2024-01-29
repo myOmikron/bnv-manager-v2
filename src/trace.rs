@@ -3,7 +3,7 @@ use std::time::Duration;
 use opentelemetry::KeyValue;
 use opentelemetry_otlp::WithExportConfig;
 use opentelemetry_sdk::resource::{OsResourceDetector, ProcessResourceDetector};
-use opentelemetry_sdk::trace::{config, BatchConfig, RandomIdGenerator, Sampler};
+use opentelemetry_sdk::trace::{config, BatchConfig, Sampler};
 use opentelemetry_sdk::{runtime, Resource};
 use opentelemetry_semantic_conventions::resource::SERVICE_NAME;
 use opentelemetry_semantic_conventions::SCHEMA_URL;
@@ -36,15 +36,14 @@ pub fn init_trace_oltp(endpoint: &Url) -> Result<(), Box<dyn std::error::Error>>
                     [KeyValue::new(SERVICE_NAME, env!("CARGO_PKG_NAME"))],
                     SCHEMA_URL,
                 ))
-                .with_id_generator(RandomIdGenerator::default())
                 .with_sampler(Sampler::AlwaysOn),
         )
         .with_batch_config(BatchConfig::default())
         .install_batch(runtime::Tokio)?;
 
     tracing_subscriber::registry()
-        .with(tracing_subscriber::fmt::layer().with_filter(LevelFilter::DEBUG))
-        .with(OpenTelemetryLayer::new(tracer))
+        .with(tracing_subscriber::fmt::layer().with_filter(LevelFilter::INFO))
+        .with(OpenTelemetryLayer::new(tracer).with_filter(LevelFilter::DEBUG))
         .init();
 
     Ok(())

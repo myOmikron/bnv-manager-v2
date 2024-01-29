@@ -1,5 +1,6 @@
 //! The configuration definition of bnv-manager is defined in this module
 
+use std::net::IpAddr;
 use std::num::NonZeroU16;
 use std::path::Path;
 use std::{fs, io};
@@ -16,6 +17,32 @@ use url::Url;
 pub struct Config {
     pub database: DatabaseConfig,
     pub tracing: TracingConfig,
+    pub server: ServerConfig,
+    pub ldap: LdapConfig,
+}
+
+/// The configuration for the webserver
+#[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct ServerConfig {
+    /// The address to listen on
+    pub listen_address: IpAddr,
+    /// The port to listen on
+    pub listen_port: NonZeroU16,
+}
+
+/// The configuration of the ldap connection
+#[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct LdapConfig {
+    /// The ldap uri
+    pub uri: Url,
+    /// The distinguished name that should be used for binding
+    pub bind_dn: String,
+    /// The password that should be used for binding
+    pub bind_password: String,
+    /// Don't verify certificates
+    pub do_not_verify_certs: Option<bool>,
 }
 
 /// The configuration for tracing capabilities

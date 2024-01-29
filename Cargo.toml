@@ -21,6 +21,7 @@ clap = { version = "~4", features = ["derive"] }
 serde = { version = "~1", features = ["derive"] }
 toml = { version = "~0.8" }
 url = { version = "~2", features = ["serde"] }
+uuid = { version = "~1" }
 
 # Error handling
 thiserror = { version = "~1" }
@@ -36,6 +37,10 @@ opentelemetry-semantic-conventions = { version = "~0.13" }
 
 # Async runtime
 tokio = { version = ">=1.23.1", features = ["macros", "rt-multi-thread", "sync"] }
+# Signal hook for tokio
+signal-hook = { version = "~0.3" }
+signal-hook-tokio = { version = "~0.3", features = ["futures-v0_3"] }
+futures = { version = "~0.3" }
 
 # rorm
 rorm = { version = "~0.6", default-features = false, features = ["postgres-only", "tokio", "rustls", "cli", "uuid", "time"] }
