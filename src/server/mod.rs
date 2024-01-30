@@ -1,24 +1,36 @@
 use std::io;
 use std::net::SocketAddr;
 
-use axum::routing::get;
 use axum::Router;
 use futures::stream::StreamExt;
 use signal_hook::consts::TERM_SIGNALS;
 use signal_hook_tokio::Signals;
 use thiserror::Error;
 use tokio::net::TcpListener;
+use tower_sessions::cookie::time::Duration;
+use tower_sessions::cookie::SameSite;
+use tower_sessions::{Expiry, SessionManagerLayer};
 use tracing::{error, info, info_span, instrument, Instrument};
 
 use crate::config::Config;
-use crate::server::handler::test;
+use crate::server::middleware::sessions::DBStore;
 
 pub mod handler;
+pub mod middleware;
 
 /// Start the webserver
 #[instrument(name = "server", level = "debug", skip_all)]
 pub async fn start_server(config: &Config) -> Result<(), StartServerError> {
-    let router = Router::new().route("/", get(test::test));
+    let session_store = DBStore;
+    session_store.run_deletion_task(Duration::minutes(5));
+
+    let session_layer = SessionManagerLayer::new(session_store)
+        .with_secure(true)
+        .with_http_only(true)
+        .with_same_site(SameSite::Strict)
+        .with_expiry(Expiry::OnInactivity(Duration::days(1)));
+
+    let router = Router::new().layer(session_layer);
 
     let sock = SocketAddr::new(
         config.server.listen_address,
