@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <LoggingSwitch />
-        <ToastContainer />
+        <ToastContainer toastClassName={"toast-message"} />
         <RouterProvider router={router} />
     </React.StrictMode>,
 );

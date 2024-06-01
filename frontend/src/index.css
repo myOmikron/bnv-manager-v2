@@ -10,3 +10,9 @@
     font-display: swap;
     src: url('/Inter-variable.ttf') format('truetype');
 }
+
+@layer base {
+    .toast-message {
+        @apply dark:!bg-zinc-900;
+    }
+}

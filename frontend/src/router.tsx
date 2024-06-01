@@ -6,6 +6,7 @@ import {
 import React from "react";
 import Menu from "./views/menu/menu";
 import Error from "./views/error";
+import { UserProvider } from "./context/user";
 
 /**
  * An element in the router
@@ -36,7 +37,14 @@ export const ROUTER = {
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route element={<Menu />} errorElement={<Error />}>
+        <Route
+            element={
+                <UserProvider>
+                    <Menu />
+                </UserProvider>
+            }
+            errorElement={<Error />}
+        >
             {Object.values(ROUTER).map((x) => x.getRoute())}
         </Route>,
     ),
