@@ -1,0 +1,14 @@
+apis/AuthApi.ts
+apis/OidcApi.ts
+apis/UsersApi.ts
+apis/WebsocketApi.ts
+apis/index.ts
+index.ts
+models/ApiErrorResponse.ts
+models/ApiStatusCode.ts
+models/FullUser.ts
+models/LoginRequest.ts
+models/WsClientMsg.ts
+models/WsServerMsg.ts
+models/index.ts
+runtime.ts
