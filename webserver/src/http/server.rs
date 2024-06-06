@@ -8,11 +8,6 @@ use std::str::FromStr;
 
 use axum::Router;
 use futures::StreamExt;
-use openidconnect::core::CoreClient;
-use openidconnect::core::CoreProviderMetadata;
-use openidconnect::reqwest::async_http_client;
-use openidconnect::reqwest::HttpClientError;
-use openidconnect::DiscoveryError;
 use signal_hook::consts::TERM_SIGNALS;
 use signal_hook_tokio::Signals;
 use swaggapi::ApiContext;
@@ -43,22 +38,6 @@ use crate::models;
 /// Start the http server
 #[instrument(skip_all, ret)]
 pub async fn run(config: &Config) -> Result<(), StartServerError> {
-    let oidc_client = if let Some(config) = config.openid_connect.clone() {
-        let provider_metadata =
-            CoreProviderMetadata::discover_async(config.discover_url, async_http_client).await?;
-        let client = CoreClient::from_provider_metadata(
-            provider_metadata,
-            config.client_id,
-            Some(config.client_secret),
-        )
-        .set_redirect_uri(config.redirect_url);
-        info!("OIDC connected successfully!");
-        Some(client)
-    } else {
-        info!("OIDC is disabled");
-        None
-    };
-
     // Register models that are not used in handlers
     (&FRONTEND_API_V1)
         .add_schema::<WsServerMsg>()
@@ -71,7 +50,7 @@ pub async fn run(config: &Config) -> Result<(), StartServerError> {
         .merge(
             ApiContext::new()
                 .page(&FRONTEND_API_V1)
-                .nest("/api/frontend", handler_frontend::initialize(oidc_client)),
+                .nest("/api/frontend", handler_frontend::initialize()),
         )
         .merge(swaggui)
         .layer(
@@ -120,6 +99,4 @@ pub enum StartServerError {
     Io(#[from] io::Error),
     #[error("Invalid address: {0}")]
     InvalidAddress(#[from] AddrParseError),
-    #[error("Connection to oidc failed: {0}")]
-    OidcConnectionFailed(#[from] DiscoveryError<HttpClientError>),
 }

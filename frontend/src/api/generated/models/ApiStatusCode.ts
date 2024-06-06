@@ -19,6 +19,9 @@
  */
 export const ApiStatusCode = {
     NUMBER_1000: 1000,
+    NUMBER_1001: 1001,
+    NUMBER_1002: 1002,
+    NUMBER_1003: 1003,
     NUMBER_2000: 2000
 } as const;
 export type ApiStatusCode = typeof ApiStatusCode[keyof typeof ApiStatusCode];

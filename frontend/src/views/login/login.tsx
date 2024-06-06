@@ -11,6 +11,7 @@ import {
 import { Input } from "../../components/input";
 import { Button } from "../../components/button";
 import Monkey from "./monkey-2-min.webp";
+import { useTranslation } from "react-i18next";
 
 /**
  * The properties of the login view
@@ -25,14 +26,15 @@ type LoginProps = {
  */
 export default function Login(props: LoginProps) {
     const { onLogin } = props;
+    const [t] = useTranslation("login");
     const [username, setUsername] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
 
     const performLogin = () => {
-        Api.auth.login(username, password).then((res) =>
+        Api.ldap.login(username, password).then((res) =>
             res.match(
                 () => {
-                    toast.success("Signed in");
+                    toast.success(t("Signed in"));
                     onLogin();
                 },
                 (err) => toast.error(err.message),
@@ -55,7 +57,7 @@ export default function Login(props: LoginProps) {
                     <form
                         method="post"
                         className={
-                            "grid w-full max-w-2xl grid-cols-1 items-center justify-items-center gap-8 space-y-8 md:grid-cols-2"
+                            "grid w-full max-w-2xl grid-cols-1 items-center justify-items-center gap-12 space-y-8 md:grid-cols-2"
                         }
                         onSubmit={(e) => {
                             e.preventDefault();
@@ -68,10 +70,10 @@ export default function Login(props: LoginProps) {
                             className={"max-h-96"}
                         />
                         <Fieldset className={"w-full"}>
-                            <Legend>Sign in</Legend>
+                            <Legend>{t("Sign in")}</Legend>
                             <FieldGroup>
                                 <Field>
-                                    <Label>Username</Label>
+                                    <Label>{t("Username")}</Label>
                                     <Input
                                         required={true}
                                         type={"username"}
@@ -82,7 +84,7 @@ export default function Login(props: LoginProps) {
                                     />
                                 </Field>
                                 <Field>
-                                    <Label>Password</Label>
+                                    <Label>{t("Password")}</Label>
                                     <Input
                                         required={true}
                                         type={"password"}
@@ -97,7 +99,7 @@ export default function Login(props: LoginProps) {
                                     type={"submit"}
                                     color={"orange"}
                                 >
-                                    Sign in
+                                    {t("Sign in")}
                                 </Button>
                             </FieldGroup>
                         </Fieldset>

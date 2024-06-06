@@ -7,6 +7,10 @@ import CONSOLE from "../utils/console";
 import Login from "../views/login/login";
 import WS from "../api/ws";
 
+import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import Menu from "../views/menu/menu";
+
 /** The global {@link UserProvider} instance */
 let USER_PROVIDER: UserProvider | null = null;
 
@@ -34,6 +38,7 @@ export default USER_CONTEXT;
 
 type UserProviderProps = {
     children?: React.ReactNode;
+    t: TFunction<"translation", undefined>;
 };
 type UserProviderState = {
     user: FullUser | "unauthenticated" | "loading";
@@ -62,7 +67,7 @@ export class UserProvider extends React.Component<
             result.match(
                 (user) => {
                     WS.connect(
-                        `${window.location.origin.replace("http", "ws")}/api/v1/ws`,
+                        `${window.location.origin.replace("http", "ws")}/api/frontend/v1/ws`,
                     );
                     this.setState({ user });
                 },
@@ -94,7 +99,7 @@ export class UserProvider extends React.Component<
 
         // Report websocket state changes using toasts
         const errorToast = [
-            "Connecting websocket...",
+            this.props.t("Connecting websocket"),
             {
                 closeButton: false,
                 closeOnClick: false,
@@ -103,7 +108,7 @@ export class UserProvider extends React.Component<
             },
         ] as const;
         const successToast = [
-            "Websocket has connected",
+            this.props.t("Websocket has connected"),
             { autoClose: 1000 },
         ] as const;
         let runningToast: string | number | null = toast.warn(...errorToast);
@@ -156,6 +161,24 @@ export class UserProvider extends React.Component<
                 );
         }
     }
+}
+
+/**
+ * The properties for {@link UserProviderWrapper}
+ */
+export type UserProviderWrapperProps = {};
+
+/**
+ * A wrapper around the user provider
+ */
+export function UserProviderWrapper(props: UserProviderWrapperProps) {
+    const [t] = useTranslation();
+
+    return (
+        <UserProvider t={t}>
+            <Menu />
+        </UserProvider>
+    );
 }
 
 /**

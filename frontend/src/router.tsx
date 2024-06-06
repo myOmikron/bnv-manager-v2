@@ -3,10 +3,13 @@ import {
     createRoutesFromElements,
     Route,
 } from "react-router-dom";
-import React from "react";
-import Menu from "./views/menu/menu";
+import React, { Suspense } from "react";
 import Error from "./views/error";
-import { UserProvider } from "./context/user";
+import { UserProviderWrapper } from "./context/user";
+import Mail from "./views/mail/mail";
+import Websites from "./views/websites/websites";
+import Profile from "./views/profile/profile";
+import WebsiteConfiguration from "./views/websites/website-configuration/website-configuration";
 
 /**
  * An element in the router
@@ -27,21 +30,35 @@ class PathElement {
     }
 
     getRoute() {
-        return <Route path={this.path} element={this.element}></Route>;
+        return (
+            <Route
+                key={this.path}
+                path={this.path}
+                element={this.element}
+            ></Route>
+        );
     }
 }
 
 export const ROUTER = {
     HOME: new PathElement("/", <div></div>),
+    MAIL: new PathElement("/mail", <Mail />),
+    WEBSITES: new PathElement("/websites", <Websites />),
+    WEBSITE_CONFIGURATION: new PathElement(
+        "/websites/:websiteUuid",
+        <WebsiteConfiguration />,
+    ),
+    PROFILE: new PathElement("/profiles", <Profile />),
 };
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
         <Route
+            key={"outer"}
             element={
-                <UserProvider>
-                    <Menu />
-                </UserProvider>
+                <Suspense fallback={<Error />}>
+                    <UserProviderWrapper />
+                </Suspense>
             }
             errorElement={<Error />}
         >

@@ -13,6 +13,7 @@ use thiserror::Error;
 use tracing::instrument;
 use uuid::Uuid;
 
+use crate::models::LdapUser;
 use crate::models::LocalUser;
 use crate::models::User;
 
@@ -30,7 +31,46 @@ pub enum CreateInternalUserError {
     EmptyData,
 }
 
+/// The error that might occur when creating a ldap user
+#[derive(Debug, Error)]
+#[allow(missing_docs)]
+pub enum CreateLdapUserError {
+    #[error("Database error: {0}")]
+    Database(#[from] rorm::Error),
+}
+
 impl User {
+    /// Create a ldap user
+    #[instrument(skip(executor), ret, err)]
+    pub async fn create_ldap(
+        dn: String,
+        display_name: String,
+        executor: impl Executor<'_>,
+    ) -> Result<Uuid, CreateLdapUserError> {
+        let mut exe = executor.ensure_transaction().await?;
+
+        let user_uuid = insert!(exe.get_transaction(), User)
+            .return_primary_key()
+            .single(&UserInsert {
+                uuid: Uuid::new_v4(),
+                display_name,
+            })
+            .await?;
+
+        insert!(exe.get_transaction(), LdapUser)
+            .return_nothing()
+            .single(&LdapUser {
+                uuid: Uuid::new_v4(),
+                user: ForeignModelByField::Key(user_uuid),
+                ldap_dn: dn,
+            })
+            .await?;
+
+        exe.commit().await?;
+
+        Ok(user_uuid)
+    }
+
     /// Create an internal user
     #[instrument(skip(password, executor), ret, err)]
     pub async fn create_internal(

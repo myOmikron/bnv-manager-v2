@@ -1,9 +1,5 @@
 //! The handler for local authentication
 
-use argon2::password_hash::Error;
-use argon2::Argon2;
-use argon2::PasswordHash;
-use argon2::PasswordVerifier;
 use axum::Json;
 use rorm::prelude::ForeignModelByField;
 use rorm::query;
@@ -11,9 +7,7 @@ use rorm::update;
 use rorm::FieldAccess;
 use rorm::Model;
 use swaggapi::post;
-use time::OffsetDateTime;
 use tower_sessions::Session;
-use tracing::error;
 use tracing::instrument;
 
 use crate::global::GLOBAL;
@@ -22,7 +16,8 @@ use crate::http::common::errors::ApiResult;
 use crate::http::handler_frontend::auth::schema::LoginRequest;
 use crate::models;
 use crate::models::LocalUser;
-use crate::models::User;
+use crate::utils::hashing;
+use crate::utils::hashing::VerifyPwError;
 
 /// Use the local authentication for logging in
 #[post("/login")]
@@ -39,20 +34,17 @@ pub async fn login(
         .await?
         .ok_or(ApiError::Unauthenticated)?;
 
-    Argon2::default()
-        .verify_password(password.as_bytes(), &PasswordHash::new(&user.password)?)
-        .map_err(|e| match e {
-            Error::Password => ApiError::Unauthenticated,
-            _ => ApiError::InternalServerError,
-        })?;
+    hashing::verify_pw(&password, &user.password).map_err(|x| match x {
+        VerifyPwError::Hash(_) => ApiError::InternalServerError,
+        VerifyPwError::Mismatch => ApiError::Unauthenticated,
+    })?;
 
     session.insert("user", *user.user.key()).await?;
     // We have to call save manually as the id is only populated after creating the session
     session.save().await?;
 
     let Some(id) = session.id() else {
-        error!("No ID in session");
-        return Err(ApiError::SessionCorrupt);
+        return Err(ApiError::new_internal_server_error("No ID in session"));
     };
     update!(&mut tx, models::Session)
         .condition(models::Session::F.id.equals(id.to_string()))
@@ -61,11 +53,6 @@ pub async fn login(
             Some(ForeignModelByField::Key(*user.user.key())),
         )
         .exec()
-        .await?;
-
-    update!(&mut tx, User)
-        .condition(User::F.uuid.equals(*user.user.key()))
-        .set(User::F.last_login, Some(OffsetDateTime::now_utc()))
         .await?;
 
     tx.commit().await?;

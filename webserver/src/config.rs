@@ -4,10 +4,6 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
-use openidconnect::ClientId;
-use openidconnect::ClientSecret;
-use openidconnect::IssuerUrl;
-use openidconnect::RedirectUrl;
 use rorm::DatabaseDriver;
 use serde::Deserialize;
 use serde::Serialize;
@@ -53,18 +49,24 @@ impl From<DBConfig> for DatabaseDriver {
     }
 }
 
-/// OIDC related configuration
+/// LDAP related configuration
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "PascalCase")]
-pub struct OpenIdConnect {
-    /// The client id of the server
-    pub client_id: ClientId,
-    /// The corresponding client secret
-    pub client_secret: ClientSecret,
-    /// The url the IDM server should rediert to the user to
-    pub redirect_url: RedirectUrl,
-    /// The discover url
-    pub discover_url: IssuerUrl,
+pub struct LdapConfig {
+    /// Connection URI
+    pub uri: String,
+    /// The DN to use for binding
+    pub admin_bind_dn: String,
+    /// The Password for the DN
+    pub admin_bind_pw: String,
+    /// User search base
+    pub user_search_base: String,
+    /// User search filter
+    pub user_search_filter: String,
+    /// Use start tls
+    pub start_tls: bool,
+    /// Do not verify TLS certificates
+    pub no_tls_verify: bool,
 }
 
 /// Definition of the main configuration.
@@ -77,8 +79,8 @@ pub struct Config {
     pub server: ServerConfig,
     /// Database configuration
     pub database: DBConfig,
-    /// The config for oidc
-    pub openid_connect: Option<OpenIdConnect>,
+    /// The config for ldap
+    pub ldap: LdapConfig,
 }
 
 /// All errors that can occur when parsing a configuration file

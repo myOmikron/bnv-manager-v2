@@ -2,9 +2,7 @@
 //!
 //! This included the router as well as the handlers and schemas
 
-use axum::Extension;
 use axum::Router;
-use openidconnect::core::CoreClient;
 use swaggapi::ApiContext;
 use swaggapi::SwaggapiPageBuilder;
 use tower::ServiceBuilder;
@@ -12,8 +10,9 @@ use tower::ServiceBuilder;
 use crate::http::middlewares::auth_required::auth_required;
 
 pub mod auth;
-pub mod oidc;
+pub mod ldap;
 pub mod users;
+pub mod websites;
 pub mod ws;
 
 /// The swagger page for the frontend
@@ -22,21 +21,16 @@ pub static FRONTEND_API_V1: SwaggapiPageBuilder = SwaggapiPageBuilder::new()
     .filename("frontend.json");
 
 /// Create the router for the Frontend API
-pub fn initialize(oidc_client: Option<CoreClient>) -> ApiContext<Router> {
-    let mut oidc_context = ApiContext::new()
-        .tag("oidc")
-        .handler(oidc::handler::start_auth)
-        .handler(oidc::handler::finish_auth);
-
-    if let Some(oidc_client) = oidc_client {
-        oidc_context =
-            oidc_context.route_layer(ServiceBuilder::new().layer(Extension(oidc_client)));
-    };
-
+pub fn initialize() -> ApiContext<Router> {
     ApiContext::new().nest(
         "/v1",
         ApiContext::new()
-            .nest("/oidc", oidc_context)
+            .nest(
+                "/ldap",
+                ApiContext::new()
+                    .tag("ldap")
+                    .handler(ldap::handler::login_ldap),
+            )
             .nest(
                 "/auth",
                 ApiContext::new()
@@ -56,7 +50,20 @@ pub fn initialize(oidc_client: Option<CoreClient>) -> ApiContext<Router> {
                         "/users",
                         ApiContext::new()
                             .tag("users")
-                            .handler(users::handler::get_me),
+                            .handler(users::handler::get_me)
+                            .handler(users::handler::change_password),
+                    )
+                    .nest(
+                        "/websites",
+                        ApiContext::new()
+                            .tag("Websites")
+                            .handler(websites::handler::create_website)
+                            .handler(websites::handler::get_website)
+                            .handler(websites::handler::get_all_websites)
+                            .handler(websites::handler::update_website)
+                            .handler(websites::handler::add_domain_to_website)
+                            .handler(websites::handler::remove_domain_from_website)
+                            .handler(websites::handler::delete_website),
                     )
                     .layer(ServiceBuilder::new().layer(axum::middleware::from_fn(auth_required))),
             ),

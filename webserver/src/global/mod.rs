@@ -5,8 +5,10 @@ use std::sync::OnceLock;
 
 use rorm::Database;
 
+use crate::global::ldap::GlobalLdap;
 use crate::global::ws::GlobalWs;
 
+pub mod ldap;
 pub mod ws;
 
 /// Set of global managers and handles
@@ -18,6 +20,8 @@ pub struct GlobalEntities {
     pub db: Database,
     /// The global websocket manager
     pub ws: GlobalWs,
+    /// Ldap connection
+    pub ldap: GlobalLdap,
 }
 
 /// Simple [`OnceLock`] which panics in case of error.

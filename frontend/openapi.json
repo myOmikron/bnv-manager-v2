@@ -1,0 +1,892 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Frontend",
+        "version": "v0.0.0"
+    },
+    "paths": {
+        "/api/frontend/v1/ldap/login-ldap": {
+            "post": {
+                "tags": [
+                    "ldap"
+                ],
+                "summary": "Authenticate using ldap login",
+                "description": "Authenticate using ldap login",
+                "operationId": "login_ldap",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LdapLoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Use the local authentication for logging in",
+                "description": "Use the local authentication for logging in",
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Drop the current session and logg-out",
+                "description": "Drop the current session and logg-out",
+                "operationId": "logout",
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/ws": {
+            "get": {
+                "tags": [
+                    "websocket"
+                ],
+                "operationId": "websocket",
+                "responses": {
+                    "101": {
+                        "description": "Switching protocols",
+                        "content": {
+                            "application/octet-stream": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/users/me": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Retrieve the currently logged-in user",
+                "description": "Retrieve the currently logged-in user",
+                "operationId": "get_me",
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FullUser"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/websites/websites": {
+            "get": {
+                "tags": [
+                    "Websites"
+                ],
+                "summary": "Retrieve all websites owned by this user",
+                "description": "Retrieve all websites owned by this user",
+                "operationId": "get_all_websites",
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ListWebsites"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Websites"
+                ],
+                "summary": "Create a new website",
+                "description": "Create a new website",
+                "operationId": "create_website",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateWebsiteRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UuidSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/websites/websites/{uuid}": {
+            "get": {
+                "tags": [
+                    "Websites"
+                ],
+                "summary": "Retrieve a single website",
+                "description": "Retrieve a single website",
+                "operationId": "get_website",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "description": "The uuid",
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FullWebsite"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Websites"
+                ],
+                "summary": "Update a website",
+                "description": "Update a website",
+                "operationId": "update_website",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "description": "The uuid",
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWebsiteRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Websites"
+                ],
+                "summary": "Delete a website",
+                "description": "Delete a website",
+                "operationId": "delete_website",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "description": "The uuid",
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/websites/websites/{uuid}/domains": {
+            "post": {
+                "tags": [
+                    "Websites"
+                ],
+                "summary": "Add a domain to a website",
+                "description": "Add a domain to a website",
+                "operationId": "add_domain_to_website",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "description": "The uuid",
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddDomainToWebsiteRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UuidSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/websites/websites/{website_uuid}/domains/{domain_uuid}": {
+            "delete": {
+                "tags": [
+                    "Websites"
+                ],
+                "summary": "Remove a domain from a website",
+                "description": "Remove a domain from a website",
+                "operationId": "remove_domain_from_website",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "domain_uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    },
+                    {
+                        "in": "path",
+                        "name": "website_uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AddDomainToWebsiteRequest": {
+                "description": "The request to add a domain to a website",
+                "type": "object",
+                "properties": {
+                    "domain": {
+                        "description": "The domain to add",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "domain"
+                ]
+            },
+            "ApiErrorResponse": {
+                "description": "The response that is sent in a case of an error",
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "description": "A human-readable error message.\n\nMay be used for displaying purposes",
+                        "type": "string"
+                    },
+                    "status_code": {
+                        "$ref": "#/components/schemas/ApiStatusCode"
+                    }
+                },
+                "required": [
+                    "message",
+                    "status_code"
+                ]
+            },
+            "ApiStatusCode": {
+                "description": "The Status code that are returned throughout the API",
+                "type": "integer",
+                "enum": [
+                    1000,
+                    1001,
+                    1002,
+                    1003,
+                    2000
+                ]
+            },
+            "CreateWebsiteRequest": {
+                "description": "The request to create a website",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the website",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "DeployState": {
+                "description": "The current deploy state",
+                "oneOf": [
+                    {
+                        "description": "The current state is deployed",
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "Deployed"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "type"
+                        ]
+                    },
+                    {
+                        "description": "There are pending changes",
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "PendingChanges"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "type"
+                        ]
+                    },
+                    {
+                        "description": "Deployment failed",
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "DeploymentFailed"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "type"
+                        ]
+                    }
+                ]
+            },
+            "FullUser": {
+                "description": "The full representation for the user",
+                "type": "object",
+                "properties": {
+                    "created_at": {
+                        "example": "1970-01-01T00:00:00.0Z",
+                        "description": "The point in time the user was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "display_name": {
+                        "description": "Used for displaying purposes",
+                        "type": "string"
+                    },
+                    "last_login": {
+                        "example": "1970-01-01T00:00:00.0Z",
+                        "description": "The last point in time the user has signed in",
+                        "nullable": true,
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "uuid": {
+                        "description": "The identifier of the user",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "display_name",
+                    "uuid"
+                ]
+            },
+            "FullWebsite": {
+                "description": "The full representation of a website",
+                "type": "object",
+                "properties": {
+                    "created_at": {
+                        "example": "1970-01-01T00:00:00.0Z",
+                        "description": "The point in time the website was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deploy_state": {
+                        "$ref": "#/components/schemas/DeployState"
+                    },
+                    "domains": {
+                        "description": "A list of domains for this website",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FullWebsiteDomain"
+                        }
+                    },
+                    "last_deployment": {
+                        "example": "1970-01-01T00:00:00.0Z",
+                        "description": "The last time the website was deployed",
+                        "nullable": true,
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "name": {
+                        "description": "Descriptive name of the website",
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "description": "The unique key of a website",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "deploy_state",
+                    "domains",
+                    "name",
+                    "uuid"
+                ]
+            },
+            "FullWebsiteDomain": {
+                "description": "The full representation of a domain that is attached to a website",
+                "type": "object",
+                "properties": {
+                    "domain": {
+                        "description": "The attached domain",
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "description": "The identifier of a specific domain",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "domain",
+                    "uuid"
+                ]
+            },
+            "LdapLoginRequest": {
+                "description": "The request to login via LDAP",
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "description": "Password",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "Username",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "password",
+                    "username"
+                ]
+            },
+            "ListWebsites": {
+                "description": "A list of websites",
+                "type": "object",
+                "properties": {
+                    "websites": {
+                        "description": "The list of websites",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SimpleWebsite"
+                        }
+                    }
+                },
+                "required": [
+                    "websites"
+                ]
+            },
+            "LoginRequest": {
+                "description": "The request for local authentication",
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "description": "The password for the user",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "The username that is used for logging in",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "password",
+                    "username"
+                ]
+            },
+            "SimpleWebsite": {
+                "description": "The simple representation of a website",
+                "type": "object",
+                "properties": {
+                    "created_at": {
+                        "example": "1970-01-01T00:00:00.0Z",
+                        "description": "The point in time the website was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deploy_state": {
+                        "$ref": "#/components/schemas/DeployState"
+                    },
+                    "last_deployment": {
+                        "example": "1970-01-01T00:00:00.0Z",
+                        "description": "The last time the website was deployed",
+                        "nullable": true,
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "name": {
+                        "description": "Descriptive name of the website",
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "description": "The unique key of a website",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "deploy_state",
+                    "name",
+                    "uuid"
+                ]
+            },
+            "UpdateWebsiteRequest": {
+                "description": "The request to update websites",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the website",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "UuidSchema": {
+                "description": "An uuid that can be used in a path",
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "description": "The uuid",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "uuid"
+                ]
+            },
+            "WsClientMsg": {
+                "description": "Websocket messages that originate from the client",
+                "oneOf": []
+            },
+            "WsServerMsg": {
+                "description": "Websocket messages that originate from the server",
+                "oneOf": []
+            }
+        }
+    }
+}

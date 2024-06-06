@@ -5,12 +5,10 @@ use rorm::Model;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-pub use crate::models::user::impls::UserInsert;
-
 mod impls;
 
 /// The representation of a user
-#[derive(Model)]
+#[derive(Model, Debug)]
 pub struct User {
     /// Primary key of a user
     #[rorm(primary_key)]
@@ -28,9 +26,9 @@ pub struct User {
     pub created_at: OffsetDateTime,
 }
 
-/// A user that is identified though an IDM server
+/// A user that is identified though an LDAP server
 #[derive(Model)]
-pub struct OidcUser {
+pub struct LdapUser {
     /// Primary key of an oidc user
     #[rorm(primary_key)]
     pub uuid: Uuid,
@@ -39,9 +37,9 @@ pub struct OidcUser {
     #[rorm(on_delete = "Cascade", on_update = "Cascade")]
     pub user: ForeignModel<User>,
 
-    /// The ID provided by the openid server
+    /// The distinguished name provided by the LDAP server
     #[rorm(max_length = 255)]
-    pub oidc_id: String,
+    pub ldap_dn: String,
 }
 
 /// A locally authenticated user

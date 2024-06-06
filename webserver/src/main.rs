@@ -16,6 +16,7 @@ use tracing::instrument;
 use crate::cli::Cli;
 use crate::cli::Command;
 use crate::config::Config;
+use crate::global::ldap::GlobalLdap;
 use crate::global::ws::GlobalWs;
 use crate::global::GlobalEntities;
 use crate::global::GLOBAL;
@@ -37,8 +38,10 @@ async fn start(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
 
     let ws = GlobalWs::new();
 
+    let ldap = GlobalLdap::new(config.ldap.clone()).await?;
+
     // Initialize Globals
-    GLOBAL.init(GlobalEntities { db, ws });
+    GLOBAL.init(GlobalEntities { db, ws, ldap });
 
     // Start the webserver
     http::server::run(config).await?;

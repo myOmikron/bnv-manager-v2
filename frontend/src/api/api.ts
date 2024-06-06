@@ -1,9 +1,11 @@
 import {
     AuthApi,
     Configuration,
+    LdapApi,
     RequiredError,
     ResponseError,
     UsersApi,
+    WebsitesApi,
 } from "./generated";
 import { Err, Ok, Result } from "../utils/result";
 import CONSOLE from "../utils/console";
@@ -20,6 +22,8 @@ const configuration = new Configuration({
 });
 const authApi = new AuthApi(configuration);
 const usersApi = new UsersApi(configuration);
+const ldapApi = new LdapApi(configuration);
+const websitesApi = new WebsitesApi(configuration);
 
 /* eslint-disable */
 
@@ -34,9 +38,52 @@ export const Api = {
                     },
                 }),
             ),
+        logout: () => handleError(authApi.logout()),
+    },
+    ldap: {
+        login: (username: string, password: string) =>
+            handleError(
+                ldapApi.loginLdap({
+                    ldapLoginRequest: {
+                        username,
+                        password,
+                    },
+                }),
+            ),
     },
     users: {
         getMe: () => handleError(usersApi.getMe()),
+    },
+    websites: {
+        create: (name: string) =>
+            handleError(
+                websitesApi.createWebsite({ createWebsiteRequest: { name } }),
+            ),
+        get: (uuid: UUID) => handleError(websitesApi.getWebsite({ uuid })),
+        getAll: () => handleError(websitesApi.getAllWebsites()),
+        update: (uuid: UUID, name: string) =>
+            handleError(
+                websitesApi.updateWebsite({
+                    uuid,
+                    updateWebsiteRequest: { name },
+                }),
+            ),
+        addDomain: (uuid: UUID, domain: string) =>
+            handleError(
+                websitesApi.addDomainToWebsite({
+                    uuid,
+                    addDomainToWebsiteRequest: { domain },
+                }),
+            ),
+        removeDomain: (websiteUuid: UUID, domainUuid: UUID) =>
+            handleError(
+                websitesApi.removeDomainFromWebsite({
+                    websiteUuid,
+                    domainUuid,
+                }),
+            ),
+        delete: (uuid: UUID) =>
+            handleError(websitesApi.deleteWebsite({ uuid })),
     },
 };
 
