@@ -80,6 +80,21 @@ pub enum ApiFailure {
 #[cfg(feature = "axum")]
 impl IntoResponse for ApiFailure {
     fn into_response(self) -> Response {
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(self)).into_response()
+        (
+            match self {
+                ApiFailure::MissingAuthorization => StatusCode::UNAUTHORIZED,
+                ApiFailure::InvalidAuthorization => StatusCode::BAD_REQUEST,
+                ApiFailure::WrongAuthorization => StatusCode::FORBIDDEN,
+                ApiFailure::InvalidCurrentNginxConfig(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                ApiFailure::InvalidUpdatedNginxConfig(_) => StatusCode::BAD_REQUEST,
+                ApiFailure::FailedToReloadWebserver(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                ApiFailure::DomainCheckFailure(_) => StatusCode::BAD_REQUEST,
+                ApiFailure::WebserverCheckFailure(_) => StatusCode::BAD_REQUEST,
+                ApiFailure::BadRequest(_) => StatusCode::BAD_REQUEST,
+                ApiFailure::InternalServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            },
+            Json(self),
+        )
+            .into_response()
     }
 }
