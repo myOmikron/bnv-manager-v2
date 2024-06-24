@@ -11,6 +11,7 @@ use crate::config::Config;
 mod cli;
 mod config;
 mod handler;
+mod models;
 mod server;
 
 #[tokio::main]
