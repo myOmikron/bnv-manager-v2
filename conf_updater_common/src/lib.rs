@@ -73,8 +73,8 @@ pub enum ApiFailure {
 
     #[error("Bad request: {0}")]
     BadRequest(String),
-    #[error("Internal server error: {0}")]
-    InternalServerError(String),
+    #[error("Internal server error")]
+    InternalServerError,
 }
 
 #[cfg(feature = "axum")]
@@ -91,10 +91,18 @@ impl IntoResponse for ApiFailure {
                 ApiFailure::DomainCheckFailure(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::WebserverCheckFailure(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::BadRequest(_) => StatusCode::BAD_REQUEST,
-                ApiFailure::InternalServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                ApiFailure::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             },
             Json(self),
         )
             .into_response()
+    }
+}
+
+#[cfg(feature = "rorm")]
+impl From<rorm::Error> for ApiFailure {
+    fn from(err: rorm::Error) -> Self {
+        tracing::event!(tracing::Level::ERROR, "{}", err);
+        ApiFailure::InternalServerError
     }
 }

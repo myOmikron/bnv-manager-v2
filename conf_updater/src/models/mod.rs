@@ -2,6 +2,9 @@ use chrono::{DateTime, Utc};
 use rorm::prelude::*;
 use uuid::Uuid;
 
+mod r#impl;
+pub(crate) mod patches;
+
 /// A single domain name and to which website that domain belongs (N:1 relation)
 #[derive(Debug, Model)]
 pub struct Domain {
