@@ -3,9 +3,9 @@
 #[cfg(feature = "axum")]
 use axum::http::StatusCode;
 #[cfg(feature = "axum")]
-use axum::Json;
-#[cfg(feature = "axum")]
 use axum::response::{IntoResponse, Response};
+#[cfg(feature = "axum")]
+use axum::Json;
 use serde::Deserialize;
 use serde::Serialize;
 use thiserror::Error;
@@ -102,6 +102,7 @@ impl IntoResponse for ApiFailure {
 #[cfg(feature = "rorm")]
 impl From<rorm::Error> for ApiFailure {
     fn from(err: rorm::Error) -> Self {
+        #[cfg(feature = "tracing")]
         tracing::event!(tracing::Level::ERROR, "{}", err);
         ApiFailure::InternalServerError
     }

@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-conf_updater_common = { path = "../conf_updater_common", features = ["axum", "rorm"] }
+conf_updater_common = { path = "../conf_updater_common", features = ["axum", "rorm", "tracing"] }
 
 # Web framework
 axum = { version = "~0.7" }
