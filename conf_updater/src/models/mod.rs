@@ -6,7 +6,7 @@ mod r#impl;
 pub(crate) mod patches;
 
 /// A single domain name and to which website that domain belongs (N:1 relation)
-#[derive(Debug, Model)]
+#[derive(Clone, Debug, Model)]
 pub struct Domain {
     /// Primary key of a domain
     #[rorm(id)]
@@ -24,7 +24,7 @@ pub struct Domain {
 }
 
 /// Declaration of the deployment of a single, combined website by a user
-#[derive(Debug, Model)]
+#[derive(Clone, Debug, Model)]
 pub struct Website {
     /// Website's UUID as supplied by the manager backend, which is a primary key there as well
     #[rorm(primary_key)]
@@ -45,7 +45,7 @@ pub struct Website {
 }
 
 /// Effectively a copy of the most recent state of user from the manager backend
-#[derive(Debug, Model)]
+#[derive(Clone, Debug, Model)]
 pub struct User {
     /// UUID of a user as obtained by the manager backend, where it is a primary key as well
     #[rorm(primary_key)]

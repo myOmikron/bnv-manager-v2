@@ -3,9 +3,9 @@
 #[cfg(feature = "axum")]
 use axum::http::StatusCode;
 #[cfg(feature = "axum")]
-use axum::response::{IntoResponse, Response};
-#[cfg(feature = "axum")]
 use axum::Json;
+#[cfg(feature = "axum")]
+use axum::response::{IntoResponse, Response};
 use serde::Deserialize;
 use serde::Serialize;
 use thiserror::Error;
