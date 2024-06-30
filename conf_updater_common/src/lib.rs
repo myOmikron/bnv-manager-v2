@@ -38,10 +38,26 @@ pub struct RemovalRequest {
     pub website: Uuid,
 }
 
+/// Indicator for the type of failure during domain resolution
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum DomainFailureType {
+    /// When no CNAME / A / AAAA record is set for a domain, i.e. generic resolving problem
+    DoesNotResolve,
+    /// When the domain resolves but does not point to the configured server (also for multiple records)
+    WrongResolve,
+    /// All other cases
+    Unknown,
+}
+
+/// Type for problems when resolving a domain name
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct FailedDomain {
+    /// Domain that failed to resolve correctly
     pub domain: String,
-    /// Human-readable error message, may not be suitable for end users
+    /// The type of error of this particular failure
+    pub error: DomainFailureType,
+    /// Human-readable error message, but may not be suitable for end users
     pub message: String,
 }
 

@@ -13,6 +13,7 @@ mod config;
 mod handler;
 mod models;
 mod server;
+mod util;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

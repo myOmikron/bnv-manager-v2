@@ -52,6 +52,7 @@ pub(crate) async fn start(config: Config) -> Result<(), StartServerError> {
     let router = Router::new()
         .route("/setup", post(handler::setup))
         .route("/teardown", post(handler::teardown))
+        .route("/refresh", post(handler::refresh))
         .with_state(state.clone())
         .layer(middleware::from_fn_with_state(state.clone(), enforce_auth))
         .layer(TraceLayer::new_for_http());
