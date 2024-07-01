@@ -14,63 +14,12 @@ use crate::config::MiscConfig;
 use crate::models::{Domain, User, Website};
 use crate::models::patches::{NewUser, NewWebsite};
 
-/// Ensure that all domain names resolve to this server's allowed IPs
-pub(crate) fn ensure_unique_resolvable_domains(
-    domains: &Vec<String>,
-    forwarded_domains: &Vec<String>,
-    config: &MiscConfig,
-) -> Result<(), ApiFailure> {
+/// Check that all domains, both the normal and forwards, are unique (i.e., no duplicates)
+pub(crate) fn check_unique_domains(domains: &Vec<String>, forwarded_domains: &Vec<String>) -> bool {
     let merged_domains = domains.iter().merge(forwarded_domains);
     let n_domains = domains.len() + forwarded_domains.len();
     let unique_domains: Vec<&String> = merged_domains.unique().collect();
-    if unique_domains.len() != n_domains {
-        return Err(ApiFailure::BadRequest(
-            "duplicate domain names (not unique)".to_string(),
-        ));
-    }
-
-    let mut failed_domains = vec![];
-    for domain in unique_domains {
-        // The DNS lookup uses the host's configuration, so take a look at /etc/resolv.conf
-        match lookup_host(domain) {
-            Ok(ip_addrs) => {
-                let mut failures = 0;
-                for ip_addr in ip_addrs {
-                    match ip_addr {
-                        IpAddr::V4(ip) => {
-                            if !config.global_ipv4.contains(&ip) {
-                                failures += 1;
-                            }
-                        }
-                        IpAddr::V6(ip) => {
-                            if !config.global_ipv6.contains(&ip) {
-                                failures += 1;
-                            }
-                        }
-                    }
-                }
-                if failures > 0 {
-                    failed_domains.push(FailedDomain {
-                        domain: domain.clone(),
-                        error: DomainFailureType::WrongResolve,
-                        message: format!("domain {} resolves to the wrong address", domain),
-                    })
-                }
-            }
-            Err(e) => {
-                failed_domains.push(FailedDomain {
-                    domain: domain.clone(),
-                    error: DomainFailureType::DoesNotResolve,
-                    message: e.to_string(),
-                });
-            }
-        };
-    }
-    if failed_domains.is_empty() {
-        Ok(())
-    } else {
-        Err(ApiFailure::DomainCheckFailure(failed_domains))
-    }
+    unique_domains.len() == n_domains
 }
 
 /// Ensure that the user exists locally and update its CN if necessary, otherwise create it
