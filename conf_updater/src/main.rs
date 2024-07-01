@@ -14,6 +14,7 @@ mod handler;
 mod models;
 mod server;
 mod util;
+mod utils;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
