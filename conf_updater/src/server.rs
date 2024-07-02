@@ -24,6 +24,7 @@ use conf_updater_common::ApiFailure;
 
 use crate::config::Config;
 use crate::handler;
+use crate::utils::{certbot, nginx};
 
 /// Application state used across all web request handlers
 #[derive(Clone)]
@@ -41,6 +42,12 @@ impl std::fmt::Debug for AppState {
 /// Start the HTTP server
 #[instrument(skip_all, ret)]
 pub(crate) async fn start(config: Config) -> Result<(), StartServerError> {
+    if !certbot::check_available() {
+        return Err(StartServerError::ProgramUnavailable("certbot".to_string()));
+    }
+    if !nginx::check_available() {
+        return Err(StartServerError::ProgramUnavailable("nginx".to_string()));
+    }
     let mut conf = DatabaseConfiguration::new(config.database.clone().into());
     conf.disable_logging = Some(true);
     let db = Database::connect(conf).await?;
@@ -113,4 +120,6 @@ pub(crate) enum StartServerError {
     Io(#[from] io::Error),
     #[error("Invalid address: {0}")]
     InvalidAddress(#[from] AddrParseError),
+    #[error("Program unavailable or missing permissions: {0}")]
+    ProgramUnavailable(String),
 }
