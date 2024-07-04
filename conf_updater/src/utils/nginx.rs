@@ -55,6 +55,22 @@ pub(crate) fn check_available() -> bool {
     }
 }
 
+/// Reload the nginx web server, returning the utility's response on error
+pub(crate) fn reload_server() -> io::Result<Result<(), String>> {
+    let output = Command::new("nginx").arg("-s").arg("reload").output()?;
+    if output.status.success() {
+        Ok(Ok(()))
+    } else {
+        let stderr = std::str::from_utf8(&*output.stderr).map_err(|_| {
+            io::Error::new(
+                io::ErrorKind::Other,
+                "unexpected error parsing UTF-8 sequence from nginx reload call",
+            )
+        })?;
+        Ok(Err(stderr.into()))
+    }
+}
+
 /// Verify the current nginx web server configuration, returning errors on failure
 ///
 /// This function either returns an IO error on general IO failure or the result
