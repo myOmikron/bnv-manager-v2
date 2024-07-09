@@ -46,6 +46,8 @@ pub enum DomainFailureType {
     DoesNotResolve,
     /// When the domain resolves but does not point to the configured server (also for multiple records)
     WrongResolve,
+    /// When the given string is not a valid domain name
+    InvalidDomainName,
     /// All other cases
     Unknown,
 }

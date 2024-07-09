@@ -2,13 +2,13 @@ use axum::extract::State;
 use axum::Json;
 use tracing::instrument;
 
-use conf_updater_common::{ApiFailure, ProvisioningRequest};
+use conf_updater_common::{ApiFailure, DomainFailureType, FailedDomain, ProvisioningRequest};
 
 use crate::server::AppState;
 use crate::util::{
     check_unique_domains, ensure_existing_user, ensure_existing_website, ensure_website_domains,
 };
-use crate::utils::dns::ensure_resolvable_domains;
+use crate::utils::dns::{ensure_resolvable_domains, test_domain_name};
 
 #[instrument(skip(state))]
 pub(crate) async fn setup(
@@ -25,7 +25,15 @@ pub(crate) async fn setup(
     }
 
     // Check the domain names before starting any further work
+    let invalid_domains = validate_domain_names(&payload.domains);
+    if !invalid_domains.is_empty() {
+        return Err(ApiFailure::DomainCheckFailure(invalid_domains));
+    }
     ensure_resolvable_domains(&payload.domains, &state.config.misc)?;
+    let invalid_domains = validate_domain_names(&payload.forwarded_domains);
+    if !invalid_domains.is_empty() {
+        return Err(ApiFailure::DomainCheckFailure(invalid_domains));
+    }
     ensure_resolvable_domains(&payload.forwarded_domains, &state.config.misc)?;
 
     let mut tx = state.db.start_transaction().await?;
@@ -41,4 +49,21 @@ pub(crate) async fn setup(
     tx.commit().await?;
 
     Ok(())
+}
+
+fn validate_domain_names(names: &Vec<String>) -> Vec<FailedDomain> {
+    names
+        .iter()
+        .filter_map(|name| {
+            if !test_domain_name(name) {
+                Some(FailedDomain {
+                    domain: name.clone(),
+                    error: DomainFailureType::InvalidDomainName,
+                    message: "invalid domain does not match regex".to_string(),
+                })
+            } else {
+                None
+            }
+        })
+        .collect()
 }
