@@ -5,9 +5,7 @@ use tracing::instrument;
 use conf_updater_common::{ApiFailure, DomainFailureType, FailedDomain, ProvisioningRequest};
 
 use crate::server::AppState;
-use crate::util::{
-    check_unique_domains, ensure_existing_user, ensure_existing_website, ensure_website_domains,
-};
+use crate::util::{check_unique_domains, ensure_existing_user, ensure_website_domains};
 use crate::utils::dns::{ensure_resolvable_domains, test_domain_name};
 
 #[instrument(skip(state))]
@@ -37,8 +35,15 @@ pub(crate) async fn setup(
     ensure_resolvable_domains(&payload.forwarded_domains, &state.config.misc)?;
 
     let mut tx = state.db.start_transaction().await?;
-    let website_owner = ensure_existing_user(&payload.user, &mut tx).await?;
     ensure_website_domains(&payload.domains, &mut tx).await?;
+    let website_owner = ensure_existing_user(&payload.user, &mut tx).await?;
+    tx.commit().await?;
+
+    // TODO:
+    //   1. obtain a certificate with all domain names & verify it
+    //   2. create the Domain entries for all these
+    //   3. create the Website referencing the Domains
+    /*
     let website = ensure_existing_website(
         payload.website,
         payload.test_certificate.unwrap_or(false),
@@ -47,6 +52,14 @@ pub(crate) async fn setup(
     )
     .await?;
     tx.commit().await?;
+    */
+
+    // TODO:
+    //   4. create the web root directory, add a simple index.html
+    //   5. give ownership of the new web root to the owner user (requires POSIX user ID mapping), group goes to www-data
+    //   6. configure nginx, check the nginx conf & reload the server
+    //   7. try to reach all domain names via HTTPS and expect 200 or 3xx (attention when using test certs)
+    //   8. configure auto-update mechanism that also changes file permissions if required (?)
 
     Ok(())
 }

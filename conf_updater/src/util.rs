@@ -22,7 +22,7 @@ pub(crate) fn check_unique_domains(domains: &Vec<String>, forwarded_domains: &Ve
     unique_domains.len() == n_domains
 }
 
-/// Ensure that the user exists locally and update its CN if necessary, otherwise create it
+/// Ensure that the user exists locally and update its CN and DN if necessary, otherwise create it
 pub(crate) async fn ensure_existing_user(
     user: &WebsiteUser,
     exe: impl Executor<'_>,
@@ -33,11 +33,20 @@ pub(crate) async fn ensure_existing_user(
         .optional()
         .await?
     {
+        // TODO: verify this updating functionality, especially with the check in line 49!
         if existing_user.cn != user.cn {
             update!(guard.get_transaction(), User)
                 .condition(User::F.uuid.equals(user.id))
                 .set(User::F.cn, user.cn.clone())
                 .await?;
+        }
+        if existing_user.dn != user.dn {
+            update!(guard.get_transaction(), User)
+                .condition(User::F.uuid.equals(user.id))
+                .set(User::F.dn, user.dn.clone())
+                .await?;
+        }
+        if existing_user.cn != user.cn || existing_user.dn != user.dn {
             let updated_user = query!(guard.get_transaction(), User)
                 .condition(User::F.uuid.equals(user.id))
                 .optional()
