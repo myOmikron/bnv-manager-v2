@@ -10,6 +10,7 @@ pub(crate) struct NewUser {
     pub(crate) uuid: Uuid,
     pub(crate) cn: String,
     pub(crate) dn: String,
+    pub(crate) posix_uid: i64,
 }
 
 #[derive(Patch)]

@@ -20,6 +20,8 @@ pub struct WebsiteUser {
     pub cn: String,
     /// LDAP distinguished name of a website user
     pub dn: String,
+    /// POSIX user ID of the website user; must be unique across all users
+    pub posix_uid: u32,
 }
 
 /// Request used to provision a single website in the web server configuration and with TLS certs

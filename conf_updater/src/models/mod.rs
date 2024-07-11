@@ -59,6 +59,10 @@ pub struct User {
     #[rorm(unique, max_length = 255)]
     pub dn: String,
 
+    /// POSIX user ID of a website user; must be unique across all users
+    #[rorm(unique)]
+    pub posix_uid: i64,
+
     /// Back reference of the websites owned by this user
     pub websites: BackRef<field!(Website::F.owner)>,
 }

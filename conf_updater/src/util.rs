@@ -22,7 +22,7 @@ pub(crate) fn check_unique_domains(domains: &Vec<String>, forwarded_domains: &Ve
     unique_domains.len() == n_domains
 }
 
-/// Ensure that the user exists locally and update its CN and DN if necessary, otherwise create it
+/// Ensure that the user exists locally and update its CN, DN and UID if necessary, otherwise create it
 pub(crate) async fn ensure_existing_user(
     user: &WebsiteUser,
     exe: impl Executor<'_>,
@@ -33,7 +33,8 @@ pub(crate) async fn ensure_existing_user(
         .optional()
         .await?
     {
-        // TODO: verify this updating functionality, especially with the check in line 49!
+        // TODO: verify this updating functionality, especially with the check in line 56!
+        // TODO: changing these user attributes needs more backend work (e.g. moving directories, changing file ownerships, ...) as well
         if existing_user.cn != user.cn {
             update!(guard.get_transaction(), User)
                 .condition(User::F.uuid.equals(user.id))
@@ -44,6 +45,12 @@ pub(crate) async fn ensure_existing_user(
             update!(guard.get_transaction(), User)
                 .condition(User::F.uuid.equals(user.id))
                 .set(User::F.dn, user.dn.clone())
+                .await?;
+        }
+        if existing_user.posix_uid != user.posix_uid as i64 {
+            update!(guard.get_transaction(), User)
+                .condition(User::F.uuid.equals(user.id))
+                .set(User::F.posix_uid, user.posix_uid as i64)
                 .await?;
         }
         if existing_user.cn != user.cn || existing_user.dn != user.dn {
@@ -63,6 +70,7 @@ pub(crate) async fn ensure_existing_user(
                 uuid: user.id,
                 cn: user.cn.clone(),
                 dn: user.dn.clone(),
+                posix_uid: user.posix_uid as i64,
             })
             .await?;
         guard.commit().await?;

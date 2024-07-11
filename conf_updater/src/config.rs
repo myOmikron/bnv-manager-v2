@@ -97,7 +97,15 @@ pub struct Config {
     /// Miscellaneous configuration
     pub misc: MiscConfig,
     /// Certbot configuration
-    pub certbot: Option<CertbotConfig>,
+    #[serde(default = "get_default_certbot_conf")]
+    pub certbot: CertbotConfig,
+}
+
+fn get_default_certbot_conf() -> CertbotConfig {
+    CertbotConfig {
+        test_certs: get_default_test_certs(),
+        cert_dir: get_default_lets_encrypt(),
+    }
 }
 
 /// All errors that can occur when parsing a configuration file
