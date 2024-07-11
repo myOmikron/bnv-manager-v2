@@ -1,11 +1,13 @@
 use axum::extract::State;
 use axum::Json;
-use tracing::instrument;
+use itertools::Itertools;
+use tracing::{error, instrument};
 
 use conf_updater_common::{ApiFailure, DomainFailureType, FailedDomain, ProvisioningRequest};
 
 use crate::server::AppState;
-use crate::util::{check_unique_domains, ensure_existing_user, ensure_website_domains};
+use crate::util::{ensure_existing_user, ensure_website_domains};
+use crate::utils::certbot::obtain_certificates;
 use crate::utils::dns::{ensure_resolvable_domains, test_domain_name};
 
 #[instrument(skip(state))]
@@ -14,25 +16,26 @@ pub(crate) async fn setup(
     payload: Option<Json<ProvisioningRequest>>,
 ) -> Result<(), ApiFailure> {
     let Some(payload) = payload else {
-        return Err(ApiFailure::BadRequest("missing payload".to_string()));
+        return Err(ApiFailure::BadRequest(
+            "missing payload or fields".to_string(),
+        ));
     };
-    if !check_unique_domains(&payload.domains, &payload.forwarded_domains) {
+
+    // Create a vector of all domains for further DNS & certificate operations
+    let mut all_domains = payload.domains.clone();
+    all_domains.extend(payload.forwarded_domains.clone());
+    if !all_domains.iter().all_unique() {
         return Err(ApiFailure::BadRequest(
             "duplicate domain names (not unique)".to_string(),
         ));
     }
 
     // Check the domain names before starting any further work
-    let invalid_domains = validate_domain_names(&payload.domains);
+    let invalid_domains = validate_domain_names(&all_domains);
     if !invalid_domains.is_empty() {
         return Err(ApiFailure::DomainCheckFailure(invalid_domains));
     }
-    ensure_resolvable_domains(&payload.domains, &state.config.misc)?;
-    let invalid_domains = validate_domain_names(&payload.forwarded_domains);
-    if !invalid_domains.is_empty() {
-        return Err(ApiFailure::DomainCheckFailure(invalid_domains));
-    }
-    ensure_resolvable_domains(&payload.forwarded_domains, &state.config.misc)?;
+    ensure_resolvable_domains(&all_domains, &state.config.misc)?;
 
     let mut tx = state.db.start_transaction().await?;
     ensure_website_domains(&payload.domains, &mut tx).await?;

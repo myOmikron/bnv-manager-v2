@@ -1,26 +1,13 @@
-use std::net::IpAddr;
-
-use dns_lookup::lookup_host;
-use itertools::Itertools;
 use rorm::{FieldAccess, insert, Model, query, update};
 use rorm::db::Executor;
 use rorm::prelude::ForeignModelByField;
 use tracing::info;
 use uuid::Uuid;
 
-use conf_updater_common::{ApiFailure, DomainFailureType, FailedDomain, WebsiteUser};
+use conf_updater_common::WebsiteUser;
 
-use crate::config::MiscConfig;
 use crate::models::{Domain, User, Website};
 use crate::models::patches::{NewUser, NewWebsite};
-
-/// Check that all domains, both the normal and forwards, are unique (i.e., no duplicates)
-pub(crate) fn check_unique_domains(domains: &Vec<String>, forwarded_domains: &Vec<String>) -> bool {
-    let merged_domains = domains.iter().merge(forwarded_domains);
-    let n_domains = domains.len() + forwarded_domains.len();
-    let unique_domains: Vec<&String> = merged_domains.unique().collect();
-    unique_domains.len() == n_domains
-}
 
 /// Ensure that the user exists locally and update its CN, DN and UID if necessary, otherwise create it
 pub(crate) async fn ensure_existing_user(

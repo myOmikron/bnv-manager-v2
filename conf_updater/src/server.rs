@@ -45,6 +45,7 @@ pub(crate) async fn start(config: Config) -> Result<(), StartServerError> {
     if !certbot::check_available() {
         return Err(StartServerError::ProgramUnavailable("certbot".to_string()));
     }
+    certbot::check_account().map_err(|err| StartServerError::ProgramUnavailable(err))?;
     if !nginx::check_available() {
         return Err(StartServerError::ProgramUnavailable("nginx".to_string()));
     }

@@ -1,4 +1,3 @@
-use std::fmt::Debug;
 use std::io;
 use std::process::Command;
 
@@ -40,9 +39,9 @@ pub(crate) fn check_account() -> Result<(), String> {
 /// literally to `certbot`. This means that shell syntax like quotes, escaped
 /// characters, word splitting, glob patterns, variable substitution, etc. have no effect.
 pub(crate) fn obtain_certificates(
-    cert_name: Uuid,
+    cert_name: &Uuid,
     test_certificate: bool,
-    domains: Vec<String>,
+    domains: &Vec<String>,
 ) -> io::Result<Result<(), String>> {
     if domains.len() == 0 {
         return Ok(Err("empty domain list".to_string()));
@@ -57,7 +56,7 @@ pub(crate) fn obtain_certificates(
     if test_certificate {
         command.arg("--test-cert");
     }
-    for domain in &domains {
+    for domain in domains {
         command.arg("-d"); // the next argument following after it is a domain name
         command.arg(domain);
     }

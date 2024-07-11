@@ -1,7 +1,6 @@
 use std::net::IpAddr;
 
 use dns_lookup::lookup_host;
-use itertools::Itertools;
 use regex::Regex;
 
 use conf_updater_common::{ApiFailure, DomainFailureType, FailedDomain};
