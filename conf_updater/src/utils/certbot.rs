@@ -153,10 +153,51 @@ impl From<CertbotError> for ApiFailure {
             CertbotError::ErrorMessage(uuid, error_message) => {
                 ApiFailure::CertbotCertError(CertbotFailureDetails {
                     website: uuid,
-                    failed_domains: vec![], // TODO: parse the failed domains from the error message
+                    failed_domains: extract_failed_domains(&error_message),
                     full_error: error_message,
                 })
             }
         }
+    }
+}
+
+/// Extract failed domains from certbot 'certonly' command (an empty `Vec` possibly means wrong input)
+fn extract_failed_domains(error_message: &String) -> Vec<String> {
+    let re = regex::Regex::new(r"( {2})Domain: ([a-zA-Z0-9-._]+)\r?\n").unwrap();
+    re.captures_iter(error_message)
+        .filter_map(|c| c.get(2))
+        .map(|m| m.as_str().to_string())
+        .collect()
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn check_extracted_domains() {
+        use crate::utils::certbot::extract_failed_domains;
+
+        let failure_message_example = r"Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Requesting a certificate for foo.example.com and bar.example.com
+
+Certbot failed to authenticate some domains (authenticator: nginx). The Certificate Authority reported these problems:
+  Domain: bar.example.com
+  Type:   unauthorized
+  Detail: 1.2.3.4: Invalid response from http://bar.example.com/.well-known/acme-challenge/8rVGvRKMI_gq8vbL1va83j_nU-Ql7SaANFEi3ukRxE0: 404
+
+  Domain: foo.example.com
+  Type:   unauthorized
+  Detail: 1.2.3.4: Invalid response from http://foo.example.com/.well-known/acme-challenge/tyFVIGtZBobrpk-u1c-9vQJwJFtEv541CIqx0NcehJ3: 404
+
+Hint: The Certificate Authority failed to verify the temporary nginx configuration changes made by Certbot. Ensure the listed domains point to this nginx server and that it is accessible from the internet.
+
+Some challenges have failed.
+Ask for help or search for solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with -v for more details.
+".to_string();
+
+        let result = extract_failed_domains(&failure_message_example);
+        assert_eq!(vec!["bar.example.com", "foo.example.com"], result);
+
+        let result = extract_failed_domains(&"<empty>".to_string());
+        assert_eq!(0, result.len());
     }
 }
