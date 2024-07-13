@@ -1,9 +1,10 @@
 //! Setup and start of the HTTP server
 
-use std::io;
+use std::{fs, io};
 use std::net::AddrParseError;
 use std::net::IpAddr;
 use std::net::SocketAddr;
+use std::path::Path;
 use std::str::FromStr;
 
 use axum::{middleware, Router};
@@ -42,13 +43,8 @@ impl std::fmt::Debug for AppState {
 /// Start the HTTP server
 #[instrument(skip_all, ret)]
 pub(crate) async fn start(config: Config) -> Result<(), StartServerError> {
-    if !certbot::check_available() {
-        return Err(StartServerError::ProgramUnavailable("certbot".to_string()));
-    }
-    certbot::check_account().map_err(|err| StartServerError::ProgramUnavailable(err))?;
-    if !nginx::check_available() {
-        return Err(StartServerError::ProgramUnavailable("nginx".to_string()));
-    }
+    check_env(&config)?;
+
     let mut conf = DatabaseConfiguration::new(config.database.clone().into());
     conf.disable_logging = Some(true);
     let db = Database::connect(conf).await?;
@@ -73,6 +69,48 @@ pub(crate) async fn start(config: Config) -> Result<(), StartServerError> {
     let listener = TcpListener::bind(socket_addr).await?;
     axum::serve(listener, router).await?;
 
+    Ok(())
+}
+
+/// Perform environment and configuration checks
+fn check_env(config: &Config) -> Result<(), StartServerError> {
+    if !certbot::check_available() {
+        return Err(StartServerError::ProgramUnavailable("certbot".to_string()));
+    }
+    certbot::check_account().map_err(|err| StartServerError::ProgramUnavailable(err))?;
+    if !nginx::check_available() {
+        return Err(StartServerError::ProgramUnavailable("nginx".to_string()));
+    }
+    let htdocs = Path::new(&config.misc.htdocs_root_dir);
+    if !htdocs.is_absolute() || !htdocs.exists() {
+        return Err(StartServerError::ConfigError(
+            "htdocs_root_dir must be an absolute, existing path".to_string(),
+        ));
+    }
+    let nginx_conf = Path::new(&config.misc.nginx_config_dir);
+    if !nginx_conf.is_absolute() || !nginx_conf.exists() {
+        return Err(StartServerError::ConfigError(
+            "nginx_config_dir must be an absolute, existing path".to_string(),
+        ));
+    }
+    let certbot_dir = Path::new(&config.certbot.cert_dir);
+    if !certbot_dir.is_absolute() || !certbot_dir.exists() {
+        return Err(StartServerError::ConfigError(
+            "cert_dir must be an absolute, existing path".to_string(),
+        ));
+    }
+    for (dir, read_result) in [
+        (htdocs, fs::read_dir(htdocs)),
+        (nginx_conf, fs::read_dir(nginx_conf)),
+        (certbot_dir, fs::read_dir(certbot_dir)),
+    ] {
+        if read_result.is_err() {
+            return Err(StartServerError::ConfigError(format!(
+                "could not read from {}",
+                dir.display()
+            )));
+        }
+    }
     Ok(())
 }
 
@@ -123,4 +161,6 @@ pub(crate) enum StartServerError {
     InvalidAddress(#[from] AddrParseError),
     #[error("Program unavailable or missing permissions: {0}")]
     ProgramUnavailable(String),
+    #[error("Configuration error: {0}")]
+    ConfigError(String),
 }
