@@ -1,13 +1,13 @@
 use axum::extract::State;
 use axum::Json;
 use itertools::Itertools;
-use tracing::{error, instrument};
+use tracing::instrument;
 
 use conf_updater_common::{ApiFailure, DomainFailureType, FailedDomain, ProvisioningRequest};
 
 use crate::server::AppState;
 use crate::util::{ensure_existing_user, ensure_website_domains};
-use crate::utils::certbot::obtain_certificates;
+use crate::utils::certbot::{obtain_certificate, verify_cert};
 use crate::utils::dns::{ensure_resolvable_domains, test_domain_name};
 
 #[instrument(skip(state))]
@@ -42,8 +42,11 @@ pub(crate) async fn setup(
     let website_owner = ensure_existing_user(&payload.user, &mut tx).await?;
     tx.commit().await?;
 
+    let test_cert = state.config.certbot.test_certs || payload.test_certificate.unwrap_or(false);
+    obtain_certificate(&payload.website, test_cert, &all_domains)?;
+    verify_cert(&payload.website, &all_domains, &state.config.certbot)?;
+
     // TODO:
-    //   1. obtain a certificate with all domain names & verify it
     //   2. create the Domain entries for all these
     //   3. create the Website referencing the Domains
     /*

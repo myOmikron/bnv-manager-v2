@@ -65,6 +65,17 @@ pub struct FailedDomain {
     pub message: String,
 }
 
+/// Details about failed certbot operations while trying to acquire certificates
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CertbotFailureDetails {
+    /// UUID of the affected website
+    pub website: Uuid,
+    /// List of domain names that failed to validate for whichever reason (most likely wrong DNS)
+    pub failed_domains: Vec<String>,
+    /// Full multi-line error text as returned by the certbot CLI
+    pub full_error: String,
+}
+
 /// Potential errors as returned by the API endpoints of the web conf updater
 #[derive(Error, Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -83,6 +94,10 @@ pub enum ApiFailure {
     InvalidUpdatedNginxConfig(Uuid),
     #[error("Failed to reload web server: {0}")]
     FailedToReloadWebserver(String),
+
+    /// Failing to obtain certificates through 'certonly' option
+    #[error("Certbot certificate operation failed")]
+    CertbotCertError(CertbotFailureDetails),
 
     /// Trying to resolve any of these domains did not yield the host's IP address
     #[error("Domain check failure")]
@@ -108,6 +123,7 @@ impl IntoResponse for ApiFailure {
                 ApiFailure::InvalidCurrentNginxConfig(_) => StatusCode::INTERNAL_SERVER_ERROR,
                 ApiFailure::InvalidUpdatedNginxConfig(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::FailedToReloadWebserver(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                ApiFailure::CertbotCertError(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::DomainCheckFailure(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::WebserverCheckFailure(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::BadRequest(_) => StatusCode::BAD_REQUEST,
