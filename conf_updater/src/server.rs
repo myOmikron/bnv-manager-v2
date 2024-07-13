@@ -5,6 +5,7 @@ use std::net::AddrParseError;
 use std::net::IpAddr;
 use std::net::SocketAddr;
 use std::path::Path;
+use std::process::Command;
 use std::str::FromStr;
 
 use axum::{middleware, Router};
@@ -74,29 +75,22 @@ pub(crate) async fn start(config: Config) -> Result<(), StartServerError> {
 
 /// Perform environment and configuration checks
 fn check_env(config: &Config) -> Result<(), StartServerError> {
-    if !certbot::check_available() {
-        return Err(StartServerError::ProgramUnavailable("certbot".to_string()));
-    }
-    certbot::check_account().map_err(|err| StartServerError::ProgramUnavailable(err))?;
-    if !nginx::check_available() {
-        return Err(StartServerError::ProgramUnavailable("nginx".to_string()));
-    }
     let htdocs = Path::new(&config.misc.htdocs_root_dir);
     if !htdocs.is_absolute() || !htdocs.exists() {
         return Err(StartServerError::ConfigError(
-            "htdocs_root_dir must be an absolute, existing path".to_string(),
+            "htdocs_root_dir must be an absolute, existing, readable path".to_string(),
         ));
     }
     let nginx_conf = Path::new(&config.misc.nginx_config_dir);
     if !nginx_conf.is_absolute() || !nginx_conf.exists() {
         return Err(StartServerError::ConfigError(
-            "nginx_config_dir must be an absolute, existing path".to_string(),
+            "nginx_config_dir must be an absolute, existing, readable path".to_string(),
         ));
     }
     let certbot_dir = Path::new(&config.certbot.cert_dir);
     if !certbot_dir.is_absolute() || !certbot_dir.exists() {
         return Err(StartServerError::ConfigError(
-            "cert_dir must be an absolute, existing path".to_string(),
+            "cert_dir must be an absolute, existing, readable path".to_string(),
         ));
     }
     for (dir, read_result) in [
@@ -110,6 +104,24 @@ fn check_env(config: &Config) -> Result<(), StartServerError> {
                 dir.display()
             )));
         }
+    }
+    if !certbot::check_available() {
+        return Err(StartServerError::ProgramUnavailable("certbot".to_string()));
+    }
+    certbot::check_account().map_err(|err| StartServerError::ProgramUnavailable(err))?;
+    if !nginx::check_available() {
+        return Err(StartServerError::ProgramUnavailable("nginx".to_string()));
+    }
+    let output = Command::new("getent")
+        .arg("group")
+        .arg(&config.misc.nginx_group)
+        .output()
+        .map_err(|_| StartServerError::ProgramUnavailable("getent".to_string()))?;
+    if !output.status.success() {
+        return Err(StartServerError::ConfigError(format!(
+            "could not verify UNIX group: {}",
+            &config.misc.nginx_group
+        )));
     }
     Ok(())
 }

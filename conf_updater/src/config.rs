@@ -39,6 +39,9 @@ pub struct MiscConfig {
     /// Root directory for website files, defaults to `/var/www/html/`
     #[serde(default = "get_default_htdocs_root_dir")]
     pub(crate) htdocs_root_dir: String,
+    /// UNIX group identification for the web server user, defaults to `www-data`
+    #[serde(default = "get_default_nginx_group")]
+    pub(crate) nginx_group: String,
 }
 
 fn get_default_nginx_config_dir() -> String {
@@ -47,6 +50,10 @@ fn get_default_nginx_config_dir() -> String {
 
 fn get_default_htdocs_root_dir() -> String {
     "/var/www/html/".to_string()
+}
+
+fn get_default_nginx_group() -> String {
+    "www-data".to_string()
 }
 
 /// Certbot related configuration
