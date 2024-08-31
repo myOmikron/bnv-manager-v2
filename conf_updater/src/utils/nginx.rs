@@ -1,5 +1,6 @@
 use std::io;
 use std::process::Command;
+use conf_updater_common::ApiFailure;
 
 const NGINX_SERVER_BASE_TEMPLATE: &str = "# This file is managed by the web conf updater
 
@@ -56,10 +57,10 @@ pub(crate) fn check_available() -> bool {
 }
 
 /// Reload the nginx web server, returning the utility's response on error
-pub(crate) fn reload_server() -> io::Result<Result<(), String>> {
+pub(crate) fn reload_server() -> Result<(), ApiFailure> {
     let output = Command::new("nginx").arg("-s").arg("reload").output()?;
     if output.status.success() {
-        Ok(Ok(()))
+        Ok(())
     } else {
         let stderr = std::str::from_utf8(&*output.stderr).map_err(|_| {
             io::Error::new(
@@ -67,18 +68,16 @@ pub(crate) fn reload_server() -> io::Result<Result<(), String>> {
                 "unexpected error parsing UTF-8 sequence from nginx reload call",
             )
         })?;
-        Ok(Err(stderr.into()))
+        tracing::event!(tracing::Level::ERROR, "Failed to reload nginx server: {}", stderr);
+        Err(ApiFailure::InternalServerError)
     }
 }
 
 /// Verify the current nginx web server configuration, returning errors on failure
-///
-/// This function either returns an IO error on general IO failure or the result
-/// of the check, which could fail on its own. That's why there are nested results.
-pub(crate) fn verify_config() -> io::Result<Result<(), String>> {
+pub(crate) fn verify_config() -> Result<(), ApiFailure> {
     let output = Command::new("nginx").arg("-t").output()?;
     if output.status.success() {
-        Ok(Ok(()))
+        Ok(())
     } else {
         let stderr = std::str::from_utf8(&*output.stderr).map_err(|_| {
             io::Error::new(
@@ -86,6 +85,7 @@ pub(crate) fn verify_config() -> io::Result<Result<(), String>> {
                 "unexpected error parsing UTF-8 sequence from nginx config check",
             )
         })?;
-        Ok(Err(stderr.into()))
+        tracing::event!(tracing::Level::ERROR, "Failed to verify nginx conf: {}", stderr);
+        Err(ApiFailure::InternalServerError)
     }
 }

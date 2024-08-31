@@ -9,6 +9,7 @@ use crate::server::AppState;
 use crate::util::{ensure_existing_user, ensure_website_domains};
 use crate::utils::certbot::{obtain_certificate, verify_cert};
 use crate::utils::dns::{ensure_resolvable_domains, test_domain_name};
+use crate::utils::nginx::{reload_server, verify_config};
 
 #[instrument(skip(state))]
 pub(crate) async fn setup(
@@ -42,8 +43,8 @@ pub(crate) async fn setup(
     let website_owner = ensure_existing_user(&payload.user, &mut tx).await?;
     tx.commit().await?;
 
-    let test_cert = state.config.certbot.test_certs || payload.test_certificate.unwrap_or(false);
-    obtain_certificate(&payload.website, test_cert, &all_domains)?;
+    let use_test_cert = state.config.certbot.test_certs || payload.test_certificate.unwrap_or(false);
+    obtain_certificate(&payload.website, use_test_cert, &all_domains)?;
     verify_cert(&payload.website, &all_domains, &state.config.certbot)?;
 
     // TODO:
@@ -63,7 +64,13 @@ pub(crate) async fn setup(
     // TODO:
     //   4. create the web root directory, add a simple index.html
     //   5. give ownership of the new web root to the owner user (requires POSIX user ID mapping), group goes to www-data
-    //   6. configure nginx, check the nginx conf & reload the server
+    //   6. Configure nginx
+
+    // Check the nginx conf & reload the server
+    verify_config()?;
+    reload_server()?;
+
+
     //   7. try to reach all domain names via HTTPS and expect 200 or 3xx (attention when using test certs)
     //   8. configure auto-update mechanism that also changes file permissions if required (?)
 

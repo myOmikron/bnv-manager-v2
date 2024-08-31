@@ -84,6 +84,7 @@ pub(crate) fn obtain_certificate(
     }
 }
 
+/// Verify that the cert for a given website has all valid domains
 pub(crate) fn verify_cert(
     website: &Uuid,
     all_domains: &Vec<String>,

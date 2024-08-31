@@ -1,5 +1,7 @@
 //! Common schemas and models used by the WebConf updater API
 
+use std::io;
+use std::io::Error;
 #[cfg(feature = "axum")]
 use axum::http::StatusCode;
 #[cfg(feature = "axum")]
@@ -138,6 +140,14 @@ impl IntoResponse for ApiFailure {
 #[cfg(feature = "rorm")]
 impl From<rorm::Error> for ApiFailure {
     fn from(err: rorm::Error) -> Self {
+        #[cfg(feature = "tracing")]
+        tracing::event!(tracing::Level::ERROR, "{}", err);
+        ApiFailure::InternalServerError
+    }
+}
+
+impl From<io::Error> for ApiFailure {
+    fn from(err: Error) -> Self {
         #[cfg(feature = "tracing")]
         tracing::event!(tracing::Level::ERROR, "{}", err);
         ApiFailure::InternalServerError
