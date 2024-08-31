@@ -22,7 +22,7 @@ tracing = { version = "~0.1" }
 tracing-subscriber = { version = "~0.3", features = ["tracing-log"] }
 
 # ORM
-rorm = { version = "~0.6", features = ["tokio", "cli", "uuid"] }
+rorm = { version = "~0.6", features = ["tokio", "cli", "postgres-only", "uuid", "chrono"], default-features = false }
 
 # Async runtime
 tokio = { version = ">=1.23.1", features = ["macros", "rt-multi-thread", "sync"] }

@@ -79,14 +79,27 @@ fn get_default_lets_encrypt() -> String {
 /// Database configuration (only supports SQLite for simplicity)
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub(crate) struct DBConfig {
-    filename: String,
+pub struct DBConfig {
+    /// The address of the database server
+    pub host: String,
+    /// The port of the database server
+    pub port: u16,
+    /// The database name
+    pub name: String,
+    /// The user to use for the database connection
+    pub user: String,
+    /// Password for the user
+    pub password: String,
 }
 
 impl From<DBConfig> for DatabaseDriver {
     fn from(value: DBConfig) -> Self {
-        DatabaseDriver::SQLite {
-            filename: value.filename,
+        DatabaseDriver::Postgres {
+            name: value.name,
+            host: value.host,
+            port: value.port,
+            user: value.user,
+            password: value.password,
         }
     }
 }
