@@ -2,6 +2,7 @@
 
 use std::io;
 use std::io::Error;
+
 #[cfg(feature = "axum")]
 use axum::http::StatusCode;
 #[cfg(feature = "axum")]
@@ -149,7 +150,7 @@ impl From<rorm::Error> for ApiFailure {
 impl From<io::Error> for ApiFailure {
     fn from(err: Error) -> Self {
         #[cfg(feature = "tracing")]
-        tracing::event!(tracing::Level::ERROR, "{}", err);
+        tracing::event!(tracing::Level::ERROR, "IoError: {}", err);
         ApiFailure::InternalServerError
     }
 }
