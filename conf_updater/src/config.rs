@@ -76,7 +76,21 @@ fn get_default_lets_encrypt() -> String {
     "/etc/letsencrypt/live/".to_string()
 }
 
-/// Database configuration (only supports SQLite for simplicity)
+/// Configuration about the hosting provider of this service
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct HostingConfig {
+    /// Name of the hosting provider
+    pub name: String,
+    /// Website of the hosting provider (should be a URL)
+    pub website: String,
+    /// Support e-mail address or help desk e-mail address
+    pub help_address: String,
+    /// URL of the location where users can log in to their webspace for content changes
+    pub webspace_login: String,
+}
+
+/// Database configuration (only supports Postgres)
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct DBConfig {
@@ -116,6 +130,8 @@ pub struct Config {
     pub database: DBConfig,
     /// Miscellaneous configuration
     pub misc: MiscConfig,
+    /// Hosting provider configuration
+    pub hosting: HostingConfig,
     /// Certbot configuration
     #[serde(default = "get_default_certbot_conf")]
     pub certbot: CertbotConfig,
