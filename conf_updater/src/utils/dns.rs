@@ -75,6 +75,24 @@ pub(crate) fn ensure_resolvable_domains(
     }
 }
 
+/// Check that a list of strings are "most likely" valid domain names through regex, see [DOMAIN_NAME_REGEX]
+pub(crate) fn validate_domain_names(names: &Vec<String>) -> Vec<FailedDomain> {
+    names
+        .iter()
+        .filter_map(|name| {
+            if !test_domain_name(name) {
+                Some(FailedDomain {
+                    domain: name.clone(),
+                    error: DomainFailureType::InvalidDomainName,
+                    message: "invalid domain does not match regex".to_string(),
+                })
+            } else {
+                None
+            }
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod test {
     use crate::utils::dns::test_domain_name;

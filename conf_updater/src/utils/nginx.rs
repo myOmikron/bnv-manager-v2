@@ -1,15 +1,11 @@
-use std::{fs, io};
+use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use itertools::all;
 use tracing::{debug, warn};
-use tracing::field::debug;
 use tracing::log::error;
-use tracing_subscriber::fmt::format;
-use url::quirks::host;
 use uuid::Uuid;
 
 use conf_updater_common::ApiFailure;

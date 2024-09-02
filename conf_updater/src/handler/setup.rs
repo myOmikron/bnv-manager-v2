@@ -3,13 +3,14 @@ use axum::Json;
 use itertools::Itertools;
 use tracing::instrument;
 
-use conf_updater_common::{ApiFailure, DomainFailureType, FailedDomain, ProvisioningRequest};
+use conf_updater_common::{ApiFailure, ProvisioningRequest};
 
 use crate::server::AppState;
-use crate::util::{ensure_existing_user, ensure_website_domains};
 use crate::utils::certbot::{obtain_certificate, verify_cert};
-use crate::utils::dns::{ensure_resolvable_domains, test_domain_name};
-use crate::utils::nginx::{reload_server, verify_config};
+use crate::utils::database::{ensure_existing_user, ensure_website_domains};
+use crate::utils::dns::{ensure_resolvable_domains, validate_domain_names};
+use crate::utils::nginx::{reload_server, verify_config, write_nginx_conf};
+use crate::utils::web_space::create_web_space;
 
 #[instrument(skip(state))]
 pub(crate) async fn setup(
@@ -21,6 +22,8 @@ pub(crate) async fn setup(
             "missing payload or fields".to_string(),
         ));
     };
+
+    let user_id = payload.user.posix_uid;
 
     // Create a vector of all domains for further DNS & certificate operations
     let mut all_domains = payload.domains.clone();
@@ -64,32 +67,18 @@ pub(crate) async fn setup(
     // TODO:
     //   4. create the web root directory, add a simple index.html
     //   5. give ownership of the new web root to the owner user (requires POSIX user ID mapping), group goes to www-data
-    //   6. Configure nginx
+    create_web_space(&user_id.to_string(), &payload.website, &state.config)?;
 
-    // Check the nginx conf & reload the server
+    // Configure nginx by creating a new config file for it (or deleting and re-creating an existing file)
+    write_nginx_conf(&payload.website, &user_id.to_string(), &payload.domains, &payload.forwarded_domains, &all_domains, &state.config)?;
+
+    // Check the nginx configuration & reload the server
     verify_config()?;
     reload_server()?;
 
-
+    // TODO:
     //   7. try to reach all domain names via HTTPS and expect 200 or 3xx (attention when using test certs)
     //   8. configure auto-update mechanism that also changes file permissions if required (?)
 
     Ok(())
-}
-
-fn validate_domain_names(names: &Vec<String>) -> Vec<FailedDomain> {
-    names
-        .iter()
-        .filter_map(|name| {
-            if !test_domain_name(name) {
-                Some(FailedDomain {
-                    domain: name.clone(),
-                    error: DomainFailureType::InvalidDomainName,
-                    message: "invalid domain does not match regex".to_string(),
-                })
-            } else {
-                None
-            }
-        })
-        .collect()
 }

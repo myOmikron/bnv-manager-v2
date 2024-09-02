@@ -1,12 +1,13 @@
 use std::io;
 
 use thiserror::Error;
-use tracing::{debug, error, warn};
+use tracing::{debug, error};
 
 use conf_updater_common::ApiFailure;
 
 pub(crate) mod certbot;
 pub(crate) mod certificates;
+pub(crate) mod database;
 pub(crate) mod dns;
 pub(crate) mod nginx;
 pub(crate) mod web_space;
@@ -43,7 +44,7 @@ impl From<ProgramError> for ApiFailure {
                 debug!("Returned output from previous program call: {}", err);
                 ApiFailure::InternalServerError
             }
-            ProgramError::Utf8Error(err) => ApiFailure::InternalServerError,
+            ProgramError::Utf8Error(_) => ApiFailure::InternalServerError,
         }
     }
 }

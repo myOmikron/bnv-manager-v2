@@ -1,6 +1,6 @@
 //! Setup and start of the HTTP server
 
-use std::{fs, io};
+use std::{env, fs, io};
 use std::net::AddrParseError;
 use std::net::IpAddr;
 use std::net::SocketAddr;
@@ -18,7 +18,7 @@ use rorm::{Database, DatabaseConfiguration};
 use thiserror::Error;
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
-use tracing::error;
+use tracing::{error, warn};
 use tracing::info;
 use tracing::instrument;
 
