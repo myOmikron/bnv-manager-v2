@@ -75,6 +75,18 @@ pub(crate) async fn start(config: Config) -> Result<(), StartServerError> {
 
 /// Perform environment and configuration checks
 fn check_env(config: &Config) -> Result<(), StartServerError> {
+    if !cfg!(unix) {
+        panic!("unsupported platform, requires a UNIX-like system");
+    }
+    if env::consts::OS != "linux" {
+        warn!(
+            "Currently running on untested platform '{}'",
+            env::consts::OS
+        );
+    }
+    if !Command::new("which").arg("find").output()?.status.success() {
+        return Err(StartServerError::ProgramUnavailable("find".to_string()));
+    };
     let htdocs = Path::new(&config.misc.htdocs_root_dir);
     if !htdocs.is_absolute() || !htdocs.exists() {
         return Err(StartServerError::ConfigError(
