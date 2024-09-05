@@ -3,11 +3,12 @@ use std::time::{Duration, SystemTime};
 
 use openssl::error::ErrorStack;
 use openssl::x509;
-use tracing::warn;
+use tracing::{instrument, warn};
 
 /// Determine if a certificate at location `path` is still valid by checking the
 /// `NotAfter` attribute relative to current system time is greater than `remaining_seconds`
-pub(crate) fn is_valid<P: AsRef<Path>>(path: P, remaining_seconds: u64) -> std::io::Result<bool> {
+#[instrument(level = "trace")]
+pub(crate) fn is_valid<P: AsRef<Path> + std::fmt::Debug>(path: P, remaining_seconds: u64) -> std::io::Result<bool> {
     let content = std::fs::read(&path)?;
     let cert = match x509::X509::from_pem(&content) {
         Ok(v) => v,
@@ -35,7 +36,8 @@ pub(crate) fn is_valid<P: AsRef<Path>>(path: P, remaining_seconds: u64) -> std::
 }
 
 /// Verify that a certificate at location `path` contains at least all requested domains
-pub(crate) fn contains_domains<P: AsRef<Path>>(
+#[instrument(level = "trace")]
+pub(crate) fn contains_domains<P: AsRef<Path> + std::fmt::Debug>(
     path: P,
     domains: &Vec<String>,
 ) -> std::io::Result<bool> {

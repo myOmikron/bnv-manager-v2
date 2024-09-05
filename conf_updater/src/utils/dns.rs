@@ -2,6 +2,7 @@ use std::net::IpAddr;
 
 use dns_lookup::lookup_host;
 use regex::Regex;
+use tracing::instrument;
 
 use conf_updater_common::{ApiFailure, DomainFailureType, FailedDomain};
 
@@ -27,6 +28,7 @@ pub(crate) fn test_domain_name(name: &str) -> bool {
 }
 
 /// Ensure that all domain names resolve to this server's allowed IPs
+#[instrument(level = "trace")]
 pub(crate) fn ensure_resolvable_domains(
     domains: &Vec<String>,
     config: &MiscConfig,
@@ -76,6 +78,7 @@ pub(crate) fn ensure_resolvable_domains(
 }
 
 /// Check that a list of strings are "most likely" valid domain names through regex, see [DOMAIN_NAME_REGEX]
+#[instrument(level = "trace")]
 pub(crate) fn validate_domain_names(names: &Vec<String>) -> Vec<FailedDomain> {
     names
         .iter()

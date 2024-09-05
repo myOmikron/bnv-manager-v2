@@ -64,13 +64,11 @@ pub(crate) async fn setup(
     tx.commit().await?;
     */
 
-    // TODO:
-    //   4. create the web root directory, add a simple index.html
-    //   5. give ownership of the new web root to the owner user (requires POSIX user ID mapping), group goes to www-data
-    create_web_space(&user_id.to_string(), &payload.website, &state.config)?;
+    // Create the webspace if it doesn't exist and change the permissions correctly
+    create_web_space(user_id, &payload.user.id, &payload.website, &state.config)?;
 
     // Configure nginx by creating a new config file for it (or deleting and re-creating an existing file)
-    write_nginx_conf(&payload.website, &user_id.to_string(), &payload.domains, &payload.forwarded_domains, &all_domains, &state.config)?;
+    write_nginx_conf(&payload.website, &payload.user.id, &payload.domains, &payload.forwarded_domains, &all_domains, &state.config)?;
 
     // Check the nginx configuration & reload the server
     verify_config()?;

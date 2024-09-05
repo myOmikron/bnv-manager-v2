@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 use thiserror::Error;
-use tracing::{debug, error, info, warn};
+use tracing::{debug, error, info, instrument, warn};
 use uuid::Uuid;
 
 use conf_updater_common::{ApiFailure, CertbotFailureDetails};
@@ -17,6 +17,7 @@ pub(crate) fn check_available() -> bool {
 }
 
 /// Check that the `certbot` has been configured with an account, returning error output on failure
+#[instrument(level = "trace")]
 pub(crate) fn check_account() -> Result<(), String> {
     let output = match Command::new("certbot").arg("show_account").output() {
         Ok(v) => v,
@@ -45,6 +46,7 @@ pub(crate) fn check_account() -> Result<(), String> {
 /// function. However, the arguments are not passed through a shell, but given
 /// literally to `certbot`. This means that shell syntax like quotes, escaped
 /// characters, word splitting, glob patterns, variable substitution, etc. have no effect.
+#[instrument(level = "debug")]
 pub(crate) fn obtain_certificate(
     cert_name: &Uuid,
     test_certificate: bool,

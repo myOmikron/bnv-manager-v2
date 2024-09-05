@@ -2,7 +2,7 @@ use std::fs;
 use std::fs::File;
 use std::io::ErrorKind::AlreadyExists;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::Command;
 
 use tracing::warn;
@@ -14,31 +14,34 @@ use crate::config::{Config, MiscConfig};
 use crate::utils::{ProgramError, try_from_utf8};
 
 /// Determine the webroot of a website
-pub(crate) fn get_webroot<P: AsRef<Path>>(
-    user_id: &P,
-    website: &Uuid,
+///
+/// The `user_uuid` is a valid part of a path, since the web root is defined as
+/// `{conf_webroot}/{user_uuid.as_hyphenated()}/{website_uuid.as_hyphenated()}`,
+/// where `conf_webroot` is configured globally and must be an absolute path.
+pub(crate) fn get_webroot(
+    user_uuid: &Uuid,
+    website_uuid: &Uuid,
     web_conf: &MiscConfig,
 ) -> PathBuf {
     PathBuf::from(&web_conf.htdocs_root_dir)
-        .join(user_id)
-        .join(website.as_hyphenated().to_string())
+        .join(user_uuid.as_hyphenated().to_string())
+        .join(website_uuid.as_hyphenated().to_string())
 }
 
 /// Create the web root for a new site
 ///
 /// Exit cleanly if the web root directory already exists and contains an index file.
 /// The `user_id` is a valid part of a path, since the web root's index file is
-/// expected under `{conf_webroot}/{user_id}/{website.as_hyphenated()}/index.html`,
-/// where `conf_webroot` is configured globally and must be an absolute path.
-pub(crate) fn create_web_space<P: AsRef<Path>>(
-    user_id: &P,
+/// expected at `{webroot}/index.html`, where `webroot` is the root of the user's webspace.
+pub(crate) fn create_web_space(
+    user_posix_id: u32,
+    user_uuid: &Uuid,
     website: &Uuid,
     conf: &Config,
 ) -> Result<(), ApiFailure> {
-    //let cert_file = PathBuf::from(&conf.certbot.cert_dir).join(website.as_hyphenated().to_string()).join("fullchain.pem");
-    let web_root = get_webroot(user_id, website, &conf.misc);
+    let web_root = get_webroot(user_uuid, website, &conf.misc);
     let index_path = web_root.join("index.html");
-    fs::create_dir_all(web_root)?;
+    fs::create_dir_all(&web_root)?;
 
     // If the index file does not exist, it can be created and filled with a simple default welcome page
     match File::create_new(index_path) {
@@ -96,14 +99,15 @@ pub(crate) fn create_web_space<P: AsRef<Path>>(
         }
         Err(e) => { if e.kind() != AlreadyExists { warn!("While creating web space for {}: {}", website.as_hyphenated(), e) } }
     };
-    set_permissions(&conf.misc)?;
-    set_group_ownership(&conf.misc)?;
+    set_permissions_recursively(&conf.misc)?;
+    set_webspace_owner_recursively(user_posix_id, &web_root)?;
+    set_webroot_group_recursively(&conf.misc)?;
     Ok(())
 }
 
 /// Recursively change the permissions of the web root to `-rw-r-----`
 /// (mode 0640) for files and `drwxr-x---` (mode 0750) for directories
-pub fn set_permissions(misc_conf: &MiscConfig) -> Result<(), ProgramError> {
+fn set_permissions_recursively(misc_conf: &MiscConfig) -> Result<(), ProgramError> {
     let output_files = Command::new("find")
         .arg(&misc_conf.htdocs_root_dir)
         .arg("-type")
@@ -131,8 +135,24 @@ pub fn set_permissions(misc_conf: &MiscConfig) -> Result<(), ProgramError> {
     }
 }
 
+/// Recursively set the owner of all files and directories in the webspace
+fn set_webspace_owner_recursively(owner_uid: u32, directory: &PathBuf) -> Result<(), ProgramError> {
+    let output = Command::new("chown")
+        .arg("-R")
+        .arg("--preserve-root") // safety measure
+        .arg(owner_uid.to_string())
+        .arg(directory.as_os_str())
+        .output()?;
+    if output.status.success() {
+        Ok(())
+    } else {
+        let stderr = try_from_utf8("webspace-find-chown".to_string(), &*output.stderr)?;
+        Err(ProgramError::Failure("webspace-find-chown".to_string(), stderr))
+    }
+}
+
 /// Recursively change the group ownership of the web root to the web group by calling `chgrp`
-pub fn set_group_ownership(misc_conf: &MiscConfig) -> Result<(), ProgramError> {
+fn set_webroot_group_recursively(misc_conf: &MiscConfig) -> Result<(), ProgramError> {
     let output = Command::new("chgrp")
         .arg("-R")
         .arg(&misc_conf.nginx_group)

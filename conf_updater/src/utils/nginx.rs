@@ -1,10 +1,10 @@
 use std::fs;
 use std::fs::File;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::Command;
 
-use tracing::{debug, warn};
+use tracing::{debug, instrument, warn};
 use tracing::log::error;
 use uuid::Uuid;
 
@@ -15,15 +15,16 @@ use crate::utils::{ProgramError, try_from_utf8};
 use crate::utils::web_space::get_webroot;
 
 /// Configure a new or existing website with nginx
-pub(crate) fn write_nginx_conf<P: AsRef<Path> + std::fmt::Display>(
+#[instrument(level = "trace")]
+pub(crate) fn write_nginx_conf(
     website: &Uuid,
-    user_id: &P,
+    user_uuid: &Uuid,
     hosted_domains: &Vec<String>,
     forwarded_domains: &Vec<String>,
     all_domains: &Vec<String>,
     conf: &Config,
 ) -> Result<(), ApiFailure> {
-    let nginx_conf_content = create_nginx_config_content(website, &user_id, hosted_domains, forwarded_domains, all_domains, conf)?;
+    let nginx_conf_content = create_nginx_config_content(website, &user_uuid, hosted_domains, forwarded_domains, all_domains, conf)?;
     debug!("Full new nginx config: {}", nginx_conf_content);
 
     // Write the new configuration file, then change the permissions correctly
@@ -90,9 +91,10 @@ pub(crate) fn verify_config() -> Result<(), ProgramError> {
 }
 
 /// Produce the content for a nginx configuration file
-fn create_nginx_config_content<P: AsRef<Path> + std::fmt::Display>(
+#[instrument(level = "trace")]
+fn create_nginx_config_content(
     website: &Uuid,
-    user_id: &P,
+    user_uuid: &Uuid,
     hosted_domains: &Vec<String>,
     forwarded_domains: &Vec<String>,
     all_domains: &Vec<String>,
@@ -101,11 +103,11 @@ fn create_nginx_config_content<P: AsRef<Path> + std::fmt::Display>(
     let certbot_tls_dir = &conf.certbot.cert_dir;
     let website_uuid = website.as_hyphenated().to_string();
     let target_domain = hosted_domains.get(0).ok_or(ApiFailure::BadRequest("Missing at least one target domain".to_string()))?;
-    let root_dir_path = get_webroot(user_id, website, &conf.misc);
+    let root_dir_path = get_webroot(user_uuid, website, &conf.misc);
     let root_dir = match root_dir_path.to_str() {
         Some(v) => Ok(v),
         None => {
-            error!("Formatting webroot as string did not work for {} / {}", user_id, website.as_hyphenated());
+            error!("Formatting webroot as string did not work for {} / {}", user_uuid.as_hyphenated(), website.as_hyphenated());
             Err(ApiFailure::InternalServerError)
         }
     }?;
