@@ -1,6 +1,7 @@
 use rorm::prelude::*;
 use uuid::Uuid;
 
+use super::Domain;
 use super::User;
 use super::Website;
 
@@ -13,10 +14,18 @@ pub(crate) struct NewUser {
     pub(crate) posix_uid: i64,
 }
 
-#[derive(Patch)]
+#[derive(Debug, Patch)]
 #[rorm(model = "Website")]
 pub(crate) struct NewWebsite {
     pub(crate) uuid: Uuid,
     pub(crate) owner: ForeignModel<User>,
     pub(crate) test_cert: bool,
+}
+
+#[derive(Debug, Patch)]
+#[rorm(model = "Domain")]
+pub(crate) struct NewDomain {
+    pub(crate) domain: String,
+    pub(crate) forwarded: bool,
+    pub(crate) website: ForeignModelByField<field!(Website::F.uuid)>,
 }

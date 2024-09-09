@@ -7,7 +7,7 @@ use conf_updater_common::{ApiFailure, ProvisioningRequest};
 
 use crate::server::AppState;
 use crate::utils::certbot::{obtain_certificate, verify_cert};
-use crate::utils::database::{ensure_existing_user, ensure_website_domains};
+use crate::utils::database::{ensure_existing_user, ensure_existing_website, ensure_website_domains, set_partial_domains};
 use crate::utils::dns::{ensure_resolvable_domains, validate_domain_names};
 use crate::utils::nginx::{reload_server, verify_config, write_nginx_conf};
 use crate::utils::web_space::create_web_space;
@@ -24,6 +24,9 @@ pub(crate) async fn setup(
     };
 
     let user_id = payload.user.posix_uid;
+    if user_id < 1000 {
+        return Err(ApiFailure::BadRequest("invalid posix user ID".to_string()));
+    }
 
     // Create a vector of all domains for further DNS & certificate operations
     let mut all_domains = payload.domains.clone();
@@ -50,19 +53,16 @@ pub(crate) async fn setup(
     obtain_certificate(&payload.website, use_test_cert, &all_domains)?;
     verify_cert(&payload.website, &all_domains, &state.config.certbot)?;
 
-    // TODO:
-    //   2. create the Domain entries for all these
-    //   3. create the Website referencing the Domains
-    /*
+    let mut tx = state.db.start_transaction().await?;
     let website = ensure_existing_website(
-        payload.website,
+        &payload.website,
         payload.test_certificate.unwrap_or(false),
-        website_owner.uuid,
+        &website_owner,
         &mut tx,
-    )
-    .await?;
+    ).await?;
+    set_partial_domains(&payload.domains, &website, false, &mut tx).await?;
+    set_partial_domains(&payload.forwarded_domains, &website, true, &mut tx).await?;
     tx.commit().await?;
-    */
 
     // Create the webspace if it doesn't exist and change the permissions correctly
     create_web_space(user_id, &payload.user.id, &payload.website, &state.config)?;
