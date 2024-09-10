@@ -10,7 +10,7 @@ use crate::utils::certbot::{obtain_certificate, verify_cert};
 use crate::utils::database::{ensure_existing_user, ensure_existing_website, ensure_website_domains, set_partial_domains};
 use crate::utils::dns::{ensure_resolvable_domains, validate_domain_names};
 use crate::utils::nginx::{reload_server, verify_config, write_nginx_conf};
-use crate::utils::web_space::create_web_space;
+use crate::utils::web_space::create_webspace;
 
 #[instrument(skip(state))]
 pub(crate) async fn setup(
@@ -45,7 +45,9 @@ pub(crate) async fn setup(
     ensure_resolvable_domains(&all_domains, &state.config.misc)?;
 
     let mut tx = state.db.start_transaction().await?;
-    ensure_website_domains(&payload.domains, &mut tx).await?;
+    if !ensure_website_domains(&payload.domains, &mut tx).await? {
+        return Err(ApiFailure::BadRequest("at least one domain was already registered elsewhere".to_string()));
+    };
     let website_owner = ensure_existing_user(&payload.user, &mut tx).await?;
     tx.commit().await?;
 
@@ -65,7 +67,7 @@ pub(crate) async fn setup(
     tx.commit().await?;
 
     // Create the webspace if it doesn't exist and change the permissions correctly
-    create_web_space(user_id, &payload.user.id, &payload.website, &state.config)?;
+    create_webspace(user_id, &payload.user.id, &payload.website, &state.config)?;
 
     // Configure nginx by creating a new config file for it (or deleting and re-creating an existing file)
     write_nginx_conf(&payload.website, &payload.user.id, &payload.domains, &payload.forwarded_domains, &all_domains, &state.config)?;

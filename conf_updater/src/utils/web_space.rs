@@ -5,7 +5,7 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::process::Command;
 
-use tracing::warn;
+use tracing::{instrument, warn};
 use uuid::Uuid;
 
 use conf_updater_common::ApiFailure;
@@ -28,12 +28,25 @@ pub(crate) fn get_webroot(
         .join(website_uuid.as_hyphenated().to_string())
 }
 
+/// Recursively delete an entire webspace together with all files and directories belonging to it
+#[instrument(level = "trace", skip(conf))]
+pub(crate) fn delete_webspace(
+    website: &Uuid,
+    user_uuid: &Uuid,
+    conf: &Config,
+) -> Result<(), ApiFailure> {
+    // TODO: Implement this function. It should basically be 'rm -rf $target'
+    warn!("Webspace deletion not implemented yet. Attempted: {}/{}", user_uuid.as_hyphenated(), website.as_hyphenated());
+    Ok(())
+}
+
 /// Create the web root for a new site
 ///
 /// Exit cleanly if the web root directory already exists and contains an index file.
 /// The `user_id` is a valid part of a path, since the web root's index file is
 /// expected at `{webroot}/index.html`, where `webroot` is the root of the user's webspace.
-pub(crate) fn create_web_space(
+#[instrument(level = "trace", skip(conf))]
+pub(crate) fn create_webspace(
     user_posix_id: u32,
     user_uuid: &Uuid,
     website: &Uuid,

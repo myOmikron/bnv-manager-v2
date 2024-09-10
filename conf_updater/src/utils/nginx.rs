@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 use conf_updater_common::ApiFailure;
 
-use crate::config::Config;
+use crate::config::{Config, MiscConfig};
 use crate::utils::{ProgramError, try_from_utf8};
 use crate::utils::web_space::get_webroot;
 
@@ -90,8 +90,18 @@ pub(crate) fn verify_config() -> Result<(), ProgramError> {
     }
 }
 
+/// Remove an existing nginx configuration for a particular website (no error if the website doesn't exist)
+#[instrument(level = "trace", skip(conf))]
+pub(crate) fn drop_config(website: &Uuid, conf: &MiscConfig) -> Result<(), ProgramError> {
+    let conf_file = PathBuf::from(&conf.nginx_config_dir).join(website.as_hyphenated().to_string());
+    if conf_file.exists() {
+        fs::remove_file(&conf_file)?;
+    };
+    Ok(())
+}
+
 /// Produce the content for a nginx configuration file
-#[instrument(level = "trace")]
+#[instrument(level = "trace", skip(conf))]
 fn create_nginx_config_content(
     website: &Uuid,
     user_uuid: &Uuid,

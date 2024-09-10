@@ -145,7 +145,7 @@ impl From<CertbotError> for ApiFailure {
     fn from(value: CertbotError) -> Self {
         match value {
             CertbotError::EmptyDomainList(uuid) => ApiFailure::BadRequest(format!(
-                "{} requires at least one domain",
+                "website {} requires at least one domain",
                 uuid.as_hyphenated()
             )),
             CertbotError::IOError(v) => {

@@ -66,6 +66,31 @@ pub(crate) async fn ensure_existing_user(
     };
 }
 
+/// Find the user that owns a particular website by its UUID
+#[instrument(level = "trace", skip(exe))]
+pub(crate) async fn find_website_owner(
+    website: &Uuid,
+    exe: impl Executor<'_>,
+) -> Result<User, rorm::Error> {
+    let mut guard = exe.ensure_transaction().await?;
+    let owner = query!(guard.get_transaction(), User).condition(Website::F.uuid.equals(website.clone())).one().await?;
+    guard.commit().await?;
+    Ok(owner)
+}
+
+/// Drop a website and all its belonging domains (no errors if the website doesn't exist)
+#[instrument(level = "trace", skip(exe))]
+pub(crate) async fn drop_website(
+    website: &Uuid,
+    exe: impl Executor<'_>,
+) -> Result<(), rorm::Error> {
+    let mut guard = exe.ensure_transaction().await?;
+    delete!(guard.get_transaction(), Domain).condition(Domain::F.website.equals(website.clone())).await?;
+    delete!(guard.get_transaction(), Website).condition(Website::F.uuid.equals(website.clone())).await?;
+    guard.commit().await?;
+    Ok(())
+}
+
 /// Make sure that all domains either belong to the same website or do not exist
 #[instrument(level = "trace", skip(exe))]
 pub(crate) async fn ensure_website_domains(
@@ -134,7 +159,11 @@ pub(crate) async fn ensure_existing_website(
     }
 }
 
-/// Update the domains for a website (partial means: call once for hosted domains and once for forwarded domains separately)
+/// Update the domains for a website
+///
+/// Here, partial means: you should call this once for
+/// hosted domains and once for forwarded domains separately.
+/// The returned Ok value shows if something was changed.
 #[instrument(level = "trace", skip(exe))]
 pub(crate) async fn set_partial_domains(
     domains: &Vec<String>,
