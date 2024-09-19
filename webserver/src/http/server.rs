@@ -5,8 +5,11 @@ use std::net::AddrParseError;
 use std::net::IpAddr;
 use std::net::SocketAddr;
 use std::str::FromStr;
+use std::sync::Arc;
 
+use axum::extract::Request;
 use axum::Router;
+use axum::ServiceExt;
 use futures::StreamExt;
 use signal_hook::consts::TERM_SIGNALS;
 use signal_hook_tokio::Signals;
@@ -15,11 +18,14 @@ use swaggapi::SwaggapiPage;
 use swaggapi::SwaggerUi;
 use thiserror::Error;
 use tokio::net::TcpListener;
+use tower::Layer;
 use tower::ServiceBuilder;
+use tower_http::normalize_path::NormalizePath;
+use tower_http::normalize_path::NormalizePathLayer;
 use tower_http::trace::TraceLayer;
-use tower_sessions::cookie::SameSite;
-use tower_sessions::Expiry;
-use tower_sessions::SessionManagerLayer;
+use tower_sessions_rorm_store::tower_sessions::cookie::SameSite;
+use tower_sessions_rorm_store::tower_sessions::Expiry;
+use tower_sessions_rorm_store::tower_sessions::SessionManagerLayer;
 use tower_sessions_rorm_store::RormStore;
 use tracing::error;
 use tracing::info;
@@ -37,7 +43,7 @@ use crate::models;
 
 /// Start the http server
 #[instrument(skip_all, ret)]
-pub async fn run(config: &Config) -> Result<(), StartServerError> {
+pub async fn run(config: Arc<Config>) -> Result<(), StartServerError> {
     // Register models that are not used in handlers
     (&FRONTEND_API_V1)
         .add_schema::<WsServerMsg>()
@@ -63,14 +69,17 @@ pub async fn run(config: &Config) -> Result<(), StartServerError> {
                 ),
         );
 
+    let middleware = NormalizePathLayer::trim_trailing_slash();
+    let app: NormalizePath<Router> = middleware.layer(router);
+
     let socket_addr = SocketAddr::new(
-        IpAddr::from_str(&config.server.listen_address)?,
-        config.server.listen_port,
+        IpAddr::from_str(&config.http.listen_address)?,
+        config.http.listen_port,
     );
 
     info!("Start to listen on http://{socket_addr}");
     let listener = TcpListener::bind(socket_addr).await?;
-    axum::serve(listener, router)
+    axum::serve(listener, ServiceExt::<Request>::into_make_service(app))
         .with_graceful_shutdown(handle_signals().instrument(info_span!("signals")))
         .await?;
 

@@ -1,5 +1,7 @@
 //! The handler for managing websites
 
+use std::time::Duration;
+
 use axum::extract::Path;
 use axum::Json;
 use futures_util::TryStreamExt;
@@ -15,9 +17,17 @@ use swaggapi::delete;
 use swaggapi::get;
 use swaggapi::post;
 use swaggapi::put;
+use tower_sessions_rorm_store::tower_sessions::Session;
+use tracing::debug;
+use tracing::error;
+use tracing::info;
+use tracing::info_span;
 use tracing::instrument;
+use tracing::Instrument;
 use uuid::Uuid;
 
+use crate::global::webconf_updater::WebconfChanges;
+use crate::global::webconf_updater::WebconfUpdateResult;
 use crate::global::GLOBAL;
 use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
@@ -36,12 +46,14 @@ use crate::http::handler_frontend::websites::schema::ListWebsites;
 use crate::http::handler_frontend::websites::schema::RemoveDomainPath;
 use crate::http::handler_frontend::websites::schema::SimpleWebsite;
 use crate::http::handler_frontend::websites::schema::UpdateWebsiteRequest;
+use crate::http::handler_frontend::ws::schema::DnsQueryResult;
+use crate::http::handler_frontend::ws::schema::WsServerMsg;
 use crate::models::website::Website;
 use crate::models::website::WebsiteDomain;
 use crate::utils::schemars::SchemaDateTime;
 
 /// Create a new website
-#[post("/websites")]
+#[post("/")]
 #[instrument(ret, err)]
 pub async fn create_website(
     SessionUser(user): SessionUser,
@@ -57,7 +69,7 @@ pub async fn create_website(
 }
 
 /// Retrieve a single website
-#[get("/websites/:uuid")]
+#[get("/:uuid")]
 #[instrument(ret, err)]
 pub async fn get_website(
     SessionUser(user): SessionUser,
@@ -101,7 +113,7 @@ pub async fn get_website(
 }
 
 /// Retrieve all websites owned by this user
-#[get("/websites")]
+#[get("/")]
 #[instrument(ret, err)]
 pub async fn get_all_websites(SessionUser(user): SessionUser) -> ApiResult<Json<ListWebsites>> {
     let mut tx = GLOBAL.db.start_transaction().await?;
@@ -125,7 +137,7 @@ pub async fn get_all_websites(SessionUser(user): SessionUser) -> ApiResult<Json<
 }
 
 /// Update a website
-#[put("/websites/:uuid")]
+#[put("/:uuid")]
 #[instrument(ret, err)]
 pub async fn update_website(
     SessionUser(user): SessionUser,
@@ -140,7 +152,7 @@ pub async fn update_website(
         .await?
         .ok_or(ApiError::ResourceNotFound)?;
 
-    if user.uuid == *website.owner.key() {
+    if user.uuid != *website.owner.key() {
         return Err(ApiError::MissingPrivileges);
     }
 
@@ -156,7 +168,7 @@ pub async fn update_website(
 }
 
 /// Add a domain to a website
-#[post("/websites/:uuid/domains")]
+#[post("/:uuid/domains")]
 #[instrument(ret, err)]
 pub async fn add_domain_to_website(
     SessionUser(user): SessionUser,
@@ -211,7 +223,7 @@ pub async fn add_domain_to_website(
 }
 
 /// Remove a domain from a website
-#[delete("/websites/:website_uuid/domains/:domain_uuid")]
+#[delete("/:website_uuid/domains/:domain_uuid")]
 #[instrument(ret, err)]
 pub async fn remove_domain_from_website(
     SessionUser(user): SessionUser,
@@ -264,7 +276,7 @@ pub async fn remove_domain_from_website(
 }
 
 /// Delete a website
-#[delete("/websites/:uuid")]
+#[delete("/:uuid")]
 #[instrument(ret, err)]
 pub async fn delete_website(
     SessionUser(user): SessionUser,
@@ -278,7 +290,7 @@ pub async fn delete_website(
         .await?
         .ok_or(ApiError::ResourceNotFound)?;
 
-    if user.uuid == *website.owner.key() {
+    if user.uuid != *website.owner.key() {
         return Err(ApiError::MissingPrivileges);
     }
 
@@ -291,4 +303,168 @@ pub async fn delete_website(
     // TODO: Issue removal of website
 
     Ok(())
+}
+
+/// Deploy the configuration to the webserver.
+///
+/// This will configure the webspace and request certificates for all added domains
+///
+/// Returns an uuid that will be used to send a notification via websocket when the deployment
+/// process has finished
+#[post("/:uuid/deploy")]
+#[instrument(err)]
+pub async fn deploy_website(
+    SessionUser(user): SessionUser,
+    Path(UuidSchema { uuid }): Path<UuidSchema>,
+) -> ApiResult<Json<UuidSchema>> {
+    let mut tx = GLOBAL.db.start_transaction().await?;
+
+    let mut website = query!(&mut tx, Website)
+        .condition(Website::F.uuid.equals(uuid))
+        .optional()
+        .await?
+        .ok_or(ApiError::ResourceNotFound)?;
+
+    if user.uuid != *website.owner.key() {
+        return Err(ApiError::MissingPrivileges);
+    }
+
+    Website::F.domains.populate(&mut tx, &mut website).await?;
+
+    // Unwrap okay as we populated the domains above
+    #[allow(clippy::unwrap_used)]
+    let domains = website
+        .domains
+        .cached
+        .unwrap()
+        .into_iter()
+        .map(|x| x.domain)
+        .collect();
+
+    tx.commit().await?;
+
+    let uuid = Uuid::new_v4();
+
+    tokio::spawn(
+        async move {
+            let res = GLOBAL
+                .webconf_updater
+                .apply_changes(WebconfChanges {
+                    user: user.uuid,
+                    website: website.uuid,
+                    domains,
+                })
+                .await;
+
+            let success = match res {
+                Ok(state) => match state {
+                    WebconfUpdateResult::Success => true,
+                    WebconfUpdateResult::Fail => false,
+                },
+                Err(err) => {
+                    error!("webconf update failed: {err}");
+                    false
+                }
+            };
+
+            let deploy_state = if success {
+                DeployState::Deployed
+            } else {
+                DeployState::DeploymentFailed
+            };
+            if let Err(err) = update!(&GLOBAL.db, Website)
+                .condition(Website::F.uuid.equals(website.uuid))
+                .set(Website::F.deploy_state, fields::types::Json(deploy_state))
+                .exec()
+                .await
+            {
+                error!("Database error: {err}");
+                return;
+            }
+
+            // Send update to client
+            GLOBAL
+                .ws
+                .send_to_user(
+                    user.uuid,
+                    WsServerMsg::DeployUpdate {
+                        task: uuid,
+                        state: if success {
+                            WebconfUpdateResult::Success
+                        } else {
+                            WebconfUpdateResult::Fail
+                        },
+                    },
+                )
+                .await;
+        }
+        .instrument(info_span!("webconf-update")),
+    );
+
+    Ok(Json(UuidSchema { uuid }))
+}
+
+#[post("/:uuid/check-dns")]
+#[instrument]
+pub async fn check_dns(
+    Path(uuid): Path<Uuid>,
+    SessionUser(user): SessionUser,
+    session: Session,
+) -> ApiResult<Json<UuidSchema>> {
+    let mut tx = GLOBAL.db.start_transaction().await?;
+
+    let mut website = query!(&mut tx, Website)
+        .condition(Website::F.uuid.equals(uuid))
+        .optional()
+        .await?
+        .ok_or(ApiError::ResourceNotFound)?;
+
+    if *website.owner.key() != user.uuid {
+        return Err(ApiError::Unauthenticated);
+    }
+
+    Website::F.domains.populate(&mut tx, &mut website).await?;
+
+    tx.commit().await?;
+
+    // Unwrap is okay as backref was populated above
+    #[allow(clippy::unwrap_used)]
+    let domains: Vec<_> = website.domains.cached.unwrap();
+
+    let session_id = session.id().unwrap();
+
+    let task = Uuid::new_v4();
+    tokio::spawn(async move {
+        tokio::time::sleep(Duration::from_secs(1)).await;
+
+        info!("Start resolving domains:");
+
+        for domain in domains {
+            let result = GLOBAL.dns.resolve(&domain.domain).await.unwrap();
+
+            debug!("Resolved {domain}: {result:?}", domain = domain.domain);
+
+            GLOBAL
+                .ws
+                .send_to_session(
+                    user.uuid,
+                    session_id,
+                    WsServerMsg::DnsUpdate {
+                        task,
+                        result: DnsQueryResult {
+                            uuid: domain.uuid,
+                            result,
+                        },
+                    },
+                )
+                .await;
+        }
+
+        GLOBAL
+            .ws
+            .send_to_session(user.uuid, session_id, WsServerMsg::DnsFinished { task })
+            .await;
+    });
+
+    Ok(Json(UuidSchema { uuid: task }))
 }

@@ -4,7 +4,6 @@ use argon2::PasswordHasher;
 use rand::thread_rng;
 use rorm::db::Executor;
 use rorm::insert;
-use rorm::prelude::ForeignModelByField;
 use rorm::query;
 use rorm::FieldAccess;
 use rorm::Model;
@@ -13,8 +12,6 @@ use thiserror::Error;
 use tracing::instrument;
 use uuid::Uuid;
 
-use crate::models::LdapUser;
-use crate::models::LocalUser;
 use crate::models::User;
 
 /// The error that might occur when creating an internal user
@@ -40,40 +37,9 @@ pub enum CreateLdapUserError {
 }
 
 impl User {
-    /// Create a ldap user
-    #[instrument(skip(executor), ret, err)]
-    pub async fn create_ldap(
-        dn: String,
-        display_name: String,
-        executor: impl Executor<'_>,
-    ) -> Result<Uuid, CreateLdapUserError> {
-        let mut exe = executor.ensure_transaction().await?;
-
-        let user_uuid = insert!(exe.get_transaction(), User)
-            .return_primary_key()
-            .single(&UserInsert {
-                uuid: Uuid::new_v4(),
-                display_name,
-            })
-            .await?;
-
-        insert!(exe.get_transaction(), LdapUser)
-            .return_nothing()
-            .single(&LdapUser {
-                uuid: Uuid::new_v4(),
-                user: ForeignModelByField::Key(user_uuid),
-                ldap_dn: dn,
-            })
-            .await?;
-
-        exe.commit().await?;
-
-        Ok(user_uuid)
-    }
-
     /// Create an internal user
     #[instrument(skip(password, executor), ret, err)]
-    pub async fn create_internal(
+    pub async fn create_user(
         username: String,
         password: String,
         display_name: String,
@@ -90,8 +56,8 @@ impl User {
 
         let mut exe = executor.ensure_transaction().await?;
 
-        let existing = query!(exe.get_transaction(), LocalUser)
-            .condition(LocalUser::F.username.equals(&username))
+        let existing = query!(exe.get_transaction(), User)
+            .condition(User::F.username.equals(&username))
             .optional()
             .await?
             .is_some();
@@ -105,13 +71,6 @@ impl User {
             .single(&UserInsert {
                 uuid: Uuid::new_v4(),
                 display_name,
-            })
-            .await?;
-
-        insert!(exe.get_transaction(), LocalUser)
-            .single(&LocalUser {
-                uuid: Uuid::new_v4(),
-                user: ForeignModelByField::Key(user),
                 username,
                 password: password_hash,
             })
@@ -131,4 +90,8 @@ pub struct UserInsert {
     pub uuid: Uuid,
     /// The display name of the user
     pub display_name: String,
+    /// Username of the user
+    pub username: String,
+    /// Hashed password of the user
+    pub password: String,
 }

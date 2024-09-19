@@ -7,7 +7,6 @@ use rorm::FieldAccess;
 use rorm::Model;
 use swaggapi::get;
 use swaggapi::post;
-use tracing::debug;
 use tracing::instrument;
 
 use crate::global::GLOBAL;
@@ -20,7 +19,7 @@ use crate::http::handler_frontend::users::schema::ChangePwFormFields;
 use crate::http::handler_frontend::users::schema::ChangePwRequest;
 use crate::http::handler_frontend::users::schema::FullUser;
 use crate::http::handler_frontend::users::schema::PwError;
-use crate::models::LocalUser;
+use crate::models::User;
 use crate::utils::hashing;
 use crate::utils::hashing::hash_pw;
 use crate::utils::hashing::VerifyPwError;
@@ -49,17 +48,14 @@ pub async fn change_password(
 ) -> ApiResult<FormResult<(), ChangePwFormFields>> {
     let mut tx = GLOBAL.db.start_transaction().await?;
 
-    let opt_user = query!(&mut tx, LocalUser)
-        .condition(LocalUser::F.user.equals(user.uuid))
+    let password = query!(&mut tx, (User::F.password,))
+        .condition(User::F.uuid.equals(user.uuid))
         .optional()
-        .await?;
+        .await?
+        .ok_or(ApiError::InternalServerError)?
+        .0;
 
-    let Some(local_user) = opt_user else {
-        debug!("Change password was requested from a not-local user");
-        return Err(ApiError::BadRequest);
-    };
-
-    if let Err(err) = hashing::verify_pw(&current_pw, &local_user.password) {
+    if let Err(err) = hashing::verify_pw(&current_pw, &password) {
         return match err {
             VerifyPwError::Hash(_) => Err(ApiError::InternalServerError),
             VerifyPwError::Mismatch => Ok(Err(FormError::single(ChangePwFormFields::CurrentPw(
@@ -70,9 +66,9 @@ pub async fn change_password(
 
     let hashed = hash_pw(&new_pw)?;
 
-    update!(&mut tx, LocalUser)
-        .condition(LocalUser::F.user.equals(user.uuid))
-        .set(LocalUser::F.password, hashed)
+    update!(&mut tx, User)
+        .condition(User::F.uuid.equals(user.uuid))
+        .set(User::F.password, hashed)
         .exec()
         .await?;
 

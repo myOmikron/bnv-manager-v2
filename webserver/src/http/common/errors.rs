@@ -157,8 +157,7 @@ macro_rules! impl_into_internal_server_error {
 impl_into_internal_server_error!(
     rorm::Error,
     argon2::password_hash::Error,
-    tower_sessions::session::Error,
-    ldap3::LdapError,
+    tower_sessions_rorm_store::tower_sessions::session::Error,
 );
 /// Used by [`impl_into_internal_server_error`]'s `From` impls and [`ApiError::new_internal_server_error`]
 /// to log the errors converted into an [`ApiError::InternalServerError`].

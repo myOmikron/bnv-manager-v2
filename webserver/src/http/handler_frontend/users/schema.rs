@@ -5,8 +5,9 @@ use serde::Deserialize;
 use serde::Serialize;
 use uuid::Uuid;
 
-use crate::utils::not_empty_string::NotEmptyString;
+use crate::utils::checked_string::CheckedString;
 use crate::utils::schemars::SchemaDateTime;
+use crate::utils::secure_string::SecureString;
 
 /// The fields of the change password request
 #[derive(Debug, Copy, Clone, Serialize, Deserialize, JsonSchema)]
@@ -28,9 +29,9 @@ pub enum ChangePwFormFields {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ChangePwRequest {
     /// The current password of the user
-    pub current_pw: NotEmptyString,
+    pub current_pw: CheckedString<1, 255, SecureString>,
     /// The password that should be set
-    pub new_pw: NotEmptyString,
+    pub new_pw: CheckedString<1, 255, SecureString>,
 }
 
 /// The full representation for the user

@@ -10,7 +10,6 @@ use tower::ServiceBuilder;
 use crate::http::middlewares::auth_required::auth_required;
 
 pub mod auth;
-pub mod ldap;
 pub mod users;
 pub mod websites;
 pub mod ws;
@@ -25,12 +24,6 @@ pub fn initialize() -> ApiContext<Router> {
     ApiContext::new().nest(
         "/v1",
         ApiContext::new()
-            .nest(
-                "/ldap",
-                ApiContext::new()
-                    .tag("ldap")
-                    .handler(ldap::handler::login_ldap),
-            )
             .nest(
                 "/auth",
                 ApiContext::new()
@@ -63,7 +56,9 @@ pub fn initialize() -> ApiContext<Router> {
                             .handler(websites::handler::update_website)
                             .handler(websites::handler::add_domain_to_website)
                             .handler(websites::handler::remove_domain_from_website)
-                            .handler(websites::handler::delete_website),
+                            .handler(websites::handler::delete_website)
+                            .handler(websites::handler::deploy_website)
+                            .handler(websites::handler::check_dns),
                     )
                     .layer(ServiceBuilder::new().layer(axum::middleware::from_fn(auth_required))),
             ),

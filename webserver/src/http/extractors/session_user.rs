@@ -6,7 +6,7 @@ use axum::http::request::Parts;
 use rorm::query;
 use rorm::FieldAccess;
 use rorm::Model;
-use tower_sessions::Session;
+use tower_sessions_rorm_store::tower_sessions::Session;
 use tracing::error;
 use tracing::instrument;
 use tracing::trace;

@@ -5,6 +5,7 @@
 use std::env;
 use std::io;
 use std::io::Write;
+use std::sync::Arc;
 
 use clap::Parser;
 use rorm::cli as rorm_cli;
@@ -16,7 +17,8 @@ use tracing::instrument;
 use crate::cli::Cli;
 use crate::cli::Command;
 use crate::config::Config;
-use crate::global::ldap::GlobalLdap;
+use crate::global::dns::GlobalDns;
+use crate::global::webconf_updater::GlobalWebconfUpdater;
 use crate::global::ws::GlobalWs;
 use crate::global::GlobalEntities;
 use crate::global::GLOBAL;
@@ -26,6 +28,7 @@ mod cli;
 pub mod config;
 pub mod global;
 pub mod http;
+pub mod ldap;
 pub mod models;
 pub mod utils;
 
@@ -38,13 +41,28 @@ async fn start(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
 
     let ws = GlobalWs::new();
 
-    let ldap = GlobalLdap::new(config.ldap.clone()).await?;
+    let dns = GlobalDns::new();
+
+    let webconf_updater = GlobalWebconfUpdater::new(
+        config.http.webconf_updater_url.clone(),
+        config.http.webconf_updater_token.clone(),
+    );
 
     // Initialize Globals
-    GLOBAL.init(GlobalEntities { db, ws, ldap });
+    GLOBAL.init(GlobalEntities {
+        db,
+        ws,
+        dns,
+        webconf_updater,
+    });
+
+    let c = Arc::new(config.clone());
+
+    // Start the ldap server
+    tokio::spawn(ldap::server::start_server(c.clone())).await??;
 
     // Start the webserver
-    http::server::run(config).await?;
+    http::server::run(c).await?;
 
     Ok(())
 }
@@ -138,7 +156,7 @@ async fn create_user(db: Database) -> Result<(), String> {
     #[allow(clippy::unwrap_used)]
     let password = rpassword::prompt_password("Enter password: ").unwrap();
 
-    User::create_internal(username.to_string(), password, display_name, &db)
+    User::create_user(username.to_string(), password, display_name, &db)
         .await
         .map_err(|e| format!("Failed to create user: {e}"))?;
 

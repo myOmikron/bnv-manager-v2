@@ -1,5 +1,5 @@
 [Migration]
-Hash = "13543293506433810030"
+Hash = "1936689915727363289"
 Initial = true
 Replaces = []
 
@@ -40,39 +40,6 @@ Type = "auto_create_time"
 [[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
 
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "ldapuser"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[[Migration.Operations.Fields]]
-Name = "ldap_dn"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "localuser"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
 [[Migration.Operations.Fields]]
 Name = "username"
 Type = "varchar"
@@ -91,35 +58,6 @@ Type = "varchar"
 [[Migration.Operations.Fields.Annotations]]
 Type = "max_length"
 Value = 1024
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "session"
-
-[[Migration.Operations.Fields]]
-Name = "id"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[[Migration.Operations.Fields]]
-Name = "expires_at"
-Type = "datetime"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[[Migration.Operations.Fields]]
-Name = "data"
-Type = "binary"
 
 [[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
@@ -154,6 +92,11 @@ Type = "binary"
 Type = "not_null"
 
 [[Migration.Operations.Fields]]
+Name = "last_deployment"
+Type = "datetime"
+Annotations = []
+
+[[Migration.Operations.Fields]]
 Name = "created_at"
 Type = "datetime"
 
@@ -186,6 +129,55 @@ Value = 255
 Type = "not_null"
 
 [[Migration.Operations]]
+Type = "CreateModel"
+Name = "session"
+
+[[Migration.Operations.Fields]]
+Name = "id"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[[Migration.Operations.Fields]]
+Name = "expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "data"
+Type = "binary"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "website"
+
+[Migration.Operations.Field]
+Name = "owner"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "user"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
 Type = "CreateField"
 Model = "websitedomain"
 
@@ -198,46 +190,6 @@ Type = "foreign_key"
 
 [Migration.Operations.Field.Annotations.Value]
 TableName = "website"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "ldapuser"
-
-[Migration.Operations.Field]
-Name = "user"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "user"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "localuser"
-
-[Migration.Operations.Field]
-Name = "user"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "user"
 ColumnName = "uuid"
 OnDelete = "Cascade"
 OnUpdate = "Cascade"
@@ -261,23 +213,3 @@ TableName = "user"
 ColumnName = "uuid"
 OnDelete = "Cascade"
 OnUpdate = "Cascade"
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "website"
-
-[Migration.Operations.Field]
-Name = "owner"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "user"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"

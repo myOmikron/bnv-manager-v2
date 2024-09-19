@@ -10,12 +10,11 @@ authors = ["myOmikron <git@omikron.dev>"]
 # webframework
 axum = { version = "~0.7", features = ["ws", "macros"] }
 # abstractions for requests
-tower = { version = "~0.4", features = ["full"] }
+tower = { version = "~0.5", features = ["full"] }
 # common middlewares
-tower-http = { version = "~0.5", features = ["trace"] }
+tower-http = { version = "~0.5", features = ["trace", "normalize-path"] }
 # Session middleware
-tower-sessions = { version = "~0.12" }
-tower-sessions-rorm-store = { version = "~0.2" }
+tower-sessions-rorm-store = { version = "~0.3" }
 
 # openapi and swagger ui
 swaggapi = { version = "*", features = ["axum"], git = "https://github.com/gammelalf/swaggapi" }
@@ -27,7 +26,6 @@ clap = { version = "~4", features = ["derive"] }
 rpassword = { version = "~7" }
 # password hashing
 argon2 = { version = "~0.5", features = ["std"] }
-bcrypt = { version = "~0.15" }
 
 # Serialization libraries
 serde = { version = "~1", features = ["derive"] }
@@ -35,6 +33,7 @@ serde_repr = { version = "~0.1" }
 serde_json = { version = "~1" }
 toml = { version = "~0.8" }
 uuid = { version = "~1", features = ["v4", "serde"] }
+url = { version = "~2", features = ["serde"] }
 # Time library
 time = { version = "~0.3", features = ["serde-well-known"] }
 
@@ -53,15 +52,21 @@ rorm = { version = "~0.6", default-features = false, features = ["tokio", "postg
 
 # Async runtime
 tokio = { version = ">=1.23.1", features = ["macros", "rt-multi-thread", "sync"] }
+# Utils for streams
+tokio-util = { version = "~0.7" }
+# TLS certificates for ldap
+tokio-rustls = { version = "~0.26" }
 # Signal hook for tokio
 signal-hook = { version = "~0.3" }
 signal-hook-tokio = { version = "~0.3", features = ["futures-v0_3"] }
 futures = { version = "~0.3" }
 futures-util = { version = "~0.3" }
-log = "0.4.21"
 
 # LDAP
-ldap3 = { version = "~0.11" }
+ldap3_proto = { version = "~0.5" }
 
 # http client
-reqwest = { version = "~0.12" }
+reqwest = { version = "~0.12", features = ["json"] }
+
+# DNS client
+hickory-resolver = { version = "~0.24", features = ["tokio"] }

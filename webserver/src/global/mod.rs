@@ -6,9 +6,11 @@ use std::sync::OnceLock;
 use rorm::Database;
 
 use crate::global::dns::GlobalDns;
+use crate::global::webconf_updater::GlobalWebconfUpdater;
 use crate::global::ws::GlobalWs;
 
 pub mod dns;
+pub mod webconf_updater;
 pub mod ws;
 
 /// Set of global managers and handles
@@ -22,6 +24,8 @@ pub struct GlobalEntities {
     pub ws: GlobalWs,
     /// Dns connection
     pub dns: GlobalDns,
+    /// The webconf updater
+    pub webconf_updater: GlobalWebconfUpdater,
 }
 
 /// Simple [`OnceLock`] which panics in case of error.
