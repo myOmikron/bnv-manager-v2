@@ -2,21 +2,29 @@
 
 use std::fs;
 use std::io;
+use std::net::IpAddr;
 use std::path::Path;
 
 use rorm::DatabaseDriver;
 use serde::Deserialize;
 use serde::Serialize;
 use thiserror::Error;
+use url::Url;
+
+use crate::utils::secure_string::SecureString;
 
 /// Server related configuration.
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct ServerConfig {
+pub struct HttpConfig {
     /// Address the API server should bind to
     pub listen_address: String,
     /// Port the API server should bind to
     pub listen_port: u16,
+    /// The url of the webconf updater
+    pub webconf_updater_url: Url,
+    /// The token of the webconf updater
+    pub webconf_updater_token: String,
 }
 
 /// Database related configuration.
@@ -34,7 +42,7 @@ pub struct DBConfig {
     /// The user to use for the database connection
     pub user: String,
     /// Password for the user
-    pub password: String,
+    pub password: SecureString,
 }
 
 impl From<DBConfig> for DatabaseDriver {
@@ -44,29 +52,19 @@ impl From<DBConfig> for DatabaseDriver {
             host: value.host,
             port: value.port,
             user: value.user,
-            password: value.password,
+            password: value.password.into_inner(),
         }
     }
 }
 
-/// LDAP related configuration
+/// LDAP server configuration
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct LdapConfig {
-    /// Connection URI
-    pub uri: String,
-    /// The DN to use for binding
-    pub admin_bind_dn: String,
-    /// The Password for the DN
-    pub admin_bind_pw: String,
-    /// User search base
-    pub user_search_base: String,
-    /// User search filter
-    pub user_search_filter: String,
-    /// Use start tls
-    pub start_tls: bool,
-    /// Do not verify TLS certificates
-    pub no_tls_verify: bool,
+    /// The address the ldap server should listen on
+    pub listen_address: IpAddr,
+    /// The port the ldap server should listen on
+    pub listen_port: u16,
 }
 
 /// Definition of the main configuration.
@@ -75,8 +73,8 @@ pub struct LdapConfig {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Config {
-    /// Server configuration
-    pub server: ServerConfig,
+    /// HTTP Server configuration
+    pub http: HttpConfig,
     /// Database configuration
     pub database: DBConfig,
     /// The config for ldap
