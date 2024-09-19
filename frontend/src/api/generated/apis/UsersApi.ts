@@ -16,19 +16,63 @@
 import * as runtime from '../runtime';
 import type {
   ApiErrorResponse,
+  ChangePwRequest,
   FullUser,
 } from '../models/index';
 import {
     ApiErrorResponseFromJSON,
     ApiErrorResponseToJSON,
+    ChangePwRequestFromJSON,
+    ChangePwRequestToJSON,
     FullUserFromJSON,
     FullUserToJSON,
 } from '../models/index';
+
+export interface ChangePasswordRequest {
+    changePwRequest: ChangePwRequest;
+}
 
 /**
  * 
  */
 export class UsersApi extends runtime.BaseAPI {
+
+    /**
+     * Change the password of the currently logged-in user  This may only be called by local users
+     * Change the password of the currently logged-in user
+     */
+    async changePasswordRaw(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['changePwRequest'] == null) {
+            throw new runtime.RequiredError(
+                'changePwRequest',
+                'Required parameter "changePwRequest" was null or undefined when calling changePassword().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/frontend/v1/users/me/change-pw`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ChangePwRequestToJSON(requestParameters['changePwRequest']),
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Change the password of the currently logged-in user  This may only be called by local users
+     * Change the password of the currently logged-in user
+     */
+    async changePassword(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.changePasswordRaw(requestParameters, initOverrides);
+    }
 
     /**
      * Retrieve the currently logged-in user

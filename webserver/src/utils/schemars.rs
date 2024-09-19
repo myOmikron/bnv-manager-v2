@@ -15,6 +15,28 @@ use time::Date;
 use time::OffsetDateTime;
 use time::Time;
 
+/// Wraps a `webauthn_rs` struct to "provide" a [`JsonSchema`] implementation
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct WebAuthnSchema<T>(pub T);
+impl<T> JsonSchema for WebAuthnSchema<T> {
+    fn schema_name() -> String {
+        "WebAuthnSchema".to_string()
+    }
+
+    fn schema_id() -> Cow<'static, str> {
+        Cow::Borrowed("WebAuthnSchema")
+    }
+
+    fn json_schema(_gen: &mut SchemaGenerator) -> Schema {
+        let mut schema = SchemaObject::default();
+        schema.object();
+        schema.metadata().description =
+            Some("This is a type provided by webauthn_rs which we lack schemas for".to_string());
+        schema.metadata().examples.push(json! {{}});
+        schema.into()
+    }
+}
+
 /// Wrap any type to "provide" a [`JsonSchema`] implementation of [`String`]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub struct SchemaString<T>(pub T);
@@ -52,7 +74,7 @@ macro_rules! formatted_string_impl {
     ($ty:ident, format: $format:literal, example: $example:literal) => {
         impl JsonSchema for $ty {
             fn is_referenceable() -> bool {
-                false
+                true
             }
 
             fn schema_name() -> String {

@@ -12,31 +12,69 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime';
-/**
- * Websocket messages that originate from the server
- * @export
- * @interface WsServerMsg
- */
-export interface WsServerMsg {
-}
+import type { WsServerMsgOneOf } from './WsServerMsgOneOf';
+import {
+    instanceOfWsServerMsgOneOf,
+    WsServerMsgOneOfFromJSON,
+    WsServerMsgOneOfFromJSONTyped,
+    WsServerMsgOneOfToJSON,
+} from './WsServerMsgOneOf';
+import type { WsServerMsgOneOf1 } from './WsServerMsgOneOf1';
+import {
+    instanceOfWsServerMsgOneOf1,
+    WsServerMsgOneOf1FromJSON,
+    WsServerMsgOneOf1FromJSONTyped,
+    WsServerMsgOneOf1ToJSON,
+} from './WsServerMsgOneOf1';
+import type { WsServerMsgOneOf2 } from './WsServerMsgOneOf2';
+import {
+    instanceOfWsServerMsgOneOf2,
+    WsServerMsgOneOf2FromJSON,
+    WsServerMsgOneOf2FromJSONTyped,
+    WsServerMsgOneOf2ToJSON,
+} from './WsServerMsgOneOf2';
 
 /**
- * Check if a given object implements the WsServerMsg interface.
+ * @type WsServerMsg
+ * Websocket messages that originate from the server
+ * @export
  */
-export function instanceOfWsServerMsg(value: object): value is WsServerMsg {
-    return true;
-}
+export type WsServerMsg = WsServerMsgOneOf | WsServerMsgOneOf1 | WsServerMsgOneOf2;
 
 export function WsServerMsgFromJSON(json: any): WsServerMsg {
     return WsServerMsgFromJSONTyped(json, false);
 }
 
 export function WsServerMsgFromJSONTyped(json: any, ignoreDiscriminator: boolean): WsServerMsg {
-    return json;
+    if (json == null) {
+        return json;
+    }
+    if (instanceOfWsServerMsgOneOf(json)) {
+        return WsServerMsgOneOfFromJSONTyped(json, true);
+    }
+    if (instanceOfWsServerMsgOneOf1(json)) {
+        return WsServerMsgOneOf1FromJSONTyped(json, true);
+    }
+    if (instanceOfWsServerMsgOneOf2(json)) {
+        return WsServerMsgOneOf2FromJSONTyped(json, true);
+    }
 }
 
 export function WsServerMsgToJSON(value?: WsServerMsg | null): any {
-    return value;
+    if (value == null) {
+        return value;
+    }
+
+    if (instanceOfWsServerMsgOneOf(value)) {
+        return WsServerMsgOneOfToJSON(value as WsServerMsgOneOf);
+    }
+    if (instanceOfWsServerMsgOneOf1(value)) {
+        return WsServerMsgOneOf1ToJSON(value as WsServerMsgOneOf1);
+    }
+    if (instanceOfWsServerMsgOneOf2(value)) {
+        return WsServerMsgOneOf2ToJSON(value as WsServerMsgOneOf2);
+    }
+
+    return {};
 }
 

@@ -1,11 +1,11 @@
-import CONSOLE from "../utils/console";
-import EventEmitter from "../utils/event-emitter";
+import CONSOLE from "src/utils/console";
+import EventEmitter from "src/utils/event-emitter";
 import {
     WsClientMsg,
     WsClientMsgToJSON,
     WsServerMsg,
     WsServerMsgFromJSON,
-} from "./generated";
+} from "src/api/generated";
 
 /**
  * Declaration of all events the {@link WebSocketWrapper} exposes:

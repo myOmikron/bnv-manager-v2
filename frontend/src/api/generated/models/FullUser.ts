@@ -20,7 +20,7 @@ import { mapValues } from '../runtime';
  */
 export interface FullUser {
     /**
-     * The point in time the user was created
+     * The time the user was created
      * @type {Date}
      * @memberof FullUser
      */
@@ -32,7 +32,7 @@ export interface FullUser {
      */
     displayName: string;
     /**
-     * The last point in time the user has signed in
+     * The last time the user has logged in
      * @type {Date}
      * @memberof FullUser
      */

@@ -14,7 +14,7 @@
 
 import { mapValues } from '../runtime';
 /**
- * An uuid that can be used in a path
+ * a uuid
  * @export
  * @interface UuidSchema
  */

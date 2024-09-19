@@ -6,10 +6,10 @@ import {
     ResponseError,
     UsersApi,
     WebsitesApi,
-} from "./generated";
-import { Err, Ok, Result } from "../utils/result";
-import CONSOLE from "../utils/console";
-import { ApiError, parseError, StatusCode } from "./error";
+} from "src/api/generated";
+import { Err, Ok, Result } from "src/utils/result";
+import CONSOLE from "src/utils/console";
+import { ApiError, parseError, StatusCode } from "src/api/error";
 
 /** Database id i.e. and u32 */
 export type ID = number;
@@ -84,6 +84,9 @@ export const Api = {
             ),
         delete: (uuid: UUID) =>
             handleError(websitesApi.deleteWebsite({ uuid })),
+        deploy: (uuid: UUID) =>
+            handleError(websitesApi.deployWebsite({ uuid })),
+        checkDns: (uuid: UUID) => handleError(websitesApi.checkDns({ uuid })),
     },
 };
 

@@ -1,4 +1,4 @@
-import CONSOLE from "../utils/console";
+import CONSOLE from "src/utils/console";
 
 export enum StatusCode {
     ArbitraryJSError = -2,
