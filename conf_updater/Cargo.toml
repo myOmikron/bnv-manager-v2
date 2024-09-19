@@ -4,10 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-conf_updater_common = { path = "../conf_updater_common", features = ["axum"] }
+conf_updater_common = { path = "../conf_updater_common", features = ["axum", "rorm", "tracing"] }
 
 # Web framework
 axum = { version = "~0.7" }
+tower-http = { version = "~0.5", features = ["trace"] }
 
 # CLI
 clap = { version = "~4", features = ["derive"] }
@@ -21,12 +22,21 @@ tracing = { version = "~0.1" }
 tracing-subscriber = { version = "~0.3", features = ["tracing-log"] }
 
 # ORM
-rorm = { version = "~0.6", features = ["tokio", "cli", "uuid"] }
+rorm = { version = "~0.6", features = ["tokio", "cli", "postgres-only", "uuid", "chrono"], default-features = false }
 
 # Async runtime
 tokio = { version = ">=1.23.1", features = ["macros", "rt-multi-thread", "sync"] }
 
+# DNS lookups
+dns-lookup = { version = "~2.0" }
+
+# Cryptography (handling certificates)
+openssl = { version = "~0.10" }
+
 # Utilities
+chrono = { version = "~0.4" }
+itertools = { version = "~0.13" }
+regex = { version = "~1.10" }
 thiserror = { version = "~1" }
 toml = { version = "~0.8" }
 url = { version = "~2", features = ["serde"] }

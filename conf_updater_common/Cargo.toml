@@ -9,5 +9,9 @@ serde_json = { version = "~1" }
 uuid = { version = "~1", features = ["v4", "serde"] }
 thiserror = { version = "~1" }
 
-# Enabling this feature will provide the IntoResponse trait needed for Axum responses
-axum = { version = "~0.7", optional = true}
+# Enabling this feature provides the IntoResponse trait needed for Axum responses
+axum = { version = "~0.7", optional = true }
+# Enabling this feature provides conversions of rorm errors to ApiFailures
+rorm = { version = "~0.6", optional = true,features = ["tokio", "postgres-only", "cli", "uuid"], default-features = false }
+# Enabling this feature provides tracing capabilities to create events if necessary
+tracing = { version = "~0.1", optional = true }

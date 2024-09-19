@@ -1,5 +1,8 @@
 //! Common schemas and models used by the WebConf updater API
 
+use std::io;
+use std::io::Error;
+
 #[cfg(feature = "axum")]
 use axum::http::StatusCode;
 #[cfg(feature = "axum")]
@@ -20,6 +23,8 @@ pub struct WebsiteUser {
     pub cn: String,
     /// LDAP distinguished name of a website user
     pub dn: String,
+    /// POSIX user ID of the website user; must be unique across all users
+    pub posix_uid: u32,
 }
 
 /// Request used to provision a single website in the web server configuration and with TLS certs
@@ -38,11 +43,40 @@ pub struct RemovalRequest {
     pub website: Uuid,
 }
 
+/// Indicator for the type of failure during domain resolution
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum DomainFailureType {
+    /// When no CNAME / A / AAAA record is set for a domain, i.e. generic resolving problem
+    DoesNotResolve,
+    /// When the domain resolves but does not point to the configured server (also for multiple records)
+    WrongResolve,
+    /// When the given string is not a valid domain name
+    InvalidDomainName,
+    /// All other cases
+    Unknown,
+}
+
+/// Type for problems when resolving a domain name
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct FailedDomain {
+    /// Domain that failed to resolve correctly
     pub domain: String,
-    /// Human-readable error message, may not be suitable for end users
+    /// The type of error of this particular failure
+    pub error: DomainFailureType,
+    /// Human-readable error message, but may not be suitable for end users
     pub message: String,
+}
+
+/// Details about failed certbot operations while trying to acquire certificates
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CertbotFailureDetails {
+    /// UUID of the affected website
+    pub website: Uuid,
+    /// List of domain names that failed to validate for whichever reason (most likely wrong DNS)
+    pub failed_domains: Vec<String>,
+    /// Full multi-line error text as returned by the certbot CLI
+    pub full_error: String,
 }
 
 /// Potential errors as returned by the API endpoints of the web conf updater
@@ -64,6 +98,10 @@ pub enum ApiFailure {
     #[error("Failed to reload web server: {0}")]
     FailedToReloadWebserver(String),
 
+    /// Failing to obtain certificates through 'certonly' option
+    #[error("Certbot certificate operation failed")]
+    CertbotCertError(CertbotFailureDetails),
+
     /// Trying to resolve any of these domains did not yield the host's IP address
     #[error("Domain check failure")]
     DomainCheckFailure(Vec<FailedDomain>),
@@ -73,8 +111,8 @@ pub enum ApiFailure {
 
     #[error("Bad request: {0}")]
     BadRequest(String),
-    #[error("Internal server error: {0}")]
-    InternalServerError(String),
+    #[error("Internal server error")]
+    InternalServerError,
 }
 
 #[cfg(feature = "axum")]
@@ -88,13 +126,31 @@ impl IntoResponse for ApiFailure {
                 ApiFailure::InvalidCurrentNginxConfig(_) => StatusCode::INTERNAL_SERVER_ERROR,
                 ApiFailure::InvalidUpdatedNginxConfig(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::FailedToReloadWebserver(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                ApiFailure::CertbotCertError(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::DomainCheckFailure(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::WebserverCheckFailure(_) => StatusCode::BAD_REQUEST,
                 ApiFailure::BadRequest(_) => StatusCode::BAD_REQUEST,
-                ApiFailure::InternalServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                ApiFailure::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             },
             Json(self),
         )
             .into_response()
+    }
+}
+
+#[cfg(feature = "rorm")]
+impl From<rorm::Error> for ApiFailure {
+    fn from(err: rorm::Error) -> Self {
+        #[cfg(feature = "tracing")]
+        tracing::event!(tracing::Level::ERROR, "{}", err);
+        ApiFailure::InternalServerError
+    }
+}
+
+impl From<io::Error> for ApiFailure {
+    fn from(err: Error) -> Self {
+        #[cfg(feature = "tracing")]
+        tracing::event!(tracing::Level::ERROR, "IoError: {}", err);
+        ApiFailure::InternalServerError
     }
 }

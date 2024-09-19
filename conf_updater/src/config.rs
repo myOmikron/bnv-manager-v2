@@ -39,6 +39,9 @@ pub struct MiscConfig {
     /// Root directory for website files, defaults to `/var/www/html/`
     #[serde(default = "get_default_htdocs_root_dir")]
     pub(crate) htdocs_root_dir: String,
+    /// UNIX group identification for the web server user, defaults to `www-data`
+    #[serde(default = "get_default_nginx_group")]
+    pub(crate) nginx_group: String,
 }
 
 fn get_default_nginx_config_dir() -> String {
@@ -47,6 +50,10 @@ fn get_default_nginx_config_dir() -> String {
 
 fn get_default_htdocs_root_dir() -> String {
     "/var/www/html/".to_string()
+}
+
+fn get_default_nginx_group() -> String {
+    "www-data".to_string()
 }
 
 /// Certbot related configuration
@@ -69,17 +76,44 @@ fn get_default_lets_encrypt() -> String {
     "/etc/letsencrypt/live/".to_string()
 }
 
-/// Database configuration (only supports SQLite for simplicity)
+/// Configuration about the hosting provider of this service
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub(crate) struct DBConfig {
-    filename: String,
+pub struct HostingConfig {
+    /// Name of the hosting provider
+    pub name: String,
+    /// Website of the hosting provider (should be a URL)
+    pub website: String,
+    /// Support e-mail address or help desk e-mail address
+    pub help_address: String,
+    /// URL of the location where users can log in to their webspace for content changes
+    pub webspace_login: String,
+}
+
+/// Database configuration (only supports Postgres)
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct DBConfig {
+    /// The address of the database server
+    pub host: String,
+    /// The port of the database server
+    pub port: u16,
+    /// The database name
+    pub name: String,
+    /// The user to use for the database connection
+    pub user: String,
+    /// Password for the user
+    pub password: String,
 }
 
 impl From<DBConfig> for DatabaseDriver {
     fn from(value: DBConfig) -> Self {
-        DatabaseDriver::SQLite {
-            filename: value.filename,
+        DatabaseDriver::Postgres {
+            name: value.name,
+            host: value.host,
+            port: value.port,
+            user: value.user,
+            password: value.password,
         }
     }
 }
@@ -96,8 +130,18 @@ pub struct Config {
     pub database: DBConfig,
     /// Miscellaneous configuration
     pub misc: MiscConfig,
+    /// Hosting provider configuration
+    pub hosting: HostingConfig,
     /// Certbot configuration
-    pub certbot: Option<CertbotConfig>,
+    #[serde(default = "get_default_certbot_conf")]
+    pub certbot: CertbotConfig,
+}
+
+fn get_default_certbot_conf() -> CertbotConfig {
+    CertbotConfig {
+        test_certs: get_default_test_certs(),
+        cert_dir: get_default_lets_encrypt(),
+    }
 }
 
 /// All errors that can occur when parsing a configuration file
