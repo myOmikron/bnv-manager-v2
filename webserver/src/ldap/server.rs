@@ -17,6 +17,7 @@ use rorm::FieldAccess;
 use rorm::Model;
 use tokio::net::TcpListener;
 use tokio::net::TcpStream;
+use tokio::task::JoinHandle;
 use tokio_util::codec::FramedRead;
 use tokio_util::codec::FramedWrite;
 use tracing::debug;
@@ -98,21 +99,23 @@ pub async fn handle_client(socket: TcpStream, _addr: SocketAddr) {
 }
 
 /// Start the LDAP listener
-pub async fn start_server(config: Arc<Config>) -> Result<(), io::Error> {
+pub async fn start_server(config: Arc<Config>) -> Result<JoinHandle<()>, io::Error> {
     let addr = SocketAddr::new(config.ldap.listen_address, config.ldap.listen_port);
 
     info!("Start to listen on ldap://{}", addr);
     let listener = TcpListener::bind(&addr).await?;
 
-    loop {
-        match listener.accept().await {
-            Ok((socket, addr)) => {
-                debug!("Handle ldap client");
-                tokio::spawn(handle_client(socket, addr));
-            }
-            Err(err) => {
-                debug!("accept error = {:?}", err);
+    Ok(tokio::spawn(async move {
+        loop {
+            match listener.accept().await {
+                Ok((socket, addr)) => {
+                    debug!("Handle ldap client");
+                    tokio::spawn(handle_client(socket, addr));
+                }
+                Err(err) => {
+                    debug!("accept error = {:?}", err);
+                }
             }
         }
-    }
+    }))
 }

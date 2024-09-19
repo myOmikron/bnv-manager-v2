@@ -59,7 +59,7 @@ async fn start(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
     let c = Arc::new(config.clone());
 
     // Start the ldap server
-    tokio::spawn(ldap::server::start_server(c.clone())).await??;
+    ldap::server::start_server(c.clone()).await?;
 
     // Start the webserver
     http::server::run(c).await?;
