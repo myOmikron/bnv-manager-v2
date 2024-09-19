@@ -23,26 +23,10 @@ import type {
   UpdateWebsiteRequest,
   UuidSchema,
 } from '../models/index';
-import {
-    AddDomainToWebsiteRequestFromJSON,
-    AddDomainToWebsiteRequestToJSON,
-    ApiErrorResponseFromJSON,
-    ApiErrorResponseToJSON,
-    CreateWebsiteRequestFromJSON,
-    CreateWebsiteRequestToJSON,
-    FullWebsiteFromJSON,
-    FullWebsiteToJSON,
-    ListWebsitesFromJSON,
-    ListWebsitesToJSON,
-    UpdateWebsiteRequestFromJSON,
-    UpdateWebsiteRequestToJSON,
-    UuidSchemaFromJSON,
-    UuidSchemaToJSON,
-} from '../models/index';
 
 export interface AddDomainToWebsiteOperationRequest {
     uuid: string;
-    addDomainToWebsiteRequest: AddDomainToWebsiteRequest;
+    AddDomainToWebsiteRequest: AddDomainToWebsiteRequest;
 }
 
 export interface CheckDnsRequest {
@@ -50,7 +34,7 @@ export interface CheckDnsRequest {
 }
 
 export interface CreateWebsiteOperationRequest {
-    createWebsiteRequest: CreateWebsiteRequest;
+    CreateWebsiteRequest: CreateWebsiteRequest;
 }
 
 export interface DeleteWebsiteRequest {
@@ -66,13 +50,13 @@ export interface GetWebsiteRequest {
 }
 
 export interface RemoveDomainFromWebsiteRequest {
-    domainUuid: string;
-    websiteUuid: string;
+    domain_uuid: string;
+    website_uuid: string;
 }
 
 export interface UpdateWebsiteOperationRequest {
     uuid: string;
-    updateWebsiteRequest: UpdateWebsiteRequest;
+    UpdateWebsiteRequest: UpdateWebsiteRequest;
 }
 
 /**
@@ -92,10 +76,10 @@ export class WebsitesApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['addDomainToWebsiteRequest'] == null) {
+        if (requestParameters['AddDomainToWebsiteRequest'] == null) {
             throw new runtime.RequiredError(
-                'addDomainToWebsiteRequest',
-                'Required parameter "addDomainToWebsiteRequest" was null or undefined when calling addDomainToWebsite().'
+                'AddDomainToWebsiteRequest',
+                'Required parameter "AddDomainToWebsiteRequest" was null or undefined when calling addDomainToWebsite().'
             );
         }
 
@@ -110,10 +94,10 @@ export class WebsitesApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: AddDomainToWebsiteRequestToJSON(requestParameters['addDomainToWebsiteRequest']),
+            body: requestParameters['AddDomainToWebsiteRequest'],
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UuidSchemaFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
@@ -146,7 +130,7 @@ export class WebsitesApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UuidSchemaFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
@@ -161,10 +145,10 @@ export class WebsitesApi extends runtime.BaseAPI {
      * Create a new website
      */
     async createWebsiteRaw(requestParameters: CreateWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UuidSchema>> {
-        if (requestParameters['createWebsiteRequest'] == null) {
+        if (requestParameters['CreateWebsiteRequest'] == null) {
             throw new runtime.RequiredError(
-                'createWebsiteRequest',
-                'Required parameter "createWebsiteRequest" was null or undefined when calling createWebsite().'
+                'CreateWebsiteRequest',
+                'Required parameter "CreateWebsiteRequest" was null or undefined when calling createWebsite().'
             );
         }
 
@@ -175,14 +159,14 @@ export class WebsitesApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/`,
+            path: `/api/frontend/v1/websites`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: CreateWebsiteRequestToJSON(requestParameters['createWebsiteRequest']),
+            body: requestParameters['CreateWebsiteRequest'],
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UuidSchemaFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
@@ -251,7 +235,7 @@ export class WebsitesApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UuidSchemaFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
@@ -273,13 +257,13 @@ export class WebsitesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/`,
+            path: `/api/frontend/v1/websites`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ListWebsitesFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
@@ -314,7 +298,7 @@ export class WebsitesApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => FullWebsiteFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
@@ -331,17 +315,17 @@ export class WebsitesApi extends runtime.BaseAPI {
      * Remove a domain from a website
      */
     async removeDomainFromWebsiteRaw(requestParameters: RemoveDomainFromWebsiteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters['domainUuid'] == null) {
+        if (requestParameters['domain_uuid'] == null) {
             throw new runtime.RequiredError(
-                'domainUuid',
-                'Required parameter "domainUuid" was null or undefined when calling removeDomainFromWebsite().'
+                'domain_uuid',
+                'Required parameter "domain_uuid" was null or undefined when calling removeDomainFromWebsite().'
             );
         }
 
-        if (requestParameters['websiteUuid'] == null) {
+        if (requestParameters['website_uuid'] == null) {
             throw new runtime.RequiredError(
-                'websiteUuid',
-                'Required parameter "websiteUuid" was null or undefined when calling removeDomainFromWebsite().'
+                'website_uuid',
+                'Required parameter "website_uuid" was null or undefined when calling removeDomainFromWebsite().'
             );
         }
 
@@ -350,7 +334,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/{website_uuid}/domains/{domain_uuid}`.replace(`{${"domain_uuid"}}`, encodeURIComponent(String(requestParameters['domainUuid']))).replace(`{${"website_uuid"}}`, encodeURIComponent(String(requestParameters['websiteUuid']))),
+            path: `/api/frontend/v1/websites/{website_uuid}/domains/{domain_uuid}`.replace(`{${"domain_uuid"}}`, encodeURIComponent(String(requestParameters['domain_uuid']))).replace(`{${"website_uuid"}}`, encodeURIComponent(String(requestParameters['website_uuid']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -379,10 +363,10 @@ export class WebsitesApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['updateWebsiteRequest'] == null) {
+        if (requestParameters['UpdateWebsiteRequest'] == null) {
             throw new runtime.RequiredError(
-                'updateWebsiteRequest',
-                'Required parameter "updateWebsiteRequest" was null or undefined when calling updateWebsite().'
+                'UpdateWebsiteRequest',
+                'Required parameter "UpdateWebsiteRequest" was null or undefined when calling updateWebsite().'
             );
         }
 
@@ -397,7 +381,7 @@ export class WebsitesApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: UpdateWebsiteRequestToJSON(requestParameters['updateWebsiteRequest']),
+            body: requestParameters['UpdateWebsiteRequest'],
         }, initOverrides);
 
         return new runtime.VoidApiResponse(response);

@@ -18,15 +18,9 @@ import type {
   ApiErrorResponse,
   LoginRequest,
 } from '../models/index';
-import {
-    ApiErrorResponseFromJSON,
-    ApiErrorResponseToJSON,
-    LoginRequestFromJSON,
-    LoginRequestToJSON,
-} from '../models/index';
 
 export interface LoginOperationRequest {
-    loginRequest: LoginRequest;
+    LoginRequest: LoginRequest;
 }
 
 /**
@@ -39,10 +33,10 @@ export class AuthApi extends runtime.BaseAPI {
      * Use the local authentication for logging in
      */
     async loginRaw(requestParameters: LoginOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters['loginRequest'] == null) {
+        if (requestParameters['LoginRequest'] == null) {
             throw new runtime.RequiredError(
-                'loginRequest',
-                'Required parameter "loginRequest" was null or undefined when calling login().'
+                'LoginRequest',
+                'Required parameter "LoginRequest" was null or undefined when calling login().'
             );
         }
 
@@ -57,7 +51,7 @@ export class AuthApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: LoginRequestToJSON(requestParameters['loginRequest']),
+            body: requestParameters['LoginRequest'],
         }, initOverrides);
 
         return new runtime.VoidApiResponse(response);

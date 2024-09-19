@@ -19,17 +19,9 @@ import type {
   ChangePwRequest,
   FullUser,
 } from '../models/index';
-import {
-    ApiErrorResponseFromJSON,
-    ApiErrorResponseToJSON,
-    ChangePwRequestFromJSON,
-    ChangePwRequestToJSON,
-    FullUserFromJSON,
-    FullUserToJSON,
-} from '../models/index';
 
 export interface ChangePasswordRequest {
-    changePwRequest: ChangePwRequest;
+    ChangePwRequest: ChangePwRequest;
 }
 
 /**
@@ -42,10 +34,10 @@ export class UsersApi extends runtime.BaseAPI {
      * Change the password of the currently logged-in user
      */
     async changePasswordRaw(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters['changePwRequest'] == null) {
+        if (requestParameters['ChangePwRequest'] == null) {
             throw new runtime.RequiredError(
-                'changePwRequest',
-                'Required parameter "changePwRequest" was null or undefined when calling changePassword().'
+                'ChangePwRequest',
+                'Required parameter "ChangePwRequest" was null or undefined when calling changePassword().'
             );
         }
 
@@ -60,7 +52,7 @@ export class UsersApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: ChangePwRequestToJSON(requestParameters['changePwRequest']),
+            body: requestParameters['ChangePwRequest'],
         }, initOverrides);
 
         return new runtime.VoidApiResponse(response);
@@ -90,7 +82,7 @@ export class UsersApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => FullUserFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
