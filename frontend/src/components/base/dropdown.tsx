@@ -3,8 +3,8 @@
 import * as Headless from "@headlessui/react";
 import clsx from "clsx";
 import type React from "react";
-import { Button } from "./button";
-import { Link } from "./link";
+import { Button } from "src/components/base/button";
+import { Link } from "src/components/base/link";
 
 export function Dropdown(props: Headless.MenuProps) {
     return <Headless.Menu {...props} />;
@@ -82,12 +82,25 @@ export function DropdownItem({
     return "href" in props ? (
         <Headless.MenuItem as={Link} {...props} className={classes} />
     ) : (
-        <Headless.MenuItem as="button" type="button" {...props} className={classes} />
+        <Headless.MenuItem
+            as="button"
+            type="button"
+            {...props}
+            className={classes}
+        />
     );
 }
 
-export function DropdownHeader({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
-    return <div {...props} className={clsx(className, "col-span-5 px-3.5 pb-1 pt-2.5 sm:px-3")} />;
+export function DropdownHeader({
+    className,
+    ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+    return (
+        <div
+            {...props}
+            className={clsx(className, "col-span-5 px-3.5 pb-1 pt-2.5 sm:px-3")}
+        />
+    );
 }
 
 export function DropdownSection({
@@ -178,20 +191,25 @@ export function DropdownShortcut({
         <Headless.Description
             as="kbd"
             {...props}
-            className={clsx(className, "col-start-5 row-start-1 flex justify-self-end")}
+            className={clsx(
+                className,
+                "col-start-5 row-start-1 flex justify-self-end",
+            )}
         >
-            {(Array.isArray(keys) ? keys : keys.split("")).map((char, index) => (
-                <kbd
-                    key={index}
-                    className={clsx([
-                        "min-w-[2ch] text-center font-sans capitalize text-zinc-400 group-data-[focus]:text-white forced-colors:group-data-[focus]:text-[HighlightText]",
-                        // Make sure key names that are longer than one character (like "Tab") have extra space
-                        index > 0 && char.length > 1 && "pl-1",
-                    ])}
-                >
-                    {char}
-                </kbd>
-            ))}
+            {(Array.isArray(keys) ? keys : keys.split("")).map(
+                (char, index) => (
+                    <kbd
+                        key={index}
+                        className={clsx([
+                            "min-w-[2ch] text-center font-sans capitalize text-zinc-400 group-data-[focus]:text-white forced-colors:group-data-[focus]:text-[HighlightText]",
+                            // Make sure key names that are longer than one character (like "Tab") have extra space
+                            index > 0 && char.length > 1 && "pl-1",
+                        ])}
+                    >
+                        {char}
+                    </kbd>
+                ),
+            )}
         </Headless.Description>
     );
 }

@@ -1,15 +1,14 @@
 import React from "react";
 import { toast } from "react-toastify";
-import { Api } from "../api/api";
-import { ApiError, StatusCode } from "../api/error";
-import { FullUser } from "../api/generated";
-import CONSOLE from "../utils/console";
-import Login from "../views/login/login";
-import WS from "../api/ws";
+import { Api } from "src/api/api";
+import { ApiError, StatusCode } from "src/api/error";
+import { FullUser } from "src/api/generated";
+import CONSOLE from "src/utils/console";
+import Login from "src/views/login/login";
+import WS from "src/api/ws";
 
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
-import Menu from "../views/menu/menu";
 
 /** The global {@link UserProvider} instance */
 let USER_PROVIDER: UserProvider | null = null;
@@ -166,7 +165,9 @@ export class UserProvider extends React.Component<
 /**
  * The properties for {@link UserProviderWrapper}
  */
-export type UserProviderWrapperProps = {};
+export type UserProviderWrapperProps = {
+    children: React.ReactNode;
+};
 
 /**
  * A wrapper around the user provider
@@ -174,11 +175,7 @@ export type UserProviderWrapperProps = {};
 export function UserProviderWrapper(props: UserProviderWrapperProps) {
     const [t] = useTranslation();
 
-    return (
-        <UserProvider t={t}>
-            <Menu />
-        </UserProvider>
-    );
+    return <UserProvider t={t}>{props.children}</UserProvider>;
 }
 
 /**

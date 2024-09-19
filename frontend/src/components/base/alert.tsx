@@ -1,7 +1,7 @@
 import * as Headless from "@headlessui/react";
 import clsx from "clsx";
 import type React from "react";
-import { Text } from "./text";
+import { Text } from "src/components/base/text";
 
 const sizes = {
     xs: "sm:max-w-xs",
@@ -86,21 +86,32 @@ export function AlertTitle({
 export function AlertDescription({
     className,
     ...props
-}: { className?: string } & Omit<Headless.DescriptionProps<typeof Text>, "className">) {
+}: {
+    className?: string;
+} & Omit<Headless.DescriptionProps<typeof Text>, "className">) {
     return (
         <Headless.Description
             as={Text}
             {...props}
-            className={clsx(className, "mt-2 text-pretty text-center sm:text-left")}
+            className={clsx(
+                className,
+                "mt-2 text-pretty text-center sm:text-left",
+            )}
         />
     );
 }
 
-export function AlertBody({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+export function AlertBody({
+    className,
+    ...props
+}: React.ComponentPropsWithoutRef<"div">) {
     return <div {...props} className={clsx(className, "mt-4")} />;
 }
 
-export function AlertActions({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+export function AlertActions({
+    className,
+    ...props
+}: React.ComponentPropsWithoutRef<"div">) {
     return (
         <div
             {...props}

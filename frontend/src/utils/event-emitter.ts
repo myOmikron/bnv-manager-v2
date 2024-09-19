@@ -1,4 +1,4 @@
-import CONSOLE from "./console";
+import CONSOLE from "src/utils/console";
 
 /** An event handler is any function taking an event */
 export type EventHandler<Event> = (event: Event) => void;

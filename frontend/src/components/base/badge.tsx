@@ -1,8 +1,8 @@
 import * as Headless from "@headlessui/react";
 import clsx from "clsx";
 import React from "react";
-import { TouchTarget } from "./button";
-import { Link, LinkProps } from "./link";
+import { TouchTarget } from "src/components/base/button";
+import { Link, LinkProps } from "src/components/base/link";
 
 const colors = {
     red: "bg-red-500/15 text-red-700 group-data-[hover]:bg-red-500/25 dark:bg-red-500/10 dark:text-red-400 dark:group-data-[hover]:bg-red-500/20",
@@ -29,7 +29,11 @@ const colors = {
 
 type BadgeProps = { color?: keyof typeof colors };
 
-export function Badge({ color = "zinc", className, ...props }: BadgeProps & React.ComponentPropsWithoutRef<"span">) {
+export function Badge({
+    color = "zinc",
+    className,
+    ...props
+}: BadgeProps & React.ComponentPropsWithoutRef<"span">) {
     return (
         <span
             {...props}
@@ -60,7 +64,11 @@ export const BadgeButton = React.forwardRef(function BadgeButton(
     );
 
     return "href" in props ? (
-        <Link {...props} className={classes} ref={ref as React.ForwardedRef<HTMLAnchorElement>}>
+        <Link
+            {...props}
+            className={classes}
+            ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+        >
             <TouchTarget>
                 <Badge color={color}>{children}</Badge>
             </TouchTarget>

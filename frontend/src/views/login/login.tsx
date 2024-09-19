@@ -1,15 +1,15 @@
 import React from "react";
 import { toast } from "react-toastify";
-import { Api } from "../../api/api";
+import { Api } from "src/api/api";
 import {
     Field,
     FieldGroup,
     Fieldset,
     Label,
     Legend,
-} from "../../components/fieldset";
-import { Input } from "../../components/input";
-import { Button } from "../../components/button";
+} from "src/components/base/fieldset";
+import { Input } from "src/components/base/input";
+import { Button } from "src/components/base/button";
 import Monkey from "./monkey-2-min.webp";
 import { useTranslation } from "react-i18next";
 
