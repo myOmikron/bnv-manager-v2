@@ -1,21 +1,19 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { Api } from "src/api/api";
-import { ApiError, StatusCode } from "src/api/error";
-import { FullUser } from "src/api/generated";
+import { FullUser } from "src/api/generated/";
 import CONSOLE from "src/utils/console";
-import Login from "src/views/login/login";
+import Login from "src/components/login";
+import { ApiError, StatusCode } from "src/api/error";
+import { Navigate } from "@tanstack/react-router";
 import WS from "src/api/ws";
-
-import { useTranslation } from "react-i18next";
-import { TFunction } from "i18next";
 
 /** The global {@link UserProvider} instance */
 let USER_PROVIDER: UserProvider | null = null;
 
 /** Data provided by the {@link USER_CONTEXT} */
 export type UserContext = {
-    /** The user */
+    /** The currently logged-in user */
     user: FullUser;
 
     /** Reload the user's information */
@@ -25,21 +23,34 @@ export type UserContext = {
 /** {@link React.Context} to access {@link FullUser user information} */
 const USER_CONTEXT = React.createContext<UserContext>({
     user: {
-        displayName: "",
         uuid: "",
-        createdAt: new Date(),
-        lastLogin: undefined,
+        username: "",
+        display_name: "",
+        created_at: "",
+        last_login: "",
     },
+
+    /**
+     * Reset the user's information
+     */
     reset: () => {},
 });
 USER_CONTEXT.displayName = "UserContext";
 export default USER_CONTEXT;
 
+/**
+ * The properties of the user provider
+ */
 type UserProviderProps = {
-    children?: React.ReactNode;
-    t: TFunction<"translation", undefined>;
+    /** The children of the properties */
+    children: React.ReactNode | Array<React.ReactNode>;
 };
+
+/**
+ * The state of the user provider
+ */
 type UserProviderState = {
+    /** The user */
     user: FullUser | "unauthenticated" | "loading";
 };
 
@@ -55,6 +66,10 @@ export class UserProvider extends React.Component<
     state: UserProviderState = { user: "loading" };
 
     fetching: boolean = false;
+
+    /**
+     * Fetch the user
+     */
     fetchUser = () => {
         // Guard against a lot of calls
         if (this.fetching) return;
@@ -66,8 +81,9 @@ export class UserProvider extends React.Component<
             result.match(
                 (user) => {
                     WS.connect(
-                        `${window.location.origin.replace("http", "ws")}/api/frontend/v1/ws`,
+                        `${window.location.origin.replace("http", "ws")}/api/frontend/v1/common/ws/ws`,
                     );
+                    window.localStorage.setItem("username", user.username);
                     this.setState({ user });
                 },
                 (error) => {
@@ -86,6 +102,9 @@ export class UserProvider extends React.Component<
         });
     };
 
+    /**
+     * Hook when the component mounts
+     */
     componentDidMount() {
         this.fetchUser();
 
@@ -95,38 +114,11 @@ export class UserProvider extends React.Component<
         else if (USER_PROVIDER === this)
             CONSOLE.error("UserProvider did mount twice");
         else CONSOLE.error("Two instances of UserProvider are used");
-
-        // Report websocket state changes using toasts
-        const errorToast = [
-            this.props.t("Connecting websocket"),
-            {
-                closeButton: false,
-                closeOnClick: false,
-                autoClose: false,
-                isLoading: true,
-            },
-        ] as const;
-        const successToast = [
-            this.props.t("Websocket has connected"),
-            { autoClose: 1000 },
-        ] as const;
-        let runningToast: string | number | null = toast.warn(...errorToast);
-        WS.addEventListener("state", (newState) => {
-            switch (newState) {
-                case "connected":
-                    if (runningToast !== null) {
-                        toast.dismiss(runningToast);
-                        runningToast = null;
-                    }
-                    toast.success(...successToast);
-                    break;
-                default:
-                    if (runningToast === null)
-                        runningToast = toast.error(...errorToast);
-            }
-        });
     }
 
+    /**
+     * Hook when the component will unmount
+     */
     componentWillUnmount() {
         // Deregister as global singleton
         if (USER_PROVIDER === this) USER_PROVIDER = null;
@@ -135,17 +127,25 @@ export class UserProvider extends React.Component<
         else CONSOLE.error("Two instances of UserProvider are used");
     }
 
+    /**
+     * The render function
+     *
+     * @returns The JSX component
+     */
     render() {
         switch (this.state.user) {
             case "loading":
-                return <div>Loading ..</div>;
+                return <div></div>;
             case "unauthenticated":
                 return (
-                    <Login
-                        onLogin={() => {
-                            this.fetchUser();
-                        }}
-                    />
+                    <>
+                        <Navigate to="/" />
+                        <Login
+                            onLogin={() => {
+                                this.fetchUser();
+                            }}
+                        />
+                    </>
                 );
             default:
                 return (
@@ -163,25 +163,9 @@ export class UserProvider extends React.Component<
 }
 
 /**
- * The properties for {@link UserProviderWrapper}
- */
-export type UserProviderWrapperProps = {
-    children: React.ReactNode;
-};
-
-/**
- * A wrapper around the user provider
- */
-export function UserProviderWrapper(props: UserProviderWrapperProps) {
-    const [t] = useTranslation();
-
-    return <UserProvider t={t}>{props.children}</UserProvider>;
-}
-
-/**
- * Inspect an error and handle the {@link StatusCode.Unauthenticated Unauthenticated} status code by requiring the user to log in again.
+ * Inspect an error and handle the {@link StatusCode.Unauthenticated} status code by requiring the user to log in again.
  *
- * @param error {@link ApiError} to inspect for {@link StatusCode.Unauthenticated Unauthenticated}
+ * @param error {@link ApiError} to inspect for {@link StatusCode.Unauthenticated}
  */
 export function inspectError(error: ApiError) {
     switch (error.status_code) {

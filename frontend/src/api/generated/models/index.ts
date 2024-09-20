@@ -369,6 +369,12 @@ export interface FullUser {
      */
     last_login?: string;
     /**
+     * The username
+     * @type {string}
+     * @memberof FullUser
+     */
+    username: string;
+    /**
      * The identifier of the user
      * @type {string}
      * @memberof FullUser

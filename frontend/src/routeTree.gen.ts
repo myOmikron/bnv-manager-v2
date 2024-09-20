@@ -17,6 +17,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as UserUProfileImport } from './routes/_user/u/profile'
 import { Route as UserUWebsitesIndexImport } from './routes/_user/u/websites/index'
 import { Route as UserUMailIndexImport } from './routes/_user/u/mail/index'
+import { Route as UserUWebsitesCreateImport } from './routes/_user/u/websites/create'
 import { Route as UserUWebsitesWebsiteIdImport } from './routes/_user/u/websites/$websiteId'
 
 // Create Virtual Routes
@@ -47,6 +48,11 @@ const UserUWebsitesIndexRoute = UserUWebsitesIndexImport.update({
 
 const UserUMailIndexRoute = UserUMailIndexImport.update({
   path: '/u/mail/',
+  getParentRoute: () => UserLazyRoute,
+} as any)
+
+const UserUWebsitesCreateRoute = UserUWebsitesCreateImport.update({
+  path: '/u/websites/create',
   getParentRoute: () => UserLazyRoute,
 } as any)
 
@@ -87,6 +93,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserUWebsitesWebsiteIdImport
       parentRoute: typeof UserLazyImport
     }
+    '/_user/u/websites/create': {
+      id: '/_user/u/websites/create'
+      path: '/u/websites/create'
+      fullPath: '/u/websites/create'
+      preLoaderRoute: typeof UserUWebsitesCreateImport
+      parentRoute: typeof UserLazyImport
+    }
     '/_user/u/mail/': {
       id: '/_user/u/mail/'
       path: '/u/mail'
@@ -111,6 +124,7 @@ export const routeTree = rootRoute.addChildren({
   UserLazyRoute: UserLazyRoute.addChildren({
     UserUProfileRoute,
     UserUWebsitesWebsiteIdRoute,
+    UserUWebsitesCreateRoute,
     UserUMailIndexRoute,
     UserUWebsitesIndexRoute,
   }),
@@ -136,6 +150,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/_user/u/profile",
         "/_user/u/websites/$websiteId",
+        "/_user/u/websites/create",
         "/_user/u/mail/",
         "/_user/u/websites/"
       ]
@@ -146,6 +161,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_user/u/websites/$websiteId": {
       "filePath": "_user/u/websites/$websiteId.tsx",
+      "parent": "/_user"
+    },
+    "/_user/u/websites/create": {
+      "filePath": "_user/u/websites/create.tsx",
       "parent": "/_user"
     },
     "/_user/u/mail/": {

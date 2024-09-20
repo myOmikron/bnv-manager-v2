@@ -39,6 +39,8 @@ pub struct ChangePwRequest {
 pub struct FullUser {
     /// The identifier of the user
     pub uuid: Uuid,
+    /// The username
+    pub username: String,
     /// Used for displaying purposes
     pub display_name: String,
     /// The last time the user has logged in

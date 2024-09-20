@@ -31,6 +31,7 @@ use crate::utils::schemars::SchemaDateTime;
 pub async fn get_me(SessionUser(user): SessionUser) -> ApiResult<Json<FullUser>> {
     Ok(Json(FullUser {
         uuid: user.uuid,
+        username: user.username,
         display_name: user.display_name,
         last_login: user.last_login.map(SchemaDateTime),
         created_at: SchemaDateTime(user.created_at),

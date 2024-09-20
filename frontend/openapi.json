@@ -967,6 +967,10 @@
                     "last_login": {
                         "$ref": "#/components/schemas/SchemaDateTime"
                     },
+                    "username": {
+                        "description": "The username",
+                        "type": "string"
+                    },
                     "uuid": {
                         "description": "The identifier of the user",
                         "type": "string",
@@ -976,6 +980,7 @@
                 "required": [
                     "created_at",
                     "display_name",
+                    "username",
                     "uuid"
                 ]
             },

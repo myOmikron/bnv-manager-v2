@@ -8,14 +8,7 @@ import HeadingLayout from "src/components/base/heading-layout";
 import { Button } from "src/components/base/button";
 import { Input } from "src/components/base/input";
 import ChevronLeftIcon from "@heroicons/react/20/solid/ChevronLeftIcon";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "src/components/base/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "src/components/base/table";
 import { Text } from "src/components/base/text";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 
@@ -76,30 +69,27 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
                     (uuid) => {
                         const deployingId = toast.loading("Deploying");
 
-                        const listener = Ws.addEventListener(
-                            "message.DeployUpdate",
-                            (event) => {
-                                if (event.task === uuid.uuid) {
-                                    if (event.state.res === "Success") {
-                                        toast.update(deployingId, {
-                                            render: "Deployment successful",
-                                            autoClose: 3500,
-                                            type: "success",
-                                            isLoading: false,
-                                        });
-                                    } else if (event.state.res === "Fail") {
-                                        toast.update(deployingId, {
-                                            render: "Deployment failed",
-                                            autoClose: 3500,
-                                            type: "error",
-                                            isLoading: false,
-                                        });
-                                    }
-
-                                    Ws.removeEventListener(listener);
+                        const listener = Ws.addEventListener("message.DeployUpdate", (event) => {
+                            if (event.task === uuid.uuid) {
+                                if (event.state.res === "Success") {
+                                    toast.update(deployingId, {
+                                        render: "Deployment successful",
+                                        autoClose: 3500,
+                                        type: "success",
+                                        isLoading: false,
+                                    });
+                                } else if (event.state.res === "Fail") {
+                                    toast.update(deployingId, {
+                                        render: "Deployment failed",
+                                        autoClose: 3500,
+                                        type: "error",
+                                        isLoading: false,
+                                    });
                                 }
-                            },
-                        );
+
+                                Ws.removeEventListener(listener);
+                            }
+                        });
                     },
                     (err) => toast.error(err.message),
                 ),
@@ -113,23 +103,18 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
     return (
         website && (
             <div className={"flex flex-col justify-start gap-6"}>
-                <Button plain={true} className={"w-fit"} href={"/websites"}>
+                <Button plain={true} className={"w-fit"} href={"/u/websites"}>
                     <ChevronLeftIcon />
                     <Text>Websites</Text>
                 </Button>
                 <HeadingLayout heading={`Edit Website ${website.name}`}>
                     <div className={"flex flex-col gap-3"}>
-                        <Table
-                            dense={true}
-                            className={"text-zinc-800 dark:text-zinc-200"}
-                        >
+                        <Table dense={true} className={"text-zinc-800 dark:text-zinc-200"}>
                             <TableHead>
                                 <TableRow>
                                     <TableHeader>Domain</TableHeader>
                                     <TableHeader className={"text-right"}>
-                                        <span className={"sr-only"}>
-                                            Action
-                                        </span>
+                                        <span className={"sr-only"}>Action</span>
                                     </TableHeader>
                                 </TableRow>
                             </TableHead>
@@ -141,20 +126,12 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
                                             <Button
                                                 plain={true}
                                                 onClick={() => {
-                                                    Api.websites
-                                                        .removeDomain(
-                                                            websiteId,
-                                                            x.uuid,
-                                                        )
-                                                        .then((res) =>
-                                                            res.match(
-                                                                () => refresh(),
-                                                                (err) =>
-                                                                    toast.error(
-                                                                        err.message,
-                                                                    ),
-                                                            ),
-                                                        );
+                                                    Api.websites.removeDomain(websiteId, x.uuid).then((res) =>
+                                                        res.match(
+                                                            () => refresh(),
+                                                            (err) => toast.error(err.message),
+                                                        ),
+                                                    );
                                                 }}
                                             >
                                                 <XMarkIcon />
@@ -185,10 +162,7 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
                                 Add
                             </Button>
                         </form>
-                        <Button
-                            plain={true}
-                            onClick={() => setOpenDNSSettings(true)}
-                        >
+                        <Button plain={true} onClick={() => setOpenDNSSettings(true)}>
                             Check DNS
                         </Button>
                     </div>
@@ -199,21 +173,12 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
                         </Button>
                     </div>
                 </HeadingLayout>
-                <DialogDNSSettings
-                    open={openDNSSettings}
-                    website={website}
-                    onClose={() => {
-                        setOpenDNSSettings(false);
-                    }}
-                />
             </div>
         )
     );
 }
 
-const re = new RegExp(
-    `^(?=.{1,253}\\.?$)(?:(?!-|[^.]+_)[A-Za-z0-9-_]{1,63}(?<!-)(?:\\.|$)){2,}$`,
-);
+const re = new RegExp(`^(?=.{1,253}\\.?$)(?:(?!-|[^.]+_)[A-Za-z0-9-_]{1,63}(?<!-)(?:\\.|$)){2,}$`);
 
 /**
  * Tests whether an input string seems to be a valid domain
@@ -227,5 +192,5 @@ function validateDomain(domain: string) {
 }
 
 export const Route = createFileRoute("/_user/u/websites/$websiteId")({
-    component: () => <WebsiteConfiguration />,
+    component: WebsiteConfiguration,
 });

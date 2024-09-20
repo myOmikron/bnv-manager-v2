@@ -1,11 +1,6 @@
-import CONSOLE from "src/utils/console";
-import EventEmitter from "src/utils/event-emitter";
-import {
-    WsClientMsg,
-    WsClientMsgToJSON,
-    WsServerMsg,
-    WsServerMsgFromJSON,
-} from "src/api/generated";
+import CONSOLE from "../utils/console";
+import EventEmitter from "../utils/event-emitter";
+import { WsServerMsg } from "./generated";
 
 /**
  * Declaration of all events the {@link WebSocketWrapper} exposes:
@@ -43,11 +38,7 @@ export type WebSocketEvents = {
  * - **connected**: the socket is connected and ready for operation
  * - **waiting**: the socket failed to connect and is waiting before retrying later
  */
-export type WebSocketState =
-    | "disconnected"
-    | "connecting"
-    | "connected"
-    | "waiting";
+export type WebSocketState = "disconnected" | "connecting" | "connected" | "waiting";
 
 /**
  * Wrapper around the browser's {@link WebSocket `WebSocket`} which implements auto reconnecting and a high-level event interface.
@@ -69,12 +60,6 @@ export class WebSocketWrapper extends EventEmitter<WebSocketEvents> {
         this.url = url;
         this.clearOld();
         this.reconnect();
-    }
-
-    send(msg: WsClientMsg) {
-        if (this.ws !== null && this.state === "connected") {
-            this.ws.send(JSON.stringify(WsClientMsgToJSON(msg)));
-        }
     }
 
     /** Explicitly discards the connection without opening a new one */
@@ -111,26 +96,15 @@ export class WebSocketWrapper extends EventEmitter<WebSocketEvents> {
         };
         this.ws.onmessage = (event) => {
             if (typeof event.data !== "string") {
-                CONSOLE.error(
-                    "Received a non string websocket message: ",
-                    event.data,
-                );
+                CONSOLE.error("Received a non string websocket message: ", event.data);
             } else {
                 try {
-                    const message = WsServerMsgFromJSON(JSON.parse(event.data));
+                    const message: WsServerMsg = JSON.parse(event.data);
                     this.emitEvent(`message`, message);
                     this.emitEvent(`message.${message.type}`, message);
                 } catch (e) {
-                    if (e instanceof SyntaxError)
-                        CONSOLE.error(
-                            "Received a non json websocket message: ",
-                            event.data,
-                        );
-                    else
-                        CONSOLE.error(
-                            "Received malformed json websocket message: ",
-                            JSON.parse(event.data),
-                        );
+                    if (e instanceof SyntaxError) CONSOLE.error("Received a non json websocket message: ", event.data);
+                    else CONSOLE.error("Received malformed json websocket message: ", JSON.parse(event.data));
                 }
             }
         };
@@ -138,9 +112,7 @@ export class WebSocketWrapper extends EventEmitter<WebSocketEvents> {
             switch (this.state) {
                 case "disconnected":
                 case "waiting":
-                    CONSOLE.error(
-                        "There shouldn't be any open websocket to close",
-                    );
+                    CONSOLE.error("There shouldn't be any open websocket to close");
                     break;
                 case "connecting":
                     CONSOLE.info("Failed to connect. Retry in 10s");
@@ -148,16 +120,8 @@ export class WebSocketWrapper extends EventEmitter<WebSocketEvents> {
                     this.timeout = setTimeout(this.reconnect, 10000);
                     break;
                 case "connected":
-                    if (event.wasClean)
-                        CONSOLE.info(
-                            "Websocket has been closed cleanly",
-                            event.reason,
-                        );
-                    else
-                        CONSOLE.error(
-                            "Websocket lost connection",
-                            event.reason,
-                        );
+                    if (event.wasClean) CONSOLE.info("Websocket has been closed cleanly", event.reason);
+                    else CONSOLE.error("Websocket lost connection", event.reason);
                     this.reconnect();
                     break;
             }

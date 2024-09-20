@@ -1,0 +1,9 @@
+{
+    "button": {
+        "create": "Erstellen"
+    },
+    "label": {
+        "password": "Passwort",
+        "username": "Nutzername"
+    }
+}

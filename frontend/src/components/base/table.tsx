@@ -163,7 +163,7 @@ export function TableCell({
 }: React.ComponentPropsWithoutRef<"td">) {
     const { bleed, dense, grid, striped } = useContext(TableContext);
     const { href, search, params, target, title } = useContext(TableRowContext);
-    const [cellRef, setCellRef] = useState<HTMLElement | null>(null);
+    const [_cellRef, setCellRef] = useState<HTMLElement | null>(null);
 
     return (
         <td
@@ -187,7 +187,6 @@ export function TableCell({
                     search={search}
                     target={target}
                     aria-label={title}
-                    tabIndex={cellRef?.previousElementSibling === null ? 0 : -1}
                     className="absolute inset-0 focus:outline-none"
                 />
             )}
