@@ -14,15 +14,30 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
-import { Route as UserUProfileImport } from './routes/_user/u/profile'
+import { Route as UserUProfileImport } from './routes/_user/u/_profile'
+import { Route as ClubAdminCaDashboardImport } from './routes/_club-admin/ca/dashboard'
+import { Route as ClubAdminCaProfileImport } from './routes/_club-admin/ca/_profile'
+import { Route as AdminADashboardImport } from './routes/_admin/a/dashboard'
+import { Route as AdminAProfileImport } from './routes/_admin/a/_profile'
 import { Route as UserUWebsitesIndexImport } from './routes/_user/u/websites/index'
 import { Route as UserUMailIndexImport } from './routes/_user/u/mail/index'
 import { Route as UserUWebsitesCreateImport } from './routes/_user/u/websites/create'
 import { Route as UserUWebsitesWebsiteIdImport } from './routes/_user/u/websites/$websiteId'
+import { Route as UserUProfileProfileSecurityImport } from './routes/_user/u/_profile/profile/security'
+import { Route as UserUProfileProfileGeneralImport } from './routes/_user/u/_profile/profile/general'
+import { Route as ClubAdminCaProfileProfileSecurityImport } from './routes/_club-admin/ca/_profile/profile/security'
+import { Route as ClubAdminCaProfileProfileGeneralImport } from './routes/_club-admin/ca/_profile/profile/general'
+import { Route as AdminAProfileProfileSecurityImport } from './routes/_admin/a/_profile/profile/security'
+import { Route as AdminAProfileProfileGeneralImport } from './routes/_admin/a/_profile/profile/general'
 
 // Create Virtual Routes
 
 const UserLazyImport = createFileRoute('/_user')()
+const ClubAdminLazyImport = createFileRoute('/_club-admin')()
+const AdminLazyImport = createFileRoute('/_admin')()
+const UserUImport = createFileRoute('/_user/u')()
+const ClubAdminCaImport = createFileRoute('/_club-admin/ca')()
+const AdminAImport = createFileRoute('/_admin/a')()
 
 // Create/Update Routes
 
@@ -31,35 +46,117 @@ const UserLazyRoute = UserLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/_user.lazy').then((d) => d.Route))
 
+const ClubAdminLazyRoute = ClubAdminLazyImport.update({
+  id: '/_club-admin',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/_club-admin.lazy').then((d) => d.Route))
+
+const AdminLazyRoute = AdminLazyImport.update({
+  id: '/_admin',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/_admin.lazy').then((d) => d.Route))
+
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const UserUProfileRoute = UserUProfileImport.update({
-  path: '/u/profile',
+const UserURoute = UserUImport.update({
+  path: '/u',
   getParentRoute: () => UserLazyRoute,
+} as any)
+
+const ClubAdminCaRoute = ClubAdminCaImport.update({
+  path: '/ca',
+  getParentRoute: () => ClubAdminLazyRoute,
+} as any)
+
+const AdminARoute = AdminAImport.update({
+  path: '/a',
+  getParentRoute: () => AdminLazyRoute,
+} as any)
+
+const UserUProfileRoute = UserUProfileImport.update({
+  id: '/_profile',
+  getParentRoute: () => UserURoute,
+} as any)
+
+const ClubAdminCaDashboardRoute = ClubAdminCaDashboardImport.update({
+  path: '/dashboard',
+  getParentRoute: () => ClubAdminCaRoute,
+} as any)
+
+const ClubAdminCaProfileRoute = ClubAdminCaProfileImport.update({
+  id: '/_profile',
+  getParentRoute: () => ClubAdminCaRoute,
+} as any)
+
+const AdminADashboardRoute = AdminADashboardImport.update({
+  path: '/dashboard',
+  getParentRoute: () => AdminARoute,
+} as any)
+
+const AdminAProfileRoute = AdminAProfileImport.update({
+  id: '/_profile',
+  getParentRoute: () => AdminARoute,
 } as any)
 
 const UserUWebsitesIndexRoute = UserUWebsitesIndexImport.update({
-  path: '/u/websites/',
-  getParentRoute: () => UserLazyRoute,
+  path: '/websites/',
+  getParentRoute: () => UserURoute,
 } as any)
 
 const UserUMailIndexRoute = UserUMailIndexImport.update({
-  path: '/u/mail/',
-  getParentRoute: () => UserLazyRoute,
+  path: '/mail/',
+  getParentRoute: () => UserURoute,
 } as any)
 
 const UserUWebsitesCreateRoute = UserUWebsitesCreateImport.update({
-  path: '/u/websites/create',
-  getParentRoute: () => UserLazyRoute,
+  path: '/websites/create',
+  getParentRoute: () => UserURoute,
 } as any)
 
 const UserUWebsitesWebsiteIdRoute = UserUWebsitesWebsiteIdImport.update({
-  path: '/u/websites/$websiteId',
-  getParentRoute: () => UserLazyRoute,
+  path: '/websites/$websiteId',
+  getParentRoute: () => UserURoute,
 } as any)
+
+const UserUProfileProfileSecurityRoute =
+  UserUProfileProfileSecurityImport.update({
+    path: '/profile/security',
+    getParentRoute: () => UserUProfileRoute,
+  } as any)
+
+const UserUProfileProfileGeneralRoute = UserUProfileProfileGeneralImport.update(
+  {
+    path: '/profile/general',
+    getParentRoute: () => UserUProfileRoute,
+  } as any,
+)
+
+const ClubAdminCaProfileProfileSecurityRoute =
+  ClubAdminCaProfileProfileSecurityImport.update({
+    path: '/profile/security',
+    getParentRoute: () => ClubAdminCaProfileRoute,
+  } as any)
+
+const ClubAdminCaProfileProfileGeneralRoute =
+  ClubAdminCaProfileProfileGeneralImport.update({
+    path: '/profile/general',
+    getParentRoute: () => ClubAdminCaProfileRoute,
+  } as any)
+
+const AdminAProfileProfileSecurityRoute =
+  AdminAProfileProfileSecurityImport.update({
+    path: '/profile/security',
+    getParentRoute: () => AdminAProfileRoute,
+  } as any)
+
+const AdminAProfileProfileGeneralRoute =
+  AdminAProfileProfileGeneralImport.update({
+    path: '/profile/general',
+    getParentRoute: () => AdminAProfileRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -72,6 +169,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AdminLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/_club-admin': {
+      id: '/_club-admin'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ClubAdminLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/_user': {
       id: '/_user'
       path: ''
@@ -79,40 +190,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserLazyImport
       parentRoute: typeof rootRoute
     }
-    '/_user/u/profile': {
-      id: '/_user/u/profile'
-      path: '/u/profile'
-      fullPath: '/u/profile'
-      preLoaderRoute: typeof UserUProfileImport
+    '/_admin/a': {
+      id: '/_admin/a'
+      path: '/a'
+      fullPath: '/a'
+      preLoaderRoute: typeof AdminAImport
+      parentRoute: typeof AdminLazyImport
+    }
+    '/_admin/a/_profile': {
+      id: '/_admin/a/_profile'
+      path: '/a'
+      fullPath: '/a'
+      preLoaderRoute: typeof AdminAProfileImport
+      parentRoute: typeof AdminARoute
+    }
+    '/_admin/a/dashboard': {
+      id: '/_admin/a/dashboard'
+      path: '/dashboard'
+      fullPath: '/a/dashboard'
+      preLoaderRoute: typeof AdminADashboardImport
+      parentRoute: typeof AdminAImport
+    }
+    '/_club-admin/ca': {
+      id: '/_club-admin/ca'
+      path: '/ca'
+      fullPath: '/ca'
+      preLoaderRoute: typeof ClubAdminCaImport
+      parentRoute: typeof ClubAdminLazyImport
+    }
+    '/_club-admin/ca/_profile': {
+      id: '/_club-admin/ca/_profile'
+      path: '/ca'
+      fullPath: '/ca'
+      preLoaderRoute: typeof ClubAdminCaProfileImport
+      parentRoute: typeof ClubAdminCaRoute
+    }
+    '/_club-admin/ca/dashboard': {
+      id: '/_club-admin/ca/dashboard'
+      path: '/dashboard'
+      fullPath: '/ca/dashboard'
+      preLoaderRoute: typeof ClubAdminCaDashboardImport
+      parentRoute: typeof ClubAdminCaImport
+    }
+    '/_user/u': {
+      id: '/_user/u'
+      path: '/u'
+      fullPath: '/u'
+      preLoaderRoute: typeof UserUImport
       parentRoute: typeof UserLazyImport
+    }
+    '/_user/u/_profile': {
+      id: '/_user/u/_profile'
+      path: '/u'
+      fullPath: '/u'
+      preLoaderRoute: typeof UserUProfileImport
+      parentRoute: typeof UserURoute
     }
     '/_user/u/websites/$websiteId': {
       id: '/_user/u/websites/$websiteId'
-      path: '/u/websites/$websiteId'
+      path: '/websites/$websiteId'
       fullPath: '/u/websites/$websiteId'
       preLoaderRoute: typeof UserUWebsitesWebsiteIdImport
-      parentRoute: typeof UserLazyImport
+      parentRoute: typeof UserUImport
     }
     '/_user/u/websites/create': {
       id: '/_user/u/websites/create'
-      path: '/u/websites/create'
+      path: '/websites/create'
       fullPath: '/u/websites/create'
       preLoaderRoute: typeof UserUWebsitesCreateImport
-      parentRoute: typeof UserLazyImport
+      parentRoute: typeof UserUImport
     }
     '/_user/u/mail/': {
       id: '/_user/u/mail/'
-      path: '/u/mail'
+      path: '/mail'
       fullPath: '/u/mail'
       preLoaderRoute: typeof UserUMailIndexImport
-      parentRoute: typeof UserLazyImport
+      parentRoute: typeof UserUImport
     }
     '/_user/u/websites/': {
       id: '/_user/u/websites/'
-      path: '/u/websites'
+      path: '/websites'
       fullPath: '/u/websites'
       preLoaderRoute: typeof UserUWebsitesIndexImport
-      parentRoute: typeof UserLazyImport
+      parentRoute: typeof UserUImport
+    }
+    '/_admin/a/_profile/profile/general': {
+      id: '/_admin/a/_profile/profile/general'
+      path: '/profile/general'
+      fullPath: '/a/profile/general'
+      preLoaderRoute: typeof AdminAProfileProfileGeneralImport
+      parentRoute: typeof AdminAProfileImport
+    }
+    '/_admin/a/_profile/profile/security': {
+      id: '/_admin/a/_profile/profile/security'
+      path: '/profile/security'
+      fullPath: '/a/profile/security'
+      preLoaderRoute: typeof AdminAProfileProfileSecurityImport
+      parentRoute: typeof AdminAProfileImport
+    }
+    '/_club-admin/ca/_profile/profile/general': {
+      id: '/_club-admin/ca/_profile/profile/general'
+      path: '/profile/general'
+      fullPath: '/ca/profile/general'
+      preLoaderRoute: typeof ClubAdminCaProfileProfileGeneralImport
+      parentRoute: typeof ClubAdminCaProfileImport
+    }
+    '/_club-admin/ca/_profile/profile/security': {
+      id: '/_club-admin/ca/_profile/profile/security'
+      path: '/profile/security'
+      fullPath: '/ca/profile/security'
+      preLoaderRoute: typeof ClubAdminCaProfileProfileSecurityImport
+      parentRoute: typeof ClubAdminCaProfileImport
+    }
+    '/_user/u/_profile/profile/general': {
+      id: '/_user/u/_profile/profile/general'
+      path: '/profile/general'
+      fullPath: '/u/profile/general'
+      preLoaderRoute: typeof UserUProfileProfileGeneralImport
+      parentRoute: typeof UserUProfileImport
+    }
+    '/_user/u/_profile/profile/security': {
+      id: '/_user/u/_profile/profile/security'
+      path: '/profile/security'
+      fullPath: '/u/profile/security'
+      preLoaderRoute: typeof UserUProfileProfileSecurityImport
+      parentRoute: typeof UserUProfileImport
     }
   }
 }
@@ -121,12 +323,35 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  AdminLazyRoute: AdminLazyRoute.addChildren({
+    AdminARoute: AdminARoute.addChildren({
+      AdminAProfileRoute: AdminAProfileRoute.addChildren({
+        AdminAProfileProfileGeneralRoute,
+        AdminAProfileProfileSecurityRoute,
+      }),
+      AdminADashboardRoute,
+    }),
+  }),
+  ClubAdminLazyRoute: ClubAdminLazyRoute.addChildren({
+    ClubAdminCaRoute: ClubAdminCaRoute.addChildren({
+      ClubAdminCaProfileRoute: ClubAdminCaProfileRoute.addChildren({
+        ClubAdminCaProfileProfileGeneralRoute,
+        ClubAdminCaProfileProfileSecurityRoute,
+      }),
+      ClubAdminCaDashboardRoute,
+    }),
+  }),
   UserLazyRoute: UserLazyRoute.addChildren({
-    UserUProfileRoute,
-    UserUWebsitesWebsiteIdRoute,
-    UserUWebsitesCreateRoute,
-    UserUMailIndexRoute,
-    UserUWebsitesIndexRoute,
+    UserURoute: UserURoute.addChildren({
+      UserUProfileRoute: UserUProfileRoute.addChildren({
+        UserUProfileProfileGeneralRoute,
+        UserUProfileProfileSecurityRoute,
+      }),
+      UserUWebsitesWebsiteIdRoute,
+      UserUWebsitesCreateRoute,
+      UserUMailIndexRoute,
+      UserUWebsitesIndexRoute,
+    }),
   }),
 })
 
@@ -139,41 +364,130 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_admin",
+        "/_club-admin",
         "/_user"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/_admin": {
+      "filePath": "_admin.lazy.tsx",
+      "children": [
+        "/_admin/a"
+      ]
+    },
+    "/_club-admin": {
+      "filePath": "_club-admin.lazy.tsx",
+      "children": [
+        "/_club-admin/ca"
+      ]
+    },
     "/_user": {
       "filePath": "_user.lazy.tsx",
       "children": [
-        "/_user/u/profile",
+        "/_user/u"
+      ]
+    },
+    "/_admin/a": {
+      "filePath": "_admin/a",
+      "parent": "/_admin",
+      "children": [
+        "/_admin/a/_profile",
+        "/_admin/a/dashboard"
+      ]
+    },
+    "/_admin/a/_profile": {
+      "filePath": "_admin/a/_profile.tsx",
+      "parent": "/_admin/a",
+      "children": [
+        "/_admin/a/_profile/profile/general",
+        "/_admin/a/_profile/profile/security"
+      ]
+    },
+    "/_admin/a/dashboard": {
+      "filePath": "_admin/a/dashboard.tsx",
+      "parent": "/_admin/a"
+    },
+    "/_club-admin/ca": {
+      "filePath": "_club-admin/ca",
+      "parent": "/_club-admin",
+      "children": [
+        "/_club-admin/ca/_profile",
+        "/_club-admin/ca/dashboard"
+      ]
+    },
+    "/_club-admin/ca/_profile": {
+      "filePath": "_club-admin/ca/_profile.tsx",
+      "parent": "/_club-admin/ca",
+      "children": [
+        "/_club-admin/ca/_profile/profile/general",
+        "/_club-admin/ca/_profile/profile/security"
+      ]
+    },
+    "/_club-admin/ca/dashboard": {
+      "filePath": "_club-admin/ca/dashboard.tsx",
+      "parent": "/_club-admin/ca"
+    },
+    "/_user/u": {
+      "filePath": "_user/u",
+      "parent": "/_user",
+      "children": [
+        "/_user/u/_profile",
         "/_user/u/websites/$websiteId",
         "/_user/u/websites/create",
         "/_user/u/mail/",
         "/_user/u/websites/"
       ]
     },
-    "/_user/u/profile": {
-      "filePath": "_user/u/profile.tsx",
-      "parent": "/_user"
+    "/_user/u/_profile": {
+      "filePath": "_user/u/_profile.tsx",
+      "parent": "/_user/u",
+      "children": [
+        "/_user/u/_profile/profile/general",
+        "/_user/u/_profile/profile/security"
+      ]
     },
     "/_user/u/websites/$websiteId": {
       "filePath": "_user/u/websites/$websiteId.tsx",
-      "parent": "/_user"
+      "parent": "/_user/u"
     },
     "/_user/u/websites/create": {
       "filePath": "_user/u/websites/create.tsx",
-      "parent": "/_user"
+      "parent": "/_user/u"
     },
     "/_user/u/mail/": {
       "filePath": "_user/u/mail/index.tsx",
-      "parent": "/_user"
+      "parent": "/_user/u"
     },
     "/_user/u/websites/": {
       "filePath": "_user/u/websites/index.tsx",
-      "parent": "/_user"
+      "parent": "/_user/u"
+    },
+    "/_admin/a/_profile/profile/general": {
+      "filePath": "_admin/a/_profile/profile/general.tsx",
+      "parent": "/_admin/a/_profile"
+    },
+    "/_admin/a/_profile/profile/security": {
+      "filePath": "_admin/a/_profile/profile/security.tsx",
+      "parent": "/_admin/a/_profile"
+    },
+    "/_club-admin/ca/_profile/profile/general": {
+      "filePath": "_club-admin/ca/_profile/profile/general.tsx",
+      "parent": "/_club-admin/ca/_profile"
+    },
+    "/_club-admin/ca/_profile/profile/security": {
+      "filePath": "_club-admin/ca/_profile/profile/security.tsx",
+      "parent": "/_club-admin/ca/_profile"
+    },
+    "/_user/u/_profile/profile/general": {
+      "filePath": "_user/u/_profile/profile/general.tsx",
+      "parent": "/_user/u/_profile"
+    },
+    "/_user/u/_profile/profile/security": {
+      "filePath": "_user/u/_profile/profile/security.tsx",
+      "parent": "/_user/u/_profile"
     }
   }
 }

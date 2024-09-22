@@ -14,6 +14,7 @@ use crate::global::GLOBAL;
 use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
 use crate::http::handler_frontend::auth::schema::LoginRequest;
+use crate::http::SESSION_USER;
 use crate::models;
 use crate::models::User;
 use crate::utils::hashing;
@@ -40,7 +41,7 @@ pub async fn login(
         VerifyPwError::Mismatch => ApiError::Unauthenticated,
     })?;
 
-    session.insert("user", user.uuid).await?;
+    session.insert(SESSION_USER, user.uuid).await?;
     // We have to call save manually as the id is only populated after creating the session
     session.save().await?;
 

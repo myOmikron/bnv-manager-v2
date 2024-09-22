@@ -7,6 +7,7 @@ use rorm::FieldAccess;
 use rorm::Model;
 use swaggapi::get;
 use swaggapi::post;
+use swaggapi::put;
 use tracing::instrument;
 
 use crate::global::GLOBAL;
@@ -15,6 +16,7 @@ use crate::http::common::errors::ApiResult;
 use crate::http::common::errors::FormResult;
 use crate::http::common::schemas::FormError;
 use crate::http::extractors::session_user::SessionUser;
+use crate::http::handler_frontend::users::schema::ChangeMeRequest;
 use crate::http::handler_frontend::users::schema::ChangePwFormFields;
 use crate::http::handler_frontend::users::schema::ChangePwRequest;
 use crate::http::handler_frontend::users::schema::FullUser;
@@ -32,6 +34,8 @@ pub async fn get_me(SessionUser(user): SessionUser) -> ApiResult<Json<FullUser>>
     Ok(Json(FullUser {
         uuid: user.uuid,
         username: user.username,
+        preferred_lang: user.preferred_lang,
+        role: user.role,
         display_name: user.display_name,
         last_login: user.last_login.map(SchemaDateTime),
         created_at: SchemaDateTime(user.created_at),
@@ -76,4 +80,32 @@ pub async fn change_password(
     tx.commit().await?;
 
     Ok(Ok(()))
+}
+
+/// Updates the current user information
+#[put("/me")]
+pub async fn update_me(
+    SessionUser(user): SessionUser,
+    Json(ChangeMeRequest {
+        display_name,
+        preferred_lang,
+    }): Json<ChangeMeRequest>,
+) -> ApiResult<()> {
+    let mut tx = GLOBAL.db.start_transaction().await?;
+
+    update!(&mut tx, User)
+        .condition(User::F.uuid.equals(user.uuid))
+        .begin_dyn_set()
+        .set_if(User::F.display_name, display_name.map(|x| x.into_inner()))
+        .set_if(
+            User::F.preferred_lang,
+            preferred_lang.map(|x| x.into_inner()),
+        )
+        .finish_dyn_set()
+        .map_err(|_| ApiError::BadRequest)?
+        .await?;
+
+    tx.commit().await?;
+
+    Ok(())
 }

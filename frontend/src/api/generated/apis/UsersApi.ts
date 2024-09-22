@@ -16,12 +16,17 @@
 import * as runtime from '../runtime';
 import type {
   ApiErrorResponse,
+  ChangeMeRequest,
   ChangePwRequest,
   FullUser,
 } from '../models/index';
 
 export interface ChangePasswordRequest {
     ChangePwRequest: ChangePwRequest;
+}
+
+export interface UpdateMeRequest {
+    ChangeMeRequest: ChangeMeRequest;
 }
 
 /**
@@ -92,6 +97,43 @@ export class UsersApi extends runtime.BaseAPI {
     async getMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FullUser> {
         const response = await this.getMeRaw(initOverrides);
         return await response.value();
+    }
+
+    /**
+     * Updates the current user information
+     * Updates the current user information
+     */
+    async updateMeRaw(requestParameters: UpdateMeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['ChangeMeRequest'] == null) {
+            throw new runtime.RequiredError(
+                'ChangeMeRequest',
+                'Required parameter "ChangeMeRequest" was null or undefined when calling updateMe().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/frontend/v1/users/me`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['ChangeMeRequest'],
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Updates the current user information
+     * Updates the current user information
+     */
+    async updateMe(requestParameters: UpdateMeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.updateMeRaw(requestParameters, initOverrides);
     }
 
 }

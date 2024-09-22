@@ -5,3 +5,5 @@ pub mod checked_string;
 pub mod hashing;
 pub mod schemars;
 pub mod secure_string;
+
+pub mod custom_db_enum;

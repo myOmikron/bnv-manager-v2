@@ -9,7 +9,6 @@ use std::sync::Arc;
 
 use clap::Parser;
 use rorm::cli as rorm_cli;
-use rorm::config::DatabaseConfig;
 use rorm::Database;
 use rorm::DatabaseConfiguration;
 use tracing::instrument;
@@ -23,12 +22,14 @@ use crate::global::ws::GlobalWs;
 use crate::global::GlobalEntities;
 use crate::global::GLOBAL;
 use crate::models::User;
+use crate::models::UserRole;
 
 mod cli;
 pub mod config;
 pub mod global;
 pub mod http;
 pub mod ldap;
+mod migrate;
 pub mod models;
 pub mod utils;
 
@@ -103,18 +104,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             std::fs::remove_file(MODELS)?;
         }
         Command::Migrate { migrations_dir } => {
-            rorm_cli::migrate::run_migrate_custom(
-                DatabaseConfig {
-                    driver: config.database.into(),
-                    last_migration_table_name: None,
-                },
-                migrations_dir,
-                false,
-                None,
-            )
-            .await?
+            migrate::migrate(config.database.clone(), migrations_dir).await?
         }
-        Command::CreateUser => {
+        Command::CreateAdmin => {
             // Connect to the database
             let mut conf = DatabaseConfiguration::new(config.database.clone().into());
             conf.disable_logging = Some(true);
@@ -156,9 +148,16 @@ async fn create_user(db: Database) -> Result<(), String> {
     #[allow(clippy::unwrap_used)]
     let password = rpassword::prompt_password("Enter password: ").unwrap();
 
-    User::create_user(username.to_string(), password, display_name, &db)
-        .await
-        .map_err(|e| format!("Failed to create user: {e}"))?;
+    User::create_user(
+        username.to_string(),
+        password,
+        display_name,
+        UserRole::Administrator,
+        "EN".to_string(),
+        &db,
+    )
+    .await
+    .map_err(|e| format!("Failed to create user: {e}"))?;
 
     println!("Created user {username}");
 

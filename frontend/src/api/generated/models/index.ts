@@ -101,6 +101,25 @@ export const ApiStatusCode = {
 export type ApiStatusCode = typeof ApiStatusCode[keyof typeof ApiStatusCode];
 
 /**
+ * The request to change user information
+ * @export
+ * @interface ChangeMeRequest
+ */
+export interface ChangeMeRequest {
+    /**
+     * The new name
+     * @type {string}
+     * @memberof ChangeMeRequest
+     */
+    display_name?: string | null;
+    /**
+     * The preferred user language
+     * @type {string}
+     * @memberof ChangeMeRequest
+     */
+    preferred_lang?: string | null;
+}
+/**
  * @type ChangePwFormFields
  * The fields of the change password request
  * @export
@@ -369,6 +388,18 @@ export interface FullUser {
      */
     last_login?: string;
     /**
+     * Preferred language of the user
+     * @type {string}
+     * @memberof FullUser
+     */
+    preferred_lang: string;
+    /**
+     * 
+     * @type {UserRole}
+     * @memberof FullUser
+     */
+    role: UserRole;
+    /**
      * The username
      * @type {string}
      * @memberof FullUser
@@ -544,6 +575,18 @@ export interface UpdateWebsiteRequest {
      */
     name: string;
 }
+
+/**
+ * The role of a user
+ * @export
+ */
+export const UserRole = {
+    Administrator: 'Administrator',
+    ClubAdmin: 'ClubAdmin',
+    User: 'User'
+} as const;
+export type UserRole = typeof UserRole[keyof typeof UserRole];
+
 /**
  * a uuid
  * @export

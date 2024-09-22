@@ -13,6 +13,7 @@ use tracing::instrument;
 use uuid::Uuid;
 
 use crate::models::User;
+use crate::models::UserRole;
 
 /// The error that might occur when creating an internal user
 #[derive(Debug, Error)]
@@ -43,6 +44,8 @@ impl User {
         username: String,
         password: String,
         display_name: String,
+        role: UserRole,
+        preferred_lang: String,
         executor: impl Executor<'_>,
     ) -> Result<Uuid, CreateInternalUserError> {
         if username.is_empty() || password.is_empty() || display_name.is_empty() {
@@ -72,6 +75,8 @@ impl User {
                 uuid: Uuid::new_v4(),
                 display_name,
                 username,
+                role,
+                preferred_lang,
                 password: password_hash,
             })
             .await?;
@@ -88,6 +93,10 @@ impl User {
 pub struct UserInsert {
     /// The primary key of the user
     pub uuid: Uuid,
+    /// The role of the user
+    pub role: UserRole,
+    /// The chosen language of the user
+    pub preferred_lang: String,
     /// The display name of the user
     pub display_name: String,
     /// Username of the user

@@ -9,10 +9,12 @@ authors = ["myOmikron <git@omikron.dev>"]
 [dependencies]
 # webframework
 axum = { version = "~0.7", features = ["ws", "macros"] }
+# Extra utilities for axum
+axum-extra = { version = "~0.9" }
 # abstractions for requests
 tower = { version = "~0.5", features = ["full"] }
 # common middlewares
-tower-http = { version = "~0.5", features = ["trace", "normalize-path"] }
+tower-http = { version = "~0.6", features = ["trace", "normalize-path"] }
 # Session middleware
 tower-sessions-rorm-store = { version = "~0.3" }
 
@@ -27,6 +29,12 @@ rpassword = { version = "~7" }
 # password hashing
 argon2 = { version = "~0.5", features = ["std"] }
 
+# totp
+totp-rs = { version = "~5" }
+# webauthn
+# The feature is necessary as we want to save the state to a database
+webauthn-rs = { version = "~0.5", features = ["danger-allow-state-serialisation"] }
+
 # Serialization libraries
 serde = { version = "~1", features = ["derive"] }
 serde_repr = { version = "~0.1" }
@@ -37,12 +45,18 @@ url = { version = "~2", features = ["serde"] }
 # Time library
 time = { version = "~0.3", features = ["serde-well-known"] }
 
+# Derives for enums
+strum = { version = "~0.26", features = ["derive"] }
+
+# For custom_db_enum
+linkme = { version = "~0.3" }
+
 # Errors
 thiserror = { version = "~1" }
 
 # Logging
 tracing = { version = "~0.1" }
-tracing-subscriber = { version = "~0.3", features = ["tracing-log"] }
+tracing-subscriber = { version = "~0.3", features = ["tracing-log", "env-filter"] }
 
 # RNG
 rand = { version = "~0.8" }
@@ -70,3 +84,9 @@ reqwest = { version = "~0.12", features = ["json"] }
 
 # DNS client
 hickory-resolver = { version = "~0.24", features = ["tokio"] }
+
+# Opentelemetry
+tracing-opentelemetry = { version = "~0.26", optional = true }
+opentelemetry = { version = "~0.25", optional = true }
+opentelemetry_sdk = { version = "~0.25", features = ["rt-tokio"], optional = true }
+opentelemetry-otlp = { version = "~0.25", optional = true }

@@ -1,0 +1,12 @@
+{
+    "heading": {
+        "profile": "Profile"
+    },
+    "description": {
+        "profile": "You can change your profile settings here"
+    },
+    "label": {
+        "general": "General",
+        "security": "Security"
+    }
+}

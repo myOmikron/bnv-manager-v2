@@ -28,6 +28,8 @@ const USER_CONTEXT = React.createContext<UserContext>({
         display_name: "",
         created_at: "",
         last_login: "",
+        preferred_lang: "",
+        role: "User",
     },
 
     /**
@@ -59,10 +61,7 @@ type UserProviderState = {
  *
  * This is a **singleton** only use at most **one** instance in your application.
  */
-export class UserProvider extends React.Component<
-    UserProviderProps,
-    UserProviderState
-> {
+export class UserProvider extends React.Component<UserProviderProps, UserProviderState> {
     state: UserProviderState = { user: "loading" };
 
     fetching: boolean = false;
@@ -80,9 +79,7 @@ export class UserProvider extends React.Component<
         Api.users.getMe().then((result) => {
             result.match(
                 (user) => {
-                    WS.connect(
-                        `${window.location.origin.replace("http", "ws")}/api/frontend/v1/common/ws/ws`,
-                    );
+                    WS.connect(`${window.location.origin.replace("http", "ws")}/api/frontend/v1/common/ws/ws`);
                     window.localStorage.setItem("username", user.username);
                     this.setState({ user });
                 },
@@ -111,8 +108,7 @@ export class UserProvider extends React.Component<
         // Register as global singleton
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         if (USER_PROVIDER === null) USER_PROVIDER = this;
-        else if (USER_PROVIDER === this)
-            CONSOLE.error("UserProvider did mount twice");
+        else if (USER_PROVIDER === this) CONSOLE.error("UserProvider did mount twice");
         else CONSOLE.error("Two instances of UserProvider are used");
     }
 
@@ -122,8 +118,7 @@ export class UserProvider extends React.Component<
     componentWillUnmount() {
         // Deregister as global singleton
         if (USER_PROVIDER === this) USER_PROVIDER = null;
-        else if (USER_PROVIDER === null)
-            CONSOLE.error("UserProvider instance did unmount twice");
+        else if (USER_PROVIDER === null) CONSOLE.error("UserProvider instance did unmount twice");
         else CONSOLE.error("Two instances of UserProvider are used");
     }
 
@@ -170,12 +165,8 @@ export class UserProvider extends React.Component<
 export function inspectError(error: ApiError) {
     switch (error.status_code) {
         case StatusCode.Unauthenticated:
-            if (USER_PROVIDER !== null)
-                USER_PROVIDER.setState({ user: "unauthenticated" });
-            else
-                CONSOLE.warn(
-                    "inspectError has been called without a UserProvider",
-                );
+            if (USER_PROVIDER !== null) USER_PROVIDER.setState({ user: "unauthenticated" });
+            else CONSOLE.warn("inspectError has been called without a UserProvider");
             break;
         default:
             break;

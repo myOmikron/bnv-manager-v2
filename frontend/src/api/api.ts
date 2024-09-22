@@ -1,5 +1,6 @@
 import {
     AuthApi,
+    ChangeMeRequest,
     Configuration,
     RequiredError,
     ResponseError,
@@ -40,12 +41,19 @@ export const Api = {
     },
     users: {
         getMe: () => handleError(usersApi.getMe()),
+        updateMe: (req: ChangeMeRequest) => handleError(usersApi.updateMe({ ChangeMeRequest: req })),
+        changePassword: (current_pw: string, new_pw: string) =>
+            handleError(
+                usersApi.changePassword({
+                    ChangePwRequest: {
+                        current_pw,
+                        new_pw,
+                    },
+                }),
+            ),
     },
     websites: {
-        create: (name: string) =>
-            handleError(
-                websitesApi.createWebsite({ CreateWebsiteRequest: { name } }),
-            ),
+        create: (name: string) => handleError(websitesApi.createWebsite({ CreateWebsiteRequest: { name } })),
         get: (uuid: UUID) => handleError(websitesApi.getWebsite({ uuid })),
         getAll: () => handleError(websitesApi.getAllWebsites()),
         update: (uuid: UUID, name: string) =>
@@ -69,10 +77,8 @@ export const Api = {
                     domain_uuid: domainUuid,
                 }),
             ),
-        delete: (uuid: UUID) =>
-            handleError(websitesApi.deleteWebsite({ uuid })),
-        deploy: (uuid: UUID) =>
-            handleError(websitesApi.deployWebsite({ uuid })),
+        delete: (uuid: UUID) => handleError(websitesApi.deleteWebsite({ uuid })),
+        deploy: (uuid: UUID) => handleError(websitesApi.deployWebsite({ uuid })),
         checkDns: (uuid: UUID) => handleError(websitesApi.checkDns({ uuid })),
     },
 };
@@ -82,9 +88,7 @@ export const Api = {
 /**
  * Wraps a promise returned by the generated SDK which handles its errors and returns a {@link Result}
  */
-export async function handleError<T>(
-    promise: Promise<T>,
-): Promise<Result<T, ApiError>> {
+export async function handleError<T>(promise: Promise<T>): Promise<Result<T, ApiError>> {
     try {
         return new Ok(await promise);
     } catch (e) {

@@ -11,14 +11,14 @@ import { Avatar } from "src/components/base/avatar";
 import USER_CONTEXT, { UserProvider } from "src/context/user";
 
 /**
- * The properties for {@link UserMenu}
+ * The properties for {@link AdminMenu}
  */
-export type UserMenuProps = {};
+export type AdminMenuProps = {};
 
 /**
  * The menu for the user
  */
-export default function UserMenu(props: UserMenuProps) {
+export default function AdminMenu(props: AdminMenuProps) {
     const [t] = useTranslation();
     const [tM] = useTranslation("menu");
 
@@ -35,8 +35,7 @@ export default function UserMenu(props: UserMenuProps) {
                     </NavbarSection>
                     <NavbarDivider />
                     <NavbarSection>
-                        <NavbarItem href={"/u/mail"}>{tM("button.mail")}</NavbarItem>
-                        <NavbarItem href={"/u/websites"}>{tM("button.websites")}</NavbarItem>
+                        <NavbarItem href={"/a/dashboard"}>{tM("button.dashboard")}</NavbarItem>
                     </NavbarSection>
                     <NavbarSpacer />
                     <NavbarSection>
@@ -61,7 +60,7 @@ export default function UserMenu(props: UserMenuProps) {
                                 </div>
                             </DropdownButton>
                             <DropdownMenu className="min-w-52">
-                                <DropdownItem href={"/u/profile/general"}>
+                                <DropdownItem href={"/a/profile/general"}>
                                     <DropdownLabel>{tM("button.profile")}</DropdownLabel>
                                 </DropdownItem>
                                 <DropdownItem
@@ -82,8 +81,7 @@ export default function UserMenu(props: UserMenuProps) {
                 <Sidebar>
                     <SidebarHeader></SidebarHeader>
                     <SidebarBody>
-                        <SidebarItem href={"/u/mail"}>{tM("button.mail")}</SidebarItem>
-                        <SidebarItem href={"/u/websites"}>{tM("button.websites")}</SidebarItem>
+                        <SidebarItem href={"/a/dashboard"}>{tM("button.dashboard")}</SidebarItem>
                     </SidebarBody>
                     <SidebarFooter>
                         <Dropdown>
@@ -107,7 +105,7 @@ export default function UserMenu(props: UserMenuProps) {
                                 </div>
                             </DropdownButton>
                             <DropdownMenu className="min-w-52" anchor={"top start"}>
-                                <DropdownItem href={"/u/profile/general"}>
+                                <DropdownItem href={"/a/profile/general"}>
                                     <DropdownLabel>{tM("button.profile")}</DropdownLabel>
                                 </DropdownItem>
                                 <DropdownItem
@@ -129,11 +127,10 @@ export default function UserMenu(props: UserMenuProps) {
         </StackedLayout>
     );
 }
-
-export const Route = createLazyFileRoute("/_user")({
+export const Route = createLazyFileRoute("/_admin")({
     component: () => (
         <UserProvider>
-            <UserMenu />
+            <AdminMenu />
         </UserProvider>
     ),
 });

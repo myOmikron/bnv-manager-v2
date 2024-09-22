@@ -1,9 +1,28 @@
 {
     "button": {
-        "create": "Erstellen"
+        "create": "Erstellen",
+        "reset": "Zurücksetzen",
+        "save": "Speichern"
     },
     "label": {
+        "centuries": "Jahrzehnte",
+        "days": "Tage",
+        "english": "Englisch",
+        "estimated-crack-time": "Ungefähre Zeit zum Cracken: {{time}}",
+        "german": "Deutsch",
+        "hours": "Stunden",
+        "minutes": "Minuten",
+        "months": "Monate",
+        "name": "Name",
         "password": "Passwort",
-        "username": "Nutzername"
+        "preferred-lang": "Bevorzugte Sprache",
+        "seconds": "Sekunden",
+        "theme": "Theme",
+        "theme-light": "Hell",
+        "theme-dark": "Dunkel",
+        "theme-system": "System",
+        "username": "Nutzername",
+        "weeks": "Wochen",
+        "years": "Jahre"
     }
 }

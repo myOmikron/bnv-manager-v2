@@ -1,10 +1,31 @@
 //! All user related models are defined here
 
 use rorm::Model;
+use schemars::JsonSchema;
+use serde::Deserialize;
+use serde::Serialize;
+use strum::EnumIter;
+use strum::EnumString;
+use strum::IntoStaticStr;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
+use crate::custom_db_enum;
+
 mod impls;
+
+custom_db_enum!(UserRole, "role");
+
+/// The role of a user
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)] // std
+#[derive(JsonSchema, Serialize, Deserialize)] // Conversion from and to json for api
+#[derive(EnumString, IntoStaticStr, EnumIter)] // Conversion from and to string for db
+#[allow(missing_docs)]
+pub enum UserRole {
+    Administrator,
+    ClubAdmin,
+    User,
+}
 
 /// The representation of a user
 #[derive(Model, Debug)]
@@ -12,6 +33,13 @@ pub struct User {
     /// Primary key of a user
     #[rorm(primary_key)]
     pub uuid: Uuid,
+
+    /// The preferred language of the user
+    #[rorm(max_length = 255)]
+    pub preferred_lang: String,
+
+    /// The role of a user
+    pub role: UserRole,
 
     /// The name that is used for displaying purposes
     #[rorm(max_length = 255)]

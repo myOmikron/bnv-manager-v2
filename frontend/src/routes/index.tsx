@@ -1,7 +1,7 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 import React from "react";
-import { UserProvider } from "src/context/user";
+import USER_CONTEXT, { UserProvider } from "src/context/user";
 
 /**
  * The properties for {@link RoleGuard}
@@ -12,7 +12,16 @@ export type RoleGuardProps = {};
  * A guard for distributing on sub-routes based on the user role
  */
 export default function RoleGuard(props: RoleGuardProps) {
-    return <Navigate to={"/u/mail"} />;
+    const { user } = React.useContext(USER_CONTEXT);
+
+    switch (user.role) {
+        case "Administrator":
+            return <Navigate to={"/a/dashboard"} />;
+        case "User":
+            return <Navigate to={"/u/mail"} />;
+        case "ClubAdmin":
+            return <Navigate to={"/ca/dashboard"} />;
+    }
 }
 
 export const Route = createFileRoute("/")({

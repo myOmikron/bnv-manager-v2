@@ -1,9 +1,28 @@
 {
     "button": {
-        "create": "Create"
+        "create": "Create",
+        "reset": "Reset",
+        "save": "Save"
     },
     "label": {
+        "centuries": "centuries",
+        "days": "days",
+        "english": "English",
+        "estimated-crack-time": "Estimated crack time: {{time}}",
+        "german": "German",
+        "hours": "hours",
+        "minutes": "minutes",
+        "months": "months",
+        "name": "Name",
         "password": "Password",
-        "username": "Username"
+        "preferred-lang": "Preferred language",
+        "seconds": "seconds",
+        "theme": "Theme",
+        "theme-light": "Light theme",
+        "theme-dark": "Dark theme",
+        "theme-system": "System theme",
+        "username": "Username",
+        "weeks": "weeks",
+        "years": "years"
     }
 }

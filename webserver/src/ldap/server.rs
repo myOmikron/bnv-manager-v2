@@ -29,8 +29,17 @@ use crate::models::User;
 use crate::utils::hashing;
 use crate::utils::hashing::VerifyPwError;
 
+/// Current state of the session of the user
+#[derive(Debug)]
+pub enum BindState {
+    /// Anonymous bind
+    Anonymous,
+    /// User bind
+    User(User),
+}
+
 /// Execute the bind operation
-pub async fn do_bind(sbr: &SimpleBindRequest) -> Result<LdapMsg, LdapMsg> {
+pub async fn do_bind(sbr: &SimpleBindRequest) -> Result<(User, LdapMsg), LdapMsg> {
     let mut parts = sbr.dn.split("=");
     let dn = parts
         .next()
@@ -61,7 +70,7 @@ pub async fn do_bind(sbr: &SimpleBindRequest) -> Result<LdapMsg, LdapMsg> {
         VerifyPwError::Mismatch => sbr.gen_invalid_cred(),
     })?;
 
-    Ok(sbr.gen_success())
+    Ok((user, sbr.gen_success()))
 }
 
 /// Handle the client connection
@@ -70,6 +79,8 @@ pub async fn handle_client(socket: TcpStream, _addr: SocketAddr) {
     let (r, w) = tokio::io::split(socket);
     let mut reqs = FramedRead::new(r, LdapCodec::default());
     let mut resp = FramedWrite::new(w, LdapCodec::default());
+
+    let mut bind_state = BindState::Anonymous;
 
     while let Some(req) = reqs.next().await {
         let Ok(Ok(server_ops)) = req.map(ServerOps::try_from) else {
@@ -83,11 +94,23 @@ pub async fn handle_client(socket: TcpStream, _addr: SocketAddr) {
             return;
         };
 
-        let ServerOps::SimpleBind(sbr) = server_ops else {
-            return;
-        };
+        let msg = match server_ops {
+            ServerOps::SimpleBind(sbr) => match do_bind(&sbr).await {
+                Ok((user, msg)) => {
+                    bind_state = BindState::User(user);
 
-        let msg = do_bind(&sbr).await.unwrap_or_else(|x| x);
+                    msg
+                }
+                Err(msg) => msg,
+            },
+            ServerOps::Whoami(whoami) => match &bind_state {
+                BindState::Anonymous => whoami.gen_success("dn=anonymous"),
+                BindState::User(user) => whoami.gen_success(&format!("dn={}", user.username)),
+            },
+            _ => {
+                return;
+            }
+        };
 
         if resp.send(msg).await.is_err() {
             return;

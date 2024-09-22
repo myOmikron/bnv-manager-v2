@@ -1,5 +1,6 @@
 {
     "button": {
+        "dashboard": "Dashboard",
         "mail": "Mail",
         "profile": "Profil",
         "sign-out": "Ausloggen",

@@ -141,6 +141,49 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Updates the current user information",
+                "description": "Updates the current user information",
+                "operationId": "update_me",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangeMeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
             }
         },
         "/api/frontend/v1/users/me/change-pw": {
@@ -752,6 +795,26 @@
                     2000
                 ]
             },
+            "ChangeMeRequest": {
+                "description": "The request to change user information",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "The new name",
+                        "nullable": true,
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "preferred_lang": {
+                        "description": "The preferred user language",
+                        "nullable": true,
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    }
+                }
+            },
             "ChangePwFormFields": {
                 "description": "The fields of the change password request",
                 "oneOf": [
@@ -967,6 +1030,13 @@
                     "last_login": {
                         "$ref": "#/components/schemas/SchemaDateTime"
                     },
+                    "preferred_lang": {
+                        "description": "Preferred language of the user",
+                        "type": "string"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/UserRole"
+                    },
                     "username": {
                         "description": "The username",
                         "type": "string"
@@ -980,6 +1050,8 @@
                 "required": [
                     "created_at",
                     "display_name",
+                    "preferred_lang",
+                    "role",
                     "username",
                     "uuid"
                 ]
@@ -1143,6 +1215,15 @@
                 },
                 "required": [
                     "name"
+                ]
+            },
+            "UserRole": {
+                "description": "The role of a user",
+                "type": "string",
+                "enum": [
+                    "Administrator",
+                    "ClubAdmin",
+                    "User"
                 ]
             },
             "UuidSchema": {

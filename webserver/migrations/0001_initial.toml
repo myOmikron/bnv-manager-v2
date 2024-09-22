@@ -1,63 +1,33 @@
 [Migration]
-Hash = "1936689915727363289"
+Hash = "2687404623037670105"
 Initial = true
 Replaces = []
 
 [[Migration.Operations]]
 Type = "CreateModel"
-Name = "user"
+Name = "session"
 
 [[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
+Name = "id"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
 
 [[Migration.Operations.Fields.Annotations]]
 Type = "primary_key"
 
 [[Migration.Operations.Fields]]
-Name = "display_name"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[[Migration.Operations.Fields]]
-Name = "last_login"
-Type = "datetime"
-Annotations = []
-
-[[Migration.Operations.Fields]]
-Name = "created_at"
+Name = "expires_at"
 Type = "datetime"
 
 [[Migration.Operations.Fields.Annotations]]
-Type = "auto_create_time"
-
-[[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
 
 [[Migration.Operations.Fields]]
-Name = "username"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[[Migration.Operations.Fields]]
-Name = "password"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 1024
+Name = "data"
+Type = "binary"
 
 [[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
@@ -130,10 +100,10 @@ Type = "not_null"
 
 [[Migration.Operations]]
 Type = "CreateModel"
-Name = "session"
+Name = "role"
 
 [[Migration.Operations.Fields]]
-Name = "id"
+Name = "identifier"
 Type = "varchar"
 
 [[Migration.Operations.Fields.Annotations]]
@@ -143,16 +113,72 @@ Value = 255
 [[Migration.Operations.Fields.Annotations]]
 Type = "primary_key"
 
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "user"
+
 [[Migration.Operations.Fields]]
-Name = "expires_at"
-Type = "datetime"
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[[Migration.Operations.Fields]]
+Name = "preferred_lang"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
 
 [[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
 
 [[Migration.Operations.Fields]]
-Name = "data"
-Type = "binary"
+Name = "display_name"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "last_login"
+Type = "datetime"
+Annotations = []
+
+[[Migration.Operations.Fields]]
+Name = "created_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "auto_create_time"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "username"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "password"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 1024
 
 [[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
@@ -179,6 +205,23 @@ Type = "not_null"
 
 [[Migration.Operations]]
 Type = "CreateField"
+Model = "session"
+
+[Migration.Operations.Field]
+Name = "user"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "user"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations]]
+Type = "CreateField"
 Model = "websitedomain"
 
 [Migration.Operations.Field]
@@ -199,17 +242,24 @@ Type = "not_null"
 
 [[Migration.Operations]]
 Type = "CreateField"
-Model = "session"
+Model = "user"
 
 [Migration.Operations.Field]
-Name = "user"
-Type = "uuid"
+Name = "role"
+Type = "varchar"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "max_length"
+Value = 255
 
 [[Migration.Operations.Field.Annotations]]
 Type = "foreign_key"
 
 [Migration.Operations.Field.Annotations.Value]
-TableName = "user"
-ColumnName = "uuid"
-OnDelete = "Cascade"
+TableName = "role"
+ColumnName = "identifier"
+OnDelete = "Restrict"
 OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"

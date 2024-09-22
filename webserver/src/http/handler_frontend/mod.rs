@@ -44,6 +44,7 @@ pub fn initialize() -> ApiContext<Router> {
                         ApiContext::new()
                             .tag("users")
                             .handler(users::handler::get_me)
+                            .handler(users::handler::update_me)
                             .handler(users::handler::change_password),
                     )
                     .nest(

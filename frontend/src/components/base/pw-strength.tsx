@@ -1,6 +1,5 @@
-import React from "react";
 import { clsx } from "clsx";
-import { Text } from "src/components/base/text";
+import { Text } from "./text";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en";
 import * as zxcvbnDePackage from "@zxcvbn-ts/language-de";
