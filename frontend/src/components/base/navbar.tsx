@@ -7,61 +7,28 @@ import React, { useId } from "react";
 import { TouchTarget } from "src/components/base/button";
 import { Link, LinkProps } from "src/components/base/link";
 
-export function Navbar({
-    className,
-    ...props
-}: React.ComponentPropsWithoutRef<"nav">) {
+export function Navbar({ className, ...props }: React.ComponentPropsWithoutRef<"nav">) {
+    return <nav {...props} className={clsx(className, "flex flex-1 items-center gap-4 py-2.5")} />;
+}
+
+export function NavbarDivider({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
     return (
-        <nav
-            {...props}
-            className={clsx(className, "flex flex-1 items-center gap-4 py-2.5")}
-        />
+        <div aria-hidden="true" {...props} className={clsx(className, "h-6 w-px bg-zinc-950/10 dark:bg-white/10")} />
     );
 }
 
-export function NavbarDivider({
-    className,
-    ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-    return (
-        <div
-            aria-hidden="true"
-            {...props}
-            className={clsx(
-                className,
-                "h-6 w-px bg-zinc-950/10 dark:bg-white/10",
-            )}
-        />
-    );
-}
-
-export function NavbarSection({
-    className,
-    ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function NavbarSection({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
     const id = useId();
 
     return (
         <LayoutGroup id={id}>
-            <div
-                {...props}
-                className={clsx(className, "flex items-center gap-3")}
-            />
+            <div {...props} className={clsx(className, "flex items-center gap-3")} />
         </LayoutGroup>
     );
 }
 
-export function NavbarSpacer({
-    className,
-    ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-    return (
-        <div
-            aria-hidden="true"
-            {...props}
-            className={clsx(className, "-ml-4 flex-1")}
-        />
-    );
+export function NavbarSpacer({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+    return <div aria-hidden="true" {...props} className={clsx(className, "-ml-4 flex-1")} />;
 }
 
 export const NavbarItem = React.forwardRef(function NavbarItem(
@@ -97,21 +64,26 @@ export const NavbarItem = React.forwardRef(function NavbarItem(
 
     return (
         <span className={clsx(className, "relative")}>
-            {current && (
-                <motion.span
-                    layoutId="current-indicator"
-                    className="absolute inset-x-2 -bottom-2.5 h-0.5 rounded-full bg-zinc-950 dark:bg-white"
-                />
-            )}
             {"href" in props ? (
                 <Link
                     {...props}
                     className={classes}
                     data-current={current ? "true" : undefined}
                     ref={ref as React.ForwardedRef<HTMLAnchorElement>}
-                >
-                    <TouchTarget>{children}</TouchTarget>
-                </Link>
+                    render={({ isActive }: { isActive: boolean }) => {
+                        return (
+                            <>
+                                {isActive && (
+                                    <motion.span
+                                        layoutId="current-indicator"
+                                        className="absolute inset-x-2 -bottom-2.5 h-0.5 rounded-full bg-zinc-950 dark:bg-white"
+                                    />
+                                )}
+                                <TouchTarget>{children}</TouchTarget>
+                            </>
+                        );
+                    }}
+                />
             ) : (
                 <Headless.Button
                     {...props}
@@ -126,9 +98,6 @@ export const NavbarItem = React.forwardRef(function NavbarItem(
     );
 });
 
-export function NavbarLabel({
-    className,
-    ...props
-}: React.ComponentPropsWithoutRef<"span">) {
+export function NavbarLabel({ className, ...props }: React.ComponentPropsWithoutRef<"span">) {
     return <span {...props} className={clsx(className, "truncate")} />;
 }
