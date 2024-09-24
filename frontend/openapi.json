@@ -708,6 +708,48 @@
                     }
                 }
             }
+        },
+        "/api/frontend/v1/clubs/clubs": {
+            "get": {
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Get all clubs",
+                "description": "Get all clubs",
+                "operationId": "get_all_clubs",
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubList"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -879,6 +921,22 @@
                     "new_pw"
                 ]
             },
+            "ClubList": {
+                "description": "A list of clubs",
+                "type": "object",
+                "properties": {
+                    "clubs": {
+                        "description": "List of all clubs",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FullClub"
+                        }
+                    }
+                },
+                "required": [
+                    "clubs"
+                ]
+            },
             "CreateWebsiteRequest": {
                 "description": "The request to create a website",
                 "type": "object",
@@ -1014,6 +1072,32 @@
                 },
                 "required": [
                     "field"
+                ]
+            },
+            "FullClub": {
+                "description": "A full representation of a club",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name of the club",
+                        "type": "string"
+                    },
+                    "users": {
+                        "description": "User count associated with the club",
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0
+                    },
+                    "uuid": {
+                        "description": "Primary key",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "name",
+                    "users",
+                    "uuid"
                 ]
             },
             "FullUser": {

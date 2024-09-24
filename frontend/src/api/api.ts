@@ -1,6 +1,7 @@
 import {
     AuthApi,
     ChangeMeRequest,
+    ClubsApi,
     Configuration,
     RequiredError,
     ResponseError,
@@ -21,65 +22,76 @@ const configuration = new Configuration({
     basePath: window.location.origin,
 });
 const authApi = new AuthApi(configuration);
+const clubsApi = new ClubsApi(configuration);
 const usersApi = new UsersApi(configuration);
 const websitesApi = new WebsitesApi(configuration);
 
 /* eslint-disable */
 
 export const Api = {
-    auth: {
-        login: (username: string, password: string) =>
-            handleError(
-                authApi.login({
-                    LoginRequest: {
-                        username,
-                        password,
-                    },
-                }),
-            ),
-        logout: () => handleError(authApi.logout()),
+    common: {
+        auth: {
+            login: (username: string, password: string) =>
+                handleError(
+                    authApi.login({
+                        LoginRequest: {
+                            username,
+                            password,
+                        },
+                    }),
+                ),
+            logout: () => handleError(authApi.logout()),
+        },
+        users: {
+            getMe: () => handleError(usersApi.getMe()),
+            updateMe: (req: ChangeMeRequest) => handleError(usersApi.updateMe({ ChangeMeRequest: req })),
+            changePassword: (current_pw: string, new_pw: string) =>
+                handleError(
+                    usersApi.changePassword({
+                        ChangePwRequest: {
+                            current_pw,
+                            new_pw,
+                        },
+                    }),
+                ),
+        },
     },
-    users: {
-        getMe: () => handleError(usersApi.getMe()),
-        updateMe: (req: ChangeMeRequest) => handleError(usersApi.updateMe({ ChangeMeRequest: req })),
-        changePassword: (current_pw: string, new_pw: string) =>
-            handleError(
-                usersApi.changePassword({
-                    ChangePwRequest: {
-                        current_pw,
-                        new_pw,
-                    },
-                }),
-            ),
+    admin: {
+        clubs: {
+            all: () => handleError(clubsApi.getAllClubs()),
+        },
     },
-    websites: {
-        create: (name: string) => handleError(websitesApi.createWebsite({ CreateWebsiteRequest: { name } })),
-        get: (uuid: UUID) => handleError(websitesApi.getWebsite({ uuid })),
-        getAll: () => handleError(websitesApi.getAllWebsites()),
-        update: (uuid: UUID, name: string) =>
-            handleError(
-                websitesApi.updateWebsite({
-                    uuid,
-                    UpdateWebsiteRequest: { name },
-                }),
-            ),
-        addDomain: (uuid: UUID, domain: string) =>
-            handleError(
-                websitesApi.addDomainToWebsite({
-                    uuid,
-                    AddDomainToWebsiteRequest: { domain },
-                }),
-            ),
-        removeDomain: (websiteUuid: UUID, domainUuid: UUID) =>
-            handleError(
-                websitesApi.removeDomainFromWebsite({
-                    website_uuid: websiteUuid,
-                    domain_uuid: domainUuid,
-                }),
-            ),
-        delete: (uuid: UUID) => handleError(websitesApi.deleteWebsite({ uuid })),
-        deploy: (uuid: UUID) => handleError(websitesApi.deployWebsite({ uuid })),
-        checkDns: (uuid: UUID) => handleError(websitesApi.checkDns({ uuid })),
+    clubAdmin: {},
+    user: {
+        websites: {
+            create: (name: string) => handleError(websitesApi.createWebsite({ CreateWebsiteRequest: { name } })),
+            get: (uuid: UUID) => handleError(websitesApi.getWebsite({ uuid })),
+            getAll: () => handleError(websitesApi.getAllWebsites()),
+            update: (uuid: UUID, name: string) =>
+                handleError(
+                    websitesApi.updateWebsite({
+                        uuid,
+                        UpdateWebsiteRequest: { name },
+                    }),
+                ),
+            addDomain: (uuid: UUID, domain: string) =>
+                handleError(
+                    websitesApi.addDomainToWebsite({
+                        uuid,
+                        AddDomainToWebsiteRequest: { domain },
+                    }),
+                ),
+            removeDomain: (websiteUuid: UUID, domainUuid: UUID) =>
+                handleError(
+                    websitesApi.removeDomainFromWebsite({
+                        website_uuid: websiteUuid,
+                        domain_uuid: domainUuid,
+                    }),
+                ),
+            delete: (uuid: UUID) => handleError(websitesApi.deleteWebsite({ uuid })),
+            deploy: (uuid: UUID) => handleError(websitesApi.deployWebsite({ uuid })),
+            checkDns: (uuid: UUID) => handleError(websitesApi.checkDns({ uuid })),
+        },
     },
 };
 

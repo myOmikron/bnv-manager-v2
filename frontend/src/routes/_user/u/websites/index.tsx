@@ -27,7 +27,7 @@ export default function Websites(props: WebsitesProps) {
      * Refresh the websites of the user
      */
     const refreshWebsites = async () => {
-        const res = await Api.websites.getAll();
+        const res = await Api.user.websites.getAll();
 
         res.match(
             (websites) => setWebsites(websites.websites),

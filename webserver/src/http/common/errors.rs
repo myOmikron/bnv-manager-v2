@@ -1,15 +1,14 @@
 //! This module holds the errors and the error conversion for handlers
 //! that are returned from handlers
 
-use std::fmt;
+use std::error::Error;
 use std::panic::Location;
+use std::time::SystemTimeError;
 
+use axum::extract::rejection::JsonRejection;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::response::Response;
-use axum::Json;
-use schemars::JsonSchema;
-use serde::Serialize;
 use swaggapi::as_responses::simple_responses;
 use swaggapi::as_responses::AsResponses;
 use swaggapi::as_responses::SimpleResponse;
@@ -20,18 +19,15 @@ use swaggapi::re_exports::openapiv3::MediaType;
 use swaggapi::re_exports::openapiv3::Responses;
 use thiserror::Error;
 use tracing::error;
+use webauthn_rs::prelude::WebauthnError;
 
 use crate::http::common::schemas::ApiErrorResponse;
 use crate::http::common::schemas::ApiStatusCode;
-use crate::http::common::schemas::FormError;
+use crate::http::extractors::api_json::ApiJson;
+use crate::utils::checked_string;
 
 /// A type alias that includes the ApiError
 pub type ApiResult<T> = Result<T, ApiError>;
-
-/// The type alias for providing more information about invalid form states
-///
-/// This should be nested in [ApiResult]
-pub type FormResult<Ok, Err> = Result<Ok, FormError<Err>>;
 
 /// The common error that is returned from the handlers
 #[derive(Debug, Error)]
@@ -39,45 +35,65 @@ pub type FormResult<Ok, Err> = Result<Ok, FormError<Err>>;
 pub enum ApiError {
     #[error("Unauthenticated")]
     Unauthenticated,
-    #[error("Bad request")]
-    BadRequest,
+
     #[error("Missing privileges")]
     MissingPrivileges,
-    #[error("Resource not found")]
-    ResourceNotFound,
+
+    #[error("Bad request")]
+    BadRequest,
+
+    #[error("Invalid json received: {0}")]
+    InvalidJson(#[from] JsonRejection),
 
     #[error("An internal server error occurred")]
-    InternalServerError,
+    InternalServerError {
+        location: &'static Location<'static>,
+        source: DynError,
+    },
 }
+/// Self-explanatory type alias to make signatures smaller
+type DynError = Box<dyn Error + Send + Sync + 'static>;
 
 impl ApiError {
     /// Ad-hoc constructor for an internal server error
     /// where the causing `error` doesn't have a proper `From` impl.
-    // This function takes `impl Debug + Display` instead of `impl Error` to also support strings
+    // This function takes `impl Into<Box<dyn Error>>` instead of `impl Error` to also support strings
     #[track_caller]
-    pub fn new_internal_server_error(error: impl fmt::Debug + fmt::Display) -> Self {
-        log_internal_server_error(error, Location::caller());
-        Self::InternalServerError
-    }
-}
-
-impl<T> IntoResponse for FormError<T>
-where
-    T: JsonSchema + Serialize,
-{
-    fn into_response(self) -> Response {
-        (StatusCode::OK, Json(self)).into_response()
+    pub fn new_internal_server_error(error: impl Into<DynError>) -> Self {
+        Self::InternalServerError {
+            location: Location::caller(),
+            source: error.into(),
+        }
     }
 }
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        let status_code = match self {
-            ApiError::Unauthenticated => ApiStatusCode::Unauthenticated,
-            ApiError::BadRequest => ApiStatusCode::BadRequest,
-            ApiError::MissingPrivileges => ApiStatusCode::MissingPrivileges,
-            ApiError::InternalServerError => ApiStatusCode::InternalServerError,
-            ApiError::ResourceNotFound => ApiStatusCode::ResourceNotFound,
+        let (status_code, message) = match self {
+            ApiError::Unauthenticated => (
+                ApiStatusCode::Unauthenticated,
+                "Unauthenticated".to_string(),
+            ),
+            ApiError::BadRequest => (ApiStatusCode::BadRequest, "Bad Request".to_string()),
+            ApiError::MissingPrivileges => (
+                ApiStatusCode::MissingPrivileges,
+                "Missing Privileges".to_string(),
+            ),
+            ApiError::InvalidJson(msg) => (ApiStatusCode::InvalidJson, msg.to_string()),
+            ApiError::InternalServerError { location, source } => {
+                error!(
+                    error.display = %source,
+                    error.debug = ?source,
+                    error.file = location.file(),
+                    error.line = location.line(),
+                    error.column = location.column(),
+                    "Internal server error",
+                );
+                (
+                    ApiStatusCode::InternalServerError,
+                    "Internal server error occurred".to_string(),
+                )
+            }
         };
 
         let res = (
@@ -86,9 +102,9 @@ impl IntoResponse for ApiError {
             } else {
                 StatusCode::INTERNAL_SERVER_ERROR
             },
-            Json(ApiErrorResponse {
+            ApiJson(ApiErrorResponse {
                 status_code,
-                message: self.to_string(),
+                message,
             }),
         );
 
@@ -120,25 +136,6 @@ impl AsResponses for ApiError {
     }
 }
 
-impl<T> AsResponses for FormError<T>
-where
-    T: JsonSchema,
-{
-    fn responses(gen: &mut SchemaGenerator) -> Responses {
-        let media_type = Some(MediaType {
-            schema: Some(gen.generate::<FormError<T>>()),
-            ..Default::default()
-        });
-
-        simple_responses([SimpleResponse {
-            status_code: openapiv3::StatusCode::Code(200),
-            mime_type: mime::APPLICATION_JSON,
-            description: "Form field error".to_string(),
-            media_type,
-        }])
-    }
-}
-
 /// Simple macro to reduce the noise of several identical `From` implementations
 ///
 /// It takes a list of error types
@@ -148,8 +145,7 @@ macro_rules! impl_into_internal_server_error {
         impl From<$error> for ApiError {
             #[track_caller]
             fn from(value: $error) -> Self {
-                log_internal_server_error(value, Location::caller());
-                Self::InternalServerError
+                Self::new_internal_server_error(value)
             }
         }
     )+};
@@ -157,21 +153,9 @@ macro_rules! impl_into_internal_server_error {
 impl_into_internal_server_error!(
     rorm::Error,
     argon2::password_hash::Error,
-    tower_sessions_rorm_store::tower_sessions::session::Error,
+    tower_sessions::session::Error,
+    strum::ParseError,
+    checked_string::ConstraintsViolated,
+    SystemTimeError,
+    WebauthnError,
 );
-/// Used by [`impl_into_internal_server_error`]'s `From` impls and [`ApiError::new_internal_server_error`]
-/// to log the errors converted into an [`ApiError::InternalServerError`].
-///
-/// This function serves as an easy to find and understand place for tweaking the log's format.
-///
-/// It takes `impl Debug + Display` instead of `impl Error` to also support strings.
-fn log_internal_server_error(error: impl fmt::Debug + fmt::Display, location: &Location) {
-    error!(
-        error.display = %error,
-        error.debug = ?error,
-        error.file = location.file(),
-        error.line = location.line(),
-        error.column = location.column(),
-        "Internal server error",
-    );
-}

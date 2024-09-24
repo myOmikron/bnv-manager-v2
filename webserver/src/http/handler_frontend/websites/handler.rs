@@ -3,7 +3,6 @@
 use std::time::Duration;
 
 use axum::extract::Path;
-use axum::Json;
 use futures_util::TryStreamExt;
 use rorm::and;
 use rorm::fields;
@@ -31,9 +30,9 @@ use crate::global::webconf_updater::WebconfUpdateResult;
 use crate::global::GLOBAL;
 use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
-use crate::http::common::errors::FormResult;
-use crate::http::common::schemas::FormError;
-use crate::http::common::schemas::UuidSchema;
+use crate::http::common::schemas::FormResult;
+use crate::http::common::schemas::SingleUuid;
+use crate::http::extractors::api_json::ApiJson;
 use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::websites::schema::AddDomainToWebsiteForm;
 use crate::http::handler_frontend::websites::schema::AddDomainToWebsiteRequest;
@@ -56,32 +55,34 @@ use crate::utils::schemars::SchemaDateTime;
 #[post("/")]
 #[instrument(ret, err)]
 pub async fn create_website(
-    SessionUser(user): SessionUser,
-    Json(CreateWebsiteRequest { name }): Json<CreateWebsiteRequest>,
-) -> ApiResult<Json<UuidSchema>> {
+    SessionUser { user }: SessionUser,
+    ApiJson(CreateWebsiteRequest { name }): ApiJson<CreateWebsiteRequest>,
+) -> ApiResult<ApiJson<SingleUuid>> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let uuid = Website::create_website(name, user.uuid, &mut tx).await?;
 
     tx.commit().await?;
 
-    Ok(Json(UuidSchema { uuid }))
+    Ok(ApiJson(SingleUuid { uuid }))
 }
 
 /// Retrieve a single website
 #[get("/:uuid")]
 #[instrument(ret, err)]
 pub async fn get_website(
-    SessionUser(user): SessionUser,
-    Path(UuidSchema { uuid }): Path<UuidSchema>,
-) -> ApiResult<Json<FullWebsite>> {
+    SessionUser { user }: SessionUser,
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+) -> ApiResult<ApiJson<FullWebsite>> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let mut website = query!(&mut tx, Website)
         .condition(Website::F.uuid.equals(uuid))
         .optional()
         .await?
-        .ok_or(ApiError::ResourceNotFound)?;
+        .ok_or(ApiError::BadRequest)?;
 
     if *website.owner.key() != user.uuid {
         return Err(ApiError::MissingPrivileges);
@@ -93,7 +94,7 @@ pub async fn get_website(
 
     // Unwrap is okay as the populate call above fills the cached field
     #[allow(clippy::unwrap_used)]
-    Ok(Json(FullWebsite {
+    Ok(ApiJson(FullWebsite {
         uuid,
         name: website.name,
         domains: website
@@ -115,7 +116,10 @@ pub async fn get_website(
 /// Retrieve all websites owned by this user
 #[get("/")]
 #[instrument(ret, err)]
-pub async fn get_all_websites(SessionUser(user): SessionUser) -> ApiResult<Json<ListWebsites>> {
+pub async fn get_all_websites(
+    SessionUser { user }: SessionUser,
+) -> ApiResult<ApiJson<ListWebsites>> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let websites = query!(&mut tx, Website)
@@ -133,24 +137,25 @@ pub async fn get_all_websites(SessionUser(user): SessionUser) -> ApiResult<Json<
 
     tx.commit().await?;
 
-    Ok(Json(ListWebsites { websites }))
+    Ok(ApiJson(ListWebsites { websites }))
 }
 
 /// Update a website
 #[put("/:uuid")]
 #[instrument(ret, err)]
 pub async fn update_website(
-    SessionUser(user): SessionUser,
-    Path(UuidSchema { uuid }): Path<UuidSchema>,
-    Json(UpdateWebsiteRequest { name }): Json<UpdateWebsiteRequest>,
+    SessionUser { user }: SessionUser,
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+    ApiJson(UpdateWebsiteRequest { name }): ApiJson<UpdateWebsiteRequest>,
 ) -> ApiResult<()> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let website = query!(&mut tx, Website)
         .condition(Website::F.uuid.equals(uuid))
         .optional()
         .await?
-        .ok_or(ApiError::ResourceNotFound)?;
+        .ok_or(ApiError::BadRequest)?;
 
     if user.uuid != *website.owner.key() {
         return Err(ApiError::MissingPrivileges);
@@ -171,17 +176,18 @@ pub async fn update_website(
 #[post("/:uuid/domains")]
 #[instrument(ret, err)]
 pub async fn add_domain_to_website(
-    SessionUser(user): SessionUser,
-    Path(UuidSchema { uuid: website_uuid }): Path<UuidSchema>,
-    Json(AddDomainToWebsiteRequest { domain }): Json<AddDomainToWebsiteRequest>,
-) -> ApiResult<FormResult<Json<UuidSchema>, AddDomainToWebsiteForm>> {
+    SessionUser { user }: SessionUser,
+    Path(SingleUuid { uuid: website_uuid }): Path<SingleUuid>,
+    ApiJson(AddDomainToWebsiteRequest { domain }): ApiJson<AddDomainToWebsiteRequest>,
+) -> ApiResult<ApiJson<FormResult<SingleUuid, AddDomainToWebsiteForm>>> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let website = query!(&mut tx, Website)
         .condition(Website::F.uuid.equals(website_uuid))
         .optional()
         .await?
-        .ok_or(ApiError::ResourceNotFound)?;
+        .ok_or(ApiError::BadRequest)?;
 
     if user.uuid != *website.owner.key() {
         return Err(ApiError::MissingPrivileges);
@@ -194,7 +200,7 @@ pub async fn add_domain_to_website(
         .is_some();
 
     if exists {
-        return Ok(Err(FormError::single(AddDomainToWebsiteForm::Domain(
+        return Ok(ApiJson(FormResult::err(AddDomainToWebsiteForm::Domain(
             DomainField::AlreadyRegistered,
         ))));
     }
@@ -219,26 +225,27 @@ pub async fn add_domain_to_website(
 
     tx.commit().await?;
 
-    Ok(Ok(Json(UuidSchema { uuid })))
+    Ok(ApiJson(FormResult::ok(SingleUuid { uuid })))
 }
 
 /// Remove a domain from a website
 #[delete("/:website_uuid/domains/:domain_uuid")]
 #[instrument(ret, err)]
 pub async fn remove_domain_from_website(
-    SessionUser(user): SessionUser,
+    SessionUser { user }: SessionUser,
     Path(RemoveDomainPath {
         website_uuid,
         domain_uuid,
     }): Path<RemoveDomainPath>,
 ) -> ApiResult<()> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let website = query!(&mut tx, Website)
         .condition(Website::F.uuid.equals(website_uuid))
         .optional()
         .await?
-        .ok_or(ApiError::ResourceNotFound)?;
+        .ok_or(ApiError::BadRequest)?;
 
     if user.uuid != *website.owner.key() {
         return Err(ApiError::MissingPrivileges);
@@ -254,7 +261,7 @@ pub async fn remove_domain_from_website(
         .is_some();
 
     if !exists {
-        return Err(ApiError::ResourceNotFound);
+        return Err(ApiError::BadRequest);
     }
 
     rorm::delete!(&mut tx, WebsiteDomain)
@@ -279,16 +286,17 @@ pub async fn remove_domain_from_website(
 #[delete("/:uuid")]
 #[instrument(ret, err)]
 pub async fn delete_website(
-    SessionUser(user): SessionUser,
-    Path(UuidSchema { uuid }): Path<UuidSchema>,
+    SessionUser { user }: SessionUser,
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
 ) -> ApiResult<()> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let website = query!(&mut tx, Website)
         .condition(Website::F.uuid.equals(uuid))
         .optional()
         .await?
-        .ok_or(ApiError::ResourceNotFound)?;
+        .ok_or(ApiError::BadRequest)?;
 
     if user.uuid != *website.owner.key() {
         return Err(ApiError::MissingPrivileges);
@@ -314,16 +322,17 @@ pub async fn delete_website(
 #[post("/:uuid/deploy")]
 #[instrument(err)]
 pub async fn deploy_website(
-    SessionUser(user): SessionUser,
-    Path(UuidSchema { uuid }): Path<UuidSchema>,
-) -> ApiResult<Json<UuidSchema>> {
+    SessionUser { user }: SessionUser,
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+) -> ApiResult<ApiJson<SingleUuid>> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let mut website = query!(&mut tx, Website)
         .condition(Website::F.uuid.equals(uuid))
         .optional()
         .await?
-        .ok_or(ApiError::ResourceNotFound)?;
+        .ok_or(ApiError::BadRequest)?;
 
     if user.uuid != *website.owner.key() {
         return Err(ApiError::MissingPrivileges);
@@ -401,23 +410,24 @@ pub async fn deploy_website(
         .instrument(info_span!("webconf-update")),
     );
 
-    Ok(Json(UuidSchema { uuid }))
+    Ok(ApiJson(SingleUuid { uuid }))
 }
 
 #[post("/:uuid/check-dns")]
 #[instrument]
 pub async fn check_dns(
     Path(uuid): Path<Uuid>,
-    SessionUser(user): SessionUser,
+    SessionUser { user }: SessionUser,
     session: Session,
-) -> ApiResult<Json<UuidSchema>> {
+) -> ApiResult<ApiJson<SingleUuid>> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let mut website = query!(&mut tx, Website)
         .condition(Website::F.uuid.equals(uuid))
         .optional()
         .await?
-        .ok_or(ApiError::ResourceNotFound)?;
+        .ok_or(ApiError::BadRequest)?;
 
     if *website.owner.key() != user.uuid {
         return Err(ApiError::Unauthenticated);
@@ -466,5 +476,5 @@ pub async fn check_dns(
             .await;
     });
 
-    Ok(Json(UuidSchema { uuid: task }))
+    Ok(ApiJson(SingleUuid { uuid: task }))
 }

@@ -19,7 +19,6 @@ export type AdminMenuProps = {};
  * The menu for the user
  */
 export default function AdminMenu(props: AdminMenuProps) {
-    const [t] = useTranslation();
     const [tM] = useTranslation("menu");
 
     const userContext = React.useContext(USER_CONTEXT);
@@ -65,7 +64,7 @@ export default function AdminMenu(props: AdminMenuProps) {
                                 </DropdownItem>
                                 <DropdownItem
                                     onClick={() => {
-                                        Api.auth.logout().then(() => {
+                                        Api.common.auth.logout().then(() => {
                                             userContext.reset();
                                         });
                                     }}
@@ -110,7 +109,7 @@ export default function AdminMenu(props: AdminMenuProps) {
                                 </DropdownItem>
                                 <DropdownItem
                                     onClick={() => {
-                                        Api.auth.logout().then(() => {
+                                        Api.common.auth.logout().then(() => {
                                             userContext.reset();
                                         });
                                     }}

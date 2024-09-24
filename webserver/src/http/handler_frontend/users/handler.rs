@@ -13,14 +13,13 @@ use tracing::instrument;
 use crate::global::GLOBAL;
 use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
-use crate::http::common::errors::FormResult;
-use crate::http::common::schemas::FormError;
+use crate::http::common::schemas::FormResult;
+use crate::http::extractors::api_json::ApiJson;
 use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::users::schema::ChangeMeRequest;
-use crate::http::handler_frontend::users::schema::ChangePwFormFields;
+use crate::http::handler_frontend::users::schema::ChangePwErrors;
 use crate::http::handler_frontend::users::schema::ChangePwRequest;
 use crate::http::handler_frontend::users::schema::FullUser;
-use crate::http::handler_frontend::users::schema::PwError;
 use crate::models::User;
 use crate::utils::hashing;
 use crate::utils::hashing::hash_pw;
@@ -30,7 +29,9 @@ use crate::utils::schemars::SchemaDateTime;
 /// Retrieve the currently logged-in user
 #[get("/me")]
 #[instrument(skip_all, ret, err)]
-pub async fn get_me(SessionUser(user): SessionUser) -> ApiResult<Json<FullUser>> {
+pub async fn get_me(SessionUser { user }: SessionUser) -> ApiResult<Json<FullUser>> {
+    let user = user.0;
+
     Ok(Json(FullUser {
         uuid: user.uuid,
         username: user.username,
@@ -48,24 +49,27 @@ pub async fn get_me(SessionUser(user): SessionUser) -> ApiResult<Json<FullUser>>
 #[post("/me/change-pw")]
 #[instrument(skip_all, ret, err)]
 pub async fn change_password(
-    SessionUser(user): SessionUser,
+    SessionUser { user }: SessionUser,
     Json(ChangePwRequest { current_pw, new_pw }): Json<ChangePwRequest>,
-) -> ApiResult<FormResult<(), ChangePwFormFields>> {
+) -> ApiResult<ApiJson<FormResult<(), ChangePwErrors>>> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let password = query!(&mut tx, (User::F.password,))
         .condition(User::F.uuid.equals(user.uuid))
         .optional()
         .await?
-        .ok_or(ApiError::InternalServerError)?
+        .ok_or(ApiError::new_internal_server_error("".to_string()))?
         .0;
 
     if let Err(err) = hashing::verify_pw(&current_pw, &password) {
         return match err {
-            VerifyPwError::Hash(_) => Err(ApiError::InternalServerError),
-            VerifyPwError::Mismatch => Ok(Err(FormError::single(ChangePwFormFields::CurrentPw(
-                PwError::Incorrect,
-            )))),
+            VerifyPwError::Hash(_) => Err(ApiError::new_internal_server_error(
+                "hash error".to_string(),
+            )),
+            VerifyPwError::Mismatch => Ok(ApiJson(FormResult::err(ChangePwErrors {
+                current_pw: true,
+            }))),
         };
     }
 
@@ -79,18 +83,19 @@ pub async fn change_password(
 
     tx.commit().await?;
 
-    Ok(Ok(()))
+    Ok(ApiJson(FormResult::Ok { value: () }))
 }
 
 /// Updates the current user information
 #[put("/me")]
 pub async fn update_me(
-    SessionUser(user): SessionUser,
+    SessionUser { user }: SessionUser,
     Json(ChangeMeRequest {
         display_name,
         preferred_lang,
     }): Json<ChangeMeRequest>,
 ) -> ApiResult<()> {
+    let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     update!(&mut tx, User)

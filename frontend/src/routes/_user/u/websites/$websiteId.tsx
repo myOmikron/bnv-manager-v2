@@ -32,7 +32,7 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
     const [openDNSSettings, setOpenDNSSettings] = React.useState(false);
 
     const refresh = () => {
-        Api.websites.get(websiteId).then((res) =>
+        Api.user.websites.get(websiteId).then((res) =>
             res.match(
                 (website) => setWebsite(website),
                 (err) => toast.error(err.message),
@@ -51,7 +51,7 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
         if (website === undefined) {
             return;
         }
-        Api.websites.addDomain(website.uuid, newDomain).then((res) =>
+        Api.user.websites.addDomain(website.uuid, newDomain).then((res) =>
             res.match(
                 () => {
                     refresh();
@@ -64,7 +64,7 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
 
     const deploy = () => {
         website &&
-            Api.websites.deploy(website.uuid).then((res) =>
+            Api.user.websites.deploy(website.uuid).then((res) =>
                 res.match(
                     (uuid) => {
                         const deployingId = toast.loading("Deploying");
@@ -126,7 +126,7 @@ export default function WebsiteConfiguration(props: WebsiteConfigurationProps) {
                                             <Button
                                                 plain={true}
                                                 onClick={() => {
-                                                    Api.websites.removeDomain(websiteId, x.uuid).then((res) =>
+                                                    Api.user.websites.removeDomain(websiteId, x.uuid).then((res) =>
                                                         res.match(
                                                             () => refresh(),
                                                             (err) => toast.error(err.message),

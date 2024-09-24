@@ -19,7 +19,6 @@ export type UserMenuProps = {};
  * The menu for the user
  */
 export default function UserMenu(props: UserMenuProps) {
-    const [t] = useTranslation();
     const [tM] = useTranslation("menu");
 
     const userContext = React.useContext(USER_CONTEXT);
@@ -66,7 +65,7 @@ export default function UserMenu(props: UserMenuProps) {
                                 </DropdownItem>
                                 <DropdownItem
                                     onClick={() => {
-                                        Api.auth.logout().then(() => {
+                                        Api.common.auth.logout().then(() => {
                                             userContext.reset();
                                         });
                                     }}
@@ -112,7 +111,7 @@ export default function UserMenu(props: UserMenuProps) {
                                 </DropdownItem>
                                 <DropdownItem
                                     onClick={() => {
-                                        Api.auth.logout().then(() => {
+                                        Api.common.auth.logout().then(() => {
                                             userContext.reset();
                                         });
                                     }}

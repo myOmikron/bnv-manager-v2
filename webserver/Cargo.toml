@@ -16,6 +16,7 @@ tower = { version = "~0.5", features = ["full"] }
 # common middlewares
 tower-http = { version = "~0.6", features = ["trace", "normalize-path"] }
 # Session middleware
+tower-sessions = { version = "~0.13" }
 tower-sessions-rorm-store = { version = "~0.3" }
 
 # openapi and swagger ui

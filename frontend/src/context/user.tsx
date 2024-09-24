@@ -76,10 +76,10 @@ export class UserProvider extends React.Component<UserProviderProps, UserProvide
 
         this.setState({ user: "loading" });
 
-        Api.users.getMe().then((result) => {
+        Api.common.users.getMe().then((result) => {
             result.match(
                 (user) => {
-                    WS.connect(`${window.location.origin.replace("http", "ws")}/api/frontend/v1/common/ws/ws`);
+                    WS.connect(`${window.location.origin.replace("http", "ws")}/api/frontend/v1/ws`);
                     window.localStorage.setItem("username", user.username);
                     this.setState({ user });
                 },

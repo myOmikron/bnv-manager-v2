@@ -55,11 +55,15 @@ impl AsResponses for WsResponse {
 #[get("/ws")]
 pub async fn websocket(
     ws: WebSocketUpgrade,
-    SessionUser(user): SessionUser,
+    SessionUser { user }: SessionUser,
     session: Session,
 ) -> WsResponse {
+    let user = user.0;
     let Some(id) = session.id() else {
-        return WsResponse(ApiError::InternalServerError.into_response());
+        return WsResponse(
+            ApiError::new_internal_server_error("Couldn't retrieve session".to_string())
+                .into_response(),
+        );
     };
 
     WsResponse(ws.on_upgrade(move |ws| async move {
@@ -171,7 +175,7 @@ async fn handle_recv(
     while let Ok(Some(msg)) = receiver.try_next().await {
         match msg {
             Message::Text(data) => {
-                let Ok(client_msg) = serde_json::from_str::<WsClientMsg>(&data) else {
+                let Ok(_client_msg) = serde_json::from_str::<WsClientMsg>(&data) else {
                     debug!("Could not deserialize client message: {data}");
                     continue;
                 };

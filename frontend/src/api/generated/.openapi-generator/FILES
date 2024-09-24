@@ -1,4 +1,5 @@
 apis/AuthApi.ts
+apis/ClubsApi.ts
 apis/UsersApi.ts
 apis/WebsitesApi.ts
 apis/WebsocketApi.ts

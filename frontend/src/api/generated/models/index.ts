@@ -205,6 +205,19 @@ export interface ChangePwRequest {
     new_pw: string;
 }
 /**
+ * A list of clubs
+ * @export
+ * @interface ClubList
+ */
+export interface ClubList {
+    /**
+     * List of all clubs
+     * @type {Array<FullClub>}
+     * @memberof ClubList
+     */
+    clubs: Array<FullClub>;
+}
+/**
  * The request to create a website
  * @export
  * @interface CreateWebsiteRequest
@@ -362,6 +375,31 @@ export interface FormFieldErrorForChangePwFormFields {
      * @memberof FormFieldErrorForChangePwFormFields
      */
     field: ChangePwFormFields;
+}
+/**
+ * A full representation of a club
+ * @export
+ * @interface FullClub
+ */
+export interface FullClub {
+    /**
+     * Name of the club
+     * @type {string}
+     * @memberof FullClub
+     */
+    name: string;
+    /**
+     * User count associated with the club
+     * @type {number}
+     * @memberof FullClub
+     */
+    users: number;
+    /**
+     * Primary key
+     * @type {string}
+     * @memberof FullClub
+     */
+    uuid: string;
 }
 /**
  * The full representation for the user

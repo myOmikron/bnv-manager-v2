@@ -12,18 +12,10 @@ use crate::utils::secure_string::SecureString;
 
 /// The fields of the change password request
 #[derive(Debug, Copy, Clone, Serialize, Deserialize, JsonSchema)]
-#[serde(tag = "error")]
-#[allow(missing_docs)]
-pub enum PwError {
-    Incorrect,
-}
-
-/// The fields of the change password request
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "field")]
 #[allow(missing_docs)]
-pub enum ChangePwFormFields {
-    CurrentPw(PwError),
+pub struct ChangePwErrors {
+    pub current_pw: bool,
 }
 
 /// The request to change user information
@@ -61,4 +53,17 @@ pub struct FullUser {
     pub last_login: Option<SchemaDateTime>,
     /// The time the user was created
     pub created_at: SchemaDateTime,
+}
+
+/// The simple representation for the user
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct SimpleUser {
+    /// The identifier of the user
+    pub uuid: Uuid,
+    /// The username of the user
+    pub username: String,
+    /// Used for displaying purposes
+    pub display_name: String,
+    /// The user's role
+    pub role: UserRole,
 }

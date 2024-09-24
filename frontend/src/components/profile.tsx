@@ -88,7 +88,7 @@ export function GeneralProfile(props: GeneralProfileProps) {
         },
         // eslint-disable-next-line
         onSubmit: async ({ value, formApi }) => {
-            const res = await Api.users.updateMe({
+            const res = await Api.common.users.updateMe({
                 preferred_lang: value.preferredLanguage,
                 display_name: value.display_name,
             });
@@ -216,7 +216,7 @@ export default function SecurityProfile(props: SecurityProfileProps) {
             password2: "",
         },
         onSubmit: async ({ value, formApi }) => {
-            const res = await Api.users.changePassword(value.current, value.password);
+            const res = await Api.common.users.changePassword(value.current, value.password);
 
             res.match(
                 (ok) => {},

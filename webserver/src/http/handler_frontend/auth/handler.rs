@@ -37,7 +37,7 @@ pub async fn login(
         .ok_or(ApiError::Unauthenticated)?;
 
     hashing::verify_pw(&password, &user.password).map_err(|x| match x {
-        VerifyPwError::Hash(_) => ApiError::InternalServerError,
+        VerifyPwError::Hash(err) => err.into(),
         VerifyPwError::Mismatch => ApiError::Unauthenticated,
     })?;
 

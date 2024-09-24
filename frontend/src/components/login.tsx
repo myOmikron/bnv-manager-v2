@@ -29,7 +29,7 @@ export default function Login(props: LoginProps) {
             password: "",
         },
         onSubmit: async ({ value }) => {
-            const res = await Api.auth.login(value.username, value.password);
+            const res = await Api.common.auth.login(value.username, value.password);
 
             res.match(
                 () => {
