@@ -7,6 +7,10 @@ use swaggapi::ApiContext;
 use swaggapi::SwaggapiPageBuilder;
 use tower::ServiceBuilder;
 
+use crate::http::middlewares::auth_required::auth_required;
+use crate::http::middlewares::role_required::RoleRequiredLayer;
+use crate::models::UserRole;
+
 pub mod auth;
 mod clubs;
 pub mod users;
@@ -82,9 +86,26 @@ pub fn initialize() -> ApiContext<Router> {
     ApiContext::new().nest(
         "/v1",
         ApiContext::new()
-            .nest("/common", common())
-            .nest("/admin", admin())
-            .nest("/club-admin", club_admin())
-            .nest("/user", user()),
+            .nest(
+                "/common",
+                common()
+                    .layer(ServiceBuilder::new().layer(axum::middleware::from_fn(auth_required))),
+            )
+            .nest(
+                "/admin",
+                admin().layer(
+                    ServiceBuilder::new().layer(RoleRequiredLayer::new(UserRole::Administrator)),
+                ),
+            )
+            .nest(
+                "/club-admin",
+                club_admin().layer(
+                    ServiceBuilder::new().layer(RoleRequiredLayer::new(UserRole::ClubAdmin)),
+                ),
+            )
+            .nest(
+                "/user",
+                user().layer(ServiceBuilder::new().layer(RoleRequiredLayer::new(UserRole::User))),
+            ),
     )
 }
