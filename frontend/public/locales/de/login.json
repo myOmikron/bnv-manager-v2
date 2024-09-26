@@ -3,6 +3,7 @@
         "sign-in": "Einloggen"
     },
     "toast": {
+        "login-failed": "Nutzername oder Passwort inkorrekt",
         "login-successful": "Login erfolgreich"
     }
 }

@@ -1,0 +1,8 @@
+{
+    "button": {
+        "back-to-dashboard": "Back to dashboard"
+    },
+    "heading": {
+        "club-overview": "Club overview: {{club}}"
+    }
+}

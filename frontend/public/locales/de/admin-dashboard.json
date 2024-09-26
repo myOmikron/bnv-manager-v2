@@ -1,5 +1,13 @@
 {
+    "button": {
+        "add-club-admin": "Vereinsadministrator hinzufügen"
+    },
     "heading": {
-        "users-in-clubs": "Nutzer in Vereinen"
+        "users-in-clubs": "Nutzer in Vereinen",
+        "clubs": "Vereine"
+    },
+    "label": {
+        "club-name": "Vereinsname",
+        "club-users": "Nutzerzahl"
     }
 }

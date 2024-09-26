@@ -1,0 +1,8 @@
+{
+    "button": {
+        "back-to-dashboard": "Zurück zum Dashboard"
+    },
+    "heading": {
+        "club-overview": "Vereinsübersicht: {{club}}"
+    }
+}

@@ -1,5 +1,13 @@
 {
+    "button": {
+        "add-club-admin": "Add club admin"
+    },
     "heading": {
-        "users-in-clubs": "Users in Clubs"
+        "users-in-clubs": "Users in Clubs",
+        "clubs": "Clubs"
+    },
+    "label": {
+        "club-name": "Name of the club",
+        "club-users": "Number of users"
     }
 }

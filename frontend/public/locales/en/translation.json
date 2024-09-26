@@ -1,6 +1,10 @@
 {
+    "accessibility": {
+        "actions": "Actions"
+    },
     "button": {
         "create": "Create",
+        "delete": "Delete",
         "reset": "Reset",
         "save": "Save"
     },
