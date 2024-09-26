@@ -18,10 +18,11 @@ import type {
   AddDomainToWebsiteRequest,
   ApiErrorResponse,
   CreateWebsiteRequest,
+  FormResultForSingleUuidAndAddDomainToWebsiteForm,
   FullWebsite,
   ListWebsites,
+  SingleUuid,
   UpdateWebsiteRequest,
-  UuidSchema,
 } from '../models/index';
 
 export interface AddDomainToWebsiteOperationRequest {
@@ -68,7 +69,7 @@ export class WebsitesApi extends runtime.BaseAPI {
      * Add a domain to a website
      * Add a domain to a website
      */
-    async addDomainToWebsiteRaw(requestParameters: AddDomainToWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UuidSchema>> {
+    async addDomainToWebsiteRaw(requestParameters: AddDomainToWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleUuidAndAddDomainToWebsiteForm>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
@@ -90,7 +91,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/{uuid}/domains`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/frontend/v1/user/websites/{uuid}/domains`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -104,14 +105,14 @@ export class WebsitesApi extends runtime.BaseAPI {
      * Add a domain to a website
      * Add a domain to a website
      */
-    async addDomainToWebsite(requestParameters: AddDomainToWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UuidSchema> {
+    async addDomainToWebsite(requestParameters: AddDomainToWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleUuidAndAddDomainToWebsiteForm> {
         const response = await this.addDomainToWebsiteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async checkDnsRaw(requestParameters: CheckDnsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UuidSchema>> {
+    async checkDnsRaw(requestParameters: CheckDnsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SingleUuid>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
@@ -124,7 +125,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/{uuid}/check-dns`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/frontend/v1/user/websites/{uuid}/check-dns`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -135,7 +136,7 @@ export class WebsitesApi extends runtime.BaseAPI {
 
     /**
      */
-    async checkDns(requestParameters: CheckDnsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UuidSchema> {
+    async checkDns(requestParameters: CheckDnsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SingleUuid> {
         const response = await this.checkDnsRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -144,7 +145,7 @@ export class WebsitesApi extends runtime.BaseAPI {
      * Create a new website
      * Create a new website
      */
-    async createWebsiteRaw(requestParameters: CreateWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UuidSchema>> {
+    async createWebsiteRaw(requestParameters: CreateWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SingleUuid>> {
         if (requestParameters['CreateWebsiteRequest'] == null) {
             throw new runtime.RequiredError(
                 'CreateWebsiteRequest',
@@ -159,7 +160,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites`,
+            path: `/api/frontend/v1/user/websites`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -173,7 +174,7 @@ export class WebsitesApi extends runtime.BaseAPI {
      * Create a new website
      * Create a new website
      */
-    async createWebsite(requestParameters: CreateWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UuidSchema> {
+    async createWebsite(requestParameters: CreateWebsiteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SingleUuid> {
         const response = await this.createWebsiteRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -195,7 +196,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/frontend/v1/user/websites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -216,7 +217,7 @@ export class WebsitesApi extends runtime.BaseAPI {
      * Deploy the configuration to the webserver.  This will configure the webspace and request certificates for all added domains  Returns an uuid that will be used to send a notification via websocket when the deployment process has finished
      * Deploy the configuration to the webserver.
      */
-    async deployWebsiteRaw(requestParameters: DeployWebsiteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UuidSchema>> {
+    async deployWebsiteRaw(requestParameters: DeployWebsiteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SingleUuid>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
@@ -229,7 +230,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/{uuid}/deploy`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/frontend/v1/user/websites/{uuid}/deploy`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -242,7 +243,7 @@ export class WebsitesApi extends runtime.BaseAPI {
      * Deploy the configuration to the webserver.  This will configure the webspace and request certificates for all added domains  Returns an uuid that will be used to send a notification via websocket when the deployment process has finished
      * Deploy the configuration to the webserver.
      */
-    async deployWebsite(requestParameters: DeployWebsiteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UuidSchema> {
+    async deployWebsite(requestParameters: DeployWebsiteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SingleUuid> {
         const response = await this.deployWebsiteRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -257,7 +258,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites`,
+            path: `/api/frontend/v1/user/websites`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -292,7 +293,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/frontend/v1/user/websites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -334,7 +335,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/{website_uuid}/domains/{domain_uuid}`.replace(`{${"domain_uuid"}}`, encodeURIComponent(String(requestParameters['domain_uuid']))).replace(`{${"website_uuid"}}`, encodeURIComponent(String(requestParameters['website_uuid']))),
+            path: `/api/frontend/v1/user/websites/{website_uuid}/domains/{domain_uuid}`.replace(`{${"domain_uuid"}}`, encodeURIComponent(String(requestParameters['domain_uuid']))).replace(`{${"website_uuid"}}`, encodeURIComponent(String(requestParameters['website_uuid']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -377,7 +378,7 @@ export class WebsitesApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/frontend/v1/websites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/frontend/v1/user/websites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,

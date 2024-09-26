@@ -16,6 +16,7 @@
 import * as runtime from '../runtime';
 import type {
   ApiErrorResponse,
+  FormResultForNullAndLoginErrors,
   LoginRequest,
 } from '../models/index';
 
@@ -32,7 +33,7 @@ export class AuthApi extends runtime.BaseAPI {
      * Use the local authentication for logging in
      * Use the local authentication for logging in
      */
-    async loginRaw(requestParameters: LoginOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async loginRaw(requestParameters: LoginOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndLoginErrors>> {
         if (requestParameters['LoginRequest'] == null) {
             throw new runtime.RequiredError(
                 'LoginRequest',
@@ -54,15 +55,16 @@ export class AuthApi extends runtime.BaseAPI {
             body: requestParameters['LoginRequest'],
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
      * Use the local authentication for logging in
      * Use the local authentication for logging in
      */
-    async login(requestParameters: LoginOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.loginRaw(requestParameters, initOverrides);
+    async login(requestParameters: LoginOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndLoginErrors> {
+        const response = await this.loginRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**

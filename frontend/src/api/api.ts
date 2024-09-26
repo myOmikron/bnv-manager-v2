@@ -3,6 +3,7 @@ import {
     ChangeMeRequest,
     ClubsApi,
     Configuration,
+    CreateClubRequest,
     RequiredError,
     ResponseError,
     UsersApi,
@@ -59,6 +60,9 @@ export const Api = {
     admin: {
         clubs: {
             all: () => handleError(clubsApi.getAllClubs()),
+            get: (uuid: UUID) => handleError(clubsApi.getClub({ uuid })),
+            create: (createClubRequest: CreateClubRequest) =>
+                handleError(clubsApi.createClub({ CreateClubRequest: createClubRequest })),
         },
     },
     clubAdmin: {},

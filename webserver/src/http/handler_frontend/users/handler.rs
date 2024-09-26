@@ -19,7 +19,7 @@ use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::users::schema::ChangeMeRequest;
 use crate::http::handler_frontend::users::schema::ChangePwErrors;
 use crate::http::handler_frontend::users::schema::ChangePwRequest;
-use crate::http::handler_frontend::users::schema::FullUser;
+use crate::http::handler_frontend::users::schema::FullUserAdmin;
 use crate::models::User;
 use crate::utils::hashing;
 use crate::utils::hashing::hash_pw;
@@ -29,10 +29,10 @@ use crate::utils::schemars::SchemaDateTime;
 /// Retrieve the currently logged-in user
 #[get("/me")]
 #[instrument(skip_all, ret, err)]
-pub async fn get_me(SessionUser { user }: SessionUser) -> ApiResult<Json<FullUser>> {
+pub async fn get_me(SessionUser { user }: SessionUser) -> ApiResult<Json<FullUserAdmin>> {
     let user = user.0;
 
-    Ok(Json(FullUser {
+    Ok(Json(FullUserAdmin {
         uuid: user.uuid,
         username: user.username,
         preferred_lang: user.preferred_lang,

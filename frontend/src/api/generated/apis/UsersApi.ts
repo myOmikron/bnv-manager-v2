@@ -18,7 +18,8 @@ import type {
   ApiErrorResponse,
   ChangeMeRequest,
   ChangePwRequest,
-  FullUser,
+  FormResultForNullAndChangePwErrors,
+  FullUserAdmin,
 } from '../models/index';
 
 export interface ChangePasswordRequest {
@@ -38,7 +39,7 @@ export class UsersApi extends runtime.BaseAPI {
      * Change the password of the currently logged-in user  This may only be called by local users
      * Change the password of the currently logged-in user
      */
-    async changePasswordRaw(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async changePasswordRaw(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndChangePwErrors>> {
         if (requestParameters['ChangePwRequest'] == null) {
             throw new runtime.RequiredError(
                 'ChangePwRequest',
@@ -53,35 +54,36 @@ export class UsersApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/frontend/v1/users/me/change-pw`,
+            path: `/api/frontend/v1/common/users/me/change-pw`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: requestParameters['ChangePwRequest'],
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
      * Change the password of the currently logged-in user  This may only be called by local users
      * Change the password of the currently logged-in user
      */
-    async changePassword(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.changePasswordRaw(requestParameters, initOverrides);
+    async changePassword(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndChangePwErrors> {
+        const response = await this.changePasswordRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**
      * Retrieve the currently logged-in user
      * Retrieve the currently logged-in user
      */
-    async getMeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FullUser>> {
+    async getMeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FullUserAdmin>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/users/me`,
+            path: `/api/frontend/v1/common/users/me`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -94,7 +96,7 @@ export class UsersApi extends runtime.BaseAPI {
      * Retrieve the currently logged-in user
      * Retrieve the currently logged-in user
      */
-    async getMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FullUser> {
+    async getMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FullUserAdmin> {
         const response = await this.getMeRaw(initOverrides);
         return await response.value();
     }
@@ -118,7 +120,7 @@ export class UsersApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/frontend/v1/users/me`,
+            path: `/api/frontend/v1/common/users/me`,
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,

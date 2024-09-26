@@ -17,12 +17,61 @@ import * as runtime from '../runtime';
 import type {
   ApiErrorResponse,
   ClubList,
+  CreateClubRequest,
+  FormResultForSingleUuidAndCreateClubErrors,
+  FullClub,
 } from '../models/index';
+
+export interface CreateClubOperationRequest {
+    CreateClubRequest: CreateClubRequest;
+}
+
+export interface GetClubRequest {
+    uuid: string;
+}
 
 /**
  * 
  */
 export class ClubsApi extends runtime.BaseAPI {
+
+    /**
+     * Create a new club
+     * Create a new club
+     */
+    async createClubRaw(requestParameters: CreateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleUuidAndCreateClubErrors>> {
+        if (requestParameters['CreateClubRequest'] == null) {
+            throw new runtime.RequiredError(
+                'CreateClubRequest',
+                'Required parameter "CreateClubRequest" was null or undefined when calling createClub().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/frontend/v1/admin/clubs/create`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['CreateClubRequest'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     * Create a new club
+     * Create a new club
+     */
+    async createClub(requestParameters: CreateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleUuidAndCreateClubErrors> {
+        const response = await this.createClubRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * Get all clubs
@@ -34,7 +83,7 @@ export class ClubsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/clubs/clubs`,
+            path: `/api/frontend/v1/admin/clubs`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -49,6 +98,41 @@ export class ClubsApi extends runtime.BaseAPI {
      */
     async getAllClubs(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ClubList> {
         const response = await this.getAllClubsRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get a single club
+     * Get a single club
+     */
+    async getClubRaw(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FullClub>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling getClub().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/frontend/v1/admin/clubs/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     * Get a single club
+     * Get a single club
+     */
+    async getClub(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FullClub> {
+        const response = await this.getClubRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

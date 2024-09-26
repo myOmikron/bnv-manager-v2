@@ -1,3 +1,5 @@
+use axum::extract::Path;
+use futures_util::TryStreamExt;
 use rorm::insert;
 use rorm::query;
 use rorm::FieldAccess;
@@ -7,15 +9,20 @@ use swaggapi::post;
 use uuid::Uuid;
 
 use crate::global::GLOBAL;
+use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
 use crate::http::common::schemas::FormResult;
+use crate::http::common::schemas::SingleUuid;
 use crate::http::extractors::api_json::ApiJson;
 use crate::http::handler_frontend::clubs::schema::ClubList;
 use crate::http::handler_frontend::clubs::schema::CreateClubErrors;
 use crate::http::handler_frontend::clubs::schema::CreateClubRequest;
 use crate::http::handler_frontend::clubs::schema::FullClub;
+use crate::http::handler_frontend::clubs::schema::SimpleClub;
+use crate::http::handler_frontend::users::schema::SimpleUser;
 use crate::models::Club;
 use crate::models::ClubUser;
+use crate::models::User;
 
 /// Get all clubs
 #[get("/")]
@@ -32,10 +39,10 @@ pub async fn get_all_clubs() -> ApiResult<ApiJson<ClubList>> {
             .await?
             .0;
 
-        clubs.push(FullClub {
+        clubs.push(SimpleClub {
             uuid: club.uuid,
             name: club.name,
-            users: club_users as u64,
+            user_count: club_users as u64,
         })
     }
 
@@ -44,11 +51,53 @@ pub async fn get_all_clubs() -> ApiResult<ApiJson<ClubList>> {
     Ok(ApiJson(ClubList { clubs }))
 }
 
+/// Get a single club
+#[get("/:uuid")]
+pub async fn get_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<ApiJson<FullClub>> {
+    let mut tx = GLOBAL.db.start_transaction().await?;
+
+    let club = query!(&mut tx, Club)
+        .condition(Club::F.uuid.equals(uuid))
+        .optional()
+        .await?
+        .ok_or(ApiError::BadRequest)?;
+
+    let club_users = query!(&mut tx, (ClubUser::F.uuid.count(),))
+        .condition(ClubUser::F.club.equals(club.uuid))
+        .one()
+        .await?
+        .0;
+
+    let users = query!(&mut tx, (ClubUser::F.user as User,))
+        .condition(ClubUser::F.club.equals(club.uuid))
+        .stream()
+        .map_ok(|x| {
+            let x = x.0;
+            SimpleUser {
+                uuid,
+                role: x.role,
+                username: x.username,
+                display_name: x.display_name,
+            }
+        })
+        .try_collect()
+        .await?;
+
+    tx.commit().await?;
+
+    Ok(ApiJson(FullClub {
+        uuid,
+        name: club.name,
+        user_count: club_users as u64,
+        admins: users,
+    }))
+}
+
 /// Create a new club
 #[post("/create")]
 pub async fn create_club(
     ApiJson(CreateClubRequest { name }): ApiJson<CreateClubRequest>,
-) -> ApiResult<ApiJson<FormResult<Uuid, CreateClubErrors>>> {
+) -> ApiResult<ApiJson<FormResult<SingleUuid, CreateClubErrors>>> {
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let club = query!(&mut tx, Club)
@@ -72,5 +121,5 @@ pub async fn create_club(
 
     tx.commit().await?;
 
-    Ok(ApiJson(FormResult::ok(uuid)))
+    Ok(ApiJson(FormResult::ok(SingleUuid { uuid })))
 }

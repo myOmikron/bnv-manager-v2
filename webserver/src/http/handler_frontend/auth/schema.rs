@@ -15,3 +15,10 @@ pub struct LoginRequest {
     /// The password for the user
     pub password: CheckedString<1, 255, SecureString>,
 }
+
+/// The request for local authentication
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct LoginErrors {
+    /// Login has failed
+    pub login_failed: bool,
+}

@@ -28,7 +28,7 @@ export class WebsocketApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/frontend/v1/ws`,
+            path: `/api/frontend/v1/common/ws`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

@@ -8,11 +8,15 @@ use rorm::FieldAccess;
 use rorm::Model;
 use swaggapi::post;
 use tower_sessions_rorm_store::tower_sessions::Session;
+use tracing::info;
 use tracing::instrument;
 
 use crate::global::GLOBAL;
 use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
+use crate::http::common::schemas::FormResult;
+use crate::http::extractors::api_json::ApiJson;
+use crate::http::handler_frontend::auth::schema::LoginErrors;
 use crate::http::handler_frontend::auth::schema::LoginRequest;
 use crate::http::SESSION_USER;
 use crate::models;
@@ -26,9 +30,11 @@ use crate::utils::hashing::VerifyPwError;
 pub async fn login(
     session: Session,
     Json(LoginRequest { username, password }): Json<LoginRequest>,
-) -> ApiResult<()> {
+) -> ApiResult<ApiJson<FormResult<(), LoginErrors>>> {
     let username = username.into_inner();
     let mut tx = GLOBAL.db.start_transaction().await?;
+
+    info!("{username}");
 
     let user = query!(&mut tx, User)
         .condition(User::F.username.equals(username))
@@ -36,10 +42,15 @@ pub async fn login(
         .await?
         .ok_or(ApiError::Unauthenticated)?;
 
-    hashing::verify_pw(&password, &user.password).map_err(|x| match x {
-        VerifyPwError::Hash(err) => err.into(),
-        VerifyPwError::Mismatch => ApiError::Unauthenticated,
-    })?;
+    let res = hashing::verify_pw(&password, &user.password);
+    if let Err(err) = res {
+        return match err {
+            VerifyPwError::Hash(err) => Err(err.into()),
+            VerifyPwError::Mismatch => {
+                Ok(ApiJson(FormResult::err(LoginErrors { login_failed: true })))
+            }
+        };
+    };
 
     session.insert(SESSION_USER, user.uuid).await?;
     // We have to call save manually as the id is only populated after creating the session
@@ -59,7 +70,7 @@ pub async fn login(
 
     tx.commit().await?;
 
-    Ok(())
+    Ok(ApiJson(FormResult::ok(())))
 }
 
 /// Drop the current session and logg-out

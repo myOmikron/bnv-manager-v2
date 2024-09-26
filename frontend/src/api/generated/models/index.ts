@@ -120,71 +120,18 @@ export interface ChangeMeRequest {
     preferred_lang?: string | null;
 }
 /**
- * @type ChangePwFormFields
  * The fields of the change password request
  * @export
+ * @interface ChangePwErrors
  */
-export type ChangePwFormFields = ChangePwFormFieldsOneOf;
-/**
- * The fields of the change password request
- * @export
- * @interface ChangePwFormFieldsOneOf
- */
-export interface ChangePwFormFieldsOneOf {
+export interface ChangePwErrors {
     /**
      * 
-     * @type {string}
-     * @memberof ChangePwFormFieldsOneOf
+     * @type {boolean}
+     * @memberof ChangePwErrors
      */
-    error: ChangePwFormFieldsOneOfErrorEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChangePwFormFieldsOneOf
-     */
-    field: ChangePwFormFieldsOneOfFieldEnum;
+    current_pw: boolean;
 }
-
-
-/**
- * @export
- */
-export const ChangePwFormFieldsOneOfErrorEnum = {
-    Incorrect: 'Incorrect'
-} as const;
-export type ChangePwFormFieldsOneOfErrorEnum = typeof ChangePwFormFieldsOneOfErrorEnum[keyof typeof ChangePwFormFieldsOneOfErrorEnum];
-
-/**
- * @export
- */
-export const ChangePwFormFieldsOneOfFieldEnum = {
-    CurrentPw: 'CurrentPw'
-} as const;
-export type ChangePwFormFieldsOneOfFieldEnum = typeof ChangePwFormFieldsOneOfFieldEnum[keyof typeof ChangePwFormFieldsOneOfFieldEnum];
-
-/**
- * 
- * @export
- * @interface ChangePwFormFieldsOneOfAllOfOneOf
- */
-export interface ChangePwFormFieldsOneOfAllOfOneOf {
-    /**
-     * 
-     * @type {string}
-     * @memberof ChangePwFormFieldsOneOfAllOfOneOf
-     */
-    error: ChangePwFormFieldsOneOfAllOfOneOfErrorEnum;
-}
-
-
-/**
- * @export
- */
-export const ChangePwFormFieldsOneOfAllOfOneOfErrorEnum = {
-    Incorrect: 'Incorrect'
-} as const;
-export type ChangePwFormFieldsOneOfAllOfOneOfErrorEnum = typeof ChangePwFormFieldsOneOfAllOfOneOfErrorEnum[keyof typeof ChangePwFormFieldsOneOfAllOfOneOfErrorEnum];
-
 /**
  * The request to change the password
  * @export
@@ -212,10 +159,36 @@ export interface ChangePwRequest {
 export interface ClubList {
     /**
      * List of all clubs
-     * @type {Array<FullClub>}
+     * @type {Array<SimpleClub>}
      * @memberof ClubList
      */
-    clubs: Array<FullClub>;
+    clubs: Array<SimpleClub>;
+}
+/**
+ * Errors that may occur during creation of a club
+ * @export
+ * @interface CreateClubErrors
+ */
+export interface CreateClubErrors {
+    /**
+     * Name is already in use
+     * @type {boolean}
+     * @memberof CreateClubErrors
+     */
+    name_in_use: boolean;
+}
+/**
+ * The request to create a club
+ * @export
+ * @interface CreateClubRequest
+ */
+export interface CreateClubRequest {
+    /**
+     * The name of the club
+     * @type {string}
+     * @memberof CreateClubRequest
+     */
+    name: string;
 }
 /**
  * The request to create a website
@@ -325,63 +298,215 @@ export interface DnsQueryResult {
     uuid: string;
 }
 /**
- * The response that should be used for inform the user about errors in the form
+ * @type FormResultForNullAndChangePwErrors
+ * A `Result` with a custom serialization
  * @export
- * @interface FormErrorForAddDomainToWebsiteForm
  */
-export interface FormErrorForAddDomainToWebsiteForm {
-    /**
-     * The errors that occurred
-     * @type {Array<FormFieldErrorForAddDomainToWebsiteForm>}
-     * @memberof FormErrorForAddDomainToWebsiteForm
-     */
-    errors: Array<FormFieldErrorForAddDomainToWebsiteForm>;
-}
+export type FormResultForNullAndChangePwErrors = FormResultForNullAndChangePwErrorsOneOf | FormResultForNullAndChangePwErrorsOneOf1;
 /**
- * The response that should be used for inform the user about errors in the form
+ * 
  * @export
- * @interface FormErrorForChangePwFormFields
+ * @interface FormResultForNullAndChangePwErrorsOneOf
  */
-export interface FormErrorForChangePwFormFields {
+export interface FormResultForNullAndChangePwErrorsOneOf {
     /**
-     * The errors that occurred
-     * @type {Array<FormFieldErrorForChangePwFormFields>}
-     * @memberof FormErrorForChangePwFormFields
+     * 
+     * @type {string}
+     * @memberof FormResultForNullAndChangePwErrorsOneOf
      */
-    errors: Array<FormFieldErrorForChangePwFormFields>;
+    result: FormResultForNullAndChangePwErrorsOneOfResultEnum;
+    /**
+     * 
+     * @type {any}
+     * @memberof FormResultForNullAndChangePwErrorsOneOf
+     */
+    value: any | null;
 }
+
+
 /**
- * An error in a form field
  * @export
- * @interface FormFieldErrorForAddDomainToWebsiteForm
  */
-export interface FormFieldErrorForAddDomainToWebsiteForm {
+export const FormResultForNullAndChangePwErrorsOneOfResultEnum = {
+    Ok: 'Ok'
+} as const;
+export type FormResultForNullAndChangePwErrorsOneOfResultEnum = typeof FormResultForNullAndChangePwErrorsOneOfResultEnum[keyof typeof FormResultForNullAndChangePwErrorsOneOfResultEnum];
+
+/**
+ * 
+ * @export
+ * @interface FormResultForNullAndChangePwErrorsOneOf1
+ */
+export interface FormResultForNullAndChangePwErrorsOneOf1 {
+    /**
+     * 
+     * @type {ChangePwErrors}
+     * @memberof FormResultForNullAndChangePwErrorsOneOf1
+     */
+    error: ChangePwErrors;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForNullAndChangePwErrorsOneOf1
+     */
+    result: FormResultForNullAndChangePwErrorsOneOf1ResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForNullAndChangePwErrorsOneOf1ResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForNullAndChangePwErrorsOneOf1ResultEnum = typeof FormResultForNullAndChangePwErrorsOneOf1ResultEnum[keyof typeof FormResultForNullAndChangePwErrorsOneOf1ResultEnum];
+
+/**
+ * @type FormResultForNullAndLoginErrors
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForNullAndLoginErrors = FormResultForNullAndChangePwErrorsOneOf | FormResultForNullAndLoginErrorsOneOf;
+/**
+ * 
+ * @export
+ * @interface FormResultForNullAndLoginErrorsOneOf
+ */
+export interface FormResultForNullAndLoginErrorsOneOf {
+    /**
+     * 
+     * @type {LoginErrors}
+     * @memberof FormResultForNullAndLoginErrorsOneOf
+     */
+    error: LoginErrors;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForNullAndLoginErrorsOneOf
+     */
+    result: FormResultForNullAndLoginErrorsOneOfResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForNullAndLoginErrorsOneOfResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForNullAndLoginErrorsOneOfResultEnum = typeof FormResultForNullAndLoginErrorsOneOfResultEnum[keyof typeof FormResultForNullAndLoginErrorsOneOfResultEnum];
+
+/**
+ * @type FormResultForSingleUuidAndAddDomainToWebsiteForm
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForSingleUuidAndAddDomainToWebsiteForm = FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf | FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1;
+/**
+ * 
+ * @export
+ * @interface FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf
+ */
+export interface FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf
+     */
+    result: FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum;
+    /**
+     * 
+     * @type {SingleUuid}
+     * @memberof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf
+     */
+    value: SingleUuid;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum = {
+    Ok: 'Ok'
+} as const;
+export type FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum = typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum[keyof typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum];
+
+/**
+ * 
+ * @export
+ * @interface FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1
+ */
+export interface FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1 {
     /**
      * 
      * @type {AddDomainToWebsiteForm}
-     * @memberof FormFieldErrorForAddDomainToWebsiteForm
+     * @memberof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1
      */
-    field: AddDomainToWebsiteForm;
-}
-/**
- * An error in a form field
- * @export
- * @interface FormFieldErrorForChangePwFormFields
- */
-export interface FormFieldErrorForChangePwFormFields {
+    error: AddDomainToWebsiteForm;
     /**
      * 
-     * @type {ChangePwFormFields}
-     * @memberof FormFieldErrorForChangePwFormFields
+     * @type {string}
+     * @memberof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1
      */
-    field: ChangePwFormFields;
+    result: FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum;
 }
+
+
+/**
+ * @export
+ */
+export const FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum = typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum[keyof typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum];
+
+/**
+ * @type FormResultForSingleUuidAndCreateClubErrors
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForSingleUuidAndCreateClubErrors = FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf | FormResultForSingleUuidAndCreateClubErrorsOneOf;
+/**
+ * 
+ * @export
+ * @interface FormResultForSingleUuidAndCreateClubErrorsOneOf
+ */
+export interface FormResultForSingleUuidAndCreateClubErrorsOneOf {
+    /**
+     * 
+     * @type {CreateClubErrors}
+     * @memberof FormResultForSingleUuidAndCreateClubErrorsOneOf
+     */
+    error: CreateClubErrors;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForSingleUuidAndCreateClubErrorsOneOf
+     */
+    result: FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum = typeof FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum[keyof typeof FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum];
+
 /**
  * A full representation of a club
  * @export
  * @interface FullClub
  */
 export interface FullClub {
+    /**
+     * The users that are admins of the club
+     * @type {Array<SimpleUser>}
+     * @memberof FullClub
+     */
+    admins: Array<SimpleUser>;
     /**
      * Name of the club
      * @type {string}
@@ -393,7 +518,7 @@ export interface FullClub {
      * @type {number}
      * @memberof FullClub
      */
-    users: number;
+    user_count: number;
     /**
      * Primary key
      * @type {string}
@@ -404,49 +529,49 @@ export interface FullClub {
 /**
  * The full representation for the user
  * @export
- * @interface FullUser
+ * @interface FullUserAdmin
  */
-export interface FullUser {
+export interface FullUserAdmin {
     /**
      * 
      * @type {string}
-     * @memberof FullUser
+     * @memberof FullUserAdmin
      */
     created_at: string;
     /**
      * Used for displaying purposes
      * @type {string}
-     * @memberof FullUser
+     * @memberof FullUserAdmin
      */
     display_name: string;
     /**
      * 
      * @type {string}
-     * @memberof FullUser
+     * @memberof FullUserAdmin
      */
     last_login?: string;
     /**
      * Preferred language of the user
      * @type {string}
-     * @memberof FullUser
+     * @memberof FullUserAdmin
      */
     preferred_lang: string;
     /**
      * 
      * @type {UserRole}
-     * @memberof FullUser
+     * @memberof FullUserAdmin
      */
     role: UserRole;
     /**
      * The username
      * @type {string}
-     * @memberof FullUser
+     * @memberof FullUserAdmin
      */
     username: string;
     /**
      * The identifier of the user
      * @type {string}
-     * @memberof FullUser
+     * @memberof FullUserAdmin
      */
     uuid: string;
 }
@@ -528,6 +653,19 @@ export interface ListWebsites {
 /**
  * The request for local authentication
  * @export
+ * @interface LoginErrors
+ */
+export interface LoginErrors {
+    /**
+     * Login has failed
+     * @type {boolean}
+     * @memberof LoginErrors
+     */
+    login_failed: boolean;
+}
+/**
+ * The request for local authentication
+ * @export
  * @interface LoginRequest
  */
 export interface LoginRequest {
@@ -562,6 +700,62 @@ export interface ResolveResult {
      * @memberof ResolveResult
      */
     ipv6?: string | null;
+}
+/**
+ * A simple representation of a club
+ * @export
+ * @interface SimpleClub
+ */
+export interface SimpleClub {
+    /**
+     * Name of the club
+     * @type {string}
+     * @memberof SimpleClub
+     */
+    name: string;
+    /**
+     * User count associated with the club
+     * @type {number}
+     * @memberof SimpleClub
+     */
+    user_count: number;
+    /**
+     * Primary key
+     * @type {string}
+     * @memberof SimpleClub
+     */
+    uuid: string;
+}
+/**
+ * The simple representation for the user
+ * @export
+ * @interface SimpleUser
+ */
+export interface SimpleUser {
+    /**
+     * Used for displaying purposes
+     * @type {string}
+     * @memberof SimpleUser
+     */
+    display_name: string;
+    /**
+     * 
+     * @type {UserRole}
+     * @memberof SimpleUser
+     */
+    role: UserRole;
+    /**
+     * The username of the user
+     * @type {string}
+     * @memberof SimpleUser
+     */
+    username: string;
+    /**
+     * The identifier of the user
+     * @type {string}
+     * @memberof SimpleUser
+     */
+    uuid: string;
 }
 /**
  * The simple representation of a website
@@ -601,6 +795,19 @@ export interface SimpleWebsite {
     uuid: string;
 }
 /**
+ * A single uuid wrapped in a struct
+ * @export
+ * @interface SingleUuid
+ */
+export interface SingleUuid {
+    /**
+     * 
+     * @type {string}
+     * @memberof SingleUuid
+     */
+    uuid: string;
+}
+/**
  * The request to update websites
  * @export
  * @interface UpdateWebsiteRequest
@@ -625,19 +832,6 @@ export const UserRole = {
 } as const;
 export type UserRole = typeof UserRole[keyof typeof UserRole];
 
-/**
- * a uuid
- * @export
- * @interface UuidSchema
- */
-export interface UuidSchema {
-    /**
-     * The uuid
-     * @type {string}
-     * @memberof UuidSchema
-     */
-    uuid: string;
-}
 /**
  * @type WebconfUpdateResult
  * The result of a webconf update request

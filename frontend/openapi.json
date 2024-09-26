@@ -45,7 +45,14 @@
                         }
                     },
                     "200": {
-                        "description": "Empty body"
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_Null_and_LoginErrors"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -85,7 +92,7 @@
                 }
             }
         },
-        "/api/frontend/v1/ws": {
+        "/api/frontend/v1/common/ws": {
             "get": {
                 "tags": [
                     "websocket"
@@ -101,7 +108,7 @@
                 }
             }
         },
-        "/api/frontend/v1/users/me": {
+        "/api/frontend/v1/common/users/me": {
             "get": {
                 "tags": [
                     "users"
@@ -135,7 +142,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FullUser"
+                                    "$ref": "#/components/schemas/FullUserAdmin"
                                 }
                             }
                         }
@@ -186,7 +193,7 @@
                 }
             }
         },
-        "/api/frontend/v1/users/me/change-pw": {
+        "/api/frontend/v1/common/users/me/change-pw": {
             "post": {
                 "tags": [
                     "users"
@@ -226,15 +233,170 @@
                         }
                     },
                     "200": {
-                        "description": "Empty body"
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_Null_and_ChangePwErrors"
+                                }
+                            }
+                        }
                     }
                 }
             }
         },
-        "/api/frontend/v1/websites": {
+        "/api/frontend/v1/admin/clubs": {
             "get": {
                 "tags": [
-                    "Websites"
+                    "clubs"
+                ],
+                "summary": "Get all clubs",
+                "description": "Get all clubs",
+                "operationId": "get_all_clubs",
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClubList"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/admin/clubs/create": {
+            "post": {
+                "tags": [
+                    "clubs"
+                ],
+                "summary": "Create a new club",
+                "description": "Create a new club",
+                "operationId": "create_club",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateClubRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_SingleUuid_and_CreateClubErrors"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/admin/clubs/{uuid}": {
+            "get": {
+                "tags": [
+                    "clubs"
+                ],
+                "summary": "Get a single club",
+                "description": "Get a single club",
+                "operationId": "get_club",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FullClub"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/user/websites": {
+            "get": {
+                "tags": [
+                    "websites"
                 ],
                 "summary": "Retrieve all websites owned by this user",
                 "description": "Retrieve all websites owned by this user",
@@ -274,7 +436,7 @@
             },
             "post": {
                 "tags": [
-                    "Websites"
+                    "websites"
                 ],
                 "summary": "Create a new website",
                 "description": "Create a new website",
@@ -315,7 +477,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UuidSchema"
+                                    "$ref": "#/components/schemas/SingleUuid"
                                 }
                             }
                         }
@@ -323,10 +485,10 @@
                 }
             }
         },
-        "/api/frontend/v1/websites/{uuid}": {
+        "/api/frontend/v1/user/websites/{uuid}": {
             "get": {
                 "tags": [
-                    "Websites"
+                    "websites"
                 ],
                 "summary": "Retrieve a single website",
                 "description": "Retrieve a single website",
@@ -337,7 +499,6 @@
                         "name": "uuid",
                         "required": true,
                         "schema": {
-                            "description": "The uuid",
                             "type": "string",
                             "format": "uuid"
                         },
@@ -379,7 +540,7 @@
             },
             "put": {
                 "tags": [
-                    "Websites"
+                    "websites"
                 ],
                 "summary": "Update a website",
                 "description": "Update a website",
@@ -390,7 +551,6 @@
                         "name": "uuid",
                         "required": true,
                         "schema": {
-                            "description": "The uuid",
                             "type": "string",
                             "format": "uuid"
                         },
@@ -435,7 +595,7 @@
             },
             "delete": {
                 "tags": [
-                    "Websites"
+                    "websites"
                 ],
                 "summary": "Delete a website",
                 "description": "Delete a website",
@@ -446,7 +606,6 @@
                         "name": "uuid",
                         "required": true,
                         "schema": {
-                            "description": "The uuid",
                             "type": "string",
                             "format": "uuid"
                         },
@@ -480,10 +639,10 @@
                 }
             }
         },
-        "/api/frontend/v1/websites/{uuid}/domains": {
+        "/api/frontend/v1/user/websites/{uuid}/domains": {
             "post": {
                 "tags": [
-                    "Websites"
+                    "websites"
                 ],
                 "summary": "Add a domain to a website",
                 "description": "Add a domain to a website",
@@ -494,7 +653,6 @@
                         "name": "uuid",
                         "required": true,
                         "schema": {
-                            "description": "The uuid",
                             "type": "string",
                             "format": "uuid"
                         },
@@ -537,7 +695,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UuidSchema"
+                                    "$ref": "#/components/schemas/FormResult_for_SingleUuid_and_AddDomainToWebsiteForm"
                                 }
                             }
                         }
@@ -545,10 +703,10 @@
                 }
             }
         },
-        "/api/frontend/v1/websites/{website_uuid}/domains/{domain_uuid}": {
+        "/api/frontend/v1/user/websites/{website_uuid}/domains/{domain_uuid}": {
             "delete": {
                 "tags": [
-                    "Websites"
+                    "websites"
                 ],
                 "summary": "Remove a domain from a website",
                 "description": "Remove a domain from a website",
@@ -602,10 +760,10 @@
                 }
             }
         },
-        "/api/frontend/v1/websites/{uuid}/deploy": {
+        "/api/frontend/v1/user/websites/{uuid}/deploy": {
             "post": {
                 "tags": [
-                    "Websites"
+                    "websites"
                 ],
                 "summary": "Deploy the configuration to the webserver.",
                 "description": "Deploy the configuration to the webserver.\n\nThis will configure the webspace and request certificates for all added domains\n\nReturns an uuid that will be used to send a notification via websocket when the deployment\nprocess has finished",
@@ -616,7 +774,6 @@
                         "name": "uuid",
                         "required": true,
                         "schema": {
-                            "description": "The uuid",
                             "type": "string",
                             "format": "uuid"
                         },
@@ -649,7 +806,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UuidSchema"
+                                    "$ref": "#/components/schemas/SingleUuid"
                                 }
                             }
                         }
@@ -657,10 +814,10 @@
                 }
             }
         },
-        "/api/frontend/v1/websites/{uuid}/check-dns": {
+        "/api/frontend/v1/user/websites/{uuid}/check-dns": {
             "post": {
                 "tags": [
-                    "Websites"
+                    "websites"
                 ],
                 "operationId": "check_dns",
                 "parameters": [
@@ -701,49 +858,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UuidSchema"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/frontend/v1/clubs/clubs": {
-            "get": {
-                "tags": [
-                    "Clubs"
-                ],
-                "summary": "Get all clubs",
-                "description": "Get all clubs",
-                "operationId": "get_all_clubs",
-                "responses": {
-                    "400": {
-                        "description": "Client side error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Server side error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ClubList"
+                                    "$ref": "#/components/schemas/SingleUuid"
                                 }
                             }
                         }
@@ -857,46 +972,16 @@
                     }
                 }
             },
-            "ChangePwFormFields": {
+            "ChangePwErrors": {
                 "description": "The fields of the change password request",
-                "oneOf": [
-                    {
-                        "description": "The fields of the change password request",
-                        "allOf": [
-                            {
-                                "oneOf": [
-                                    {
-                                        "type": "object",
-                                        "properties": {
-                                            "error": {
-                                                "type": "string",
-                                                "enum": [
-                                                    "Incorrect"
-                                                ]
-                                            }
-                                        },
-                                        "required": [
-                                            "error"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "field": {
-                                        "type": "string",
-                                        "enum": [
-                                            "CurrentPw"
-                                        ]
-                                    }
-                                },
-                                "required": [
-                                    "field"
-                                ]
-                            }
-                        ]
+                "type": "object",
+                "properties": {
+                    "current_pw": {
+                        "type": "boolean"
                     }
+                },
+                "required": [
+                    "current_pw"
                 ]
             },
             "ChangePwRequest": {
@@ -929,12 +1014,38 @@
                         "description": "List of all clubs",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/FullClub"
+                            "$ref": "#/components/schemas/SimpleClub"
                         }
                     }
                 },
                 "required": [
                     "clubs"
+                ]
+            },
+            "CreateClubErrors": {
+                "description": "Errors that may occur during creation of a club",
+                "type": "object",
+                "properties": {
+                    "name_in_use": {
+                        "description": "Name is already in use",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "name_in_use"
+                ]
+            },
+            "CreateClubRequest": {
+                "description": "The request to create a club",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the club",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
                 ]
             },
             "CreateWebsiteRequest": {
@@ -1018,71 +1129,186 @@
                     "uuid"
                 ]
             },
-            "FormError_for_AddDomainToWebsiteForm": {
-                "description": "The response that should be used for inform the user about errors in the form",
-                "type": "object",
-                "properties": {
-                    "errors": {
-                        "description": "The errors that occurred",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/FormFieldError_for_AddDomainToWebsiteForm"
-                        }
+            "FormResult_for_Null_and_ChangePwErrors": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/ChangePwErrors"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
                     }
-                },
-                "required": [
-                    "errors"
                 ]
             },
-            "FormError_for_ChangePwFormFields": {
-                "description": "The response that should be used for inform the user about errors in the form",
-                "type": "object",
-                "properties": {
-                    "errors": {
-                        "description": "The errors that occurred",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/FormFieldError_for_ChangePwFormFields"
-                        }
+            "FormResult_for_Null_and_LoginErrors": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/LoginErrors"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
                     }
-                },
-                "required": [
-                    "errors"
                 ]
             },
-            "FormFieldError_for_AddDomainToWebsiteForm": {
-                "description": "An error in a form field",
-                "type": "object",
-                "properties": {
-                    "field": {
-                        "$ref": "#/components/schemas/AddDomainToWebsiteForm"
+            "FormResult_for_SingleUuid_and_AddDomainToWebsiteForm": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/SingleUuid"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/AddDomainToWebsiteForm"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
                     }
-                },
-                "required": [
-                    "field"
                 ]
             },
-            "FormFieldError_for_ChangePwFormFields": {
-                "description": "An error in a form field",
-                "type": "object",
-                "properties": {
-                    "field": {
-                        "$ref": "#/components/schemas/ChangePwFormFields"
+            "FormResult_for_SingleUuid_and_CreateClubErrors": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/SingleUuid"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/CreateClubErrors"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
                     }
-                },
-                "required": [
-                    "field"
                 ]
             },
             "FullClub": {
                 "description": "A full representation of a club",
                 "type": "object",
                 "properties": {
+                    "admins": {
+                        "description": "The users that are admins of the club",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SimpleUser"
+                        }
+                    },
                     "name": {
                         "description": "Name of the club",
                         "type": "string"
                     },
-                    "users": {
+                    "user_count": {
                         "description": "User count associated with the club",
                         "type": "integer",
                         "format": "uint64",
@@ -1095,12 +1321,13 @@
                     }
                 },
                 "required": [
+                    "admins",
                     "name",
-                    "users",
+                    "user_count",
                     "uuid"
                 ]
             },
-            "FullUser": {
+            "FullUserAdmin": {
                 "description": "The full representation for the user",
                 "type": "object",
                 "properties": {
@@ -1213,6 +1440,19 @@
                     "websites"
                 ]
             },
+            "LoginErrors": {
+                "description": "The request for local authentication",
+                "type": "object",
+                "properties": {
+                    "login_failed": {
+                        "description": "Login has failed",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "login_failed"
+                ]
+            },
             "LoginRequest": {
                 "description": "The request for local authentication",
                 "type": "object",
@@ -1258,6 +1498,60 @@
                 "type": "string",
                 "format": "date-time"
             },
+            "SimpleClub": {
+                "description": "A simple representation of a club",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name of the club",
+                        "type": "string"
+                    },
+                    "user_count": {
+                        "description": "User count associated with the club",
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0
+                    },
+                    "uuid": {
+                        "description": "Primary key",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "name",
+                    "user_count",
+                    "uuid"
+                ]
+            },
+            "SimpleUser": {
+                "description": "The simple representation for the user",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "Used for displaying purposes",
+                        "type": "string"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/UserRole"
+                    },
+                    "username": {
+                        "description": "The username of the user",
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "description": "The identifier of the user",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "role",
+                    "username",
+                    "uuid"
+                ]
+            },
             "SimpleWebsite": {
                 "description": "The simple representation of a website",
                 "type": "object",
@@ -1288,6 +1582,19 @@
                     "uuid"
                 ]
             },
+            "SingleUuid": {
+                "description": "A single uuid wrapped in a struct",
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "uuid"
+                ]
+            },
             "UpdateWebsiteRequest": {
                 "description": "The request to update websites",
                 "type": "object",
@@ -1308,20 +1615,6 @@
                     "Administrator",
                     "ClubAdmin",
                     "User"
-                ]
-            },
-            "UuidSchema": {
-                "description": "a uuid",
-                "type": "object",
-                "properties": {
-                    "uuid": {
-                        "description": "The uuid",
-                        "type": "string",
-                        "format": "uuid"
-                    }
-                },
-                "required": [
-                    "uuid"
                 ]
             },
             "WebconfUpdateResult": {

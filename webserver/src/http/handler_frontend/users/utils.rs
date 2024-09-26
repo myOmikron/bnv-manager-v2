@@ -1,7 +1,7 @@
 //! Utilities for working with [`users::schema`](super::schema)
 
 use crate::http::common::errors::ApiResult;
-use crate::http::handler_frontend::users::schema::FullUser;
+use crate::http::handler_frontend::users::schema::FullUserAdmin;
 use crate::models::User;
 use crate::utils::schemars::SchemaDateTime;
 
@@ -11,8 +11,8 @@ use crate::utils::schemars::SchemaDateTime;
 /// - if `user.role` is `UserRole::Internal` but `user.internal_groups` is not populated
 /// - if `user.role` is `UserRole::Customer` but `user.customers` is not populated
 #[track_caller]
-pub fn new_full_user(user: User) -> ApiResult<FullUser> {
-    Ok(FullUser {
+pub fn new_full_user(user: User) -> ApiResult<FullUserAdmin> {
+    Ok(FullUserAdmin {
         uuid: user.uuid,
         username: user.username,
         display_name: user.display_name,

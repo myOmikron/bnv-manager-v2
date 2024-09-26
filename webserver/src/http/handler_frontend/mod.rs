@@ -28,7 +28,9 @@ pub fn admin() -> ApiContext<Router> {
         "/clubs",
         ApiContext::new()
             .tag("clubs")
-            .handler(clubs::handler_admin::get_all_clubs),
+            .handler(clubs::handler_admin::get_all_clubs)
+            .handler(clubs::handler_admin::create_club)
+            .handler(clubs::handler_admin::get_club),
     )
 }
 
@@ -64,14 +66,6 @@ pub fn common() -> ApiContext<Router> {
                 .handler(ws::handler::websocket),
         )
         .nest(
-            "/auth",
-            ApiContext::new()
-                .tag("auth")
-                .handler(auth::handler::login)
-                .route_layer(ServiceBuilder::new().concurrency_limit(10))
-                .handler(auth::handler::logout),
-        )
-        .nest(
             "/users",
             ApiContext::new()
                 .tag("users")
@@ -86,6 +80,14 @@ pub fn initialize() -> ApiContext<Router> {
     ApiContext::new().nest(
         "/v1",
         ApiContext::new()
+            .nest(
+                "/auth",
+                ApiContext::new()
+                    .tag("auth")
+                    .handler(auth::handler::login)
+                    .route_layer(ServiceBuilder::new().concurrency_limit(10))
+                    .handler(auth::handler::logout),
+            )
             .nest(
                 "/common",
                 common()
