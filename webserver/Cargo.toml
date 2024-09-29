@@ -3,6 +3,7 @@ name = "webserver"
 version = "0.1.0"
 edition = "2021"
 authors = ["myOmikron <git@omikron.dev>"]
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -20,7 +21,7 @@ tower-sessions = { version = "~0.13" }
 tower-sessions-rorm-store = { version = "~0.3" }
 
 # openapi and swagger ui
-swaggapi = { version = "*", features = ["axum"], git = "https://github.com/gammelalf/swaggapi" }
+swaggapi = { version = "*", default-features = false, features = ["axum"], git = "https://github.com/gammelalf/swaggapi" }
 schemars = { version = "~0.8", features = ["uuid1"] }
 
 # Cli

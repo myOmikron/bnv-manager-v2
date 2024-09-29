@@ -2,6 +2,7 @@
 name = "conf_updater_common"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 serde = { version = "~1", features = ["derive"] }
@@ -12,6 +13,6 @@ thiserror = { version = "~1" }
 # Enabling this feature provides the IntoResponse trait needed for Axum responses
 axum = { version = "~0.7", optional = true }
 # Enabling this feature provides conversions of rorm errors to ApiFailures
-rorm = { version = "~0.6", optional = true,features = ["tokio", "postgres-only", "cli", "uuid"], default-features = false }
+rorm = { version = "~0.6", optional = true, features = ["tokio", "postgres-only", "cli", "uuid"], default-features = false }
 # Enabling this feature provides tracing capabilities to create events if necessary
 tracing = { version = "~0.1", optional = true }
