@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Frontend",
+        "title": "Unnamed API",
         "version": "v0.0.0"
     },
     "paths": {
@@ -389,6 +389,61 @@
                                 }
                             }
                         }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "clubs"
+                ],
+                "summary": "Updates an existing club",
+                "description": "Updates an existing club\n\nOne of the attributes must be set",
+                "operationId": "update_club",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateClubRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
                     }
                 }
             },
@@ -1156,24 +1211,6 @@
                     }
                 ]
             },
-            "DnsQueryResult": {
-                "description": "The result from a dns query",
-                "type": "object",
-                "properties": {
-                    "result": {
-                        "$ref": "#/components/schemas/ResolveResult"
-                    },
-                    "uuid": {
-                        "description": "The uuid of the domain",
-                        "type": "string",
-                        "format": "uuid"
-                    }
-                },
-                "required": [
-                    "result",
-                    "uuid"
-                ]
-            },
             "FormResult_for_Null_and_ChangePwErrors": {
                 "description": "A `Result` with a custom serialization",
                 "oneOf": [
@@ -1520,24 +1557,6 @@
                     "username"
                 ]
             },
-            "ResolveResult": {
-                "description": "The result of a resolver",
-                "type": "object",
-                "properties": {
-                    "ipv4": {
-                        "description": "Ipv4 address",
-                        "nullable": true,
-                        "type": "string",
-                        "format": "ipv4"
-                    },
-                    "ipv6": {
-                        "description": "Ipv6 address",
-                        "nullable": true,
-                        "type": "string",
-                        "format": "ipv6"
-                    }
-                }
-            },
             "SchemaDateTime": {
                 "example": "1970-01-01T00:00:00.0Z",
                 "type": "string",
@@ -1640,6 +1659,17 @@
                     "uuid"
                 ]
             },
+            "UpdateClubRequest": {
+                "description": "The request to update a club",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the club",
+                        "nullable": true,
+                        "type": "string"
+                    }
+                }
+            },
             "UpdateWebsiteRequest": {
                 "description": "The request to update websites",
                 "type": "object",
@@ -1660,119 +1690,6 @@
                     "Administrator",
                     "ClubAdmin",
                     "User"
-                ]
-            },
-            "WebconfUpdateResult": {
-                "description": "The result of a webconf update request",
-                "oneOf": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "res": {
-                                "type": "string",
-                                "enum": [
-                                    "Success"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "res"
-                        ]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "res": {
-                                "type": "string",
-                                "enum": [
-                                    "Fail"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "res"
-                        ]
-                    }
-                ]
-            },
-            "WsClientMsg": {
-                "description": "Websocket messages that originate from the client",
-                "oneOf": []
-            },
-            "WsServerMsg": {
-                "description": "Websocket messages that originate from the server",
-                "oneOf": [
-                    {
-                        "description": "Deployment state has updated",
-                        "type": "object",
-                        "properties": {
-                            "state": {
-                                "$ref": "#/components/schemas/WebconfUpdateResult"
-                            },
-                            "task": {
-                                "description": "The task uuid",
-                                "type": "string",
-                                "format": "uuid"
-                            },
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "DeployUpdate"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "state",
-                            "task",
-                            "type"
-                        ]
-                    },
-                    {
-                        "description": "DNS query update",
-                        "type": "object",
-                        "properties": {
-                            "result": {
-                                "$ref": "#/components/schemas/DnsQueryResult"
-                            },
-                            "task": {
-                                "description": "The task uuid",
-                                "type": "string",
-                                "format": "uuid"
-                            },
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "DnsUpdate"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "result",
-                            "task",
-                            "type"
-                        ]
-                    },
-                    {
-                        "description": "DNS task finished",
-                        "type": "object",
-                        "properties": {
-                            "task": {
-                                "description": "The task uuid",
-                                "type": "string",
-                                "format": "uuid"
-                            },
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "DnsFinished"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "task",
-                            "type"
-                        ]
-                    }
                 ]
             }
         }

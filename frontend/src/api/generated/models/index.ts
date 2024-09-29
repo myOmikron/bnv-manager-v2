@@ -279,25 +279,6 @@ export const DeployStateOneOf2TypeEnum = {
 export type DeployStateOneOf2TypeEnum = typeof DeployStateOneOf2TypeEnum[keyof typeof DeployStateOneOf2TypeEnum];
 
 /**
- * The result from a dns query
- * @export
- * @interface DnsQueryResult
- */
-export interface DnsQueryResult {
-    /**
-     * 
-     * @type {ResolveResult}
-     * @memberof DnsQueryResult
-     */
-    result: ResolveResult;
-    /**
-     * The uuid of the domain
-     * @type {string}
-     * @memberof DnsQueryResult
-     */
-    uuid: string;
-}
-/**
  * @type FormResultForNullAndChangePwErrors
  * A `Result` with a custom serialization
  * @export
@@ -683,25 +664,6 @@ export interface LoginRequest {
     username: string;
 }
 /**
- * The result of a resolver
- * @export
- * @interface ResolveResult
- */
-export interface ResolveResult {
-    /**
-     * Ipv4 address
-     * @type {string}
-     * @memberof ResolveResult
-     */
-    ipv4?: string | null;
-    /**
-     * Ipv6 address
-     * @type {string}
-     * @memberof ResolveResult
-     */
-    ipv6?: string | null;
-}
-/**
  * A simple representation of a club
  * @export
  * @interface SimpleClub
@@ -808,6 +770,19 @@ export interface SingleUuid {
     uuid: string;
 }
 /**
+ * The request to update a club
+ * @export
+ * @interface UpdateClubRequest
+ */
+export interface UpdateClubRequest {
+    /**
+     * The name of the club
+     * @type {string}
+     * @memberof UpdateClubRequest
+     */
+    name?: string | null;
+}
+/**
  * The request to update websites
  * @export
  * @interface UpdateWebsiteRequest
@@ -831,168 +806,4 @@ export const UserRole = {
     User: 'User'
 } as const;
 export type UserRole = typeof UserRole[keyof typeof UserRole];
-
-/**
- * @type WebconfUpdateResult
- * The result of a webconf update request
- * @export
- */
-export type WebconfUpdateResult = WebconfUpdateResultOneOf | WebconfUpdateResultOneOf1;
-/**
- * 
- * @export
- * @interface WebconfUpdateResultOneOf
- */
-export interface WebconfUpdateResultOneOf {
-    /**
-     * 
-     * @type {string}
-     * @memberof WebconfUpdateResultOneOf
-     */
-    res: WebconfUpdateResultOneOfResEnum;
-}
-
-
-/**
- * @export
- */
-export const WebconfUpdateResultOneOfResEnum = {
-    Success: 'Success'
-} as const;
-export type WebconfUpdateResultOneOfResEnum = typeof WebconfUpdateResultOneOfResEnum[keyof typeof WebconfUpdateResultOneOfResEnum];
-
-/**
- * 
- * @export
- * @interface WebconfUpdateResultOneOf1
- */
-export interface WebconfUpdateResultOneOf1 {
-    /**
-     * 
-     * @type {string}
-     * @memberof WebconfUpdateResultOneOf1
-     */
-    res: WebconfUpdateResultOneOf1ResEnum;
-}
-
-
-/**
- * @export
- */
-export const WebconfUpdateResultOneOf1ResEnum = {
-    Fail: 'Fail'
-} as const;
-export type WebconfUpdateResultOneOf1ResEnum = typeof WebconfUpdateResultOneOf1ResEnum[keyof typeof WebconfUpdateResultOneOf1ResEnum];
-
-/**
- * Websocket messages that originate from the client
- * @export
- * @interface WsClientMsg
- */
-export interface WsClientMsg {
-}
-/**
- * @type WsServerMsg
- * Websocket messages that originate from the server
- * @export
- */
-export type WsServerMsg = WsServerMsgOneOf | WsServerMsgOneOf1 | WsServerMsgOneOf2;
-/**
- * Deployment state has updated
- * @export
- * @interface WsServerMsgOneOf
- */
-export interface WsServerMsgOneOf {
-    /**
-     * 
-     * @type {WebconfUpdateResult}
-     * @memberof WsServerMsgOneOf
-     */
-    state: WebconfUpdateResult;
-    /**
-     * The task uuid
-     * @type {string}
-     * @memberof WsServerMsgOneOf
-     */
-    task: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WsServerMsgOneOf
-     */
-    type: WsServerMsgOneOfTypeEnum;
-}
-
-
-/**
- * @export
- */
-export const WsServerMsgOneOfTypeEnum = {
-    DeployUpdate: 'DeployUpdate'
-} as const;
-export type WsServerMsgOneOfTypeEnum = typeof WsServerMsgOneOfTypeEnum[keyof typeof WsServerMsgOneOfTypeEnum];
-
-/**
- * DNS query update
- * @export
- * @interface WsServerMsgOneOf1
- */
-export interface WsServerMsgOneOf1 {
-    /**
-     * 
-     * @type {DnsQueryResult}
-     * @memberof WsServerMsgOneOf1
-     */
-    result: DnsQueryResult;
-    /**
-     * The task uuid
-     * @type {string}
-     * @memberof WsServerMsgOneOf1
-     */
-    task: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WsServerMsgOneOf1
-     */
-    type: WsServerMsgOneOf1TypeEnum;
-}
-
-
-/**
- * @export
- */
-export const WsServerMsgOneOf1TypeEnum = {
-    DnsUpdate: 'DnsUpdate'
-} as const;
-export type WsServerMsgOneOf1TypeEnum = typeof WsServerMsgOneOf1TypeEnum[keyof typeof WsServerMsgOneOf1TypeEnum];
-
-/**
- * DNS task finished
- * @export
- * @interface WsServerMsgOneOf2
- */
-export interface WsServerMsgOneOf2 {
-    /**
-     * The task uuid
-     * @type {string}
-     * @memberof WsServerMsgOneOf2
-     */
-    task: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WsServerMsgOneOf2
-     */
-    type: WsServerMsgOneOf2TypeEnum;
-}
-
-
-/**
- * @export
- */
-export const WsServerMsgOneOf2TypeEnum = {
-    DnsFinished: 'DnsFinished'
-} as const;
-export type WsServerMsgOneOf2TypeEnum = typeof WsServerMsgOneOf2TypeEnum[keyof typeof WsServerMsgOneOf2TypeEnum];
 

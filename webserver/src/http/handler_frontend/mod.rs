@@ -12,7 +12,7 @@ use crate::http::middlewares::role_required::RoleRequiredLayer;
 use crate::models::UserRole;
 
 pub mod auth;
-mod clubs;
+pub mod clubs;
 pub mod users;
 pub mod websites;
 pub mod ws;
@@ -31,7 +31,8 @@ pub fn admin() -> ApiContext<Router> {
             .handler(clubs::handler_admin::get_all_clubs)
             .handler(clubs::handler_admin::create_club)
             .handler(clubs::handler_admin::get_club)
-            .handler(clubs::handler_admin::delete_club),
+            .handler(clubs::handler_admin::delete_club)
+            .handler(clubs::handler_admin::update_club),
     )
 }
 

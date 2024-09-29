@@ -1,3 +1,5 @@
+//! Schemas of all club handlers
+
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
@@ -48,4 +50,11 @@ pub struct CreateClubRequest {
 pub struct CreateClubErrors {
     /// Name is already in use
     pub name_in_use: bool,
+}
+
+/// The request to update a club
+#[derive(Clone, Debug, JsonSchema, Serialize, Deserialize)]
+pub struct UpdateClubRequest {
+    /// The name of the club
+    pub name: Option<String>,
 }

@@ -1,12 +1,16 @@
+//! Administration handlers of clubs
+
 use axum::extract::Path;
 use futures_util::TryStreamExt;
 use rorm::insert;
 use rorm::query;
+use rorm::update;
 use rorm::FieldAccess;
 use rorm::Model;
 use swaggapi::delete;
 use swaggapi::get;
 use swaggapi::post;
+use swaggapi::put;
 use uuid::Uuid;
 
 use crate::global::GLOBAL;
@@ -20,6 +24,7 @@ use crate::http::handler_frontend::clubs::schema::CreateClubErrors;
 use crate::http::handler_frontend::clubs::schema::CreateClubRequest;
 use crate::http::handler_frontend::clubs::schema::FullClub;
 use crate::http::handler_frontend::clubs::schema::SimpleClub;
+use crate::http::handler_frontend::clubs::schema::UpdateClubRequest;
 use crate::http::handler_frontend::users::schema::SimpleUser;
 use crate::models::Club;
 use crate::models::ClubUser;
@@ -138,6 +143,36 @@ pub async fn delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResu
 
     rorm::delete!(&mut tx, Club)
         .condition(Club::F.uuid.equals(uuid))
+        .await?;
+
+    tx.commit().await?;
+
+    Ok(())
+}
+
+/// Updates an existing club
+///
+/// One of the attributes must be set
+#[put("/:uuid")]
+pub async fn update_club(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+    ApiJson(UpdateClubRequest { name }): ApiJson<UpdateClubRequest>,
+) -> ApiResult<()> {
+    let mut tx = GLOBAL.db.start_transaction().await?;
+
+    query!(&mut tx, (Club::F.uuid,))
+        .condition(Club::F.uuid.equals(uuid))
+        .optional()
+        .await?
+        .ok_or(ApiError::BadRequest)?;
+
+    update!(&mut tx, Club)
+        .condition(Club::F.uuid.equals(uuid))
+        .begin_dyn_set()
+        .set_if(Club::F.name, name)
+        .finish_dyn_set()
+        .map_err(|_| ApiError::BadRequest)?
+        .exec()
         .await?;
 
     tx.commit().await?;
