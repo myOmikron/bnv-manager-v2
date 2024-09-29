@@ -8,14 +8,16 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use axum::extract::Request;
+use axum::routing::get;
+use axum::Json;
 use axum::Router;
 use axum::ServiceExt;
 use futures::StreamExt;
 use signal_hook::consts::TERM_SIGNALS;
 use signal_hook_tokio::Signals;
 use swaggapi::ApiContext;
+use swaggapi::PageOfEverything;
 use swaggapi::SwaggapiPage;
-use swaggapi::SwaggerUi;
 use thiserror::Error;
 use tokio::net::TcpListener;
 use tower::Layer;
@@ -49,16 +51,19 @@ pub async fn run(config: Arc<Config>) -> Result<(), StartServerError> {
         .add_schema::<WsServerMsg>()
         .add_schema::<WsClientMsg>();
 
-    let mut swaggui = SwaggerUi::without_everything().page("Frontend", &FRONTEND_API_V1);
-    swaggui.path = "/docs";
-
     let router = Router::new()
+        .nest(
+            "/docs",
+            Router::new().route(
+                "/openapi.json",
+                get(|| async { Json(PageOfEverything.openapi()) }),
+            ),
+        )
         .merge(
             ApiContext::new()
                 .page(&FRONTEND_API_V1)
                 .nest("/api/frontend", handler_frontend::initialize()),
         )
-        .merge(swaggui)
         .layer(
             ServiceBuilder::new()
                 .layer(TraceLayer::new_for_http())
