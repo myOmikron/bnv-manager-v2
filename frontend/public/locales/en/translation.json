@@ -3,6 +3,9 @@
         "actions": "Actions"
     },
     "button": {
+        "back": "Back",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
         "create": "Create",
         "delete": "Delete",
         "reset": "Reset",

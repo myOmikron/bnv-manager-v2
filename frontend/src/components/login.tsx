@@ -32,9 +32,13 @@ export default function Login(props: LoginProps) {
             const res = await Api.common.auth.login(value.username, value.password);
 
             res.match(
-                () => {
-                    toast.success(tL("toast.login-successful"));
-                    props.onLogin();
+                (res) => {
+                    if (res.result === "Ok") {
+                        toast.success(tL("toast.login-successful"));
+                        props.onLogin();
+                    } else {
+                        toast.error(tL("toast.login-failed"));
+                    }
                 },
                 (err) => toast.error(err.message),
             );

@@ -1,0 +1,11 @@
+{
+    "description": {
+        "club-name": "The legal name of the club"
+    },
+    "label": {
+        "club-name": "Club name"
+    },
+    "heading": {
+        "create-club": "Create club"
+    }
+}

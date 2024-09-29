@@ -1,0 +1,11 @@
+{
+    "description": {
+        "club-name": "Der rechtliche Name des Vereins"
+    },
+    "label": {
+        "club-name": "Vereinsname"
+    },
+    "heading": {
+        "create-club": "Verein anlegen"
+    }
+}

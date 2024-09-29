@@ -3,7 +3,10 @@
         "actions": "Aktionen"
     },
     "button": {
+        "back": "Zurück",
+        "cancel": "Abbrechen",
         "create": "Erstellen",
+        "confirm": "Bestätigen",
         "delete": "Löschen",
         "reset": "Zurücksetzen",
         "save": "Speichern"

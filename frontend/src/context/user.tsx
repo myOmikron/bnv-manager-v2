@@ -79,7 +79,7 @@ export class UserProvider extends React.Component<UserProviderProps, UserProvide
         Api.common.users.getMe().then((result) => {
             result.match(
                 (user) => {
-                    WS.connect(`${window.location.origin.replace("http", "ws")}/api/frontend/v1/ws`);
+                    WS.connect(`${window.location.origin.replace("http", "ws")}/api/frontend/v1/common/ws`);
                     window.localStorage.setItem("username", user.username);
                     this.setState({ user });
                 },

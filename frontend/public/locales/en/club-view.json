@@ -1,8 +1,10 @@
 {
-    "button": {
-        "back-to-dashboard": "Back to dashboard"
-    },
+    "button": {},
     "heading": {
-        "club-overview": "Club overview: {{club}}"
+        "club-overview": "Club overview: {{club}}",
+        "overview": "Overview"
+    },
+    "label": {
+        "user-count": "User count"
     }
 }
