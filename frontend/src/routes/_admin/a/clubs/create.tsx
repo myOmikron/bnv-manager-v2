@@ -67,6 +67,7 @@ export default function ClubCreate(props: ClubCreateProps) {
                                         <RequiredLabel>{tC("label.club-name")}</RequiredLabel>
                                         <Description>{tC("description.club-name")}</Description>
                                         <Input
+                                            autoFocus={true}
                                             required={true}
                                             value={fieldApi.state.value}
                                             onChange={(e) => fieldApi.setValue(e.target.value)}
