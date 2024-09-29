@@ -1,10 +1,20 @@
 {
-    "button": {},
+    "button": {
+        "delete-club": "Delete club",
+        "rename-club": "Rename club"
+    },
+    "description": {
+        "delete-club": "This action will delete all club administrators as well as all club users and their mailboxes."
+    },
     "heading": {
         "club-overview": "Club overview: {{club}}",
-        "overview": "Overview"
+        "overview": "Overview",
+        "delete-club": "Delete club \"{{name}}\"?"
     },
     "label": {
         "user-count": "User count"
+    },
+    "toast": {
+        "club-deleted": "Club was deleted"
     }
 }

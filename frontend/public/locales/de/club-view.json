@@ -1,10 +1,20 @@
 {
-    "button": {},
+    "button": {
+        "delete-club": "Verein löschen",
+        "rename-club": "Verein umbenennen"
+    },
+    "description": {
+        "delete-club": "Diese Aktion wird alle Vereins-Administratoren, Vereins-Nutzer und deren Postfächer löschen."
+    },
     "heading": {
         "club-overview": "Vereinsübersicht: {{club}}",
-        "overview": "Übersicht"
+        "overview": "Übersicht",
+        "delete-club": "Verein \"{{name}}\" löschen?"
     },
     "label": {
         "user-count": "Nutzerzahl"
+    },
+    "toast": {
+        "club-deleted": "Verein wurde gelöscht"
     }
 }
