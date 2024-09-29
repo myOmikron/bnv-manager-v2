@@ -4,6 +4,7 @@ use rorm::insert;
 use rorm::query;
 use rorm::FieldAccess;
 use rorm::Model;
+use swaggapi::delete;
 use swaggapi::get;
 use swaggapi::post;
 use uuid::Uuid;
@@ -122,4 +123,24 @@ pub async fn create_club(
     tx.commit().await?;
 
     Ok(ApiJson(FormResult::ok(SingleUuid { uuid })))
+}
+
+/// Delete an existing club
+#[delete("/:uuid")]
+pub async fn delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
+    let mut tx = GLOBAL.db.start_transaction().await?;
+
+    query!(&mut tx, (Club::F.uuid,))
+        .condition(Club::F.uuid.equals(uuid))
+        .optional()
+        .await?
+        .ok_or(ApiError::BadRequest)?;
+
+    rorm::delete!(&mut tx, Club)
+        .condition(Club::F.uuid.equals(uuid))
+        .await?;
+
+    tx.commit().await?;
+
+    Ok(())
 }

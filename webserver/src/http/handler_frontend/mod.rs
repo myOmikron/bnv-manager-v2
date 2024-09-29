@@ -30,7 +30,8 @@ pub fn admin() -> ApiContext<Router> {
             .tag("clubs")
             .handler(clubs::handler_admin::get_all_clubs)
             .handler(clubs::handler_admin::create_club)
-            .handler(clubs::handler_admin::get_club),
+            .handler(clubs::handler_admin::get_club)
+            .handler(clubs::handler_admin::delete_club),
     )
 }
 
