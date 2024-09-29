@@ -26,6 +26,10 @@ export interface CreateClubOperationRequest {
     CreateClubRequest: CreateClubRequest;
 }
 
+export interface DeleteClubRequest {
+    uuid: string;
+}
+
 export interface GetClubRequest {
     uuid: string;
 }
@@ -71,6 +75,40 @@ export class ClubsApi extends runtime.BaseAPI {
     async createClub(requestParameters: CreateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleUuidAndCreateClubErrors> {
         const response = await this.createClubRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     * Delete an existing club
+     * Delete an existing club
+     */
+    async deleteClubRaw(requestParameters: DeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling deleteClub().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/frontend/v1/admin/clubs/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete an existing club
+     * Delete an existing club
+     */
+    async deleteClub(requestParameters: DeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteClubRaw(requestParameters, initOverrides);
     }
 
     /**

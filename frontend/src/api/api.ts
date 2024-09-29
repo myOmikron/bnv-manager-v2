@@ -63,6 +63,7 @@ export const Api = {
             get: (uuid: UUID) => handleError(clubsApi.getClub({ uuid })),
             create: (createClubRequest: CreateClubRequest) =>
                 handleError(clubsApi.createClub({ CreateClubRequest: createClubRequest })),
+            delete: (uuid: UUID) => handleError(clubsApi.deleteClub({ uuid })),
         },
     },
     clubAdmin: {},
