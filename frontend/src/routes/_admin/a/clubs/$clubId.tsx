@@ -12,6 +12,11 @@ import { Heading } from "src/components/base/heading";
 import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } from "src/components/base/dropdown";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import ConfirmDialog from "src/components/confirm-dialog";
+import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
+import Form from "src/components/base/form";
+import { Button } from "src/components/base/button";
+import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
+import { Input } from "src/components/base/input";
 
 /**
  * The properties for {@link ClubView}
@@ -31,6 +36,12 @@ export default function ClubView(props: ClubViewProps) {
     const [club, setClub] = React.useState<FullClub>();
 
     const [openDeleteClub, setOpenDeleteClub] = React.useState(false);
+    const [openRenameClub, setOpenRenameClub] = React.useState<{
+        /** New name of the club */
+        newName: string;
+        /** List of possible errors */
+        errors: Array<string>;
+    }>();
 
     /**
      * Retrieve a club
@@ -56,6 +67,31 @@ export default function ClubView(props: ClubViewProps) {
         }
     };
 
+    /**
+     * Rename the club
+     *
+     * @param name The new name
+     */
+    const renameClub = async (name: string) => {
+        const res = await Api.admin.clubs.update(clubId, { name });
+
+        res.match(
+            (res) => {
+                if (res.result === "Ok") {
+                    getClub().then(() => setOpenRenameClub(undefined));
+                } else {
+                    if (res.error.name_in_use) {
+                        setOpenRenameClub({
+                            errors: [tC("errors.club-name-in-use")],
+                            newName: openRenameClub?.newName || "",
+                        });
+                    }
+                }
+            },
+            (err) => toast.error(err.message),
+        );
+    };
+
     useEffect(() => {
         getClub().then();
     }, [clubId]);
@@ -78,7 +114,7 @@ export default function ClubView(props: ClubViewProps) {
                             <span className={"sr-only"}>{t("accessibility.actions")}</span>
                         </DropdownButton>
                         <DropdownMenu anchor={"bottom end"}>
-                            <DropdownItem>
+                            <DropdownItem onClick={() => setOpenRenameClub({ errors: [], newName: "" })}>
                                 <DropdownLabel>{tC("button.rename-club")}</DropdownLabel>
                             </DropdownItem>
                             <DropdownItem onClick={() => setOpenDeleteClub(true)}>
@@ -102,6 +138,42 @@ export default function ClubView(props: ClubViewProps) {
                     onConfirm={() => deleteClub().then(() => navigate({ to: "/a/dashboard" }))}
                     onCancel={() => setOpenDeleteClub(false)}
                 />
+            )}
+
+            {openRenameClub !== undefined && (
+                <Dialog open={true} onClose={() => setOpenRenameClub(undefined)}>
+                    <Form onSubmit={() => openRenameClub && renameClub(openRenameClub.newName)}>
+                        <DialogTitle>{tC("heading.rename-club")}</DialogTitle>
+                        <DialogBody>
+                            <Fieldset>
+                                <FieldGroup>
+                                    <Field>
+                                        <RequiredLabel>{tC("label.new-club-name")}</RequiredLabel>
+                                        <Input
+                                            autoFocus={true}
+                                            required={true}
+                                            value={openRenameClub.newName}
+                                            invalid={openRenameClub.errors.length > 0}
+                                            onChange={(e) => {
+                                                openRenameClub &&
+                                                    setOpenRenameClub({ errors: [], newName: e.target.value });
+                                            }}
+                                        />
+                                        {openRenameClub.errors.map((err) => (
+                                            <ErrorMessage>{err}</ErrorMessage>
+                                        ))}
+                                    </Field>
+                                </FieldGroup>
+                            </Fieldset>
+                        </DialogBody>
+                        <DialogActions>
+                            <Button plain={true} onClick={() => setOpenRenameClub(undefined)}>
+                                {t("button.cancel")}
+                            </Button>
+                            <Button type={"submit"}>{tC("button.rename-club")}</Button>
+                        </DialogActions>
+                    </Form>
+                </Dialog>
             )}
         </>
     );

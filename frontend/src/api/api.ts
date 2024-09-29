@@ -6,6 +6,7 @@ import {
     CreateClubRequest,
     RequiredError,
     ResponseError,
+    UpdateClubRequest,
     UsersApi,
     WebsitesApi,
 } from "src/api/generated";
@@ -64,7 +65,13 @@ export const Api = {
             create: (createClubRequest: CreateClubRequest) =>
                 handleError(clubsApi.createClub({ CreateClubRequest: createClubRequest })),
             delete: (uuid: UUID) => handleError(clubsApi.deleteClub({ uuid })),
-            update: (uuid: UUID) => handleError(),
+            update: (uuid: UUID, updateClubRequest: UpdateClubRequest) =>
+                handleError(
+                    clubsApi.updateClub({
+                        uuid,
+                        UpdateClubRequest: updateClubRequest,
+                    }),
+                ),
         },
     },
     clubAdmin: {},

@@ -443,7 +443,14 @@
                         }
                     },
                     "200": {
-                        "description": "Empty body"
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_Null_and_UpdateClubErrors"
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -1293,6 +1300,47 @@
                     }
                 ]
             },
+            "FormResult_for_Null_and_UpdateClubErrors": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/UpdateClubErrors"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
             "FormResult_for_SingleUuid_and_AddDomainToWebsiteForm": {
                 "description": "A `Result` with a custom serialization",
                 "oneOf": [
@@ -1657,6 +1705,19 @@
                 },
                 "required": [
                     "uuid"
+                ]
+            },
+            "UpdateClubErrors": {
+                "description": "Errors that may occur in an update club request",
+                "type": "object",
+                "properties": {
+                    "name_in_use": {
+                        "description": "The new name is already in use",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "name_in_use"
                 ]
             },
             "UpdateClubRequest": {

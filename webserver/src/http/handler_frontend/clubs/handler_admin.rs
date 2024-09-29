@@ -24,6 +24,7 @@ use crate::http::handler_frontend::clubs::schema::CreateClubErrors;
 use crate::http::handler_frontend::clubs::schema::CreateClubRequest;
 use crate::http::handler_frontend::clubs::schema::FullClub;
 use crate::http::handler_frontend::clubs::schema::SimpleClub;
+use crate::http::handler_frontend::clubs::schema::UpdateClubErrors;
 use crate::http::handler_frontend::clubs::schema::UpdateClubRequest;
 use crate::http::handler_frontend::users::schema::SimpleUser;
 use crate::models::Club;
@@ -157,7 +158,7 @@ pub async fn delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResu
 pub async fn update_club(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
     ApiJson(UpdateClubRequest { name }): ApiJson<UpdateClubRequest>,
-) -> ApiResult<()> {
+) -> ApiResult<ApiJson<FormResult<(), UpdateClubErrors>>> {
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     query!(&mut tx, (Club::F.uuid,))
@@ -165,6 +166,21 @@ pub async fn update_club(
         .optional()
         .await?
         .ok_or(ApiError::BadRequest)?;
+
+    if let Some(name) = &name {
+        let existing = query!(&mut tx, Club)
+            .condition(Club::F.name.equals(name))
+            .optional()
+            .await?;
+
+        if let Some(existing) = existing {
+            if existing.uuid != uuid {
+                return Ok(ApiJson(FormResult::err(UpdateClubErrors {
+                    name_in_use: true,
+                })));
+            }
+        }
+    }
 
     update!(&mut tx, Club)
         .condition(Club::F.uuid.equals(uuid))
@@ -177,5 +193,5 @@ pub async fn update_club(
 
     tx.commit().await?;
 
-    Ok(())
+    Ok(ApiJson(FormResult::ok(())))
 }

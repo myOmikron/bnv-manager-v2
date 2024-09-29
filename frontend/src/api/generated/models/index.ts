@@ -378,6 +378,41 @@ export const FormResultForNullAndLoginErrorsOneOfResultEnum = {
 export type FormResultForNullAndLoginErrorsOneOfResultEnum = typeof FormResultForNullAndLoginErrorsOneOfResultEnum[keyof typeof FormResultForNullAndLoginErrorsOneOfResultEnum];
 
 /**
+ * @type FormResultForNullAndUpdateClubErrors
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForNullAndUpdateClubErrors = FormResultForNullAndChangePwErrorsOneOf | FormResultForNullAndUpdateClubErrorsOneOf;
+/**
+ * 
+ * @export
+ * @interface FormResultForNullAndUpdateClubErrorsOneOf
+ */
+export interface FormResultForNullAndUpdateClubErrorsOneOf {
+    /**
+     * 
+     * @type {UpdateClubErrors}
+     * @memberof FormResultForNullAndUpdateClubErrorsOneOf
+     */
+    error: UpdateClubErrors;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForNullAndUpdateClubErrorsOneOf
+     */
+    result: FormResultForNullAndUpdateClubErrorsOneOfResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForNullAndUpdateClubErrorsOneOfResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForNullAndUpdateClubErrorsOneOfResultEnum = typeof FormResultForNullAndUpdateClubErrorsOneOfResultEnum[keyof typeof FormResultForNullAndUpdateClubErrorsOneOfResultEnum];
+
+/**
  * @type FormResultForSingleUuidAndAddDomainToWebsiteForm
  * A `Result` with a custom serialization
  * @export
@@ -768,6 +803,19 @@ export interface SingleUuid {
      * @memberof SingleUuid
      */
     uuid: string;
+}
+/**
+ * Errors that may occur in an update club request
+ * @export
+ * @interface UpdateClubErrors
+ */
+export interface UpdateClubErrors {
+    /**
+     * The new name is already in use
+     * @type {boolean}
+     * @memberof UpdateClubErrors
+     */
+    name_in_use: boolean;
 }
 /**
  * The request to update a club

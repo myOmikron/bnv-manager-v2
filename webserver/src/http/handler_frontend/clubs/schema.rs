@@ -58,3 +58,10 @@ pub struct UpdateClubRequest {
     /// The name of the club
     pub name: Option<String>,
 }
+
+/// Errors that may occur in an update club request
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct UpdateClubErrors {
+    /// The new name is already in use
+    pub name_in_use: bool,
+}

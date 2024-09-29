@@ -18,6 +18,7 @@ import type {
   ApiErrorResponse,
   ClubList,
   CreateClubRequest,
+  FormResultForNullAndUpdateClubErrors,
   FormResultForSingleUuidAndCreateClubErrors,
   FullClub,
   UpdateClubRequest,
@@ -184,7 +185,7 @@ export class ClubsApi extends runtime.BaseAPI {
      * Updates an existing club  One of the attributes must be set
      * Updates an existing club
      */
-    async updateClubRaw(requestParameters: UpdateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async updateClubRaw(requestParameters: UpdateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndUpdateClubErrors>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
@@ -213,15 +214,16 @@ export class ClubsApi extends runtime.BaseAPI {
             body: requestParameters['UpdateClubRequest'],
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
      * Updates an existing club  One of the attributes must be set
      * Updates an existing club
      */
-    async updateClub(requestParameters: UpdateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.updateClubRaw(requestParameters, initOverrides);
+    async updateClub(requestParameters: UpdateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndUpdateClubErrors> {
+        const response = await this.updateClubRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
 }
