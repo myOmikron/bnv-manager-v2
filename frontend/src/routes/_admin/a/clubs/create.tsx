@@ -37,7 +37,7 @@ export default function ClubCreate(props: ClubCreateProps) {
             res.match(
                 (res) => {
                     if (res.result === "Ok") {
-                        navigate({ to: "/a/clubs/$clubId", params: { clubId: res.value.uuid } });
+                        navigate({ to: "/a/clubs/$clubId/general", params: { clubId: res.value.uuid } });
                     } else {
                         if (res.error.name_in_use) {
                             formApi.setFieldMeta("name", (meta) => {

@@ -51,9 +51,7 @@ export function ComboboxOption<TType>(props: ComboboxOptionProps<TType>) {
  */
 type ComboboxOptionsProps<TType> = {
     /** The options for the combobox options */
-    children:
-        | React.ReactElement<ComboboxOptionProps<TType>>
-        | Array<React.ReactElement<ComboboxOptionProps<TType>>>;
+    children: React.ReactElement<ComboboxOptionProps<TType>> | Array<React.ReactElement<ComboboxOptionProps<TType>>>;
 };
 
 /**
@@ -69,7 +67,7 @@ function ComboboxOptions<TType>(props: ComboboxOptionsProps<TType>) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.1 }}
+            transition={true}
             className={clsx(
                 // Anchor positioning
                 "[--anchor-gap:theme(spacing.2)] [--anchor-padding:theme(spacing.1)] data-[anchor~=start]:[--anchor-offset:-6px] data-[anchor~=end]:[--anchor-offset:6px] sm:data-[anchor~=start]:[--anchor-offset:-4px] sm:data-[anchor~=end]:[--anchor-offset:4px]",
@@ -105,32 +103,17 @@ export type ComboboxProps<TType> = {
     onQueryChange: (query: string) => void;
 
     /** The options of the combobox */
-    children:
-        | React.ReactElement<ComboboxOptionProps<TType>>
-        | Array<React.ReactElement<ComboboxOptionProps<TType>>>;
+    children: React.ReactElement<ComboboxOptionProps<TType>> | Array<React.ReactElement<ComboboxOptionProps<TType>>>;
 };
 
 /**
  * A multiselect and searchable combobox
  */
 export function Combobox<TType>(props: ComboboxProps<TType>) {
-    const {
-        children,
-        value,
-        onChange,
-        onClose,
-        queryDisplay,
-        onQueryChange,
-        ...other
-    } = props;
+    const { children, value, onChange, onClose, queryDisplay, onQueryChange, ...other } = props;
 
     return (
-        <Headless.Combobox
-            value={value}
-            onChange={onChange}
-            onClose={onClose}
-            {...other}
-        >
+        <Headless.Combobox value={value} onChange={onChange} onClose={onClose} {...other}>
             {({ open }) => (
                 <>
                     <div data-slot={"control"} className={"relative my-3"}>
@@ -148,8 +131,7 @@ export function Combobox<TType>(props: ComboboxProps<TType>) {
 
                     <AnimatePresence>
                         {open &&
-                            (Array.isArray(children) &&
-                            children.length === 0 ? undefined : (
+                            (Array.isArray(children) && children.length === 0 ? undefined : (
                                 <ComboboxOptions children={children} />
                             ))}
                     </AnimatePresence>

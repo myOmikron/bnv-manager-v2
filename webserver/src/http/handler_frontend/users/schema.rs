@@ -38,7 +38,7 @@ pub struct ChangePwRequest {
 
 /// The full representation for the user
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct FullUserAdmin {
+pub struct FullUser {
     /// The identifier of the user
     pub uuid: Uuid,
     /// Preferred language of the user

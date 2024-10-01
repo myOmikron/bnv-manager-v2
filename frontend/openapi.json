@@ -142,7 +142,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FullUserAdmin"
+                                    "$ref": "#/components/schemas/FullUser"
                                 }
                             }
                         }
@@ -1603,7 +1603,7 @@
                     "uuid"
                 ]
             },
-            "FullUserAdmin": {
+            "FullUser": {
                 "description": "The full representation for the user",
                 "type": "object",
                 "properties": {
