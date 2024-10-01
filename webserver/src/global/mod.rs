@@ -5,6 +5,7 @@ use std::sync::OnceLock;
 
 use rorm::Database;
 
+use crate::config::Config;
 use crate::global::dns::GlobalDns;
 use crate::global::webconf_updater::GlobalWebconfUpdater;
 use crate::global::ws::GlobalWs;
@@ -24,6 +25,8 @@ pub struct GlobalEntities {
     pub ws: GlobalWs,
     /// Dns connection
     pub dns: GlobalDns,
+    /// The configuration that was used to start the server
+    pub conf: Config,
     /// The webconf updater
     pub webconf_updater: GlobalWebconfUpdater,
 }

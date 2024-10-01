@@ -1,9 +1,5 @@
 import React from "react";
-import {
-    Listbox,
-    ListboxLabel,
-    ListboxOption,
-} from "src/components/base/listbox";
+import { Listbox, ListboxLabel, ListboxOption } from "src/components/base/listbox";
 import { useTranslation } from "react-i18next";
 
 /** The available languages */

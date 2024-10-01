@@ -13,6 +13,7 @@ use crate::models::UserRole;
 
 pub mod auth;
 pub mod clubs;
+pub mod user_invites;
 pub mod users;
 pub mod websites;
 pub mod ws;
@@ -24,16 +25,23 @@ pub static FRONTEND_API_V1: SwaggapiPageBuilder = SwaggapiPageBuilder::new()
 
 /// Admin routes
 pub fn admin() -> ApiContext<Router> {
-    ApiContext::new().nest(
-        "/clubs",
-        ApiContext::new()
-            .tag("clubs")
-            .handler(clubs::handler_admin::get_all_clubs)
-            .handler(clubs::handler_admin::create_club)
-            .handler(clubs::handler_admin::get_club)
-            .handler(clubs::handler_admin::delete_club)
-            .handler(clubs::handler_admin::update_club),
-    )
+    ApiContext::new()
+        .nest(
+            "/clubs",
+            ApiContext::new()
+                .tag("clubs")
+                .handler(clubs::handler_admin::get_all_clubs)
+                .handler(clubs::handler_admin::create_club)
+                .handler(clubs::handler_admin::get_club)
+                .handler(clubs::handler_admin::delete_club)
+                .handler(clubs::handler_admin::update_club),
+        )
+        .nest(
+            "/user-invites",
+            ApiContext::new()
+                .tag("user-invites")
+                .handler(user_invites::handler_admin::create_invite),
+        )
 }
 
 /// Club admin routes

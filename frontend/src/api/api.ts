@@ -4,9 +4,11 @@ import {
     ClubsApi,
     Configuration,
     CreateClubRequest,
+    CreateUserInviteRequest,
     RequiredError,
     ResponseError,
     UpdateClubRequest,
+    UserInvitesApi,
     UsersApi,
     WebsitesApi,
 } from "src/api/generated";
@@ -25,6 +27,7 @@ const configuration = new Configuration({
 });
 const authApi = new AuthApi(configuration);
 const clubsApi = new ClubsApi(configuration);
+const userInvitesApi = new UserInvitesApi(configuration);
 const usersApi = new UsersApi(configuration);
 const websitesApi = new WebsitesApi(configuration);
 
@@ -72,6 +75,11 @@ export const Api = {
                         UpdateClubRequest: updateClubRequest,
                     }),
                 ),
+        },
+
+        invites: {
+            create: (createUserInviteRequest: CreateUserInviteRequest) =>
+                handleError(userInvitesApi.createInvite({ CreateUserInviteRequest: createUserInviteRequest })),
         },
     },
     clubAdmin: {},

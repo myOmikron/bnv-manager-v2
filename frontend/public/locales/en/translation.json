@@ -1,6 +1,7 @@
 {
     "accessibility": {
-        "actions": "Actions"
+        "actions": "Actions",
+        "copy": "Copy"
     },
     "button": {
         "back": "Back",
@@ -8,16 +9,19 @@
         "confirm": "Confirm",
         "create": "Create",
         "delete": "Delete",
+        "finish": "Finish",
         "reset": "Reset",
         "save": "Save"
     },
     "label": {
         "centuries": "centuries",
         "days": "days",
+        "display-name": "Display name",
         "english": "English",
         "estimated-crack-time": "Estimated crack time: {{time}}",
         "german": "German",
         "hours": "hours",
+        "invite-link": "Invite link",
         "minutes": "minutes",
         "months": "months",
         "name": "Name",
@@ -31,5 +35,8 @@
         "username": "Username",
         "weeks": "weeks",
         "years": "years"
+    },
+    "toast": {
+        "copied-to-clipboard": "Copied to clipboard"
     }
 }

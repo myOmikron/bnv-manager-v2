@@ -1,5 +1,6 @@
 {
     "button": {
+        "add-club-admin": "Add club admin",
         "delete-club": "Delete club",
         "rename-club": "Rename club"
     },

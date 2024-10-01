@@ -1,0 +1,15 @@
+{
+    "button": {
+        "back-to-club": "Back to club"
+    },
+    "description": {
+        "dialog-user-created": "The user was created and can now use the link below to set their credentials."
+    },
+    "errors": {
+        "username-in-use": "Username already in use"
+    },
+    "heading": {
+        "create-club-admin": "Create club admin",
+        "dialog-user-created": "User created"
+    }
+}

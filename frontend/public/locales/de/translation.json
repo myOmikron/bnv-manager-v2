@@ -1,6 +1,7 @@
 {
     "accessibility": {
-        "actions": "Aktionen"
+        "actions": "Aktionen",
+        "copy": "Kopieren"
     },
     "button": {
         "back": "Zurück",
@@ -8,16 +9,19 @@
         "create": "Erstellen",
         "confirm": "Bestätigen",
         "delete": "Löschen",
+        "finish": "Abschließen",
         "reset": "Zurücksetzen",
         "save": "Speichern"
     },
     "label": {
         "centuries": "Jahrzehnte",
         "days": "Tage",
+        "display-name": "Anzeigename",
         "english": "Englisch",
         "estimated-crack-time": "Ungefähre Zeit zum Cracken: {{time}}",
         "german": "Deutsch",
         "hours": "Stunden",
+        "invite-link": "Einladungslink",
         "minutes": "Minuten",
         "months": "Monate",
         "name": "Name",
@@ -31,5 +35,8 @@
         "username": "Nutzername",
         "weeks": "Wochen",
         "years": "Jahre"
+    },
+    "toast": {
+        "copied-to-clipboard": "In die Zwischenablage kopiert"
     }
 }

@@ -54,6 +54,7 @@ async fn start(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         db,
         ws,
         dns,
+        conf: config.clone(),
         webconf_updater,
     });
 

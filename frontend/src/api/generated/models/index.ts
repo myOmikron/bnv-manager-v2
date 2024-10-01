@@ -6,6 +6,7 @@
  * @export
  */
 export type AddDomainToWebsiteForm = AddDomainToWebsiteFormOneOf;
+
 /**
  * The request to add a domain to a website
  * @export
@@ -13,44 +14,44 @@ export type AddDomainToWebsiteForm = AddDomainToWebsiteFormOneOf;
  */
 export interface AddDomainToWebsiteFormOneOf {
     /**
-     * 
+     *
      * @type {string}
      * @memberof AddDomainToWebsiteFormOneOf
      */
     field: AddDomainToWebsiteFormOneOfFieldEnum;
 }
 
-
 /**
  * @export
  */
 export const AddDomainToWebsiteFormOneOfFieldEnum = {
-    Domain: 'Domain'
+    Domain: "Domain",
 } as const;
-export type AddDomainToWebsiteFormOneOfFieldEnum = typeof AddDomainToWebsiteFormOneOfFieldEnum[keyof typeof AddDomainToWebsiteFormOneOfFieldEnum];
+export type AddDomainToWebsiteFormOneOfFieldEnum =
+    (typeof AddDomainToWebsiteFormOneOfFieldEnum)[keyof typeof AddDomainToWebsiteFormOneOfFieldEnum];
 
 /**
- * 
+ *
  * @export
  * @interface AddDomainToWebsiteFormOneOfAllOfOneOf
  */
 export interface AddDomainToWebsiteFormOneOfAllOfOneOf {
     /**
-     * 
+     *
      * @type {string}
      * @memberof AddDomainToWebsiteFormOneOfAllOfOneOf
      */
     field: AddDomainToWebsiteFormOneOfAllOfOneOfFieldEnum;
 }
 
-
 /**
  * @export
  */
 export const AddDomainToWebsiteFormOneOfAllOfOneOfFieldEnum = {
-    AlreadyRegistered: 'AlreadyRegistered'
+    AlreadyRegistered: "AlreadyRegistered",
 } as const;
-export type AddDomainToWebsiteFormOneOfAllOfOneOfFieldEnum = typeof AddDomainToWebsiteFormOneOfAllOfOneOfFieldEnum[keyof typeof AddDomainToWebsiteFormOneOfAllOfOneOfFieldEnum];
+export type AddDomainToWebsiteFormOneOfAllOfOneOfFieldEnum =
+    (typeof AddDomainToWebsiteFormOneOfAllOfOneOfFieldEnum)[keyof typeof AddDomainToWebsiteFormOneOfAllOfOneOfFieldEnum];
 
 /**
  * The request to add a domain to a website
@@ -65,6 +66,7 @@ export interface AddDomainToWebsiteRequest {
      */
     domain: string;
 }
+
 /**
  * The response that is sent in a case of an error
  * @export
@@ -73,14 +75,14 @@ export interface AddDomainToWebsiteRequest {
 export interface ApiErrorResponse {
     /**
      * A human-readable error message.
-     * 
+     *
      * May be used for displaying purposes
      * @type {string}
      * @memberof ApiErrorResponse
      */
     message: string;
     /**
-     * 
+     *
      * @type {ApiStatusCode}
      * @memberof ApiErrorResponse
      */
@@ -96,9 +98,9 @@ export const ApiStatusCode = {
     NUMBER_1001: 1001,
     NUMBER_1002: 1002,
     NUMBER_1003: 1003,
-    NUMBER_2000: 2000
+    NUMBER_2000: 2000,
 } as const;
-export type ApiStatusCode = typeof ApiStatusCode[keyof typeof ApiStatusCode];
+export type ApiStatusCode = (typeof ApiStatusCode)[keyof typeof ApiStatusCode];
 
 /**
  * The request to change user information
@@ -119,6 +121,7 @@ export interface ChangeMeRequest {
      */
     preferred_lang?: string | null;
 }
+
 /**
  * The fields of the change password request
  * @export
@@ -126,12 +129,13 @@ export interface ChangeMeRequest {
  */
 export interface ChangePwErrors {
     /**
-     * 
+     *
      * @type {boolean}
      * @memberof ChangePwErrors
      */
     current_pw: boolean;
 }
+
 /**
  * The request to change the password
  * @export
@@ -151,6 +155,7 @@ export interface ChangePwRequest {
      */
     new_pw: string;
 }
+
 /**
  * A list of clubs
  * @export
@@ -164,6 +169,7 @@ export interface ClubList {
      */
     clubs: Array<SimpleClub>;
 }
+
 /**
  * Errors that may occur during creation of a club
  * @export
@@ -177,6 +183,7 @@ export interface CreateClubErrors {
      */
     name_in_use: boolean;
 }
+
 /**
  * The request to create a club
  * @export
@@ -190,6 +197,67 @@ export interface CreateClubRequest {
      */
     name: string;
 }
+
+/**
+ * The errors that can occur on creation of user invites
+ * @export
+ * @interface CreateUserInviteErrors
+ */
+export interface CreateUserInviteErrors {
+    /**
+     * The username is already in use
+     * @type {boolean}
+     * @memberof CreateUserInviteErrors
+     */
+    username_in_use: boolean;
+}
+
+/**
+ * The request when creating a user invite
+ * @export
+ * @interface CreateUserInviteRequest
+ */
+export interface CreateUserInviteRequest {
+    /**
+     * The display name of the new user
+     * @type {string}
+     * @memberof CreateUserInviteRequest
+     */
+    display_name: string;
+    /**
+     * Preferred language of the new user
+     * @type {string}
+     * @memberof CreateUserInviteRequest
+     */
+    preferred_lang: string;
+    /**
+     *
+     * @type {UserRoleWithClub}
+     * @memberof CreateUserInviteRequest
+     */
+    role: UserRoleWithClub;
+    /**
+     * The username for the new user
+     * @type {string}
+     * @memberof CreateUserInviteRequest
+     */
+    username: string;
+}
+
+/**
+ * The response when creating a user invite
+ * @export
+ * @interface CreateUserInviteResponse
+ */
+export interface CreateUserInviteResponse {
+    /**
+     * The link of a user
+     * @type {string}
+     * @memberof CreateUserInviteResponse
+     */
+    link: string;
+}
+
 /**
  * The request to create a website
  * @export
@@ -203,12 +271,14 @@ export interface CreateWebsiteRequest {
      */
     name: string;
 }
+
 /**
  * @type DeployState
  * The current deploy state
  * @export
  */
 export type DeployState = DeployStateOneOf | DeployStateOneOf1 | DeployStateOneOf2;
+
 /**
  * The current state is deployed
  * @export
@@ -216,21 +286,20 @@ export type DeployState = DeployStateOneOf | DeployStateOneOf1 | DeployStateOneO
  */
 export interface DeployStateOneOf {
     /**
-     * 
+     *
      * @type {string}
      * @memberof DeployStateOneOf
      */
     type: DeployStateOneOfTypeEnum;
 }
 
-
 /**
  * @export
  */
 export const DeployStateOneOfTypeEnum = {
-    Deployed: 'Deployed'
+    Deployed: "Deployed",
 } as const;
-export type DeployStateOneOfTypeEnum = typeof DeployStateOneOfTypeEnum[keyof typeof DeployStateOneOfTypeEnum];
+export type DeployStateOneOfTypeEnum = (typeof DeployStateOneOfTypeEnum)[keyof typeof DeployStateOneOfTypeEnum];
 
 /**
  * There are pending changes
@@ -239,21 +308,20 @@ export type DeployStateOneOfTypeEnum = typeof DeployStateOneOfTypeEnum[keyof typ
  */
 export interface DeployStateOneOf1 {
     /**
-     * 
+     *
      * @type {string}
      * @memberof DeployStateOneOf1
      */
     type: DeployStateOneOf1TypeEnum;
 }
 
-
 /**
  * @export
  */
 export const DeployStateOneOf1TypeEnum = {
-    PendingChanges: 'PendingChanges'
+    PendingChanges: "PendingChanges",
 } as const;
-export type DeployStateOneOf1TypeEnum = typeof DeployStateOneOf1TypeEnum[keyof typeof DeployStateOneOf1TypeEnum];
+export type DeployStateOneOf1TypeEnum = (typeof DeployStateOneOf1TypeEnum)[keyof typeof DeployStateOneOf1TypeEnum];
 
 /**
  * Deployment failed
@@ -262,254 +330,335 @@ export type DeployStateOneOf1TypeEnum = typeof DeployStateOneOf1TypeEnum[keyof t
  */
 export interface DeployStateOneOf2 {
     /**
-     * 
+     *
      * @type {string}
      * @memberof DeployStateOneOf2
      */
     type: DeployStateOneOf2TypeEnum;
 }
 
-
 /**
  * @export
  */
 export const DeployStateOneOf2TypeEnum = {
-    DeploymentFailed: 'DeploymentFailed'
+    DeploymentFailed: "DeploymentFailed",
 } as const;
-export type DeployStateOneOf2TypeEnum = typeof DeployStateOneOf2TypeEnum[keyof typeof DeployStateOneOf2TypeEnum];
+export type DeployStateOneOf2TypeEnum = (typeof DeployStateOneOf2TypeEnum)[keyof typeof DeployStateOneOf2TypeEnum];
+
+/**
+ * @type FormResultForCreateUserInviteResponseAndCreateUserInviteErrors
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForCreateUserInviteResponseAndCreateUserInviteErrors =
+    | FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf
+    | FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1;
+
+/**
+ *
+ * @export
+ * @interface FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf
+ */
+export interface FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf {
+    /**
+     *
+     * @type {string}
+     * @memberof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf
+     */
+    result: FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOfResultEnum;
+    /**
+     *
+     * @type {CreateUserInviteResponse}
+     * @memberof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf
+     */
+    value: CreateUserInviteResponse;
+}
+
+/**
+ * @export
+ */
+export const FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOfResultEnum = {
+    Ok: "Ok",
+} as const;
+export type FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOfResultEnum =
+    (typeof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOfResultEnum)[keyof typeof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOfResultEnum];
+
+/**
+ *
+ * @export
+ * @interface FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1
+ */
+export interface FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1 {
+    /**
+     *
+     * @type {CreateUserInviteErrors}
+     * @memberof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1
+     */
+    error: CreateUserInviteErrors;
+    /**
+     *
+     * @type {string}
+     * @memberof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1
+     */
+    result: FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1ResultEnum;
+}
+
+/**
+ * @export
+ */
+export const FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1ResultEnum = {
+    Err: "Err",
+} as const;
+export type FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1ResultEnum =
+    (typeof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1ResultEnum)[keyof typeof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1ResultEnum];
 
 /**
  * @type FormResultForNullAndChangePwErrors
  * A `Result` with a custom serialization
  * @export
  */
-export type FormResultForNullAndChangePwErrors = FormResultForNullAndChangePwErrorsOneOf | FormResultForNullAndChangePwErrorsOneOf1;
+export type FormResultForNullAndChangePwErrors =
+    | FormResultForNullAndChangePwErrorsOneOf
+    | FormResultForNullAndChangePwErrorsOneOf1;
+
 /**
- * 
+ *
  * @export
  * @interface FormResultForNullAndChangePwErrorsOneOf
  */
 export interface FormResultForNullAndChangePwErrorsOneOf {
     /**
-     * 
+     *
      * @type {string}
      * @memberof FormResultForNullAndChangePwErrorsOneOf
      */
     result: FormResultForNullAndChangePwErrorsOneOfResultEnum;
     /**
-     * 
+     *
      * @type {any}
      * @memberof FormResultForNullAndChangePwErrorsOneOf
      */
     value: any | null;
 }
 
-
 /**
  * @export
  */
 export const FormResultForNullAndChangePwErrorsOneOfResultEnum = {
-    Ok: 'Ok'
+    Ok: "Ok",
 } as const;
-export type FormResultForNullAndChangePwErrorsOneOfResultEnum = typeof FormResultForNullAndChangePwErrorsOneOfResultEnum[keyof typeof FormResultForNullAndChangePwErrorsOneOfResultEnum];
+export type FormResultForNullAndChangePwErrorsOneOfResultEnum =
+    (typeof FormResultForNullAndChangePwErrorsOneOfResultEnum)[keyof typeof FormResultForNullAndChangePwErrorsOneOfResultEnum];
 
 /**
- * 
+ *
  * @export
  * @interface FormResultForNullAndChangePwErrorsOneOf1
  */
 export interface FormResultForNullAndChangePwErrorsOneOf1 {
     /**
-     * 
+     *
      * @type {ChangePwErrors}
      * @memberof FormResultForNullAndChangePwErrorsOneOf1
      */
     error: ChangePwErrors;
     /**
-     * 
+     *
      * @type {string}
      * @memberof FormResultForNullAndChangePwErrorsOneOf1
      */
     result: FormResultForNullAndChangePwErrorsOneOf1ResultEnum;
 }
 
-
 /**
  * @export
  */
 export const FormResultForNullAndChangePwErrorsOneOf1ResultEnum = {
-    Err: 'Err'
+    Err: "Err",
 } as const;
-export type FormResultForNullAndChangePwErrorsOneOf1ResultEnum = typeof FormResultForNullAndChangePwErrorsOneOf1ResultEnum[keyof typeof FormResultForNullAndChangePwErrorsOneOf1ResultEnum];
+export type FormResultForNullAndChangePwErrorsOneOf1ResultEnum =
+    (typeof FormResultForNullAndChangePwErrorsOneOf1ResultEnum)[keyof typeof FormResultForNullAndChangePwErrorsOneOf1ResultEnum];
 
 /**
  * @type FormResultForNullAndLoginErrors
  * A `Result` with a custom serialization
  * @export
  */
-export type FormResultForNullAndLoginErrors = FormResultForNullAndChangePwErrorsOneOf | FormResultForNullAndLoginErrorsOneOf;
+export type FormResultForNullAndLoginErrors =
+    | FormResultForNullAndChangePwErrorsOneOf
+    | FormResultForNullAndLoginErrorsOneOf;
+
 /**
- * 
+ *
  * @export
  * @interface FormResultForNullAndLoginErrorsOneOf
  */
 export interface FormResultForNullAndLoginErrorsOneOf {
     /**
-     * 
+     *
      * @type {LoginErrors}
      * @memberof FormResultForNullAndLoginErrorsOneOf
      */
     error: LoginErrors;
     /**
-     * 
+     *
      * @type {string}
      * @memberof FormResultForNullAndLoginErrorsOneOf
      */
     result: FormResultForNullAndLoginErrorsOneOfResultEnum;
 }
 
-
 /**
  * @export
  */
 export const FormResultForNullAndLoginErrorsOneOfResultEnum = {
-    Err: 'Err'
+    Err: "Err",
 } as const;
-export type FormResultForNullAndLoginErrorsOneOfResultEnum = typeof FormResultForNullAndLoginErrorsOneOfResultEnum[keyof typeof FormResultForNullAndLoginErrorsOneOfResultEnum];
+export type FormResultForNullAndLoginErrorsOneOfResultEnum =
+    (typeof FormResultForNullAndLoginErrorsOneOfResultEnum)[keyof typeof FormResultForNullAndLoginErrorsOneOfResultEnum];
 
 /**
  * @type FormResultForNullAndUpdateClubErrors
  * A `Result` with a custom serialization
  * @export
  */
-export type FormResultForNullAndUpdateClubErrors = FormResultForNullAndChangePwErrorsOneOf | FormResultForNullAndUpdateClubErrorsOneOf;
+export type FormResultForNullAndUpdateClubErrors =
+    | FormResultForNullAndChangePwErrorsOneOf
+    | FormResultForNullAndUpdateClubErrorsOneOf;
+
 /**
- * 
+ *
  * @export
  * @interface FormResultForNullAndUpdateClubErrorsOneOf
  */
 export interface FormResultForNullAndUpdateClubErrorsOneOf {
     /**
-     * 
+     *
      * @type {UpdateClubErrors}
      * @memberof FormResultForNullAndUpdateClubErrorsOneOf
      */
     error: UpdateClubErrors;
     /**
-     * 
+     *
      * @type {string}
      * @memberof FormResultForNullAndUpdateClubErrorsOneOf
      */
     result: FormResultForNullAndUpdateClubErrorsOneOfResultEnum;
 }
 
-
 /**
  * @export
  */
 export const FormResultForNullAndUpdateClubErrorsOneOfResultEnum = {
-    Err: 'Err'
+    Err: "Err",
 } as const;
-export type FormResultForNullAndUpdateClubErrorsOneOfResultEnum = typeof FormResultForNullAndUpdateClubErrorsOneOfResultEnum[keyof typeof FormResultForNullAndUpdateClubErrorsOneOfResultEnum];
+export type FormResultForNullAndUpdateClubErrorsOneOfResultEnum =
+    (typeof FormResultForNullAndUpdateClubErrorsOneOfResultEnum)[keyof typeof FormResultForNullAndUpdateClubErrorsOneOfResultEnum];
 
 /**
  * @type FormResultForSingleUuidAndAddDomainToWebsiteForm
  * A `Result` with a custom serialization
  * @export
  */
-export type FormResultForSingleUuidAndAddDomainToWebsiteForm = FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf | FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1;
+export type FormResultForSingleUuidAndAddDomainToWebsiteForm =
+    | FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf
+    | FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1;
+
 /**
- * 
+ *
  * @export
  * @interface FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf
  */
 export interface FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf {
     /**
-     * 
+     *
      * @type {string}
      * @memberof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf
      */
     result: FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum;
     /**
-     * 
+     *
      * @type {SingleUuid}
      * @memberof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf
      */
     value: SingleUuid;
 }
 
-
 /**
  * @export
  */
 export const FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum = {
-    Ok: 'Ok'
+    Ok: "Ok",
 } as const;
-export type FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum = typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum[keyof typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum];
+export type FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum =
+    (typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum)[keyof typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOfResultEnum];
 
 /**
- * 
+ *
  * @export
  * @interface FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1
  */
 export interface FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1 {
     /**
-     * 
+     *
      * @type {AddDomainToWebsiteForm}
      * @memberof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1
      */
     error: AddDomainToWebsiteForm;
     /**
-     * 
+     *
      * @type {string}
      * @memberof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1
      */
     result: FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum;
 }
 
-
 /**
  * @export
  */
 export const FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum = {
-    Err: 'Err'
+    Err: "Err",
 } as const;
-export type FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum = typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum[keyof typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum];
+export type FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum =
+    (typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum)[keyof typeof FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf1ResultEnum];
 
 /**
  * @type FormResultForSingleUuidAndCreateClubErrors
  * A `Result` with a custom serialization
  * @export
  */
-export type FormResultForSingleUuidAndCreateClubErrors = FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf | FormResultForSingleUuidAndCreateClubErrorsOneOf;
+export type FormResultForSingleUuidAndCreateClubErrors =
+    | FormResultForSingleUuidAndAddDomainToWebsiteFormOneOf
+    | FormResultForSingleUuidAndCreateClubErrorsOneOf;
+
 /**
- * 
+ *
  * @export
  * @interface FormResultForSingleUuidAndCreateClubErrorsOneOf
  */
 export interface FormResultForSingleUuidAndCreateClubErrorsOneOf {
     /**
-     * 
+     *
      * @type {CreateClubErrors}
      * @memberof FormResultForSingleUuidAndCreateClubErrorsOneOf
      */
     error: CreateClubErrors;
     /**
-     * 
+     *
      * @type {string}
      * @memberof FormResultForSingleUuidAndCreateClubErrorsOneOf
      */
     result: FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum;
 }
 
-
 /**
  * @export
  */
 export const FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum = {
-    Err: 'Err'
+    Err: "Err",
 } as const;
-export type FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum = typeof FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum[keyof typeof FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum];
+export type FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum =
+    (typeof FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum)[keyof typeof FormResultForSingleUuidAndCreateClubErrorsOneOfResultEnum];
 
 /**
  * A full representation of a club
@@ -542,6 +691,7 @@ export interface FullClub {
      */
     uuid: string;
 }
+
 /**
  * The full representation for the user
  * @export
@@ -549,7 +699,7 @@ export interface FullClub {
  */
 export interface FullUserAdmin {
     /**
-     * 
+     *
      * @type {string}
      * @memberof FullUserAdmin
      */
@@ -561,7 +711,7 @@ export interface FullUserAdmin {
      */
     display_name: string;
     /**
-     * 
+     *
      * @type {string}
      * @memberof FullUserAdmin
      */
@@ -573,7 +723,7 @@ export interface FullUserAdmin {
      */
     preferred_lang: string;
     /**
-     * 
+     *
      * @type {UserRole}
      * @memberof FullUserAdmin
      */
@@ -591,6 +741,7 @@ export interface FullUserAdmin {
      */
     uuid: string;
 }
+
 /**
  * The full representation of a website
  * @export
@@ -598,13 +749,13 @@ export interface FullUserAdmin {
  */
 export interface FullWebsite {
     /**
-     * 
+     *
      * @type {string}
      * @memberof FullWebsite
      */
     created_at: string;
     /**
-     * 
+     *
      * @type {DeployState}
      * @memberof FullWebsite
      */
@@ -616,7 +767,7 @@ export interface FullWebsite {
      */
     domains: Array<FullWebsiteDomain>;
     /**
-     * 
+     *
      * @type {string}
      * @memberof FullWebsite
      */
@@ -634,6 +785,7 @@ export interface FullWebsite {
      */
     uuid: string;
 }
+
 /**
  * The full representation of a domain that is attached to a website
  * @export
@@ -653,6 +805,7 @@ export interface FullWebsiteDomain {
      */
     uuid: string;
 }
+
 /**
  * A list of websites
  * @export
@@ -666,6 +819,7 @@ export interface ListWebsites {
      */
     websites: Array<SimpleWebsite>;
 }
+
 /**
  * The request for local authentication
  * @export
@@ -679,6 +833,7 @@ export interface LoginErrors {
      */
     login_failed: boolean;
 }
+
 /**
  * The request for local authentication
  * @export
@@ -698,6 +853,7 @@ export interface LoginRequest {
      */
     username: string;
 }
+
 /**
  * A simple representation of a club
  * @export
@@ -723,6 +879,7 @@ export interface SimpleClub {
      */
     uuid: string;
 }
+
 /**
  * The simple representation for the user
  * @export
@@ -736,7 +893,7 @@ export interface SimpleUser {
      */
     display_name: string;
     /**
-     * 
+     *
      * @type {UserRole}
      * @memberof SimpleUser
      */
@@ -754,6 +911,7 @@ export interface SimpleUser {
      */
     uuid: string;
 }
+
 /**
  * The simple representation of a website
  * @export
@@ -761,19 +919,19 @@ export interface SimpleUser {
  */
 export interface SimpleWebsite {
     /**
-     * 
+     *
      * @type {string}
      * @memberof SimpleWebsite
      */
     created_at: string;
     /**
-     * 
+     *
      * @type {DeployState}
      * @memberof SimpleWebsite
      */
     deploy_state: DeployState;
     /**
-     * 
+     *
      * @type {string}
      * @memberof SimpleWebsite
      */
@@ -791,6 +949,7 @@ export interface SimpleWebsite {
      */
     uuid: string;
 }
+
 /**
  * A single uuid wrapped in a struct
  * @export
@@ -798,12 +957,13 @@ export interface SimpleWebsite {
  */
 export interface SingleUuid {
     /**
-     * 
+     *
      * @type {string}
      * @memberof SingleUuid
      */
     uuid: string;
 }
+
 /**
  * Errors that may occur in an update club request
  * @export
@@ -817,6 +977,7 @@ export interface UpdateClubErrors {
      */
     name_in_use: boolean;
 }
+
 /**
  * The request to update a club
  * @export
@@ -830,6 +991,7 @@ export interface UpdateClubRequest {
      */
     name?: string | null;
 }
+
 /**
  * The request to update websites
  * @export
@@ -849,9 +1011,43 @@ export interface UpdateWebsiteRequest {
  * @export
  */
 export const UserRole = {
-    Administrator: 'Administrator',
-    ClubAdmin: 'ClubAdmin',
-    User: 'User'
+    Administrator: "Administrator",
+    ClubAdmin: "ClubAdmin",
+    User: "User",
 } as const;
-export type UserRole = typeof UserRole[keyof typeof UserRole];
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
+/**
+ * @type UserRoleWithClub
+ * the user role with the corresponding club associated to it
+ * @export
+ */
+export type UserRoleWithClub = UserRoleWithClubOneOf | UserRoleWithClubOneOf1 | string;
+
+/**
+ *
+ * @export
+ * @interface UserRoleWithClubOneOf
+ */
+export interface UserRoleWithClubOneOf {
+    /**
+     *
+     * @type {string}
+     * @memberof UserRoleWithClubOneOf
+     */
+    ClubAdmin: string;
+}
+
+/**
+ *
+ * @export
+ * @interface UserRoleWithClubOneOf1
+ */
+export interface UserRoleWithClubOneOf1 {
+    /**
+     *
+     * @type {string}
+     * @memberof UserRoleWithClubOneOf1
+     */
+    User: string;
+}

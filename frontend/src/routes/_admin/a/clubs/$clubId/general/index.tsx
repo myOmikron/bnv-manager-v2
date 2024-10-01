@@ -26,7 +26,7 @@ export type ClubViewProps = {};
 /**
  * The overview of a single club
  */
-export default function ClubView(props: ClubViewProps) {
+function ClubView(props: ClubViewProps) {
     const [t] = useTranslation();
     const [tC] = useTranslation("club-view");
 
@@ -61,7 +61,7 @@ export default function ClubView(props: ClubViewProps) {
     const deleteClub = async () => {
         const res = await Api.admin.clubs.delete(clubId);
         if (res.isOk) {
-            toast.success("toast.club-deleted");
+            toast.success(tC("toast.club-deleted"));
         } else {
             toast.error(res.err.message);
         }
@@ -114,6 +114,9 @@ export default function ClubView(props: ClubViewProps) {
                             <span className={"sr-only"}>{t("accessibility.actions")}</span>
                         </DropdownButton>
                         <DropdownMenu anchor={"bottom end"}>
+                            <DropdownItem href={"/a/clubs/$clubId/club-admins/create"} params={{ clubId: club.uuid }}>
+                                <DropdownLabel>{tC("button.add-club-admin")}</DropdownLabel>
+                            </DropdownItem>
                             <DropdownItem onClick={() => setOpenRenameClub({ errors: [], newName: "" })}>
                                 <DropdownLabel>{tC("button.rename-club")}</DropdownLabel>
                             </DropdownItem>
@@ -156,7 +159,10 @@ export default function ClubView(props: ClubViewProps) {
                                             invalid={openRenameClub.errors.length > 0}
                                             onChange={(e) => {
                                                 openRenameClub &&
-                                                    setOpenRenameClub({ errors: [], newName: e.target.value });
+                                                    setOpenRenameClub({
+                                                        errors: [],
+                                                        newName: e.target.value,
+                                                    });
                                             }}
                                         />
                                         {openRenameClub.errors.map((err) => (
@@ -179,6 +185,6 @@ export default function ClubView(props: ClubViewProps) {
     );
 }
 
-export const Route = createFileRoute("/_admin/a/clubs/$clubId")({
+export const Route = createFileRoute("/_admin/a/clubs/$clubId/general/")({
     component: ClubView,
 });

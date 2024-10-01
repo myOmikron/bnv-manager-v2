@@ -81,7 +81,7 @@ function AdminDashboard(props: AdminDashboardProps) {
                         </TableHead>
                         <TableBody>
                             {clubs.map((x) => (
-                                <TableRow key={x.uuid} href={"/a/clubs/$clubId"} params={{ clubId: x.uuid }}>
+                                <TableRow key={x.uuid} href={"/a/clubs/$clubId/general"} params={{ clubId: x.uuid }}>
                                     <TableCell>{x.name}</TableCell>
                                     <TableCell>{x.user_count}</TableCell>
                                     <TableCell>
@@ -90,7 +90,10 @@ function AdminDashboard(props: AdminDashboardProps) {
                                                 <EllipsisVerticalIcon />
                                             </DropdownButton>
                                             <DropdownMenu anchor={"bottom end"}>
-                                                <DropdownItem>
+                                                <DropdownItem
+                                                    href={"/a/clubs/$clubId/club-admins/create"}
+                                                    params={{ clubId: x.uuid }}
+                                                >
                                                     <DropdownLabel>{tA("button.add-club-admin")}</DropdownLabel>
                                                 </DropdownItem>
                                                 <DropdownItem onClick={() => setOpenDeleteClub(x)}>

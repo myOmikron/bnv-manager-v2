@@ -35,6 +35,7 @@ export default function AdminMenu(props: AdminMenuProps) {
                     <NavbarDivider />
                     <NavbarSection>
                         <NavbarItem href={"/a/dashboard"}>{tM("button.dashboard")}</NavbarItem>
+                        <NavbarItem href={"/a/users"}>{tM("button.users-overview")}</NavbarItem>
                     </NavbarSection>
                     <NavbarSpacer />
                     <NavbarSection>

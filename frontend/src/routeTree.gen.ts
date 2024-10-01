@@ -21,16 +21,19 @@ import { Route as AdminADashboardImport } from './routes/_admin/a/dashboard'
 import { Route as AdminAProfileImport } from './routes/_admin/a/_profile'
 import { Route as UserUWebsitesIndexImport } from './routes/_user/u/websites/index'
 import { Route as UserUMailIndexImport } from './routes/_user/u/mail/index'
+import { Route as AdminAUsersIndexImport } from './routes/_admin/a/users/index'
 import { Route as UserUWebsitesCreateImport } from './routes/_user/u/websites/create'
 import { Route as UserUWebsitesWebsiteIdImport } from './routes/_user/u/websites/$websiteId'
 import { Route as AdminAClubsCreateImport } from './routes/_admin/a/clubs/create'
-import { Route as AdminAClubsClubIdImport } from './routes/_admin/a/clubs/$clubId'
 import { Route as UserUProfileProfileSecurityImport } from './routes/_user/u/_profile/profile/security'
 import { Route as UserUProfileProfileGeneralImport } from './routes/_user/u/_profile/profile/general'
 import { Route as ClubAdminCaProfileProfileSecurityImport } from './routes/_club-admin/ca/_profile/profile/security'
 import { Route as ClubAdminCaProfileProfileGeneralImport } from './routes/_club-admin/ca/_profile/profile/general'
 import { Route as AdminAProfileProfileSecurityImport } from './routes/_admin/a/_profile/profile/security'
 import { Route as AdminAProfileProfileGeneralImport } from './routes/_admin/a/_profile/profile/general'
+import { Route as AdminAClubsClubIdGeneralIndexImport } from './routes/_admin/a/clubs/$clubId/general/index'
+import { Route as AdminAClubsClubIdClubAdminsIndexImport } from './routes/_admin/a/clubs/$clubId/club-admins/index'
+import { Route as AdminAClubsClubIdClubAdminsCreateImport } from './routes/_admin/a/clubs/$clubId/club-admins/create'
 
 // Create Virtual Routes
 
@@ -40,6 +43,7 @@ const AdminLazyImport = createFileRoute('/_admin')()
 const UserUImport = createFileRoute('/_user/u')()
 const ClubAdminCaImport = createFileRoute('/_club-admin/ca')()
 const AdminAImport = createFileRoute('/_admin/a')()
+const InviteInviteIdLazyImport = createFileRoute('/invite/$inviteId')()
 
 // Create/Update Routes
 
@@ -78,6 +82,13 @@ const AdminARoute = AdminAImport.update({
   getParentRoute: () => AdminLazyRoute,
 } as any)
 
+const InviteInviteIdLazyRoute = InviteInviteIdLazyImport.update({
+  path: '/invite/$inviteId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/invite/$inviteId.lazy').then((d) => d.Route),
+)
+
 const UserUProfileRoute = UserUProfileImport.update({
   id: '/_profile',
   getParentRoute: () => UserURoute,
@@ -113,6 +124,11 @@ const UserUMailIndexRoute = UserUMailIndexImport.update({
   getParentRoute: () => UserURoute,
 } as any)
 
+const AdminAUsersIndexRoute = AdminAUsersIndexImport.update({
+  path: '/users/',
+  getParentRoute: () => AdminARoute,
+} as any)
+
 const UserUWebsitesCreateRoute = UserUWebsitesCreateImport.update({
   path: '/websites/create',
   getParentRoute: () => UserURoute,
@@ -125,11 +141,6 @@ const UserUWebsitesWebsiteIdRoute = UserUWebsitesWebsiteIdImport.update({
 
 const AdminAClubsCreateRoute = AdminAClubsCreateImport.update({
   path: '/clubs/create',
-  getParentRoute: () => AdminARoute,
-} as any)
-
-const AdminAClubsClubIdRoute = AdminAClubsClubIdImport.update({
-  path: '/clubs/$clubId',
   getParentRoute: () => AdminARoute,
 } as any)
 
@@ -170,6 +181,24 @@ const AdminAProfileProfileGeneralRoute =
     getParentRoute: () => AdminAProfileRoute,
   } as any)
 
+const AdminAClubsClubIdGeneralIndexRoute =
+  AdminAClubsClubIdGeneralIndexImport.update({
+    path: '/clubs/$clubId/general/',
+    getParentRoute: () => AdminARoute,
+  } as any)
+
+const AdminAClubsClubIdClubAdminsIndexRoute =
+  AdminAClubsClubIdClubAdminsIndexImport.update({
+    path: '/clubs/$clubId/club-admins/',
+    getParentRoute: () => AdminARoute,
+  } as any)
+
+const AdminAClubsClubIdClubAdminsCreateRoute =
+  AdminAClubsClubIdClubAdminsCreateImport.update({
+    path: '/clubs/$clubId/club-admins/create',
+    getParentRoute: () => AdminARoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -200,6 +229,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof UserLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/invite/$inviteId': {
+      id: '/invite/$inviteId'
+      path: '/invite/$inviteId'
+      fullPath: '/invite/$inviteId'
+      preLoaderRoute: typeof InviteInviteIdLazyImport
       parentRoute: typeof rootRoute
     }
     '/_admin/a': {
@@ -258,13 +294,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserUProfileImport
       parentRoute: typeof UserURoute
     }
-    '/_admin/a/clubs/$clubId': {
-      id: '/_admin/a/clubs/$clubId'
-      path: '/clubs/$clubId'
-      fullPath: '/a/clubs/$clubId'
-      preLoaderRoute: typeof AdminAClubsClubIdImport
-      parentRoute: typeof AdminAImport
-    }
     '/_admin/a/clubs/create': {
       id: '/_admin/a/clubs/create'
       path: '/clubs/create'
@@ -285,6 +314,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/u/websites/create'
       preLoaderRoute: typeof UserUWebsitesCreateImport
       parentRoute: typeof UserUImport
+    }
+    '/_admin/a/users/': {
+      id: '/_admin/a/users/'
+      path: '/users'
+      fullPath: '/a/users'
+      preLoaderRoute: typeof AdminAUsersIndexImport
+      parentRoute: typeof AdminAImport
     }
     '/_user/u/mail/': {
       id: '/_user/u/mail/'
@@ -342,6 +378,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserUProfileProfileSecurityImport
       parentRoute: typeof UserUProfileImport
     }
+    '/_admin/a/clubs/$clubId/club-admins/create': {
+      id: '/_admin/a/clubs/$clubId/club-admins/create'
+      path: '/clubs/$clubId/club-admins/create'
+      fullPath: '/a/clubs/$clubId/club-admins/create'
+      preLoaderRoute: typeof AdminAClubsClubIdClubAdminsCreateImport
+      parentRoute: typeof AdminAImport
+    }
+    '/_admin/a/clubs/$clubId/club-admins/': {
+      id: '/_admin/a/clubs/$clubId/club-admins/'
+      path: '/clubs/$clubId/club-admins'
+      fullPath: '/a/clubs/$clubId/club-admins'
+      preLoaderRoute: typeof AdminAClubsClubIdClubAdminsIndexImport
+      parentRoute: typeof AdminAImport
+    }
+    '/_admin/a/clubs/$clubId/general/': {
+      id: '/_admin/a/clubs/$clubId/general/'
+      path: '/clubs/$clubId/general'
+      fullPath: '/a/clubs/$clubId/general'
+      preLoaderRoute: typeof AdminAClubsClubIdGeneralIndexImport
+      parentRoute: typeof AdminAImport
+    }
   }
 }
 
@@ -364,15 +421,22 @@ const AdminAProfileRouteWithChildren = AdminAProfileRoute._addFileChildren(
 interface AdminARouteChildren {
   AdminAProfileRoute: typeof AdminAProfileRouteWithChildren
   AdminADashboardRoute: typeof AdminADashboardRoute
-  AdminAClubsClubIdRoute: typeof AdminAClubsClubIdRoute
   AdminAClubsCreateRoute: typeof AdminAClubsCreateRoute
+  AdminAUsersIndexRoute: typeof AdminAUsersIndexRoute
+  AdminAClubsClubIdClubAdminsCreateRoute: typeof AdminAClubsClubIdClubAdminsCreateRoute
+  AdminAClubsClubIdClubAdminsIndexRoute: typeof AdminAClubsClubIdClubAdminsIndexRoute
+  AdminAClubsClubIdGeneralIndexRoute: typeof AdminAClubsClubIdGeneralIndexRoute
 }
 
 const AdminARouteChildren: AdminARouteChildren = {
   AdminAProfileRoute: AdminAProfileRouteWithChildren,
   AdminADashboardRoute: AdminADashboardRoute,
-  AdminAClubsClubIdRoute: AdminAClubsClubIdRoute,
   AdminAClubsCreateRoute: AdminAClubsCreateRoute,
+  AdminAUsersIndexRoute: AdminAUsersIndexRoute,
+  AdminAClubsClubIdClubAdminsCreateRoute:
+    AdminAClubsClubIdClubAdminsCreateRoute,
+  AdminAClubsClubIdClubAdminsIndexRoute: AdminAClubsClubIdClubAdminsIndexRoute,
+  AdminAClubsClubIdGeneralIndexRoute: AdminAClubsClubIdGeneralIndexRoute,
 }
 
 const AdminARouteWithChildren =
@@ -477,15 +541,16 @@ const UserLazyRouteWithChildren = UserLazyRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof UserLazyRouteWithChildren
+  '/invite/$inviteId': typeof InviteInviteIdLazyRoute
   '/a': typeof AdminAProfileRouteWithChildren
   '/a/dashboard': typeof AdminADashboardRoute
   '/ca': typeof ClubAdminCaProfileRouteWithChildren
   '/ca/dashboard': typeof ClubAdminCaDashboardRoute
   '/u': typeof UserUProfileRouteWithChildren
-  '/a/clubs/$clubId': typeof AdminAClubsClubIdRoute
   '/a/clubs/create': typeof AdminAClubsCreateRoute
   '/u/websites/$websiteId': typeof UserUWebsitesWebsiteIdRoute
   '/u/websites/create': typeof UserUWebsitesCreateRoute
+  '/a/users': typeof AdminAUsersIndexRoute
   '/u/mail': typeof UserUMailIndexRoute
   '/u/websites': typeof UserUWebsitesIndexRoute
   '/a/profile/general': typeof AdminAProfileProfileGeneralRoute
@@ -494,20 +559,24 @@ export interface FileRoutesByFullPath {
   '/ca/profile/security': typeof ClubAdminCaProfileProfileSecurityRoute
   '/u/profile/general': typeof UserUProfileProfileGeneralRoute
   '/u/profile/security': typeof UserUProfileProfileSecurityRoute
+  '/a/clubs/$clubId/club-admins/create': typeof AdminAClubsClubIdClubAdminsCreateRoute
+  '/a/clubs/$clubId/club-admins': typeof AdminAClubsClubIdClubAdminsIndexRoute
+  '/a/clubs/$clubId/general': typeof AdminAClubsClubIdGeneralIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof UserLazyRouteWithChildren
+  '/invite/$inviteId': typeof InviteInviteIdLazyRoute
   '/a': typeof AdminAProfileRouteWithChildren
   '/a/dashboard': typeof AdminADashboardRoute
   '/ca': typeof ClubAdminCaProfileRouteWithChildren
   '/ca/dashboard': typeof ClubAdminCaDashboardRoute
   '/u': typeof UserUProfileRouteWithChildren
-  '/a/clubs/$clubId': typeof AdminAClubsClubIdRoute
   '/a/clubs/create': typeof AdminAClubsCreateRoute
   '/u/websites/$websiteId': typeof UserUWebsitesWebsiteIdRoute
   '/u/websites/create': typeof UserUWebsitesCreateRoute
+  '/a/users': typeof AdminAUsersIndexRoute
   '/u/mail': typeof UserUMailIndexRoute
   '/u/websites': typeof UserUWebsitesIndexRoute
   '/a/profile/general': typeof AdminAProfileProfileGeneralRoute
@@ -516,6 +585,9 @@ export interface FileRoutesByTo {
   '/ca/profile/security': typeof ClubAdminCaProfileProfileSecurityRoute
   '/u/profile/general': typeof UserUProfileProfileGeneralRoute
   '/u/profile/security': typeof UserUProfileProfileSecurityRoute
+  '/a/clubs/$clubId/club-admins/create': typeof AdminAClubsClubIdClubAdminsCreateRoute
+  '/a/clubs/$clubId/club-admins': typeof AdminAClubsClubIdClubAdminsIndexRoute
+  '/a/clubs/$clubId/general': typeof AdminAClubsClubIdGeneralIndexRoute
 }
 
 export interface FileRoutesById {
@@ -524,6 +596,7 @@ export interface FileRoutesById {
   '/_admin': typeof AdminLazyRouteWithChildren
   '/_club-admin': typeof ClubAdminLazyRouteWithChildren
   '/_user': typeof UserLazyRouteWithChildren
+  '/invite/$inviteId': typeof InviteInviteIdLazyRoute
   '/_admin/a': typeof AdminARouteWithChildren
   '/_admin/a/_profile': typeof AdminAProfileRouteWithChildren
   '/_admin/a/dashboard': typeof AdminADashboardRoute
@@ -532,10 +605,10 @@ export interface FileRoutesById {
   '/_club-admin/ca/dashboard': typeof ClubAdminCaDashboardRoute
   '/_user/u': typeof UserURouteWithChildren
   '/_user/u/_profile': typeof UserUProfileRouteWithChildren
-  '/_admin/a/clubs/$clubId': typeof AdminAClubsClubIdRoute
   '/_admin/a/clubs/create': typeof AdminAClubsCreateRoute
   '/_user/u/websites/$websiteId': typeof UserUWebsitesWebsiteIdRoute
   '/_user/u/websites/create': typeof UserUWebsitesCreateRoute
+  '/_admin/a/users/': typeof AdminAUsersIndexRoute
   '/_user/u/mail/': typeof UserUMailIndexRoute
   '/_user/u/websites/': typeof UserUWebsitesIndexRoute
   '/_admin/a/_profile/profile/general': typeof AdminAProfileProfileGeneralRoute
@@ -544,6 +617,9 @@ export interface FileRoutesById {
   '/_club-admin/ca/_profile/profile/security': typeof ClubAdminCaProfileProfileSecurityRoute
   '/_user/u/_profile/profile/general': typeof UserUProfileProfileGeneralRoute
   '/_user/u/_profile/profile/security': typeof UserUProfileProfileSecurityRoute
+  '/_admin/a/clubs/$clubId/club-admins/create': typeof AdminAClubsClubIdClubAdminsCreateRoute
+  '/_admin/a/clubs/$clubId/club-admins/': typeof AdminAClubsClubIdClubAdminsIndexRoute
+  '/_admin/a/clubs/$clubId/general/': typeof AdminAClubsClubIdGeneralIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -551,15 +627,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
+    | '/invite/$inviteId'
     | '/a'
     | '/a/dashboard'
     | '/ca'
     | '/ca/dashboard'
     | '/u'
-    | '/a/clubs/$clubId'
     | '/a/clubs/create'
     | '/u/websites/$websiteId'
     | '/u/websites/create'
+    | '/a/users'
     | '/u/mail'
     | '/u/websites'
     | '/a/profile/general'
@@ -568,19 +645,23 @@ export interface FileRouteTypes {
     | '/ca/profile/security'
     | '/u/profile/general'
     | '/u/profile/security'
+    | '/a/clubs/$clubId/club-admins/create'
+    | '/a/clubs/$clubId/club-admins'
+    | '/a/clubs/$clubId/general'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | ''
+    | '/invite/$inviteId'
     | '/a'
     | '/a/dashboard'
     | '/ca'
     | '/ca/dashboard'
     | '/u'
-    | '/a/clubs/$clubId'
     | '/a/clubs/create'
     | '/u/websites/$websiteId'
     | '/u/websites/create'
+    | '/a/users'
     | '/u/mail'
     | '/u/websites'
     | '/a/profile/general'
@@ -589,12 +670,16 @@ export interface FileRouteTypes {
     | '/ca/profile/security'
     | '/u/profile/general'
     | '/u/profile/security'
+    | '/a/clubs/$clubId/club-admins/create'
+    | '/a/clubs/$clubId/club-admins'
+    | '/a/clubs/$clubId/general'
   id:
     | '__root__'
     | '/'
     | '/_admin'
     | '/_club-admin'
     | '/_user'
+    | '/invite/$inviteId'
     | '/_admin/a'
     | '/_admin/a/_profile'
     | '/_admin/a/dashboard'
@@ -603,10 +688,10 @@ export interface FileRouteTypes {
     | '/_club-admin/ca/dashboard'
     | '/_user/u'
     | '/_user/u/_profile'
-    | '/_admin/a/clubs/$clubId'
     | '/_admin/a/clubs/create'
     | '/_user/u/websites/$websiteId'
     | '/_user/u/websites/create'
+    | '/_admin/a/users/'
     | '/_user/u/mail/'
     | '/_user/u/websites/'
     | '/_admin/a/_profile/profile/general'
@@ -615,6 +700,9 @@ export interface FileRouteTypes {
     | '/_club-admin/ca/_profile/profile/security'
     | '/_user/u/_profile/profile/general'
     | '/_user/u/_profile/profile/security'
+    | '/_admin/a/clubs/$clubId/club-admins/create'
+    | '/_admin/a/clubs/$clubId/club-admins/'
+    | '/_admin/a/clubs/$clubId/general/'
   fileRoutesById: FileRoutesById
 }
 
@@ -623,6 +711,7 @@ export interface RootRouteChildren {
   AdminLazyRoute: typeof AdminLazyRouteWithChildren
   ClubAdminLazyRoute: typeof ClubAdminLazyRouteWithChildren
   UserLazyRoute: typeof UserLazyRouteWithChildren
+  InviteInviteIdLazyRoute: typeof InviteInviteIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -630,6 +719,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLazyRoute: AdminLazyRouteWithChildren,
   ClubAdminLazyRoute: ClubAdminLazyRouteWithChildren,
   UserLazyRoute: UserLazyRouteWithChildren,
+  InviteInviteIdLazyRoute: InviteInviteIdLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -647,7 +737,8 @@ export const routeTree = rootRoute
         "/",
         "/_admin",
         "/_club-admin",
-        "/_user"
+        "/_user",
+        "/invite/$inviteId"
       ]
     },
     "/": {
@@ -671,14 +762,20 @@ export const routeTree = rootRoute
         "/_user/u"
       ]
     },
+    "/invite/$inviteId": {
+      "filePath": "invite/$inviteId.lazy.tsx"
+    },
     "/_admin/a": {
       "filePath": "_admin/a",
       "parent": "/_admin",
       "children": [
         "/_admin/a/_profile",
         "/_admin/a/dashboard",
-        "/_admin/a/clubs/$clubId",
-        "/_admin/a/clubs/create"
+        "/_admin/a/clubs/create",
+        "/_admin/a/users/",
+        "/_admin/a/clubs/$clubId/club-admins/create",
+        "/_admin/a/clubs/$clubId/club-admins/",
+        "/_admin/a/clubs/$clubId/general/"
       ]
     },
     "/_admin/a/_profile": {
@@ -732,10 +829,6 @@ export const routeTree = rootRoute
         "/_user/u/_profile/profile/security"
       ]
     },
-    "/_admin/a/clubs/$clubId": {
-      "filePath": "_admin/a/clubs/$clubId.tsx",
-      "parent": "/_admin/a"
-    },
     "/_admin/a/clubs/create": {
       "filePath": "_admin/a/clubs/create.tsx",
       "parent": "/_admin/a"
@@ -747,6 +840,10 @@ export const routeTree = rootRoute
     "/_user/u/websites/create": {
       "filePath": "_user/u/websites/create.tsx",
       "parent": "/_user/u"
+    },
+    "/_admin/a/users/": {
+      "filePath": "_admin/a/users/index.tsx",
+      "parent": "/_admin/a"
     },
     "/_user/u/mail/": {
       "filePath": "_user/u/mail/index.tsx",
@@ -779,6 +876,18 @@ export const routeTree = rootRoute
     "/_user/u/_profile/profile/security": {
       "filePath": "_user/u/_profile/profile/security.tsx",
       "parent": "/_user/u/_profile"
+    },
+    "/_admin/a/clubs/$clubId/club-admins/create": {
+      "filePath": "_admin/a/clubs/$clubId/club-admins/create.tsx",
+      "parent": "/_admin/a"
+    },
+    "/_admin/a/clubs/$clubId/club-admins/": {
+      "filePath": "_admin/a/clubs/$clubId/club-admins/index.tsx",
+      "parent": "/_admin/a"
+    },
+    "/_admin/a/clubs/$clubId/general/": {
+      "filePath": "_admin/a/clubs/$clubId/general/index.tsx",
+      "parent": "/_admin/a"
     }
   }
 }

@@ -1,5 +1,6 @@
 //! All user related models are defined here
 
+use rorm::prelude::ForeignModel;
 use rorm::Model;
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -11,6 +12,7 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::custom_db_enum;
+use crate::models::Club;
 
 mod impls;
 
@@ -41,6 +43,12 @@ pub struct User {
     /// The role of a user
     pub role: UserRole,
 
+    /// The associated club
+    ///
+    /// In case role is Administrator, this field is empty
+    #[rorm(on_update = "Cascade", on_delete = "Cascade")]
+    pub club: Option<ForeignModel<Club>>,
+
     /// The name that is used for displaying purposes
     #[rorm(max_length = 255)]
     pub display_name: String,
@@ -59,4 +67,33 @@ pub struct User {
     /// The hashed password
     #[rorm(max_length = 1024)]
     pub password: String,
+}
+
+/// The representation of an open invitation for a user account
+#[derive(Debug, Model)]
+pub struct UserInvite {
+    /// Primary key of a user
+    #[rorm(primary_key)]
+    pub uuid: Uuid,
+
+    /// The preferred language of the user
+    #[rorm(max_length = 255)]
+    pub preferred_lang: String,
+
+    /// The role of a user
+    pub role: UserRole,
+
+    /// The associated club
+    ///
+    /// In case role is Administrator, this field is empty
+    #[rorm(on_update = "Cascade", on_delete = "Cascade")]
+    pub club: Option<ForeignModel<Club>>,
+
+    /// The name that is used for displaying purposes
+    #[rorm(max_length = 255)]
+    pub display_name: String,
+
+    /// The username
+    #[rorm(max_length = 255)]
+    pub username: String,
 }

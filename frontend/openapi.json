@@ -500,6 +500,58 @@
                 }
             }
         },
+        "/api/frontend/v1/admin/user-invites": {
+            "post": {
+                "tags": [
+                    "user-invites"
+                ],
+                "summary": "Create a new invite for a user",
+                "description": "Create a new invite for a user",
+                "operationId": "create_invite",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateUserInviteRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_CreateUserInviteResponse_and_CreateUserInviteErrors"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/frontend/v1/user/websites": {
             "get": {
                 "tags": [
@@ -1155,6 +1207,59 @@
                     "name"
                 ]
             },
+            "CreateUserInviteErrors": {
+                "description": "The errors that can occur on creation of user invites",
+                "type": "object",
+                "properties": {
+                    "username_in_use": {
+                        "description": "The username is already in use",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "username_in_use"
+                ]
+            },
+            "CreateUserInviteRequest": {
+                "description": "The request when creating a user invite",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "The display name of the new user",
+                        "type": "string"
+                    },
+                    "preferred_lang": {
+                        "description": "Preferred language of the new user",
+                        "type": "string"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/UserRoleWithClub"
+                    },
+                    "username": {
+                        "description": "The username for the new user",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "preferred_lang",
+                    "role",
+                    "username"
+                ]
+            },
+            "CreateUserInviteResponse": {
+                "description": "The response when creating a user invite",
+                "type": "object",
+                "properties": {
+                    "link": {
+                        "description": "The link of a user",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "link"
+                ]
+            },
             "CreateWebsiteRequest": {
                 "description": "The request to create a website",
                 "type": "object",
@@ -1214,6 +1319,47 @@
                         },
                         "required": [
                             "type"
+                        ]
+                    }
+                ]
+            },
+            "FormResult_for_CreateUserInviteResponse_and_CreateUserInviteErrors": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/CreateUserInviteResponse"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/CreateUserInviteErrors"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
                         ]
                     }
                 ]
@@ -1751,6 +1897,43 @@
                     "Administrator",
                     "ClubAdmin",
                     "User"
+                ]
+            },
+            "UserRoleWithClub": {
+                "description": "the user role with the corresponding club associated to it",
+                "oneOf": [
+                    {
+                        "type": "string",
+                        "enum": [
+                            "Administrator"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "ClubAdmin": {
+                                "type": "string",
+                                "format": "uuid"
+                            }
+                        },
+                        "required": [
+                            "ClubAdmin"
+                        ],
+                        "additionalProperties": false
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "User": {
+                                "type": "string",
+                                "format": "uuid"
+                            }
+                        },
+                        "required": [
+                            "User"
+                        ],
+                        "additionalProperties": false
+                    }
                 ]
             }
         }

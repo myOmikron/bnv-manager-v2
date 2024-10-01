@@ -21,6 +21,8 @@ pub struct HttpConfig {
     pub listen_address: String,
     /// Port the API server should bind to
     pub listen_port: u16,
+    /// The origin of the running instance
+    pub origin: Url,
     /// The url of the webconf updater
     pub webconf_updater_url: Url,
     /// The token of the webconf updater

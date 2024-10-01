@@ -1,5 +1,6 @@
 {
     "button": {
+        "add-club-admin": "Vereinsadministrator hinzufügen",
         "delete-club": "Verein löschen",
         "rename-club": "Verein umbenennen"
     },

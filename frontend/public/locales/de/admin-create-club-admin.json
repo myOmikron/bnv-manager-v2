@@ -1,0 +1,15 @@
+{
+    "button": {
+        "back-to-club": "Zurück zum Verein"
+    },
+    "description": {
+        "dialog-user-created": "Der Nutzer wurde erstellt und kann sich durch Aufruf des untenstehenden Links seinen Zugungsdaten setzen."
+    },
+    "errors": {
+        "username-in-use": "Nutzername ist bereits verwendet"
+    },
+    "heading": {
+        "create-club-admin": "Vereinsadministrator erstellen",
+        "dialog-user-created": "Nutzer erstellt"
+    }
+}
