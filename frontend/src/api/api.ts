@@ -60,6 +60,16 @@ export const Api = {
                     }),
                 ),
         },
+        userInvites: {
+            get: (uuid: UUID) => handleError(userInvitesApi.getUserInvite({ uuid })),
+            acceptWithPw: (uuid: UUID, password: string) =>
+                handleError(
+                    userInvitesApi.acceptInvitePw({
+                        uuid,
+                        AcceptInvitePwRequest: { password },
+                    }),
+                ),
+        },
     },
     admin: {
         clubs: {

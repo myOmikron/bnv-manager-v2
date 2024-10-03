@@ -1,15 +1,11 @@
 //! Handlers for user invites of administrative users
 
-use rorm::insert;
-use rorm::prelude::ForeignModelByField;
 use rorm::query;
 use rorm::FieldAccess;
 use rorm::Model;
 use swaggapi::post;
-use uuid::Uuid;
 
 use crate::global::GLOBAL;
-use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
 use crate::http::common::schemas::FormResult;
 use crate::http::extractors::api_json::ApiJson;
@@ -17,7 +13,7 @@ use crate::http::handler_frontend::user_invites::schema::CreateUserInviteErrors;
 use crate::http::handler_frontend::user_invites::schema::CreateUserInviteRequest;
 use crate::http::handler_frontend::user_invites::schema::CreateUserInviteResponse;
 use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
-use crate::models::Club;
+use crate::models::User;
 use crate::models::UserInvite;
 use crate::models::UserRole;
 
@@ -31,14 +27,28 @@ pub async fn create_invite(
         role,
     }): ApiJson<CreateUserInviteRequest>,
 ) -> ApiResult<ApiJson<FormResult<CreateUserInviteResponse, CreateUserInviteErrors>>> {
+    let username = username.into_inner();
+    let display_name = display_name.into_inner();
+    let preferred_lang = preferred_lang.into_inner();
+
     let mut tx = GLOBAL.db.start_transaction().await?;
 
-    let existing = query!(&mut tx, UserInvite)
+    let mut existing = query!(&mut tx, (UserInvite::F.uuid,))
         .condition(UserInvite::F.username.equals(&username))
         .optional()
-        .await?;
+        .await?
+        .is_some();
 
-    if existing.is_some() {
+    // If existing is not set yet, check the userbase for existing users
+    if !existing {
+        existing = query!(&mut tx, (User::F.uuid,))
+            .condition(User::F.username.equals(&username))
+            .optional()
+            .await?
+            .is_some();
+    }
+
+    if existing {
         return Ok(ApiJson(FormResult::err(CreateUserInviteErrors {
             username_in_use: true,
         })));
@@ -57,24 +67,15 @@ pub async fn create_invite(
         }
     };
 
-    if let Some(club) = club_uuid {
-        query!(&mut tx, (Club::F.uuid,))
-            .condition(Club::F.uuid.equals(club))
-            .optional()
-            .await?
-            .ok_or(ApiError::BadRequest)?;
-    }
-
-    let invite = insert!(&mut tx, UserInvite)
-        .single(&UserInvite {
-            uuid: Uuid::new_v4(),
-            preferred_lang,
-            role,
-            club: club_uuid.map(ForeignModelByField::Key),
-            display_name,
-            username,
-        })
-        .await?;
+    let invite = UserInvite::create_invite(
+        &mut tx,
+        username,
+        display_name,
+        preferred_lang,
+        role,
+        club_uuid,
+    )
+    .await?;
 
     tx.commit().await?;
 

@@ -245,6 +245,117 @@
                 }
             }
         },
+        "/api/frontend/v1/common/invites/{uuid}": {
+            "get": {
+                "tags": [
+                    "user-invites"
+                ],
+                "summary": "Retrieve a single user invite",
+                "description": "Retrieve a single user invite",
+                "operationId": "get_user_invite",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FullUserInvite"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/common/invites/{uuid}/accept-with-pw": {
+            "post": {
+                "tags": [
+                    "user-invites"
+                ],
+                "summary": "Accept the invite with a password",
+                "description": "Accept the invite with a password",
+                "operationId": "accept_invite_pw",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AcceptInvitePwRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
+            }
+        },
         "/api/frontend/v1/admin/clubs": {
             "get": {
                 "tags": [
@@ -1028,6 +1139,21 @@
     },
     "components": {
         "schemas": {
+            "AcceptInvitePwRequest": {
+                "description": "Accept the invite with a password",
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "description": "The password that should be set",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    }
+                },
+                "required": [
+                    "password"
+                ]
+            },
             "AddDomainToWebsiteForm": {
                 "description": "The request to add a domain to a website",
                 "oneOf": [
@@ -1226,18 +1352,24 @@
                 "properties": {
                     "display_name": {
                         "description": "The display name of the new user",
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
                     },
                     "preferred_lang": {
                         "description": "Preferred language of the new user",
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
                     },
                     "role": {
                         "$ref": "#/components/schemas/UserRoleWithClub"
                     },
                     "username": {
                         "description": "The username for the new user",
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
                     }
                 },
                 "required": [
@@ -1639,6 +1771,44 @@
                     "display_name",
                     "preferred_lang",
                     "role",
+                    "username",
+                    "uuid"
+                ]
+            },
+            "FullUserInvite": {
+                "description": "A user invite",
+                "type": "object",
+                "properties": {
+                    "accepted": {
+                        "description": "Whether the invite was accepted",
+                        "nullable": true,
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/SchemaDateTime"
+                    },
+                    "display_name": {
+                        "description": "The name that is used for displaying purposes",
+                        "type": "string"
+                    },
+                    "preferred_lang": {
+                        "description": "The preferred language of the user",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "The username",
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "description": "Primary key of a user invite",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "display_name",
+                    "preferred_lang",
                     "username",
                     "uuid"
                 ]

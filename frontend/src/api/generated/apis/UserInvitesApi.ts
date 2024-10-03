@@ -15,19 +15,74 @@
 
 import * as runtime from '../runtime';
 import type {
+  AcceptInvitePwRequest,
   ApiErrorResponse,
   CreateUserInviteRequest,
   FormResultForCreateUserInviteResponseAndCreateUserInviteErrors,
+  FullUserInvite,
 } from '../models/index';
+
+export interface AcceptInvitePwOperationRequest {
+    uuid: string;
+    AcceptInvitePwRequest: AcceptInvitePwRequest;
+}
 
 export interface CreateInviteRequest {
     CreateUserInviteRequest: CreateUserInviteRequest;
+}
+
+export interface GetUserInviteRequest {
+    uuid: string;
 }
 
 /**
  * 
  */
 export class UserInvitesApi extends runtime.BaseAPI {
+
+    /**
+     * Accept the invite with a password
+     * Accept the invite with a password
+     */
+    async acceptInvitePwRaw(requestParameters: AcceptInvitePwOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling acceptInvitePw().'
+            );
+        }
+
+        if (requestParameters['AcceptInvitePwRequest'] == null) {
+            throw new runtime.RequiredError(
+                'AcceptInvitePwRequest',
+                'Required parameter "AcceptInvitePwRequest" was null or undefined when calling acceptInvitePw().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/frontend/v1/common/invites/{uuid}/accept-with-pw`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['AcceptInvitePwRequest'],
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Accept the invite with a password
+     * Accept the invite with a password
+     */
+    async acceptInvitePw(requestParameters: AcceptInvitePwOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.acceptInvitePwRaw(requestParameters, initOverrides);
+    }
 
     /**
      * Create a new invite for a user
@@ -64,6 +119,41 @@ export class UserInvitesApi extends runtime.BaseAPI {
      */
     async createInvite(requestParameters: CreateInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForCreateUserInviteResponseAndCreateUserInviteErrors> {
         const response = await this.createInviteRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Retrieve a single user invite
+     * Retrieve a single user invite
+     */
+    async getUserInviteRaw(requestParameters: GetUserInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FullUserInvite>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling getUserInvite().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/frontend/v1/common/invites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     * Retrieve a single user invite
+     * Retrieve a single user invite
+     */
+    async getUserInvite(requestParameters: GetUserInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FullUserInvite> {
+        const response = await this.getUserInviteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

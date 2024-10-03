@@ -1,36 +1,7 @@
 [Migration]
-Hash = "2687404623037670105"
+Hash = "9941765047205296719"
 Initial = true
 Replaces = []
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "session"
-
-[[Migration.Operations.Fields]]
-Name = "id"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[[Migration.Operations.Fields]]
-Name = "expires_at"
-Type = "datetime"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[[Migration.Operations.Fields]]
-Name = "data"
-Type = "binary"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
 
 [[Migration.Operations]]
 Type = "CreateModel"
@@ -184,18 +155,155 @@ Value = 1024
 Type = "not_null"
 
 [[Migration.Operations]]
+Type = "CreateModel"
+Name = "userinvite"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[[Migration.Operations.Fields]]
+Name = "username"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "display_name"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "preferred_lang"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "created_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "auto_create_time"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "accepted"
+Type = "boolean"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "club"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[[Migration.Operations.Fields]]
+Name = "name"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "unique"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "clubadmin"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "clubuser"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "session"
+
+[[Migration.Operations.Fields]]
+Name = "id"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[[Migration.Operations.Fields]]
+Name = "expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations.Fields]]
+Name = "data"
+Type = "binary"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
 Type = "CreateField"
-Model = "website"
+Model = "clubuser"
 
 [Migration.Operations.Field]
-Name = "owner"
+Name = "club"
 Type = "uuid"
 
 [[Migration.Operations.Field.Annotations]]
 Type = "foreign_key"
 
 [Migration.Operations.Field.Annotations.Value]
-TableName = "user"
+TableName = "club"
 ColumnName = "uuid"
 OnDelete = "Cascade"
 OnUpdate = "Cascade"
@@ -205,7 +313,7 @@ Type = "not_null"
 
 [[Migration.Operations]]
 Type = "CreateField"
-Model = "session"
+Model = "clubuser"
 
 [Migration.Operations.Field]
 Name = "user"
@@ -216,23 +324,6 @@ Type = "foreign_key"
 
 [Migration.Operations.Field.Annotations.Value]
 TableName = "user"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "websitedomain"
-
-[Migration.Operations.Field]
-Name = "website"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "website"
 ColumnName = "uuid"
 OnDelete = "Cascade"
 OnUpdate = "Cascade"
@@ -259,6 +350,161 @@ Type = "foreign_key"
 TableName = "role"
 ColumnName = "identifier"
 OnDelete = "Restrict"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "user"
+
+[Migration.Operations.Field]
+Name = "club"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "club"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "session"
+
+[Migration.Operations.Field]
+Name = "user"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "user"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "website"
+
+[Migration.Operations.Field]
+Name = "owner"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "user"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "websitedomain"
+
+[Migration.Operations.Field]
+Name = "website"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "website"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "userinvite"
+
+[Migration.Operations.Field]
+Name = "role"
+Type = "varchar"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "role"
+ColumnName = "identifier"
+OnDelete = "Restrict"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "userinvite"
+
+[Migration.Operations.Field]
+Name = "club"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "club"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "clubadmin"
+
+[Migration.Operations.Field]
+Name = "club"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "club"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "clubadmin"
+
+[Migration.Operations.Field]
+Name = "user"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "user"
+ColumnName = "uuid"
+OnDelete = "Cascade"
 OnUpdate = "Cascade"
 
 [[Migration.Operations.Field.Annotations]]

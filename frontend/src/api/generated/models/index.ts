@@ -1,6 +1,19 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
+ * Accept the invite with a password
+ * @export
+ * @interface AcceptInvitePwRequest
+ */
+export interface AcceptInvitePwRequest {
+    /**
+     * The password that should be set
+     * @type {string}
+     * @memberof AcceptInvitePwRequest
+     */
+    password: string;
+}
+/**
  * @type AddDomainToWebsiteForm
  * The request to add a domain to a website
  * @export
@@ -709,6 +722,49 @@ export interface FullUser {
      * The identifier of the user
      * @type {string}
      * @memberof FullUser
+     */
+    uuid: string;
+}
+/**
+ * A user invite
+ * @export
+ * @interface FullUserInvite
+ */
+export interface FullUserInvite {
+    /**
+     * Whether the invite was accepted
+     * @type {boolean}
+     * @memberof FullUserInvite
+     */
+    accepted?: boolean | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof FullUserInvite
+     */
+    created_at: string;
+    /**
+     * The name that is used for displaying purposes
+     * @type {string}
+     * @memberof FullUserInvite
+     */
+    display_name: string;
+    /**
+     * The preferred language of the user
+     * @type {string}
+     * @memberof FullUserInvite
+     */
+    preferred_lang: string;
+    /**
+     * The username
+     * @type {string}
+     * @memberof FullUserInvite
+     */
+    username: string;
+    /**
+     * Primary key of a user invite
+     * @type {string}
+     * @memberof FullUserInvite
      */
     uuid: string;
 }

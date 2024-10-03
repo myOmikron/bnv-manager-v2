@@ -76,6 +76,14 @@ pub struct UserInvite {
     #[rorm(primary_key)]
     pub uuid: Uuid,
 
+    /// The username
+    #[rorm(max_length = 255)]
+    pub username: String,
+
+    /// The name that is used for displaying purposes
+    #[rorm(max_length = 255)]
+    pub display_name: String,
+
     /// The preferred language of the user
     #[rorm(max_length = 255)]
     pub preferred_lang: String,
@@ -89,11 +97,10 @@ pub struct UserInvite {
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub club: Option<ForeignModel<Club>>,
 
-    /// The name that is used for displaying purposes
-    #[rorm(max_length = 255)]
-    pub display_name: String,
+    /// The point in time the invite was created
+    #[rorm(auto_create_time)]
+    pub created_at: OffsetDateTime,
 
-    /// The username
-    #[rorm(max_length = 255)]
-    pub username: String,
+    /// Whether the user invite was accepted
+    pub accepted: bool,
 }

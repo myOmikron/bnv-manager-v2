@@ -1,0 +1,18 @@
+{
+    "button": {
+        "set-password": "Password setzen"
+    },
+    "description": {
+        "invite": "Setze das initiale Passwort für deinen Account.",
+        "username": "Dein Nutzername:"
+    },
+    "errors": {
+        "password-mismatch": "Die Passwörter stimmen nicht überein."
+    },
+    "label": {
+        "repeat-password": "Passwort wiederholen"
+    },
+    "heading": {
+        "welcome": "Willkommen, {{user}}"
+    }
+}

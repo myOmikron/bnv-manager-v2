@@ -4,6 +4,8 @@ use argon2::PasswordHasher;
 use rand::thread_rng;
 use rorm::db::Executor;
 use rorm::insert;
+use rorm::prelude::ForeignModel;
+use rorm::prelude::ForeignModelByField;
 use rorm::query;
 use rorm::FieldAccess;
 use rorm::Model;
@@ -12,7 +14,10 @@ use thiserror::Error;
 use tracing::instrument;
 use uuid::Uuid;
 
+use crate::http::common::errors::ApiError;
+use crate::models::Club;
 use crate::models::User;
+use crate::models::UserInvite;
 use crate::models::UserRole;
 
 /// The error that might occur when creating an internal user
@@ -103,4 +108,53 @@ pub struct UserInsert {
     pub username: String,
     /// Hashed password of the user
     pub password: String,
+}
+
+impl UserInvite {
+    /// Create a user invite
+    pub async fn create_invite(
+        exe: impl Executor<'_>,
+        username: String,
+        display_name: String,
+        preferred_lang: String,
+        role: UserRole,
+        club: Option<Uuid>,
+    ) -> Result<UserInvite, ApiError> {
+        let mut guard = exe.ensure_transaction().await?;
+
+        if let Some(club) = club {
+            query!(guard.get_transaction(), (Club::F.uuid,))
+                .condition(Club::F.uuid.equals(club))
+                .optional()
+                .await?
+                .ok_or(ApiError::BadRequest)?;
+        }
+
+        let user_invite = insert!(guard.get_transaction(), UserInvite)
+            .single(&UserInviteInsert {
+                uuid: Uuid::new_v4(),
+                username,
+                display_name,
+                preferred_lang,
+                role,
+                club: club.map(ForeignModelByField::Key),
+            })
+            .await?;
+
+        guard.commit().await?;
+
+        Ok(user_invite)
+    }
+}
+
+/// The patch to insert a user invite
+#[derive(Debug, Patch)]
+#[rorm(model = "UserInvite")]
+pub struct UserInviteInsert {
+    pub uuid: Uuid,
+    pub username: String,
+    pub display_name: String,
+    pub preferred_lang: String,
+    pub role: UserRole,
+    pub club: Option<ForeignModel<Club>>,
 }

@@ -72,16 +72,27 @@ pub fn common() -> ApiContext<Router> {
     ApiContext::new()
         .merge(
             ApiContext::new()
-                .tag("websocket")
-                .handler(ws::handler::websocket),
+                .merge(
+                    ApiContext::new()
+                        .tag("websocket")
+                        .handler(ws::handler::websocket),
+                )
+                .nest(
+                    "/users",
+                    ApiContext::new()
+                        .tag("users")
+                        .handler(users::handler::get_me)
+                        .handler(users::handler::update_me)
+                        .handler(users::handler::change_password),
+                )
+                .layer(ServiceBuilder::new().layer(axum::middleware::from_fn(auth_required))),
         )
         .nest(
-            "/users",
+            "/invites",
             ApiContext::new()
-                .tag("users")
-                .handler(users::handler::get_me)
-                .handler(users::handler::update_me)
-                .handler(users::handler::change_password),
+                .tag("user-invites")
+                .handler(user_invites::handler_common::get_user_invite)
+                .handler(user_invites::handler_common::accept_invite_pw),
         )
 }
 
@@ -98,11 +109,7 @@ pub fn initialize() -> ApiContext<Router> {
                     .route_layer(ServiceBuilder::new().concurrency_limit(10))
                     .handler(auth::handler::logout),
             )
-            .nest(
-                "/common",
-                common()
-                    .layer(ServiceBuilder::new().layer(axum::middleware::from_fn(auth_required))),
-            )
+            .nest("/common", common())
             .nest(
                 "/admin",
                 admin().layer(

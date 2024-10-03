@@ -1,0 +1,18 @@
+{
+    "button": {
+        "set-password": "Set password"
+    },
+    "description": {
+        "invite": "Set the initial password for your account.",
+        "username": "Your username:"
+    },
+    "errors": {
+        "password-mismatch": "The passwords do not match."
+    },
+    "label": {
+        "repeat-password": "Repeat password"
+    },
+    "heading": {
+        "welcome": "Welcome, {{user}}"
+    }
+}

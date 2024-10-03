@@ -43,7 +43,7 @@ const AdminLazyImport = createFileRoute('/_admin')()
 const UserUImport = createFileRoute('/_user/u')()
 const ClubAdminCaImport = createFileRoute('/_club-admin/ca')()
 const AdminAImport = createFileRoute('/_admin/a')()
-const InviteInviteIdLazyImport = createFileRoute('/invite/$inviteId')()
+const InvitesInviteIdLazyImport = createFileRoute('/invites/$inviteId')()
 
 // Create/Update Routes
 
@@ -82,11 +82,11 @@ const AdminARoute = AdminAImport.update({
   getParentRoute: () => AdminLazyRoute,
 } as any)
 
-const InviteInviteIdLazyRoute = InviteInviteIdLazyImport.update({
-  path: '/invite/$inviteId',
+const InvitesInviteIdLazyRoute = InvitesInviteIdLazyImport.update({
+  path: '/invites/$inviteId',
   getParentRoute: () => rootRoute,
 } as any).lazy(() =>
-  import('./routes/invite/$inviteId.lazy').then((d) => d.Route),
+  import('./routes/invites/$inviteId.lazy').then((d) => d.Route),
 )
 
 const UserUProfileRoute = UserUProfileImport.update({
@@ -231,11 +231,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserLazyImport
       parentRoute: typeof rootRoute
     }
-    '/invite/$inviteId': {
-      id: '/invite/$inviteId'
-      path: '/invite/$inviteId'
-      fullPath: '/invite/$inviteId'
-      preLoaderRoute: typeof InviteInviteIdLazyImport
+    '/invites/$inviteId': {
+      id: '/invites/$inviteId'
+      path: '/invites/$inviteId'
+      fullPath: '/invites/$inviteId'
+      preLoaderRoute: typeof InvitesInviteIdLazyImport
       parentRoute: typeof rootRoute
     }
     '/_admin/a': {
@@ -541,7 +541,7 @@ const UserLazyRouteWithChildren = UserLazyRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof UserLazyRouteWithChildren
-  '/invite/$inviteId': typeof InviteInviteIdLazyRoute
+  '/invites/$inviteId': typeof InvitesInviteIdLazyRoute
   '/a': typeof AdminAProfileRouteWithChildren
   '/a/dashboard': typeof AdminADashboardRoute
   '/ca': typeof ClubAdminCaProfileRouteWithChildren
@@ -567,7 +567,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof UserLazyRouteWithChildren
-  '/invite/$inviteId': typeof InviteInviteIdLazyRoute
+  '/invites/$inviteId': typeof InvitesInviteIdLazyRoute
   '/a': typeof AdminAProfileRouteWithChildren
   '/a/dashboard': typeof AdminADashboardRoute
   '/ca': typeof ClubAdminCaProfileRouteWithChildren
@@ -596,7 +596,7 @@ export interface FileRoutesById {
   '/_admin': typeof AdminLazyRouteWithChildren
   '/_club-admin': typeof ClubAdminLazyRouteWithChildren
   '/_user': typeof UserLazyRouteWithChildren
-  '/invite/$inviteId': typeof InviteInviteIdLazyRoute
+  '/invites/$inviteId': typeof InvitesInviteIdLazyRoute
   '/_admin/a': typeof AdminARouteWithChildren
   '/_admin/a/_profile': typeof AdminAProfileRouteWithChildren
   '/_admin/a/dashboard': typeof AdminADashboardRoute
@@ -627,7 +627,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
-    | '/invite/$inviteId'
+    | '/invites/$inviteId'
     | '/a'
     | '/a/dashboard'
     | '/ca'
@@ -652,7 +652,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | ''
-    | '/invite/$inviteId'
+    | '/invites/$inviteId'
     | '/a'
     | '/a/dashboard'
     | '/ca'
@@ -679,7 +679,7 @@ export interface FileRouteTypes {
     | '/_admin'
     | '/_club-admin'
     | '/_user'
-    | '/invite/$inviteId'
+    | '/invites/$inviteId'
     | '/_admin/a'
     | '/_admin/a/_profile'
     | '/_admin/a/dashboard'
@@ -711,7 +711,7 @@ export interface RootRouteChildren {
   AdminLazyRoute: typeof AdminLazyRouteWithChildren
   ClubAdminLazyRoute: typeof ClubAdminLazyRouteWithChildren
   UserLazyRoute: typeof UserLazyRouteWithChildren
-  InviteInviteIdLazyRoute: typeof InviteInviteIdLazyRoute
+  InvitesInviteIdLazyRoute: typeof InvitesInviteIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -719,7 +719,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLazyRoute: AdminLazyRouteWithChildren,
   ClubAdminLazyRoute: ClubAdminLazyRouteWithChildren,
   UserLazyRoute: UserLazyRouteWithChildren,
-  InviteInviteIdLazyRoute: InviteInviteIdLazyRoute,
+  InvitesInviteIdLazyRoute: InvitesInviteIdLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -738,7 +738,7 @@ export const routeTree = rootRoute
         "/_admin",
         "/_club-admin",
         "/_user",
-        "/invite/$inviteId"
+        "/invites/$inviteId"
       ]
     },
     "/": {
@@ -762,8 +762,8 @@ export const routeTree = rootRoute
         "/_user/u"
       ]
     },
-    "/invite/$inviteId": {
-      "filePath": "invite/$inviteId.lazy.tsx"
+    "/invites/$inviteId": {
+      "filePath": "invites/$inviteId.lazy.tsx"
     },
     "/_admin/a": {
       "filePath": "_admin/a",
