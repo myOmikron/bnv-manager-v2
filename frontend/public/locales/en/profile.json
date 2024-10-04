@@ -1,12 +1,19 @@
 {
+    "button": {
+        "set-password": "Set password"
+    },
     "heading": {
-        "profile": "Profile"
+        "profile": "Profile",
+        "set-new-password": "Set a new password"
     },
     "description": {
         "profile": "You can change your profile settings here"
     },
     "label": {
         "general": "General",
+        "current-pw": "Current password",
+        "new-pw": "New password",
+        "repeat-new-pw": "Repeat new password",
         "security": "Security"
     }
 }
