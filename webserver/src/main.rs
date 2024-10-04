@@ -154,6 +154,7 @@ async fn create_user(db: Database) -> Result<(), String> {
         password,
         display_name,
         UserRole::Administrator,
+        None,
         "EN".to_string(),
         &db,
     )

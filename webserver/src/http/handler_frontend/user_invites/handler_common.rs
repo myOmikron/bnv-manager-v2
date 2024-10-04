@@ -75,6 +75,7 @@ pub async fn accept_invite_pw(
         password.into_inner().into_inner(),
         user_invite.display_name,
         user_invite.role,
+        user_invite.club.map(|x| *x.key()),
         user_invite.preferred_lang,
         &mut tx,
     )

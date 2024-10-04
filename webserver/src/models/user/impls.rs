@@ -50,6 +50,7 @@ impl User {
         password: String,
         display_name: String,
         role: UserRole,
+        club: Option<Uuid>,
         preferred_lang: String,
         executor: impl Executor<'_>,
     ) -> Result<Uuid, CreateInternalUserError> {
@@ -81,6 +82,7 @@ impl User {
                 display_name,
                 username,
                 role,
+                club: club.map(ForeignModelByField::Key),
                 preferred_lang,
                 password: password_hash,
             })
@@ -100,6 +102,8 @@ pub struct UserInsert {
     pub uuid: Uuid,
     /// The role of the user
     pub role: UserRole,
+    /// The optional club
+    pub club: Option<ForeignModel<Club>>,
     /// The chosen language of the user
     pub preferred_lang: String,
     /// The display name of the user
