@@ -32,7 +32,7 @@ pub async fn get_club_users_ca(
     let users: Vec<SimpleUser> = tx
         .execute::<executor::Stream>(
             format!(
-                r#"SELECT uuid, username, display_name, club FROM {} WHERE club = $1 AND role = $2;"#,
+                r#"SELECT "uuid", "username", "display_name", "club" FROM "{}" WHERE "club" = $1 AND "role" = $2;"#,
                 User::TABLE,
             ),
             vec![Value::Uuid(club), Value::String(user_role)],
