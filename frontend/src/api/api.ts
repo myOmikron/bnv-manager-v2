@@ -103,7 +103,7 @@ export const Api = {
                 ),
         },
         users: {
-            all: () => handleError(usersApi.getClubUsersCa()),
+            all: () => handleError(usersApi.getClubUsersClubAdmin()),
         },
     },
     user: {

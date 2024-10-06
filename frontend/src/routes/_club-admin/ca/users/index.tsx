@@ -10,6 +10,10 @@ import { Api } from "src/api/api";
 import { Button } from "src/components/base/button";
 import { toast } from "react-toastify";
 import { SimpleUser } from "src/api/generated";
+import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } from "src/components/base/dropdown";
+import { ArrowDownOnSquareStackIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import { Field, Label } from "src/components/base/fieldset";
+import { Input } from "src/components/base/input";
 
 /**
  * The properties for {@link UserOverview}
@@ -24,6 +28,7 @@ function UserOverview(props: UserDashboardProps) {
     const [tU] = useTranslation("club-admin-user-overview");
 
     const [clubUsers, setClubUsers] = React.useState<Array<SimpleUser>>([]);
+    const [searchQuery, setSearchQuery] = React.useState("");
 
     /**
      * Refresh club users
@@ -41,6 +46,15 @@ function UserOverview(props: UserDashboardProps) {
         refreshClubUsers().then();
     }, []);
 
+    const filtered =
+        searchQuery === ""
+            ? clubUsers
+            : clubUsers.filter(
+                  (u) =>
+                      u.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      u.display_name.toLowerCase().includes(searchQuery.toLowerCase()),
+              );
+
     return (
         <>
             <BackButton href={"/ca/dashboard"}>
@@ -51,6 +65,24 @@ function UserOverview(props: UserDashboardProps) {
                 heading={tU("heading.user-overview")}
                 headingChildren={<Button href={"/ca/users/create"}>{tU("button.create-user")}</Button>}
             >
+                <div className={"flex items-end justify-between gap-12"}>
+                    <Field>
+                        <Label>{t("label.search")}</Label>
+                        <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                    </Field>
+
+                    <div className={"flex gap-3"}>
+                        <Button outline={true}>
+                            <span>{tU("button.export-csv")}</span>
+                            <ArrowDownOnSquareStackIcon className={"!size-5"} />
+                        </Button>
+                        <Button outline={true}>
+                            <span>{tU("button.export-json")}</span>
+                            <ArrowDownOnSquareStackIcon className={"!size-5"} />
+                        </Button>
+                    </div>
+                </div>
+
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -63,11 +95,27 @@ function UserOverview(props: UserDashboardProps) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {clubUsers.map((x) => (
+                        {filtered.map((x) => (
                             <TableRow key={x.uuid}>
                                 <TableCell>{x.username}</TableCell>
                                 <TableCell>{x.display_name}</TableCell>
                                 <TableCell>{}</TableCell>
+                                <TableCell>
+                                    <Dropdown>
+                                        <DropdownButton plain={true}>
+                                            <EllipsisVerticalIcon />
+                                        </DropdownButton>
+
+                                        <DropdownMenu anchor={"bottom end"}>
+                                            <DropdownItem>
+                                                <DropdownLabel>{tU("button.create-reset-link")}</DropdownLabel>
+                                            </DropdownItem>
+                                            <DropdownItem>
+                                                <DropdownLabel>{t("button.delete")}</DropdownLabel>
+                                            </DropdownItem>
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

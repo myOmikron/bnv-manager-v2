@@ -27,6 +27,7 @@
         "name": "Name",
         "password": "Passwort",
         "preferred-lang": "Bevorzugte Sprache",
+        "search": "Suchen",
         "seconds": "Sekunden",
         "theme": "Theme",
         "theme-light": "Hell",

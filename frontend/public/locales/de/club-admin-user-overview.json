@@ -1,7 +1,10 @@
 {
     "button": {
         "back-to-dashboard": "Zurück zum Dashboard",
-        "create-user": "Nutzer anlegen"
+        "create-user": "Nutzer anlegen",
+        "create-reset-link": "Reset Link erstellen",
+        "export-csv": "CSV",
+        "export-json": "JSON"
     },
     "heading": {
         "user-overview": "Nutzer Übersicht"
