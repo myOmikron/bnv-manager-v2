@@ -6,6 +6,7 @@ use rorm::Model;
 use swaggapi::post;
 
 use crate::global::GLOBAL;
+use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
 use crate::http::common::schemas::FormResult;
 use crate::http::extractors::api_json::ApiJson;
@@ -13,6 +14,7 @@ use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::user_invites::schema::CreateUserInviteErrors;
 use crate::http::handler_frontend::user_invites::schema::CreateUserInviteRequestClubAdmin;
 use crate::http::handler_frontend::user_invites::schema::CreateUserInviteResponse;
+use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
 use crate::models::User;
 use crate::models::UserInvite;
 use crate::models::UserRole;
@@ -20,7 +22,7 @@ use crate::models::UserRole;
 /// Create a new invite for a user
 #[post("/")]
 pub async fn create_invite_club_admin(
-    SessionUser { user }: SessionUser,
+    SessionUser { role, .. }: SessionUser,
     ApiJson(CreateUserInviteRequestClubAdmin {
         username,
         display_name,
@@ -54,13 +56,18 @@ pub async fn create_invite_club_admin(
         })));
     }
 
+    let club = match role {
+        UserRoleWithClub::ClubAdmin { club } => club,
+        _ => return Err(ApiError::new_internal_server_error("Invalid role")),
+    };
+
     let invite = UserInvite::create_invite(
         &mut tx,
         username,
         display_name,
         preferred_lang,
         UserRole::User,
-        user.0.club.map(|x| *x.key()),
+        Some(club),
     )
     .await?;
 

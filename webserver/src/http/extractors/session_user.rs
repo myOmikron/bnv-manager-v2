@@ -16,13 +16,18 @@ use uuid::Uuid;
 
 use crate::global::GLOBAL;
 use crate::http::common::errors::ApiError;
+use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
 use crate::http::SESSION_USER;
+use crate::models::ClubAdmin;
+use crate::models::ClubUser;
 use crate::models::User;
 
 /// The extractor the user from the session
 pub struct SessionUser {
     /// The model for the current session's user
     pub user: DebuggableUser,
+    /// The role of the current session's user
+    pub role: UserRoleWithClub,
 }
 
 /// Wrapper around [`User`] used in `SessionUser` to add a custom `Debug` implementation suitable for tracing
@@ -33,8 +38,6 @@ impl fmt::Debug for DebuggableUser {
             .field("uuid", &self.0.uuid)
             .field("username", &self.0.username)
             .field("display_name", &self.0.display_name)
-            .field("preferred_lang", &self.0.preferred_lang)
-            .field("role", &self.0.role)
             .field("preferred_lang", &self.0.preferred_lang)
             .finish()
     }
@@ -76,10 +79,35 @@ where
             .optional()
             .await?
             .ok_or(ApiError::Unauthenticated)?;
+
+        let role;
+        let ca = query!(&mut tx, (ClubAdmin::F.club,))
+            .condition(ClubAdmin::F.user.equals(user.uuid))
+            .optional()
+            .await?
+            .map(|x| x.0);
+
+        if let Some(ca) = ca {
+            role = UserRoleWithClub::ClubAdmin { club: *ca.key() };
+        } else {
+            let cu = query!(&mut tx, (ClubUser::F.club,))
+                .condition(ClubUser::F.user.equals(user.uuid))
+                .optional()
+                .await?
+                .map(|x| x.0);
+
+            if let Some(cu) = cu {
+                role = UserRoleWithClub::User { club: *cu.key() };
+            } else {
+                role = UserRoleWithClub::Administrator;
+            }
+        }
+
         tx.commit().await?;
 
         Ok(SessionUser {
             user: DebuggableUser(user),
+            role,
         })
     }
 }

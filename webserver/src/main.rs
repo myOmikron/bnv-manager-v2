@@ -21,8 +21,8 @@ use crate::global::webconf_updater::GlobalWebconfUpdater;
 use crate::global::ws::GlobalWs;
 use crate::global::GlobalEntities;
 use crate::global::GLOBAL;
+use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
 use crate::models::User;
-use crate::models::UserRole;
 
 mod cli;
 pub mod config;
@@ -153,8 +153,7 @@ async fn create_user(db: Database) -> Result<(), String> {
         username.to_string(),
         password,
         display_name,
-        UserRole::Administrator,
-        None,
+        UserRoleWithClub::Administrator,
         "EN".to_string(),
         &db,
     )

@@ -5,6 +5,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use uuid::Uuid;
 
+use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
 use crate::models::UserRole;
 use crate::utils::checked_string::CheckedString;
 use crate::utils::schemars::SchemaDateTime;
@@ -44,7 +45,7 @@ pub struct FullUser {
     /// Preferred language of the user
     pub preferred_lang: String,
     /// Role of the user
-    pub role: UserRole,
+    pub role: UserRoleWithClub,
     /// The username
     pub username: String,
     /// Used for displaying purposes

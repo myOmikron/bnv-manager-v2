@@ -57,11 +57,11 @@ pub async fn create_invite_admin(
     let mut club_uuid = None;
     let role = match role {
         UserRoleWithClub::Administrator => UserRole::Administrator,
-        UserRoleWithClub::ClubAdmin(club) => {
+        UserRoleWithClub::ClubAdmin { club } => {
             club_uuid = Some(club);
             UserRole::ClubAdmin
         }
-        UserRoleWithClub::User(club) => {
+        UserRoleWithClub::User { club } => {
             club_uuid = Some(club);
             UserRole::User
         }

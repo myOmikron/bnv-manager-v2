@@ -797,10 +797,10 @@ export interface FullUser {
     preferred_lang: string;
     /**
      * 
-     * @type {UserRole}
+     * @type {UserRoleWithClub}
      * @memberof FullUser
      */
-    role: UserRole;
+    role: UserRoleWithClub;
     /**
      * The username
      * @type {string}
@@ -1133,7 +1133,7 @@ export type UserRole = typeof UserRole[keyof typeof UserRole];
  * the user role with the corresponding club associated to it
  * @export
  */
-export type UserRoleWithClub = UserRoleWithClubOneOf | UserRoleWithClubOneOf1 | string;
+export type UserRoleWithClub = UserRoleWithClubOneOf | UserRoleWithClubOneOf1 | UserRoleWithClubOneOf2;
 /**
  * 
  * @export
@@ -1145,8 +1145,18 @@ export interface UserRoleWithClubOneOf {
      * @type {string}
      * @memberof UserRoleWithClubOneOf
      */
-    ClubAdmin: string;
+    role: UserRoleWithClubOneOfRoleEnum;
 }
+
+
+/**
+ * @export
+ */
+export const UserRoleWithClubOneOfRoleEnum = {
+    Administrator: 'Administrator'
+} as const;
+export type UserRoleWithClubOneOfRoleEnum = typeof UserRoleWithClubOneOfRoleEnum[keyof typeof UserRoleWithClubOneOfRoleEnum];
+
 /**
  * 
  * @export
@@ -1158,5 +1168,50 @@ export interface UserRoleWithClubOneOf1 {
      * @type {string}
      * @memberof UserRoleWithClubOneOf1
      */
-    User: string;
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserRoleWithClubOneOf1
+     */
+    role: UserRoleWithClubOneOf1RoleEnum;
 }
+
+
+/**
+ * @export
+ */
+export const UserRoleWithClubOneOf1RoleEnum = {
+    ClubAdmin: 'ClubAdmin'
+} as const;
+export type UserRoleWithClubOneOf1RoleEnum = typeof UserRoleWithClubOneOf1RoleEnum[keyof typeof UserRoleWithClubOneOf1RoleEnum];
+
+/**
+ * 
+ * @export
+ * @interface UserRoleWithClubOneOf2
+ */
+export interface UserRoleWithClubOneOf2 {
+    /**
+     * 
+     * @type {string}
+     * @memberof UserRoleWithClubOneOf2
+     */
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserRoleWithClubOneOf2
+     */
+    role: UserRoleWithClubOneOf2RoleEnum;
+}
+
+
+/**
+ * @export
+ */
+export const UserRoleWithClubOneOf2RoleEnum = {
+    User: 'User'
+} as const;
+export type UserRoleWithClubOneOf2RoleEnum = typeof UserRoleWithClubOneOf2RoleEnum[keyof typeof UserRoleWithClubOneOf2RoleEnum];
+

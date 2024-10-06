@@ -12,6 +12,7 @@ use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::custom_db_enum;
+use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
 use crate::models::Club;
 
 mod impls;
@@ -29,6 +30,16 @@ pub enum UserRole {
     User,
 }
 
+impl From<UserRoleWithClub> for UserRole {
+    fn from(value: UserRoleWithClub) -> Self {
+        match value {
+            UserRoleWithClub::Administrator => Self::Administrator,
+            UserRoleWithClub::ClubAdmin { .. } => Self::ClubAdmin,
+            UserRoleWithClub::User { .. } => Self::User,
+        }
+    }
+}
+
 /// The representation of a user
 #[derive(Model, Debug)]
 pub struct User {
@@ -39,15 +50,6 @@ pub struct User {
     /// The preferred language of the user
     #[rorm(max_length = 255)]
     pub preferred_lang: String,
-
-    /// The role of a user
-    pub role: UserRole,
-
-    /// The associated club
-    ///
-    /// In case role is Administrator, this field is empty
-    #[rorm(on_update = "Cascade", on_delete = "Cascade")]
-    pub club: Option<ForeignModel<Club>>,
 
     /// The name that is used for displaying purposes
     #[rorm(max_length = 255)]

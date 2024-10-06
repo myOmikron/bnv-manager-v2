@@ -34,12 +34,13 @@ pub struct CreateUserInviteRequestClubAdmin {
 }
 
 /// the user role with the corresponding club associated to it
-#[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, JsonSchema)]
 #[allow(missing_docs)]
+#[serde(tag = "role")]
 pub enum UserRoleWithClub {
     Administrator,
-    ClubAdmin(Uuid),
-    User(Uuid),
+    ClubAdmin { club: Uuid },
+    User { club: Uuid },
 }
 
 /// The response when creating a user invite

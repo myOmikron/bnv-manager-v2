@@ -78,7 +78,7 @@ export class UsersApi extends runtime.BaseAPI {
      * Retrieve the users of a club
      * Retrieve the users of a club
      */
-    async getClubUsersCaRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SimpleUser>>> {
+    async getClubUsersClubAdminRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SimpleUser>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -97,8 +97,8 @@ export class UsersApi extends runtime.BaseAPI {
      * Retrieve the users of a club
      * Retrieve the users of a club
      */
-    async getClubUsersCa(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SimpleUser>> {
-        const response = await this.getClubUsersCaRaw(initOverrides);
+    async getClubUsersClubAdmin(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SimpleUser>> {
+        const response = await this.getClubUsersClubAdminRaw(initOverrides);
         return await response.value();
     }
 

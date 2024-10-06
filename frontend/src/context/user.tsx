@@ -29,7 +29,7 @@ const USER_CONTEXT = React.createContext<UserContext>({
         created_at: "",
         last_login: "",
         preferred_lang: "",
-        role: "User",
+        role: "Administrator",
     },
 
     /**

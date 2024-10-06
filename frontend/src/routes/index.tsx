@@ -14,7 +14,7 @@ export type RoleGuardProps = {};
 export default function RoleGuard(props: RoleGuardProps) {
     const { user } = React.useContext(USER_CONTEXT);
 
-    switch (user.role) {
+    switch (user.role.role) {
         case "Administrator":
             return <Navigate to={"/a/dashboard"} />;
         case "User":

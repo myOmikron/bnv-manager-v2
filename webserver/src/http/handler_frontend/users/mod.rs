@@ -3,4 +3,3 @@
 pub mod handler_club_admin;
 pub mod handler_common;
 pub mod schema;
-pub mod utils;

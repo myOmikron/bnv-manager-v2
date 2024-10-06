@@ -15,7 +15,10 @@ use tracing::instrument;
 use uuid::Uuid;
 
 use crate::http::common::errors::ApiError;
+use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
 use crate::models::Club;
+use crate::models::ClubAdmin;
+use crate::models::ClubUser;
 use crate::models::User;
 use crate::models::UserInvite;
 use crate::models::UserRole;
@@ -49,8 +52,7 @@ impl User {
         username: String,
         password: String,
         display_name: String,
-        role: UserRole,
-        club: Option<Uuid>,
+        role: UserRoleWithClub,
         preferred_lang: String,
         executor: impl Executor<'_>,
     ) -> Result<Uuid, CreateInternalUserError> {
@@ -81,12 +83,32 @@ impl User {
                 uuid: Uuid::new_v4(),
                 display_name,
                 username,
-                role,
-                club: club.map(ForeignModelByField::Key),
                 preferred_lang,
                 password: password_hash,
             })
             .await?;
+
+        match role {
+            UserRoleWithClub::ClubAdmin { club } => {
+                insert!(exe.get_transaction(), ClubAdmin)
+                    .single(&ClubAdmin {
+                        uuid: Uuid::new_v4(),
+                        club: ForeignModelByField::Key(club),
+                        user: ForeignModelByField::Key(user),
+                    })
+                    .await?;
+            }
+            UserRoleWithClub::User { club } => {
+                insert!(exe.get_transaction(), ClubUser)
+                    .single(&ClubUser {
+                        uuid: Uuid::new_v4(),
+                        club: ForeignModelByField::Key(club),
+                        user: ForeignModelByField::Key(user),
+                    })
+                    .await?;
+            }
+            _ => {}
+        }
 
         exe.commit().await?;
 
@@ -100,10 +122,6 @@ impl User {
 pub struct UserInsert {
     /// The primary key of the user
     pub uuid: Uuid,
-    /// The role of the user
-    pub role: UserRole,
-    /// The optional club
-    pub club: Option<ForeignModel<Club>>,
     /// The chosen language of the user
     pub preferred_lang: String,
     /// The display name of the user

@@ -29,17 +29,17 @@ use crate::utils::schemars::SchemaDateTime;
 /// Retrieve the currently logged-in user
 #[get("/me")]
 #[instrument(skip_all, ret, err)]
-pub async fn get_me(SessionUser { user }: SessionUser) -> ApiResult<Json<FullUser>> {
-    let user = user.0;
+pub async fn get_me(SessionUser { user, role }: SessionUser) -> ApiResult<ApiJson<FullUser>> {
+    let u = user.0;
 
-    Ok(Json(FullUser {
-        uuid: user.uuid,
-        username: user.username,
-        preferred_lang: user.preferred_lang,
-        role: user.role,
-        display_name: user.display_name,
-        last_login: user.last_login.map(SchemaDateTime),
-        created_at: SchemaDateTime(user.created_at),
+    Ok(ApiJson(FullUser {
+        uuid: u.uuid,
+        username: u.username,
+        preferred_lang: u.preferred_lang,
+        role,
+        display_name: u.display_name,
+        last_login: u.last_login.map(SchemaDateTime),
+        created_at: SchemaDateTime(u.created_at),
     }))
 }
 
@@ -49,7 +49,7 @@ pub async fn get_me(SessionUser { user }: SessionUser) -> ApiResult<Json<FullUse
 #[post("/me/change-pw")]
 #[instrument(skip_all, ret, err)]
 pub async fn change_password(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     Json(ChangePwRequest { current_pw, new_pw }): Json<ChangePwRequest>,
 ) -> ApiResult<ApiJson<FormResult<(), ChangePwErrors>>> {
     let user = user.0;
@@ -89,7 +89,7 @@ pub async fn change_password(
 /// Updates the current user information
 #[put("/me")]
 pub async fn update_me(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     Json(ChangeMeRequest {
         display_name,
         preferred_lang,

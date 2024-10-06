@@ -30,6 +30,7 @@ use crate::http::handler_frontend::users::schema::SimpleUser;
 use crate::models::Club;
 use crate::models::ClubUser;
 use crate::models::User;
+use crate::models::UserRole;
 
 /// Get all clubs
 #[get("/")]
@@ -82,7 +83,7 @@ pub async fn get_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<
             let x = x.0;
             SimpleUser {
                 uuid,
-                role: x.role,
+                role: UserRole::User,
                 username: x.username,
                 display_name: x.display_name,
             }

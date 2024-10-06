@@ -722,7 +722,7 @@
                 ],
                 "summary": "Retrieve the users of a club",
                 "description": "Retrieve the users of a club",
-                "operationId": "get_club_users_ca",
+                "operationId": "get_club_users_club_admin",
                 "responses": {
                     "400": {
                         "description": "Client side error",
@@ -1921,7 +1921,7 @@
                         "type": "string"
                     },
                     "role": {
-                        "$ref": "#/components/schemas/UserRole"
+                        "$ref": "#/components/schemas/UserRoleWithClub"
                     },
                     "username": {
                         "description": "The username",
@@ -2248,36 +2248,56 @@
                 "description": "the user role with the corresponding club associated to it",
                 "oneOf": [
                     {
-                        "type": "string",
-                        "enum": [
-                            "Administrator"
+                        "type": "object",
+                        "properties": {
+                            "role": {
+                                "type": "string",
+                                "enum": [
+                                    "Administrator"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "role"
                         ]
                     },
                     {
                         "type": "object",
                         "properties": {
-                            "ClubAdmin": {
+                            "club": {
                                 "type": "string",
                                 "format": "uuid"
+                            },
+                            "role": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubAdmin"
+                                ]
                             }
                         },
                         "required": [
-                            "ClubAdmin"
-                        ],
-                        "additionalProperties": false
+                            "club",
+                            "role"
+                        ]
                     },
                     {
                         "type": "object",
                         "properties": {
-                            "User": {
+                            "club": {
                                 "type": "string",
                                 "format": "uuid"
+                            },
+                            "role": {
+                                "type": "string",
+                                "enum": [
+                                    "User"
+                                ]
                             }
                         },
                         "required": [
-                            "User"
-                        ],
-                        "additionalProperties": false
+                            "club",
+                            "role"
+                        ]
                     }
                 ]
             }

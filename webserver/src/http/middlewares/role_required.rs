@@ -35,15 +35,15 @@ impl RoleRequiredLayer {
     async fn call(self, req: Request) -> ControlFlow<Response, Request> {
         let (mut parts, body) = req.into_parts();
         let user = match SessionUser::from_request_parts(&mut parts, &()).await {
-            Ok(user) => user.user,
+            Ok(user) => user,
             Err(error) => return ControlFlow::Break(error.into_response()),
         };
 
-        if user.role == self.role {
+        if UserRole::from(user.role) == self.role {
             ControlFlow::Continue(Request::from_parts(parts, body))
         } else {
             trace!(
-                user = user.display_name,
+                user = user.user.display_name,
                 user_role = ?user.role,
                 required_role = ?self.role,
                 "Missing privileges due to invalid role"

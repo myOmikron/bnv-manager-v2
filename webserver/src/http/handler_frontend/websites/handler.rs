@@ -55,7 +55,7 @@ use crate::utils::schemars::SchemaDateTime;
 #[post("/")]
 #[instrument(ret, err)]
 pub async fn create_website(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     ApiJson(CreateWebsiteRequest { name }): ApiJson<CreateWebsiteRequest>,
 ) -> ApiResult<ApiJson<SingleUuid>> {
     let user = user.0;
@@ -72,7 +72,7 @@ pub async fn create_website(
 #[get("/:uuid")]
 #[instrument(ret, err)]
 pub async fn get_website(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     Path(SingleUuid { uuid }): Path<SingleUuid>,
 ) -> ApiResult<ApiJson<FullWebsite>> {
     let user = user.0;
@@ -117,7 +117,7 @@ pub async fn get_website(
 #[get("/")]
 #[instrument(ret, err)]
 pub async fn get_all_websites(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
 ) -> ApiResult<ApiJson<ListWebsites>> {
     let user = user.0;
     let mut tx = GLOBAL.db.start_transaction().await?;
@@ -144,7 +144,7 @@ pub async fn get_all_websites(
 #[put("/:uuid")]
 #[instrument(ret, err)]
 pub async fn update_website(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     Path(SingleUuid { uuid }): Path<SingleUuid>,
     ApiJson(UpdateWebsiteRequest { name }): ApiJson<UpdateWebsiteRequest>,
 ) -> ApiResult<()> {
@@ -176,7 +176,7 @@ pub async fn update_website(
 #[post("/:uuid/domains")]
 #[instrument(ret, err)]
 pub async fn add_domain_to_website(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     Path(SingleUuid { uuid: website_uuid }): Path<SingleUuid>,
     ApiJson(AddDomainToWebsiteRequest { domain }): ApiJson<AddDomainToWebsiteRequest>,
 ) -> ApiResult<ApiJson<FormResult<SingleUuid, AddDomainToWebsiteForm>>> {
@@ -232,7 +232,7 @@ pub async fn add_domain_to_website(
 #[delete("/:website_uuid/domains/:domain_uuid")]
 #[instrument(ret, err)]
 pub async fn remove_domain_from_website(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     Path(RemoveDomainPath {
         website_uuid,
         domain_uuid,
@@ -286,7 +286,7 @@ pub async fn remove_domain_from_website(
 #[delete("/:uuid")]
 #[instrument(ret, err)]
 pub async fn delete_website(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     Path(SingleUuid { uuid }): Path<SingleUuid>,
 ) -> ApiResult<()> {
     let user = user.0;
@@ -322,7 +322,7 @@ pub async fn delete_website(
 #[post("/:uuid/deploy")]
 #[instrument(err)]
 pub async fn deploy_website(
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     Path(SingleUuid { uuid }): Path<SingleUuid>,
 ) -> ApiResult<ApiJson<SingleUuid>> {
     let user = user.0;
@@ -417,7 +417,7 @@ pub async fn deploy_website(
 #[instrument]
 pub async fn check_dns(
     Path(uuid): Path<Uuid>,
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     session: Session,
 ) -> ApiResult<ApiJson<SingleUuid>> {
     let user = user.0;

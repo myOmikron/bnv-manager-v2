@@ -55,7 +55,7 @@ impl AsResponses for WsResponse {
 #[get("/ws")]
 pub async fn websocket(
     ws: WebSocketUpgrade,
-    SessionUser { user }: SessionUser,
+    SessionUser { user, .. }: SessionUser,
     session: Session,
 ) -> WsResponse {
     let user = user.0;

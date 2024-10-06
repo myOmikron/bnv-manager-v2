@@ -16,8 +16,10 @@ use crate::http::extractors::api_json::ApiJson;
 use crate::http::handler_frontend::user_invites::schema::AcceptInvitePwRequest;
 use crate::http::handler_frontend::user_invites::schema::FullUserInvite;
 use crate::http::handler_frontend::user_invites::schema::GetUserInviteErrors;
+use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
 use crate::models::User;
 use crate::models::UserInvite;
+use crate::models::UserRole;
 use crate::utils::schemars::SchemaDateTime;
 
 /// Retrieve a single user invite
@@ -66,8 +68,23 @@ pub async fn accept_invite_pw(
         user_invite.username,
         password.into_inner().into_inner(),
         user_invite.display_name,
-        user_invite.role,
-        user_invite.club.map(|x| *x.key()),
+        if let Some(club_uuid) = user_invite.club {
+            match user_invite.role {
+                UserRole::ClubAdmin => UserRoleWithClub::ClubAdmin {
+                    club: *club_uuid.key(),
+                },
+                UserRole::User => UserRoleWithClub::User {
+                    club: *club_uuid.key(),
+                },
+                _ => {
+                    return Err(ApiError::new_internal_server_error(
+                        "Invalid role and club combination",
+                    ))
+                }
+            }
+        } else {
+            UserRoleWithClub::Administrator
+        },
         user_invite.preferred_lang,
         &mut tx,
     )
