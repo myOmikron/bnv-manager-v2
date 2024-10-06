@@ -1,5 +1,6 @@
 {
     "button": {
+        "back-to-login": "Back to login",
         "set-password": "Set password"
     },
     "description": {
@@ -13,6 +14,7 @@
         "repeat-password": "Repeat password"
     },
     "heading": {
+        "invite-used-or-invalid": "The invite-link has already been used or is invalid",
         "welcome": "Welcome, {{user}}"
     }
 }

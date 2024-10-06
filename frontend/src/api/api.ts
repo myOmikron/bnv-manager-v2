@@ -4,7 +4,8 @@ import {
     ClubsApi,
     Configuration,
     CreateClubRequest,
-    CreateUserInviteRequest,
+    CreateUserInviteRequestAdmin,
+    CreateUserInviteRequestClubAdmin,
     RequiredError,
     ResponseError,
     UpdateClubRequest,
@@ -88,11 +89,20 @@ export const Api = {
         },
 
         invites: {
-            create: (createUserInviteRequest: CreateUserInviteRequest) =>
-                handleError(userInvitesApi.createInvite({ CreateUserInviteRequest: createUserInviteRequest })),
+            create: (createUserInviteRequest: CreateUserInviteRequestAdmin) =>
+                handleError(
+                    userInvitesApi.createInviteAdmin({ CreateUserInviteRequestAdmin: createUserInviteRequest }),
+                ),
         },
     },
-    clubAdmin: {},
+    clubAdmin: {
+        userInvites: {
+            create: (createUserInvite: CreateUserInviteRequestClubAdmin) =>
+                handleError(
+                    userInvitesApi.createInviteClubAdmin({ CreateUserInviteRequestClubAdmin: createUserInvite }),
+                ),
+        },
+    },
     user: {
         websites: {
             create: (name: string) => handleError(websitesApi.createWebsite({ CreateWebsiteRequest: { name } })),

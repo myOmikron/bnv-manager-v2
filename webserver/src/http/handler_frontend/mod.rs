@@ -40,13 +40,18 @@ pub fn admin() -> ApiContext<Router> {
             "/user-invites",
             ApiContext::new()
                 .tag("user-invites")
-                .handler(user_invites::handler_admin::create_invite),
+                .handler(user_invites::handler_admin::create_invite_admin),
         )
 }
 
 /// Club admin routes
 pub fn club_admin() -> ApiContext<Router> {
-    ApiContext::new()
+    ApiContext::new().nest(
+        "/user-invites",
+        ApiContext::new()
+            .tag("user-invites")
+            .handler(user_invites::handler_club_admin::create_invite_club_admin),
+    )
 }
 
 /// Normal user routes

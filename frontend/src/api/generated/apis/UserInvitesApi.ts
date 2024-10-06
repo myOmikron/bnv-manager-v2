@@ -17,9 +17,10 @@ import * as runtime from '../runtime';
 import type {
   AcceptInvitePwRequest,
   ApiErrorResponse,
-  CreateUserInviteRequest,
+  CreateUserInviteRequestAdmin,
+  CreateUserInviteRequestClubAdmin,
   FormResultForCreateUserInviteResponseAndCreateUserInviteErrors,
-  FullUserInvite,
+  FormResultForFullUserInviteAndGetUserInviteErrors,
 } from '../models/index';
 
 export interface AcceptInvitePwOperationRequest {
@@ -27,8 +28,12 @@ export interface AcceptInvitePwOperationRequest {
     AcceptInvitePwRequest: AcceptInvitePwRequest;
 }
 
-export interface CreateInviteRequest {
-    CreateUserInviteRequest: CreateUserInviteRequest;
+export interface CreateInviteAdminRequest {
+    CreateUserInviteRequestAdmin: CreateUserInviteRequestAdmin;
+}
+
+export interface CreateInviteClubAdminRequest {
+    CreateUserInviteRequestClubAdmin: CreateUserInviteRequestClubAdmin;
 }
 
 export interface GetUserInviteRequest {
@@ -88,11 +93,11 @@ export class UserInvitesApi extends runtime.BaseAPI {
      * Create a new invite for a user
      * Create a new invite for a user
      */
-    async createInviteRaw(requestParameters: CreateInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForCreateUserInviteResponseAndCreateUserInviteErrors>> {
-        if (requestParameters['CreateUserInviteRequest'] == null) {
+    async createInviteAdminRaw(requestParameters: CreateInviteAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForCreateUserInviteResponseAndCreateUserInviteErrors>> {
+        if (requestParameters['CreateUserInviteRequestAdmin'] == null) {
             throw new runtime.RequiredError(
-                'CreateUserInviteRequest',
-                'Required parameter "CreateUserInviteRequest" was null or undefined when calling createInvite().'
+                'CreateUserInviteRequestAdmin',
+                'Required parameter "CreateUserInviteRequestAdmin" was null or undefined when calling createInviteAdmin().'
             );
         }
 
@@ -107,7 +112,7 @@ export class UserInvitesApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['CreateUserInviteRequest'],
+            body: requestParameters['CreateUserInviteRequestAdmin'],
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response);
@@ -117,8 +122,46 @@ export class UserInvitesApi extends runtime.BaseAPI {
      * Create a new invite for a user
      * Create a new invite for a user
      */
-    async createInvite(requestParameters: CreateInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForCreateUserInviteResponseAndCreateUserInviteErrors> {
-        const response = await this.createInviteRaw(requestParameters, initOverrides);
+    async createInviteAdmin(requestParameters: CreateInviteAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForCreateUserInviteResponseAndCreateUserInviteErrors> {
+        const response = await this.createInviteAdminRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a new invite for a user
+     * Create a new invite for a user
+     */
+    async createInviteClubAdminRaw(requestParameters: CreateInviteClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForCreateUserInviteResponseAndCreateUserInviteErrors>> {
+        if (requestParameters['CreateUserInviteRequestClubAdmin'] == null) {
+            throw new runtime.RequiredError(
+                'CreateUserInviteRequestClubAdmin',
+                'Required parameter "CreateUserInviteRequestClubAdmin" was null or undefined when calling createInviteClubAdmin().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/frontend/v1/club-admin/user-invites`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['CreateUserInviteRequestClubAdmin'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     * Create a new invite for a user
+     * Create a new invite for a user
+     */
+    async createInviteClubAdmin(requestParameters: CreateInviteClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForCreateUserInviteResponseAndCreateUserInviteErrors> {
+        const response = await this.createInviteClubAdminRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -126,7 +169,7 @@ export class UserInvitesApi extends runtime.BaseAPI {
      * Retrieve a single user invite
      * Retrieve a single user invite
      */
-    async getUserInviteRaw(requestParameters: GetUserInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FullUserInvite>> {
+    async getUserInviteRaw(requestParameters: GetUserInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForFullUserInviteAndGetUserInviteErrors>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
@@ -152,7 +195,7 @@ export class UserInvitesApi extends runtime.BaseAPI {
      * Retrieve a single user invite
      * Retrieve a single user invite
      */
-    async getUserInvite(requestParameters: GetUserInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FullUserInvite> {
+    async getUserInvite(requestParameters: GetUserInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForFullUserInviteAndGetUserInviteErrors> {
         const response = await this.getUserInviteRaw(requestParameters, initOverrides);
         return await response.value();
     }

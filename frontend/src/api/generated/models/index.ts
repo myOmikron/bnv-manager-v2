@@ -219,31 +219,56 @@ export interface CreateUserInviteErrors {
 /**
  * The request when creating a user invite
  * @export
- * @interface CreateUserInviteRequest
+ * @interface CreateUserInviteRequestAdmin
  */
-export interface CreateUserInviteRequest {
+export interface CreateUserInviteRequestAdmin {
     /**
      * The display name of the new user
      * @type {string}
-     * @memberof CreateUserInviteRequest
+     * @memberof CreateUserInviteRequestAdmin
      */
     display_name: string;
     /**
      * Preferred language of the new user
      * @type {string}
-     * @memberof CreateUserInviteRequest
+     * @memberof CreateUserInviteRequestAdmin
      */
     preferred_lang: string;
     /**
      * 
      * @type {UserRoleWithClub}
-     * @memberof CreateUserInviteRequest
+     * @memberof CreateUserInviteRequestAdmin
      */
     role: UserRoleWithClub;
     /**
      * The username for the new user
      * @type {string}
-     * @memberof CreateUserInviteRequest
+     * @memberof CreateUserInviteRequestAdmin
+     */
+    username: string;
+}
+/**
+ * The request when creating a user invite
+ * @export
+ * @interface CreateUserInviteRequestClubAdmin
+ */
+export interface CreateUserInviteRequestClubAdmin {
+    /**
+     * The display name of the new user
+     * @type {string}
+     * @memberof CreateUserInviteRequestClubAdmin
+     */
+    display_name: string;
+    /**
+     * Preferred language of the new user
+     * @type {string}
+     * @memberof CreateUserInviteRequestClubAdmin
+     */
+    preferred_lang: string;
+    /**
+     * The username for the new user
+     * @type {string}
+     * @memberof CreateUserInviteRequestClubAdmin
      */
     username: string;
 }
@@ -411,6 +436,70 @@ export const FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf
     Err: 'Err'
 } as const;
 export type FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1ResultEnum = typeof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1ResultEnum[keyof typeof FormResultForCreateUserInviteResponseAndCreateUserInviteErrorsOneOf1ResultEnum];
+
+/**
+ * @type FormResultForFullUserInviteAndGetUserInviteErrors
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForFullUserInviteAndGetUserInviteErrors = FormResultForFullUserInviteAndGetUserInviteErrorsOneOf | FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1;
+/**
+ * 
+ * @export
+ * @interface FormResultForFullUserInviteAndGetUserInviteErrorsOneOf
+ */
+export interface FormResultForFullUserInviteAndGetUserInviteErrorsOneOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForFullUserInviteAndGetUserInviteErrorsOneOf
+     */
+    result: FormResultForFullUserInviteAndGetUserInviteErrorsOneOfResultEnum;
+    /**
+     * 
+     * @type {FullUserInvite}
+     * @memberof FormResultForFullUserInviteAndGetUserInviteErrorsOneOf
+     */
+    value: FullUserInvite;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForFullUserInviteAndGetUserInviteErrorsOneOfResultEnum = {
+    Ok: 'Ok'
+} as const;
+export type FormResultForFullUserInviteAndGetUserInviteErrorsOneOfResultEnum = typeof FormResultForFullUserInviteAndGetUserInviteErrorsOneOfResultEnum[keyof typeof FormResultForFullUserInviteAndGetUserInviteErrorsOneOfResultEnum];
+
+/**
+ * 
+ * @export
+ * @interface FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1
+ */
+export interface FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1 {
+    /**
+     * 
+     * @type {GetUserInviteErrors}
+     * @memberof FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1
+     */
+    error: GetUserInviteErrors;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1
+     */
+    result: FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1ResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1ResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1ResultEnum = typeof FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1ResultEnum[keyof typeof FormResultForFullUserInviteAndGetUserInviteErrorsOneOf1ResultEnum];
 
 /**
  * @type FormResultForNullAndChangePwErrors
@@ -732,12 +821,6 @@ export interface FullUser {
  */
 export interface FullUserInvite {
     /**
-     * Whether the invite was accepted
-     * @type {boolean}
-     * @memberof FullUserInvite
-     */
-    accepted?: boolean | null;
-    /**
      * 
      * @type {string}
      * @memberof FullUserInvite
@@ -829,6 +912,19 @@ export interface FullWebsiteDomain {
      * @memberof FullWebsiteDomain
      */
     uuid: string;
+}
+/**
+ * The errors that may occur while retrieving an invitation
+ * @export
+ * @interface GetUserInviteErrors
+ */
+export interface GetUserInviteErrors {
+    /**
+     * The invite was already used or invalid in the first place
+     * @type {boolean}
+     * @memberof GetUserInviteErrors
+     */
+    invite_invalid: boolean;
 }
 /**
  * A list of websites

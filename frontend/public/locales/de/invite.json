@@ -1,5 +1,6 @@
 {
     "button": {
+        "back-to-login": "Zurück zum Login",
         "set-password": "Password setzen"
     },
     "description": {
@@ -13,6 +14,7 @@
         "repeat-password": "Passwort wiederholen"
     },
     "heading": {
+        "invite-used-or-invalid": "Der Einladungslink wurde bereits genutzt oder ist invalid",
         "welcome": "Willkommen, {{user}}"
     }
 }

@@ -291,7 +291,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FullUserInvite"
+                                    "$ref": "#/components/schemas/FormResult_for_FullUserInvite_and_GetUserInviteErrors"
                                 }
                             }
                         }
@@ -618,12 +618,64 @@
                 ],
                 "summary": "Create a new invite for a user",
                 "description": "Create a new invite for a user",
-                "operationId": "create_invite",
+                "operationId": "create_invite_admin",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CreateUserInviteRequest"
+                                "$ref": "#/components/schemas/CreateUserInviteRequestAdmin"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_CreateUserInviteResponse_and_CreateUserInviteErrors"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/v1/club-admin/user-invites": {
+            "post": {
+                "tags": [
+                    "user-invites"
+                ],
+                "summary": "Create a new invite for a user",
+                "description": "Create a new invite for a user",
+                "operationId": "create_invite_club_admin",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateUserInviteRequestClubAdmin"
                             }
                         }
                     },
@@ -1346,7 +1398,7 @@
                     "username_in_use"
                 ]
             },
-            "CreateUserInviteRequest": {
+            "CreateUserInviteRequestAdmin": {
                 "description": "The request when creating a user invite",
                 "type": "object",
                 "properties": {
@@ -1376,6 +1428,35 @@
                     "display_name",
                     "preferred_lang",
                     "role",
+                    "username"
+                ]
+            },
+            "CreateUserInviteRequestClubAdmin": {
+                "description": "The request when creating a user invite",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "The display name of the new user",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "preferred_lang": {
+                        "description": "Preferred language of the new user",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
+                    "username": {
+                        "description": "The username for the new user",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "preferred_lang",
                     "username"
                 ]
             },
@@ -1481,6 +1562,47 @@
                         "properties": {
                             "error": {
                                 "$ref": "#/components/schemas/CreateUserInviteErrors"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
+            "FormResult_for_FullUserInvite_and_GetUserInviteErrors": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/FullUserInvite"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/GetUserInviteErrors"
                             },
                             "result": {
                                 "type": "string",
@@ -1779,11 +1901,6 @@
                 "description": "A user invite",
                 "type": "object",
                 "properties": {
-                    "accepted": {
-                        "description": "Whether the invite was accepted",
-                        "nullable": true,
-                        "type": "boolean"
-                    },
                     "created_at": {
                         "$ref": "#/components/schemas/SchemaDateTime"
                     },
@@ -1868,6 +1985,19 @@
                 "required": [
                     "domain",
                     "uuid"
+                ]
+            },
+            "GetUserInviteErrors": {
+                "description": "The errors that may occur while retrieving an invitation",
+                "type": "object",
+                "properties": {
+                    "invite_invalid": {
+                        "description": "The invite was already used or invalid in the first place",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "invite_invalid"
                 ]
             },
             "ListWebsites": {

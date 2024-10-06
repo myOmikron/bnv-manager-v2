@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Api } from "src/api/api";
 import { toast } from "react-toastify";
-import { FullUserInvite } from "src/api/generated";
+import { FormResultForFullUserInviteAndGetUserInviteErrors } from "src/api/generated";
 import { Heading } from "src/components/base/heading";
 import Form from "src/components/base/form";
 import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
@@ -28,7 +28,7 @@ export default function Invite(props: InviteProps) {
     const { inviteId } = Route.useParams();
     const navigate = Route.useNavigate();
 
-    const [invite, setInvite] = React.useState<FullUserInvite>();
+    const [invite, setInvite] = React.useState<FormResultForFullUserInviteAndGetUserInviteErrors>();
 
     const acceptForm = useForm({
         defaultValues: {
@@ -54,9 +54,7 @@ export default function Invite(props: InviteProps) {
         const res = await Api.common.userInvites.get(inviteId);
 
         res.match(
-            (x) => {
-                setInvite(x);
-            },
+            (x) => setInvite(x),
             (err) => toast.error(err.message),
         );
     };
@@ -69,13 +67,33 @@ export default function Invite(props: InviteProps) {
         return undefined;
     }
 
+    if (invite.result === "Err") {
+        return (
+            <div className={"flex h-screen w-full items-center justify-center bg-zinc-50 p-3 dark:bg-neutral-950"}>
+                <div className="w-full max-w-lg flex-col rounded-xl border bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:before:pointer-events-none forced-colors:outline">
+                    <div className={"flex h-full w-full flex-col gap-6 overflow-hidden p-6 py-8 sm:p-8 lg:p-12"}>
+                        <h1 className={"text-center text-3xl font-normal text-black dark:text-white"}>BNV Manager</h1>
+
+                        <Text className={"text-center font-medium text-red-500"}>
+                            {tI("heading.invite-used-or-invalid")}
+                        </Text>
+
+                        <Button href={"/"}>{tI("button.back-to-login")}</Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const i = invite.value;
+
     return (
         <div className={"flex h-screen w-full items-center justify-center bg-zinc-50 p-3 dark:bg-neutral-950"}>
             <div className="w-full max-w-md flex-col rounded-xl border bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:before:pointer-events-none forced-colors:outline">
                 <div className={"flex h-full w-full flex-col gap-6 overflow-hidden p-6 py-8 sm:p-8 lg:p-12"}>
                     <h1 className={"text-center text-3xl font-normal text-black dark:text-white"}>BNV Manager</h1>
 
-                    <Heading level={2}>{tI("heading.welcome", { user: invite.display_name })}</Heading>
+                    <Heading level={2}>{tI("heading.welcome", { user: i.display_name })}</Heading>
 
                     <Form onSubmit={acceptForm.handleSubmit}>
                         <Fieldset>
@@ -85,7 +103,7 @@ export default function Invite(props: InviteProps) {
 
                                     <Text>
                                         {tI("description.username")}&nbsp;
-                                        <Code>{invite.username}</Code>
+                                        <Code>{i.username}</Code>
                                     </Text>
                                 </div>
 

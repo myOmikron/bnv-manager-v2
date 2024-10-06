@@ -11,7 +11,7 @@ use crate::utils::secure_string::SecureString;
 
 /// The request when creating a user invite
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
-pub struct CreateUserInviteRequest {
+pub struct CreateUserInviteRequestAdmin {
     /// The username for the new user
     pub username: CheckedString<1, 255>,
     /// The display name of the new user
@@ -20,6 +20,17 @@ pub struct CreateUserInviteRequest {
     pub preferred_lang: CheckedString<1, 255>,
     /// The role of the new user
     pub role: UserRoleWithClub,
+}
+
+/// The request when creating a user invite
+#[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
+pub struct CreateUserInviteRequestClubAdmin {
+    /// The username for the new user
+    pub username: CheckedString<1, 255>,
+    /// The display name of the new user
+    pub display_name: CheckedString<1, 255>,
+    /// Preferred language of the new user
+    pub preferred_lang: CheckedString<1, 255>,
 }
 
 /// the user role with the corresponding club associated to it
@@ -58,15 +69,13 @@ pub struct FullUserInvite {
     pub preferred_lang: String,
     /// The point in time the invite was created
     pub created_at: SchemaDateTime,
-    /// Whether the invite was accepted
-    pub accepted: bool,
 }
 
 /// The errors that may occur while retrieving an invitation
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct GetUserInviteErrors {
-    /// The invite was already used
-    pub invite_used: bool,
+    /// The invite was already used or invalid in the first place
+    pub invite_invalid: bool,
 }
 
 /// Accept the invite with a password

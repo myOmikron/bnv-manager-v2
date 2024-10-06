@@ -1,9 +1,7 @@
 //! The handler for retrieving
 
 use axum::extract::Path;
-use rorm::and;
 use rorm::query;
-use rorm::update;
 use rorm::FieldAccess;
 use rorm::Model;
 use swaggapi::get;
@@ -29,19 +27,17 @@ pub async fn get_user_invite(
 ) -> ApiResult<ApiJson<FormResult<FullUserInvite, GetUserInviteErrors>>> {
     let mut tx = GLOBAL.db.start_transaction().await?;
 
-    let user_invite = query!(&mut tx, UserInvite)
+    let Some(user_invite) = query!(&mut tx, UserInvite)
         .condition(UserInvite::F.uuid.equals(uuid))
         .optional()
         .await?
-        .ok_or(ApiError::BadRequest)?;
+    else {
+        return Ok(ApiJson(FormResult::err(GetUserInviteErrors {
+            invite_invalid: true,
+        })));
+    };
 
     tx.commit().await?;
-
-    if user_invite.accepted {
-        return Ok(ApiJson(FormResult::err(GetUserInviteErrors {
-            invite_used: true,
-        })));
-    }
 
     Ok(ApiJson(FormResult::ok(FullUserInvite {
         uuid: user_invite.uuid,
@@ -49,7 +45,6 @@ pub async fn get_user_invite(
         display_name: user_invite.display_name,
         preferred_lang: user_invite.preferred_lang,
         created_at: SchemaDateTime(user_invite.created_at),
-        accepted: user_invite.accepted,
     })))
 }
 
@@ -62,10 +57,7 @@ pub async fn accept_invite_pw(
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let user_invite = query!(&mut tx, UserInvite)
-        .condition(and!(
-            UserInvite::F.uuid.equals(uuid),
-            UserInvite::F.accepted.equals(false)
-        ))
+        .condition(UserInvite::F.uuid.equals(uuid))
         .optional()
         .await?
         .ok_or(ApiError::BadRequest)?;
@@ -82,9 +74,8 @@ pub async fn accept_invite_pw(
     .await
     .map_err(ApiError::new_internal_server_error)?;
 
-    update!(&mut tx, UserInvite)
+    rorm::delete!(&mut tx, UserInvite)
         .condition(UserInvite::F.uuid.equals(uuid))
-        .set(UserInvite::F.accepted, true)
         .await?;
 
     tx.commit().await?;

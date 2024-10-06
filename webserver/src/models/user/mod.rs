@@ -100,7 +100,4 @@ pub struct UserInvite {
     /// The point in time the invite was created
     #[rorm(auto_create_time)]
     pub created_at: OffsetDateTime,
-
-    /// Whether the user invite was accepted
-    pub accepted: bool,
 }
