@@ -76,7 +76,7 @@ pub async fn get_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<
         .await?
         .0;
 
-    let users = query!(&mut tx, (ClubUser::F.user as User,))
+    let users: Vec<_> = query!(&mut tx, (ClubUser::F.user as User,))
         .condition(ClubUser::F.club.equals(club.uuid))
         .stream()
         .map_ok(|x| {
@@ -86,6 +86,7 @@ pub async fn get_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<
                 role: UserRole::User,
                 username: x.username,
                 display_name: x.display_name,
+                website_count: x.website_count as u64,
             }
         })
         .try_collect()
@@ -93,11 +94,14 @@ pub async fn get_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<
 
     tx.commit().await?;
 
+    let website_count = users.iter().map(|u| u.website_count).sum();
+
     Ok(ApiJson(FullClub {
         uuid,
         name: club.name,
         user_count: club_users as u64,
         admins: users,
+        website_count,
     }))
 }
 

@@ -27,6 +27,10 @@ export interface ChangePasswordRequest {
     ChangePwRequest: ChangePwRequest;
 }
 
+export interface DeleteClubUserRequest {
+    uuid: string;
+}
+
 export interface UpdateMeRequest {
     ChangeMeRequest: ChangeMeRequest;
 }
@@ -72,6 +76,40 @@ export class UsersApi extends runtime.BaseAPI {
     async changePassword(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndChangePwErrors> {
         const response = await this.changePasswordRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     * Retrieve the users of a club
+     * Retrieve the users of a club
+     */
+    async deleteClubUserRaw(requestParameters: DeleteClubUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling deleteClubUser().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/frontend/v1/club-admin/users/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Retrieve the users of a club
+     * Retrieve the users of a club
+     */
+    async deleteClubUser(requestParameters: DeleteClubUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteClubUserRaw(requestParameters, initOverrides);
     }
 
     /**

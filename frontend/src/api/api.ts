@@ -104,6 +104,7 @@ export const Api = {
         },
         users: {
             all: () => handleError(usersApi.getClubUsersClubAdmin()),
+            delete: (uuid: UUID) => handleError(usersApi.deleteClubUser({ uuid })),
         },
     },
     user: {

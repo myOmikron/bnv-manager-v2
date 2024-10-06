@@ -67,4 +67,6 @@ pub struct SimpleUser {
     pub display_name: String,
     /// The user's role
     pub role: UserRole,
+    /// The website count of the user
+    pub website_count: u64,
 }

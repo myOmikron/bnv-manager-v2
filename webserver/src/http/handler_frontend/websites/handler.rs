@@ -49,6 +49,7 @@ use crate::http::handler_frontend::ws::schema::DnsQueryResult;
 use crate::http::handler_frontend::ws::schema::WsServerMsg;
 use crate::models::website::Website;
 use crate::models::website::WebsiteDomain;
+use crate::models::User;
 use crate::utils::schemars::SchemaDateTime;
 
 /// Create a new website
@@ -62,6 +63,12 @@ pub async fn create_website(
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let uuid = Website::create_website(name, user.uuid, &mut tx).await?;
+
+    update!(&mut tx, User)
+        .condition(User::F.uuid.equals(user.uuid))
+        .set(User::F.website_count, user.website_count + 1)
+        .exec()
+        .await?;
 
     tx.commit().await?;
 
@@ -304,6 +311,12 @@ pub async fn delete_website(
 
     rorm::delete!(&mut tx, Website)
         .condition(Website::F.uuid.equals(uuid))
+        .await?;
+
+    update!(&mut tx, User)
+        .condition(User::F.uuid.equals(user.uuid))
+        .set(User::F.website_count, user.website_count - 1)
+        .exec()
         .await?;
 
     tx.commit().await?;

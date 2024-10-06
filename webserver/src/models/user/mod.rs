@@ -69,6 +69,10 @@ pub struct User {
     /// The hashed password
     #[rorm(max_length = 1024)]
     pub password: String,
+
+    /// The count of websites
+    #[rorm(default = 0)]
+    pub website_count: i64,
 }
 
 /// The representation of an open invitation for a user account

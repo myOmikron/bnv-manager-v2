@@ -760,6 +760,53 @@
                 }
             }
         },
+        "/api/frontend/v1/club-admin/users/{uuid}": {
+            "delete": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Retrieve the users of a club",
+                "description": "Retrieve the users of a club",
+                "operationId": "delete_club_user",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Empty body"
+                    }
+                }
+            }
+        },
         "/api/frontend/v1/user/websites": {
             "get": {
                 "tags": [
@@ -1893,13 +1940,20 @@
                         "description": "Primary key",
                         "type": "string",
                         "format": "uuid"
+                    },
+                    "website_count": {
+                        "description": "The count of websites of all users",
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0
                     }
                 },
                 "required": [
                     "admins",
                     "name",
                     "user_count",
-                    "uuid"
+                    "uuid",
+                    "website_count"
                 ]
             },
             "FullUser": {
@@ -2146,13 +2200,20 @@
                         "description": "The identifier of the user",
                         "type": "string",
                         "format": "uuid"
+                    },
+                    "website_count": {
+                        "description": "The website count of the user",
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0
                     }
                 },
                 "required": [
                     "display_name",
                     "role",
                     "username",
-                    "uuid"
+                    "uuid",
+                    "website_count"
                 ]
             },
             "SimpleWebsite": {

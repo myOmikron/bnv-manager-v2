@@ -764,6 +764,12 @@ export interface FullClub {
      * @memberof FullClub
      */
     uuid: string;
+    /**
+     * The count of websites of all users
+     * @type {number}
+     * @memberof FullClub
+     */
+    website_count: number;
 }
 /**
  * The full representation for the user
@@ -1026,6 +1032,12 @@ export interface SimpleUser {
      * @memberof SimpleUser
      */
     uuid: string;
+    /**
+     * The website count of the user
+     * @type {number}
+     * @memberof SimpleUser
+     */
+    website_count: number;
 }
 /**
  * The simple representation of a website

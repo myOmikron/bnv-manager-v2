@@ -18,6 +18,8 @@ pub struct FullClub {
     pub user_count: u64,
     /// The users that are admins of the club
     pub admins: Vec<SimpleUser>,
+    /// The count of websites of all users
+    pub website_count: u64,
 }
 
 /// A simple representation of a club

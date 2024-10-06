@@ -1,0 +1,20 @@
+[Migration]
+Hash = "8699104830777191810"
+Initial = false
+Dependency = 1
+Replaces = []
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "user"
+
+[Migration.Operations.Field]
+Name = "website_count"
+Type = "int64"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "default_value"
+Value = 0
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
