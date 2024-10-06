@@ -35,6 +35,7 @@ export default function ClubAdminMenu(props: ClubAdminMenuProps) {
                     <NavbarDivider />
                     <NavbarSection>
                         <NavbarItem href={"/ca/dashboard"}>{tM("button.dashboard")}</NavbarItem>
+                        <NavbarItem href={"/ca/users"}>{tM("button.users-overview")}</NavbarItem>
                     </NavbarSection>
                     <NavbarSpacer />
                     <NavbarSection>

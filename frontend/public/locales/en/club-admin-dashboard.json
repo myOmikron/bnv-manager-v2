@@ -1,0 +1,12 @@
+{
+    "button": {
+        "create-user": "Create user"
+    },
+    "heading": {
+        "welcome": "Welcome, {{user}}"
+    },
+    "label": {
+        "user-count": "User count",
+        "website-count": "Website count"
+    }
+}

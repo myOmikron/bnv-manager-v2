@@ -21,9 +21,11 @@ import { Route as AdminADashboardImport } from './routes/_admin/a/dashboard'
 import { Route as AdminAProfileImport } from './routes/_admin/a/_profile'
 import { Route as UserUWebsitesIndexImport } from './routes/_user/u/websites/index'
 import { Route as UserUMailIndexImport } from './routes/_user/u/mail/index'
+import { Route as ClubAdminCaUsersIndexImport } from './routes/_club-admin/ca/users/index'
 import { Route as AdminAUsersIndexImport } from './routes/_admin/a/users/index'
 import { Route as UserUWebsitesCreateImport } from './routes/_user/u/websites/create'
 import { Route as UserUWebsitesWebsiteIdImport } from './routes/_user/u/websites/$websiteId'
+import { Route as ClubAdminCaUsersCreateImport } from './routes/_club-admin/ca/users/create'
 import { Route as AdminAClubsCreateImport } from './routes/_admin/a/clubs/create'
 import { Route as UserUProfileProfileSecurityImport } from './routes/_user/u/_profile/profile/security'
 import { Route as UserUProfileProfileGeneralImport } from './routes/_user/u/_profile/profile/general'
@@ -124,6 +126,11 @@ const UserUMailIndexRoute = UserUMailIndexImport.update({
   getParentRoute: () => UserURoute,
 } as any)
 
+const ClubAdminCaUsersIndexRoute = ClubAdminCaUsersIndexImport.update({
+  path: '/users/',
+  getParentRoute: () => ClubAdminCaRoute,
+} as any)
+
 const AdminAUsersIndexRoute = AdminAUsersIndexImport.update({
   path: '/users/',
   getParentRoute: () => AdminARoute,
@@ -137,6 +144,11 @@ const UserUWebsitesCreateRoute = UserUWebsitesCreateImport.update({
 const UserUWebsitesWebsiteIdRoute = UserUWebsitesWebsiteIdImport.update({
   path: '/websites/$websiteId',
   getParentRoute: () => UserURoute,
+} as any)
+
+const ClubAdminCaUsersCreateRoute = ClubAdminCaUsersCreateImport.update({
+  path: '/users/create',
+  getParentRoute: () => ClubAdminCaRoute,
 } as any)
 
 const AdminAClubsCreateRoute = AdminAClubsCreateImport.update({
@@ -301,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAClubsCreateImport
       parentRoute: typeof AdminAImport
     }
+    '/_club-admin/ca/users/create': {
+      id: '/_club-admin/ca/users/create'
+      path: '/users/create'
+      fullPath: '/ca/users/create'
+      preLoaderRoute: typeof ClubAdminCaUsersCreateImport
+      parentRoute: typeof ClubAdminCaImport
+    }
     '/_user/u/websites/$websiteId': {
       id: '/_user/u/websites/$websiteId'
       path: '/websites/$websiteId'
@@ -321,6 +340,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/a/users'
       preLoaderRoute: typeof AdminAUsersIndexImport
       parentRoute: typeof AdminAImport
+    }
+    '/_club-admin/ca/users/': {
+      id: '/_club-admin/ca/users/'
+      path: '/users'
+      fullPath: '/ca/users'
+      preLoaderRoute: typeof ClubAdminCaUsersIndexImport
+      parentRoute: typeof ClubAdminCaImport
     }
     '/_user/u/mail/': {
       id: '/_user/u/mail/'
@@ -471,11 +497,15 @@ const ClubAdminCaProfileRouteWithChildren =
 interface ClubAdminCaRouteChildren {
   ClubAdminCaProfileRoute: typeof ClubAdminCaProfileRouteWithChildren
   ClubAdminCaDashboardRoute: typeof ClubAdminCaDashboardRoute
+  ClubAdminCaUsersCreateRoute: typeof ClubAdminCaUsersCreateRoute
+  ClubAdminCaUsersIndexRoute: typeof ClubAdminCaUsersIndexRoute
 }
 
 const ClubAdminCaRouteChildren: ClubAdminCaRouteChildren = {
   ClubAdminCaProfileRoute: ClubAdminCaProfileRouteWithChildren,
   ClubAdminCaDashboardRoute: ClubAdminCaDashboardRoute,
+  ClubAdminCaUsersCreateRoute: ClubAdminCaUsersCreateRoute,
+  ClubAdminCaUsersIndexRoute: ClubAdminCaUsersIndexRoute,
 }
 
 const ClubAdminCaRouteWithChildren = ClubAdminCaRoute._addFileChildren(
@@ -548,9 +578,11 @@ export interface FileRoutesByFullPath {
   '/ca/dashboard': typeof ClubAdminCaDashboardRoute
   '/u': typeof UserUProfileRouteWithChildren
   '/a/clubs/create': typeof AdminAClubsCreateRoute
+  '/ca/users/create': typeof ClubAdminCaUsersCreateRoute
   '/u/websites/$websiteId': typeof UserUWebsitesWebsiteIdRoute
   '/u/websites/create': typeof UserUWebsitesCreateRoute
   '/a/users': typeof AdminAUsersIndexRoute
+  '/ca/users': typeof ClubAdminCaUsersIndexRoute
   '/u/mail': typeof UserUMailIndexRoute
   '/u/websites': typeof UserUWebsitesIndexRoute
   '/a/profile/general': typeof AdminAProfileProfileGeneralRoute
@@ -574,9 +606,11 @@ export interface FileRoutesByTo {
   '/ca/dashboard': typeof ClubAdminCaDashboardRoute
   '/u': typeof UserUProfileRouteWithChildren
   '/a/clubs/create': typeof AdminAClubsCreateRoute
+  '/ca/users/create': typeof ClubAdminCaUsersCreateRoute
   '/u/websites/$websiteId': typeof UserUWebsitesWebsiteIdRoute
   '/u/websites/create': typeof UserUWebsitesCreateRoute
   '/a/users': typeof AdminAUsersIndexRoute
+  '/ca/users': typeof ClubAdminCaUsersIndexRoute
   '/u/mail': typeof UserUMailIndexRoute
   '/u/websites': typeof UserUWebsitesIndexRoute
   '/a/profile/general': typeof AdminAProfileProfileGeneralRoute
@@ -606,9 +640,11 @@ export interface FileRoutesById {
   '/_user/u': typeof UserURouteWithChildren
   '/_user/u/_profile': typeof UserUProfileRouteWithChildren
   '/_admin/a/clubs/create': typeof AdminAClubsCreateRoute
+  '/_club-admin/ca/users/create': typeof ClubAdminCaUsersCreateRoute
   '/_user/u/websites/$websiteId': typeof UserUWebsitesWebsiteIdRoute
   '/_user/u/websites/create': typeof UserUWebsitesCreateRoute
   '/_admin/a/users/': typeof AdminAUsersIndexRoute
+  '/_club-admin/ca/users/': typeof ClubAdminCaUsersIndexRoute
   '/_user/u/mail/': typeof UserUMailIndexRoute
   '/_user/u/websites/': typeof UserUWebsitesIndexRoute
   '/_admin/a/_profile/profile/general': typeof AdminAProfileProfileGeneralRoute
@@ -634,9 +670,11 @@ export interface FileRouteTypes {
     | '/ca/dashboard'
     | '/u'
     | '/a/clubs/create'
+    | '/ca/users/create'
     | '/u/websites/$websiteId'
     | '/u/websites/create'
     | '/a/users'
+    | '/ca/users'
     | '/u/mail'
     | '/u/websites'
     | '/a/profile/general'
@@ -659,9 +697,11 @@ export interface FileRouteTypes {
     | '/ca/dashboard'
     | '/u'
     | '/a/clubs/create'
+    | '/ca/users/create'
     | '/u/websites/$websiteId'
     | '/u/websites/create'
     | '/a/users'
+    | '/ca/users'
     | '/u/mail'
     | '/u/websites'
     | '/a/profile/general'
@@ -689,9 +729,11 @@ export interface FileRouteTypes {
     | '/_user/u'
     | '/_user/u/_profile'
     | '/_admin/a/clubs/create'
+    | '/_club-admin/ca/users/create'
     | '/_user/u/websites/$websiteId'
     | '/_user/u/websites/create'
     | '/_admin/a/users/'
+    | '/_club-admin/ca/users/'
     | '/_user/u/mail/'
     | '/_user/u/websites/'
     | '/_admin/a/_profile/profile/general'
@@ -795,7 +837,9 @@ export const routeTree = rootRoute
       "parent": "/_club-admin",
       "children": [
         "/_club-admin/ca/_profile",
-        "/_club-admin/ca/dashboard"
+        "/_club-admin/ca/dashboard",
+        "/_club-admin/ca/users/create",
+        "/_club-admin/ca/users/"
       ]
     },
     "/_club-admin/ca/_profile": {
@@ -833,6 +877,10 @@ export const routeTree = rootRoute
       "filePath": "_admin/a/clubs/create.tsx",
       "parent": "/_admin/a"
     },
+    "/_club-admin/ca/users/create": {
+      "filePath": "_club-admin/ca/users/create.tsx",
+      "parent": "/_club-admin/ca"
+    },
     "/_user/u/websites/$websiteId": {
       "filePath": "_user/u/websites/$websiteId.tsx",
       "parent": "/_user/u"
@@ -844,6 +892,10 @@ export const routeTree = rootRoute
     "/_admin/a/users/": {
       "filePath": "_admin/a/users/index.tsx",
       "parent": "/_admin/a"
+    },
+    "/_club-admin/ca/users/": {
+      "filePath": "_club-admin/ca/users/index.tsx",
+      "parent": "/_club-admin/ca"
     },
     "/_user/u/mail/": {
       "filePath": "_user/u/mail/index.tsx",

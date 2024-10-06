@@ -4,8 +4,6 @@ import React from "react";
  * The properties for {@link Stats}
  */
 export type StatsProps = {
-    /** The key to set */
-    key: string;
     /** the label of the stat */
     label: string;
     /** Value */
@@ -19,7 +17,7 @@ export type StatsProps = {
  */
 export default function Stats(props: StatsProps) {
     return (
-        <div key={props.key}>
+        <div>
             <hr role="presentation" className="w-full border-t border-zinc-950/10 dark:border-white/10" />
             <dd className="mt-6 text-lg/6 font-medium sm:text-sm/6">{props.label}</dd>
             <dt className="mt-3 text-3xl/8 font-semibold sm:text-2xl/8">{props.value}</dt>

@@ -1,0 +1,12 @@
+{
+    "button": {
+        "back-to-dashboard": "Zurück zum Dashboard",
+        "create-user": "Nutzer anlegen"
+    },
+    "heading": {
+        "user-overview": "Nutzer Übersicht"
+    },
+    "label": {
+        "website-count": "Zahl der Webseiten"
+    }
+}

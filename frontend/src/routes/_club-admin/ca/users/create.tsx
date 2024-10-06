@@ -6,58 +6,56 @@ import { useTranslation } from "react-i18next";
 import BackButton from "src/components/base/back-button";
 import { Text } from "src/components/base/text";
 import Form from "src/components/base/form";
-import { ErrorMessage, Field, FieldGroup, Fieldset, Label, RequiredLabel } from "src/components/base/fieldset";
 import { useForm } from "@tanstack/react-form";
+import { ErrorMessage, Field, FieldGroup, Fieldset, Label, RequiredLabel } from "src/components/base/fieldset";
 import { Button } from "src/components/base/button";
 import { Api } from "src/api/api";
-import { Input } from "src/components/base/input";
-import { toast } from "react-toastify";
 import LanguageSelect, { Lang } from "src/components/base/language-select";
-import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from "src/components/base/dialog";
+import { toast } from "react-toastify";
+import { Input } from "src/components/base/input";
 import { CreateUserInviteResponse } from "src/api/generated";
+import { Dialog, DialogActions, DialogBody, DialogDescription } from "src/components/base/dialog";
+import { DialogTitle } from "@headlessui/react";
 import { ClipboardDocumentListIcon } from "@heroicons/react/20/solid";
 
 /**
- * The properties for {@link CreateClubAdmin}
+ * The properties for {@link UserCreation}
  */
-export type CreateClubAdminProps = {};
+export type UserCreationProps = {};
 
 /**
- * Create a new club admin
+ * The user creation view
  */
-export default function CreateClubAdmin(props: CreateClubAdminProps) {
+function UserCreation(props: UserCreationProps) {
     const [t] = useTranslation();
-    const [tC] = useTranslation("admin-create-club-admin");
+    const [tU] = useTranslation("club-admin-create-user");
 
-    const { clubId } = Route.useParams();
     const navigate = Route.useNavigate();
 
     const [newUser, setNewUser] = React.useState<CreateUserInviteResponse>();
 
-    const createForm = useForm({
+    const form = useForm({
         defaultValues: {
             username: "",
             displayName: "",
-            preferred_lang: "DE" as Lang,
+            preferredLang: "DE" as Lang,
         },
-        onSubmit: async ({ value, formApi }) => {
-            const username = value.username;
-            const display_name = value.displayName;
-            const role = {
-                ClubAdmin: clubId,
-            };
-            const preferred_lang = value.preferred_lang;
-
-            const res = await Api.admin.invites.create({ username, display_name, role, preferred_lang });
+        onSubmit: async ({ formApi, value }) => {
+            const res = await Api.clubAdmin.userInvites.create({
+                username: value.username,
+                display_name: value.displayName,
+                preferred_lang: value.preferredLang,
+            });
 
             res.match(
                 (res) => {
                     if (res.result === "Ok") {
+                        toast.success(tU("toast.success"));
                         setNewUser(res.value);
                     } else {
                         if (res.error.username_in_use) {
                             formApi.setFieldMeta("username", (meta) => {
-                                meta.errors.push(tC("error.username-in-use"));
+                                meta.errors.push(tU("error.username-in-use"));
                                 return meta;
                             });
                         }
@@ -70,53 +68,56 @@ export default function CreateClubAdmin(props: CreateClubAdminProps) {
 
     return (
         <>
-            <BackButton href={"/a/clubs/$clubId/general"} params={{ clubId }}>
-                <Text className={"font-light"}>{tC("button.back-to-club")}</Text>
+            <BackButton href={"/ca/users"}>
+                <Text>{tU("button.back-to-users")}</Text>
             </BackButton>
-
-            <HeadingLayout className={"mt-6"} heading={tC("heading.create-club-admin")}>
-                <Form onSubmit={createForm.handleSubmit} className={"max-w-lg"}>
+            <HeadingLayout className={"mt-6"} heading={tU("heading.user-creation")}>
+                <Form onSubmit={form.handleSubmit} className={"max-w-lg"}>
                     <Fieldset>
                         <FieldGroup>
-                            <createForm.Field name={"username"}>
+                            <form.Field name={"username"}>
                                 {(fieldApi) => (
                                     <Field>
                                         <RequiredLabel>{t("label.username")}</RequiredLabel>
                                         <Input
                                             autoFocus={true}
-                                            value={fieldApi.state.value}
-                                            onChange={(e) => fieldApi.setValue(e.target.value)}
-                                            invalid={fieldApi.state.meta.errors.length > 0}
                                             required={true}
+                                            value={fieldApi.state.value}
+                                            onChange={(e) => fieldApi.handleChange(e.target.value)}
+                                            invalid={fieldApi.state.meta.errors.length > 0}
                                         />
                                         {fieldApi.state.meta.errors.map((err) => (
                                             <ErrorMessage>{err}</ErrorMessage>
                                         ))}
                                     </Field>
                                 )}
-                            </createForm.Field>
+                            </form.Field>
 
-                            <createForm.Field name={"displayName"}>
+                            <form.Field name={"displayName"}>
                                 {(fieldApi) => (
                                     <Field>
                                         <RequiredLabel>{t("label.display-name")}</RequiredLabel>
                                         <Input
-                                            value={fieldApi.state.value}
-                                            onChange={(e) => fieldApi.setValue(e.target.value)}
                                             required={true}
+                                            value={fieldApi.state.value}
+                                            onChange={(e) => fieldApi.handleChange(e.target.value)}
+                                            invalid={fieldApi.state.meta.errors.length > 0}
                                         />
+                                        {fieldApi.state.meta.errors.map((err) => (
+                                            <ErrorMessage>{err}</ErrorMessage>
+                                        ))}
                                     </Field>
                                 )}
-                            </createForm.Field>
+                            </form.Field>
 
-                            <createForm.Field name={"preferred_lang"}>
+                            <form.Field name={"preferredLang"}>
                                 {(fieldApi) => (
                                     <Field>
-                                        <RequiredLabel>{t("label.preferred-lang")}</RequiredLabel>
+                                        <Label>{t("label.preferred-lang")}</Label>
                                         <LanguageSelect lang={fieldApi.state.value} setLang={fieldApi.handleChange} />
                                     </Field>
                                 )}
-                            </createForm.Field>
+                            </form.Field>
 
                             <Button type={"submit"}>{t("button.create")}</Button>
                         </FieldGroup>
@@ -125,10 +126,10 @@ export default function CreateClubAdmin(props: CreateClubAdminProps) {
             </HeadingLayout>
 
             {newUser && (
-                <Dialog open={true} onClose={() => setNewUser(undefined)}>
-                    <Form onSubmit={() => navigate({ to: "/a/clubs/$clubId/general", params: { clubId } })}>
-                        <DialogTitle>{tC("heading.dialog-user-created")}</DialogTitle>
-                        <DialogDescription>{tC("description.dialog-user-created")}</DialogDescription>
+                <Dialog open={true} onClose={() => navigate({ to: "/ca/users" })}>
+                    <Form onSubmit={() => navigate({ to: "/ca/users" })}>
+                        <DialogTitle>{tU("heading.dialog-user-created")}</DialogTitle>
+                        <DialogDescription>{tU("description.dialog-user-created")}</DialogDescription>
                         <DialogBody>
                             <FieldGroup>
                                 <Field>
@@ -159,6 +160,6 @@ export default function CreateClubAdmin(props: CreateClubAdminProps) {
     );
 }
 
-export const Route = createFileRoute("/_admin/a/clubs/$clubId/club-admins/create")({
-    component: CreateClubAdmin,
+export const Route = createFileRoute("/_club-admin/ca/users/create")({
+    component: UserCreation,
 });

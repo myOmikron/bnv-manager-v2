@@ -1,0 +1,12 @@
+{
+    "button": {
+        "create-user": "Nutzer anlegen"
+    },
+    "heading": {
+        "welcome": "Willkommen, {{user}}"
+    },
+    "label": {
+        "user-count": "Nutzerzahl",
+        "website-count": "Zahl der Webseiten"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "button": {
+        "back-to-dashboard": "Back to dashboard",
+        "create-user": "Create user"
+    },
+    "heading": {
+        "user-overview": "User overview"
+    },
+    "label": {
+        "website-count": "Website count"
+    }
+}
