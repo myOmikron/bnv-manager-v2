@@ -20,6 +20,7 @@ import type {
   ChangePwRequest,
   FormResultForNullAndChangePwErrors,
   FullUser,
+  SimpleUser,
 } from '../models/index';
 
 export interface ChangePasswordRequest {
@@ -70,6 +71,34 @@ export class UsersApi extends runtime.BaseAPI {
      */
     async changePassword(requestParameters: ChangePasswordRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndChangePwErrors> {
         const response = await this.changePasswordRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Retrieve the users of a club
+     * Retrieve the users of a club
+     */
+    async getClubUsersCaRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SimpleUser>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/frontend/v1/club-admin/users`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     * Retrieve the users of a club
+     * Retrieve the users of a club
+     */
+    async getClubUsersCa(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SimpleUser>> {
+        const response = await this.getClubUsersCaRaw(initOverrides);
         return await response.value();
     }
 

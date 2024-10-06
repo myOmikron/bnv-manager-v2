@@ -46,12 +46,19 @@ pub fn admin() -> ApiContext<Router> {
 
 /// Club admin routes
 pub fn club_admin() -> ApiContext<Router> {
-    ApiContext::new().nest(
-        "/user-invites",
-        ApiContext::new()
-            .tag("user-invites")
-            .handler(user_invites::handler_club_admin::create_invite_club_admin),
-    )
+    ApiContext::new()
+        .nest(
+            "/user-invites",
+            ApiContext::new()
+                .tag("user-invites")
+                .handler(user_invites::handler_club_admin::create_invite_club_admin),
+        )
+        .nest(
+            "/users",
+            ApiContext::new()
+                .tag("users")
+                .handler(users::handler_club_admin::get_club_users_ca),
+        )
 }
 
 /// Normal user routes
@@ -86,9 +93,9 @@ pub fn common() -> ApiContext<Router> {
                     "/users",
                     ApiContext::new()
                         .tag("users")
-                        .handler(users::handler::get_me)
-                        .handler(users::handler::update_me)
-                        .handler(users::handler::change_password),
+                        .handler(users::handler_common::get_me)
+                        .handler(users::handler_common::update_me)
+                        .handler(users::handler_common::change_password),
                 )
                 .layer(ServiceBuilder::new().layer(axum::middleware::from_fn(auth_required))),
         )

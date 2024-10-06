@@ -102,6 +102,9 @@ export const Api = {
                     userInvitesApi.createInviteClubAdmin({ CreateUserInviteRequestClubAdmin: createUserInvite }),
                 ),
         },
+        users: {
+            all: () => handleError(usersApi.getClubUsersCa()),
+        },
     },
     user: {
         websites: {

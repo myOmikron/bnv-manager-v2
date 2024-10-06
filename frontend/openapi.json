@@ -715,6 +715,51 @@
                 }
             }
         },
+        "/api/frontend/v1/club-admin/users": {
+            "get": {
+                "tags": [
+                    "users"
+                ],
+                "summary": "Retrieve the users of a club",
+                "description": "Retrieve the users of a club",
+                "operationId": "get_club_users_ca",
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SimpleUser"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/frontend/v1/user/websites": {
             "get": {
                 "tags": [
