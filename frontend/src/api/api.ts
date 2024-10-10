@@ -97,7 +97,7 @@ export const Api = {
     },
     clubAdmin: {
         clubs: {
-            get: () => handleError(clubsApi.getClub({ uuid })),
+            get: () => handleError(clubsApi.getClubClubAdmin({})),
         },
         userInvites: {
             create: (createUserInvite: CreateUserInviteRequestClubAdmin) =>
@@ -108,6 +108,8 @@ export const Api = {
         users: {
             all: () => handleError(usersApi.getClubUsersClubAdmin()),
             delete: (uuid: UUID) => handleError(usersApi.deleteClubUser({ uuid })),
+            export_json: () => handleError(usersApi.exportJsonCa()),
+            export_csv: () => handleError(usersApi.exportCsvCa()),
         },
     },
     user: {

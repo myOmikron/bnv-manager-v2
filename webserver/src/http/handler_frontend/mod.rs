@@ -64,7 +64,9 @@ pub fn club_admin() -> ApiContext<Router> {
             ApiContext::new()
                 .tag("users")
                 .handler(users::handler_club_admin::get_club_users_club_admin)
-                .handler(users::handler_club_admin::delete_club_user),
+                .handler(users::handler_club_admin::delete_club_user)
+                .handler(users::handler_club_admin::export_json_ca)
+                .handler(users::handler_club_admin::export_csv_ca),
         )
 }
 

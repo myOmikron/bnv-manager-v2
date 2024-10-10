@@ -158,4 +158,5 @@ impl_into_internal_server_error!(
     checked_string::ConstraintsViolated,
     SystemTimeError,
     WebauthnError,
+    csv::Error,
 );

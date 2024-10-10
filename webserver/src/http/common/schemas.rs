@@ -1,5 +1,7 @@
 //! Common schemas in the API
 
+use axum::response::IntoResponse;
+use axum::response::Response;
 use schemars::JsonSchema;
 use schemars::JsonSchema_repr;
 use serde::Deserialize;
@@ -7,6 +9,13 @@ use serde::Deserializer;
 use serde::Serialize;
 use serde_repr::Deserialize_repr;
 use serde_repr::Serialize_repr;
+use swaggapi::as_responses::simple_responses;
+use swaggapi::as_responses::AsResponses;
+use swaggapi::as_responses::SimpleResponse;
+use swaggapi::internals::SchemaGenerator;
+use swaggapi::re_exports::mime;
+use swaggapi::re_exports::openapiv3::Responses;
+use swaggapi::re_exports::openapiv3::StatusCode;
 use uuid::Uuid;
 
 use crate::utils::checked_string::CheckedString;
@@ -156,4 +165,29 @@ where
     T: Deserialize<'de>,
 {
     Ok(Some(T::deserialize(d)?))
+}
+
+/// Csv wrapper type
+#[derive(Clone, Copy, Debug)]
+#[must_use]
+pub struct Csv<T>(pub T);
+
+impl<T> IntoResponse for Csv<T>
+where
+    T: IntoResponse,
+{
+    fn into_response(self) -> Response {
+        ([("content-type", "text/csv")], self.0).into_response()
+    }
+}
+
+impl<T> AsResponses for Csv<T> {
+    fn responses(_gen: &mut SchemaGenerator) -> Responses {
+        simple_responses([SimpleResponse {
+            status_code: StatusCode::Code(200),
+            mime_type: mime::TEXT_CSV,
+            description: "comma seperated list".to_string(),
+            media_type: None,
+        }])
+    }
 }

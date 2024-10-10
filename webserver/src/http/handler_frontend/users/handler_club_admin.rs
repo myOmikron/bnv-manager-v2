@@ -13,10 +13,12 @@ use swaggapi::get;
 use crate::global::GLOBAL;
 use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
+use crate::http::common::schemas::Csv;
 use crate::http::common::schemas::SingleUuid;
 use crate::http::extractors::api_json::ApiJson;
 use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
+use crate::http::handler_frontend::users::schema::ExportUser;
 use crate::http::handler_frontend::users::schema::SimpleUser;
 use crate::models::ClubUser;
 use crate::models::User;
@@ -86,4 +88,68 @@ pub async fn delete_club_user(
     tx.commit().await?;
 
     Ok(())
+}
+
+/// Export all users of the club as json
+#[get("/export/json")]
+pub async fn export_json_ca(
+    SessionUser { role, .. }: SessionUser,
+) -> ApiResult<ApiJson<Vec<ExportUser>>> {
+    let UserRoleWithClub::ClubAdmin { club } = role else {
+        return Err(ApiError::new_internal_server_error("Received invalid role"));
+    };
+
+    let mut tx = GLOBAL.db.start_transaction().await?;
+
+    let users = query!(&mut tx, (ClubUser::F.user as User,))
+        .condition(ClubUser::F.club.equals(club))
+        .stream()
+        .map_ok(|(user,)| ExportUser {
+            uuid: user.uuid,
+            username: user.username,
+            display_name: user.display_name,
+            website_count: user.website_count as u64,
+        })
+        .try_collect()
+        .await?;
+
+    tx.commit().await?;
+
+    Ok(ApiJson(users))
+}
+
+/// Export all users of the club as csv
+#[get("/export/csv")]
+pub async fn export_csv_ca(SessionUser { role, .. }: SessionUser) -> ApiResult<Csv<Vec<u8>>> {
+    let UserRoleWithClub::ClubAdmin { club } = role else {
+        return Err(ApiError::new_internal_server_error("Received invalid role"));
+    };
+
+    let mut tx = GLOBAL.db.start_transaction().await?;
+
+    let users: Vec<_> = query!(&mut tx, (ClubUser::F.user as User,))
+        .condition(ClubUser::F.club.equals(club))
+        .stream()
+        .map_ok(|(user,)| ExportUser {
+            uuid: user.uuid,
+            username: user.username,
+            display_name: user.display_name,
+            website_count: user.website_count as u64,
+        })
+        .try_collect()
+        .await?;
+
+    tx.commit().await?;
+
+    let mut writer = csv::Writer::from_writer(vec![]);
+
+    for user in users {
+        writer.serialize(&user).map_err(ApiError::from)?;
+    }
+
+    let data = writer
+        .into_inner()
+        .map_err(|_| ApiError::new_internal_server_error("export error"))?;
+
+    Ok(Csv(data))
 }

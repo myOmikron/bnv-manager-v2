@@ -18,6 +18,7 @@ import type {
   ApiErrorResponse,
   ChangeMeRequest,
   ChangePwRequest,
+  ExportUser,
   FormResultForNullAndChangePwErrors,
   FullUser,
   SimpleUser,
@@ -110,6 +111,61 @@ export class UsersApi extends runtime.BaseAPI {
      */
     async deleteClubUser(requestParameters: DeleteClubUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.deleteClubUserRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Export all users of the club as csv
+     * Export all users of the club as csv
+     */
+    async exportCsvCaRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/frontend/v1/club-admin/users/export/csv`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Export all users of the club as csv
+     * Export all users of the club as csv
+     */
+    async exportCsvCa(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.exportCsvCaRaw(initOverrides);
+    }
+
+    /**
+     * Export all users of the club as json
+     * Export all users of the club as json
+     */
+    async exportJsonCaRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ExportUser>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/frontend/v1/club-admin/users/export/json`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     * Export all users of the club as json
+     * Export all users of the club as json
+     */
+    async exportJsonCa(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ExportUser>> {
+        const response = await this.exportJsonCaRaw(initOverrides);
+        return await response.value();
     }
 
     /**

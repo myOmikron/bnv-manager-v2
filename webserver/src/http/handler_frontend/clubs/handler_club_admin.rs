@@ -23,7 +23,7 @@ use crate::models::UserRole;
 /// Get the club of the current logged-in clubadmin
 #[get("/clubs/my")]
 pub async fn get_club_club_admin(
-    SessionUser { user, role }: SessionUser,
+    SessionUser { role, .. }: SessionUser,
 ) -> ApiResult<ApiJson<FullClub>> {
     let mut tx = GLOBAL.db.start_transaction().await?;
 

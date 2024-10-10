@@ -70,3 +70,16 @@ pub struct SimpleUser {
     /// The website count of the user
     pub website_count: u64,
 }
+
+/// The representation of a user for exports
+#[derive(Clone, Debug, JsonSchema, Serialize, Deserialize)]
+pub struct ExportUser {
+    /// The identifier of the user
+    pub uuid: Uuid,
+    /// The username of the user
+    pub username: String,
+    /// Used for displaying purposes
+    pub display_name: String,
+    /// The website count of the user
+    pub website_count: u64,
+}

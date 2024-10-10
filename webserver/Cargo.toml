@@ -42,6 +42,7 @@ serde = { version = "~1", features = ["derive"] }
 serde_repr = { version = "~0.1" }
 serde_json = { version = "~1" }
 toml = { version = "~0.8" }
+csv = { version = "~1" }
 uuid = { version = "~1", features = ["v4", "serde"] }
 url = { version = "~2", features = ["serde"] }
 # Time library
