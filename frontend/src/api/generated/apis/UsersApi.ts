@@ -18,7 +18,6 @@ import type {
   ApiErrorResponse,
   ChangeMeRequest,
   ChangePwRequest,
-  ExportUser,
   FormResultForNullAndChangePwErrors,
   FullUser,
   SimpleUser,
@@ -144,7 +143,7 @@ export class UsersApi extends runtime.BaseAPI {
      * Export all users of the club as json
      * Export all users of the club as json
      */
-    async exportJsonCaRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ExportUser>>> {
+    async exportJsonCaRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -156,16 +155,15 @@ export class UsersApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response);
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * Export all users of the club as json
      * Export all users of the club as json
      */
-    async exportJsonCa(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ExportUser>> {
-        const response = await this.exportJsonCaRaw(initOverrides);
-        return await response.value();
+    async exportJsonCa(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.exportJsonCaRaw(initOverrides);
     }
 
     /**

@@ -13,7 +13,8 @@ use swaggapi::get;
 use crate::global::GLOBAL;
 use crate::http::common::errors::ApiError;
 use crate::http::common::errors::ApiResult;
-use crate::http::common::schemas::Csv;
+use crate::http::common::schemas::ExportCsv;
+use crate::http::common::schemas::ExportJson;
 use crate::http::common::schemas::SingleUuid;
 use crate::http::extractors::api_json::ApiJson;
 use crate::http::extractors::session_user::SessionUser;
@@ -94,7 +95,7 @@ pub async fn delete_club_user(
 #[get("/export/json")]
 pub async fn export_json_ca(
     SessionUser { role, .. }: SessionUser,
-) -> ApiResult<ApiJson<Vec<ExportUser>>> {
+) -> ApiResult<ExportJson<Vec<ExportUser>>> {
     let UserRoleWithClub::ClubAdmin { club } = role else {
         return Err(ApiError::new_internal_server_error("Received invalid role"));
     };
@@ -115,12 +116,12 @@ pub async fn export_json_ca(
 
     tx.commit().await?;
 
-    Ok(ApiJson(users))
+    Ok(ExportJson(users, "users.json"))
 }
 
 /// Export all users of the club as csv
 #[get("/export/csv")]
-pub async fn export_csv_ca(SessionUser { role, .. }: SessionUser) -> ApiResult<Csv<Vec<u8>>> {
+pub async fn export_csv_ca(SessionUser { role, .. }: SessionUser) -> ApiResult<ExportCsv<Vec<u8>>> {
     let UserRoleWithClub::ClubAdmin { club } = role else {
         return Err(ApiError::new_internal_server_error("Received invalid role"));
     };
@@ -151,5 +152,5 @@ pub async fn export_csv_ca(SessionUser { role, .. }: SessionUser) -> ApiResult<C
         .into_inner()
         .map_err(|_| ApiError::new_internal_server_error("export error"))?;
 
-    Ok(Csv(data))
+    Ok(ExportCsv(data, "users.csv"))
 }

@@ -1,5 +1,7 @@
 //! Common schemas in the API
 
+use axum::http::header;
+use axum::http::HeaderValue;
 use axum::response::IntoResponse;
 use axum::response::Response;
 use schemars::JsonSchema;
@@ -9,6 +11,7 @@ use serde::Deserializer;
 use serde::Serialize;
 use serde_repr::Deserialize_repr;
 use serde_repr::Serialize_repr;
+use swaggapi::as_responses::ok_binary;
 use swaggapi::as_responses::simple_responses;
 use swaggapi::as_responses::AsResponses;
 use swaggapi::as_responses::SimpleResponse;
@@ -18,6 +21,7 @@ use swaggapi::re_exports::openapiv3::Responses;
 use swaggapi::re_exports::openapiv3::StatusCode;
 use uuid::Uuid;
 
+use crate::http::common::errors::ApiError;
 use crate::utils::checked_string::CheckedString;
 
 /// A type without any runtime value
@@ -170,18 +174,31 @@ where
 /// Csv wrapper type
 #[derive(Clone, Copy, Debug)]
 #[must_use]
-pub struct Csv<T>(pub T);
+pub struct ExportCsv<T>(pub T, pub &'static str);
 
-impl<T> IntoResponse for Csv<T>
+impl<T> IntoResponse for ExportCsv<T>
 where
     T: IntoResponse,
 {
     fn into_response(self) -> Response {
-        ([("content-type", "text/csv")], self.0).into_response()
+        (
+            [
+                (
+                    header::CONTENT_TYPE,
+                    HeaderValue::from_static(mime::TEXT_CSV.as_ref()),
+                ),
+                (
+                    header::CONTENT_DISPOSITION,
+                    HeaderValue::from_str(&format!("attachment; filename={}", self.1)).unwrap(),
+                ),
+            ],
+            self.0,
+        )
+            .into_response()
     }
 }
 
-impl<T> AsResponses for Csv<T> {
+impl<T> AsResponses for ExportCsv<T> {
     fn responses(_gen: &mut SchemaGenerator) -> Responses {
         simple_responses([SimpleResponse {
             status_code: StatusCode::Code(200),
@@ -189,5 +206,47 @@ impl<T> AsResponses for Csv<T> {
             description: "comma seperated list".to_string(),
             media_type: None,
         }])
+    }
+}
+
+/// Export Json wrapper type
+#[derive(Clone, Copy, Debug)]
+#[must_use]
+pub struct ExportJson<T>(pub T, pub &'static str);
+
+impl<T> IntoResponse for ExportJson<T>
+where
+    T: Serialize,
+{
+    fn into_response(self) -> Response {
+        // Use a small initial capacity of 128 bytes like serde_json::to_vec
+        // https://docs.rs/serde_json/1.0.82/src/serde_json/ser.rs.html#2189
+        let mut buf = Vec::with_capacity(128);
+        match serde_json::to_writer(&mut buf, &self.0) {
+            Ok(()) => (
+                [
+                    (
+                        header::CONTENT_TYPE,
+                        HeaderValue::from_static(mime::APPLICATION_JSON.as_ref()),
+                    ),
+                    (
+                        header::CONTENT_DISPOSITION,
+                        HeaderValue::from_str(&format!("attachment; filename={}", self.1)).unwrap(),
+                    ),
+                ],
+                buf,
+            )
+                .into_response(),
+            Err(err) => ApiError::new_internal_server_error(err).into_response(),
+        }
+    }
+}
+
+impl<T> AsResponses for ExportJson<T>
+where
+    T: JsonSchema,
+{
+    fn responses(_gen: &mut SchemaGenerator) -> Responses {
+        ok_binary()
     }
 }

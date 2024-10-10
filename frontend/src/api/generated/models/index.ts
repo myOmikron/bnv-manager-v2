@@ -380,37 +380,6 @@ export const DeployStateOneOf2TypeEnum = {
 export type DeployStateOneOf2TypeEnum = typeof DeployStateOneOf2TypeEnum[keyof typeof DeployStateOneOf2TypeEnum];
 
 /**
- * The representation of a user for exports
- * @export
- * @interface ExportUser
- */
-export interface ExportUser {
-    /**
-     * Used for displaying purposes
-     * @type {string}
-     * @memberof ExportUser
-     */
-    display_name: string;
-    /**
-     * The username of the user
-     * @type {string}
-     * @memberof ExportUser
-     */
-    username: string;
-    /**
-     * The identifier of the user
-     * @type {string}
-     * @memberof ExportUser
-     */
-    uuid: string;
-    /**
-     * The website count of the user
-     * @type {number}
-     * @memberof ExportUser
-     */
-    website_count: number;
-}
-/**
  * @type FormResultForCreateUserInviteResponseAndCreateUserInviteErrors
  * A `Result` with a custom serialization
  * @export

@@ -879,16 +879,9 @@
                         }
                     },
                     "200": {
-                        "description": "",
+                        "description": "Some binary data",
                         "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ExportUser"
-                                    }
-                                }
-                            }
+                            "application/octet-stream": {}
                         }
                     }
                 }
@@ -1760,37 +1753,6 @@
                             "type"
                         ]
                     }
-                ]
-            },
-            "ExportUser": {
-                "description": "The representation of a user for exports",
-                "type": "object",
-                "properties": {
-                    "display_name": {
-                        "description": "Used for displaying purposes",
-                        "type": "string"
-                    },
-                    "username": {
-                        "description": "The username of the user",
-                        "type": "string"
-                    },
-                    "uuid": {
-                        "description": "The identifier of the user",
-                        "type": "string",
-                        "format": "uuid"
-                    },
-                    "website_count": {
-                        "description": "The website count of the user",
-                        "type": "integer",
-                        "format": "uint64",
-                        "minimum": 0
-                    }
-                },
-                "required": [
-                    "display_name",
-                    "username",
-                    "uuid",
-                    "website_count"
                 ]
             },
             "FormResult_for_CreateUserInviteResponse_and_CreateUserInviteErrors": {
