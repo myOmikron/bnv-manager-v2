@@ -174,31 +174,45 @@ export const Button = React.forwardRef(function Button(
     const classes = clsx(
         className,
         styles.base,
-        outline
-            ? styles.outline
-            : plain
-              ? styles.plain
-              : clsx(styles.solid, styles.colors[color ?? "dark/zinc"]),
+        outline ? styles.outline : plain ? styles.plain : clsx(styles.solid, styles.colors[color ?? "dark/zinc"]),
     );
 
     return "href" in props ? (
-        <Link
-            {...props}
-            className={classes}
-            ref={ref as React.ForwardedRef<HTMLAnchorElement>}
-        >
+        <Link {...props} className={classes} ref={ref as React.ForwardedRef<HTMLAnchorElement>}>
             <TouchTarget>{children}</TouchTarget>
         </Link>
     ) : (
-        <Headless.Button
-            {...props}
-            className={clsx(classes, "cursor-default")}
-            ref={ref}
-        >
+        <Headless.Button {...props} className={clsx(classes, "cursor-default")} ref={ref}>
             <TouchTarget>{children}</TouchTarget>
         </Headless.Button>
     );
 });
+
+export type ExternalButtonProps = {
+    href: string;
+} & (
+    | { color?: keyof typeof styles.colors; outline?: never; plain?: never }
+    | { color?: never; outline: true; plain?: never }
+    | { color?: never; outline?: never; plain: true }
+) & { className?: string; children: React.ReactNode };
+
+export function ExternalButton(props: ExternalButtonProps) {
+    const classes = clsx(
+        props.className,
+        styles.base,
+        props.outline
+            ? styles.outline
+            : props.plain
+              ? styles.plain
+              : clsx(styles.solid, styles.colors[props.color ?? "dark/zinc"]),
+    );
+
+    return (
+        <a href={props.href} className={classes}>
+            <TouchTarget>{props.children}</TouchTarget>
+        </a>
+    );
+}
 
 /* Expand the hit area to at least 44×44px on touch devices */
 export function TouchTarget({ children }: { children: React.ReactNode }) {
