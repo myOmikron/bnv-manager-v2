@@ -18,6 +18,7 @@
     },
     "label": {
         "new-club-name": "New club name",
+        "mail-domain": "Mail domain",
         "user-count": "User count",
         "website-count": "Website count"
     },

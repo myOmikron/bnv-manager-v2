@@ -130,6 +130,7 @@ function ClubView(props: ClubViewProps) {
                 <div className={"grid grid-cols-1 gap-6 sm:grid-cols-3"}>
                     <Stats label={tC("label.user-count")} value={club.user_count} />
                     <Stats label={tC("label.website-count")} value={club.website_count} />
+                    <Stats label={tC("label.mail-domain")} value={club.domain} />
                 </div>
             </div>
 

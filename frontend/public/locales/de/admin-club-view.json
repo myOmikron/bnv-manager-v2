@@ -18,6 +18,7 @@
     },
     "label": {
         "new-club-name": "Neuer Name des Vereins",
+        "mail-domain": "Maildomain",
         "user-count": "Nutzerzahl",
         "website-count": "Zahl der Webseiten"
     },
