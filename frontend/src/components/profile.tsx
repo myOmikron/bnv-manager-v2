@@ -37,9 +37,9 @@ export function ProfileLayout(props: ProfileProps) {
                 <TabMenu>
                     <Tab
                         href={
-                            user.role === "User"
+                            user.role.role === "User"
                                 ? "/u/profile/general"
-                                : user.role === "ClubAdmin"
+                                : user.role.role === "ClubAdmin"
                                   ? "/ca/profile/general"
                                   : "/a/profile/general"
                         }
@@ -48,9 +48,9 @@ export function ProfileLayout(props: ProfileProps) {
                     </Tab>
                     <Tab
                         href={
-                            user.role === "User"
+                            user.role.role === "User"
                                 ? "/u/profile/security"
-                                : user.role === "ClubAdmin"
+                                : user.role.role === "ClubAdmin"
                                   ? "/ca/profile/security"
                                   : "/a/profile/security"
                         }
