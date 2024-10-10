@@ -43,12 +43,14 @@ export default function CreateClubAdmin(props: CreateClubAdminProps) {
         onSubmit: async ({ value, formApi }) => {
             const username = value.username;
             const display_name = value.displayName;
-            const role = {
-                ClubAdmin: clubId,
-            };
             const preferred_lang = value.preferred_lang;
 
-            const res = await Api.admin.invites.create({ username, display_name, role, preferred_lang });
+            const res = await Api.admin.invites.create({
+                username,
+                display_name,
+                role: { role: "ClubAdmin", club: clubId },
+                preferred_lang,
+            });
 
             res.match(
                 (res) => {

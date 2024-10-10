@@ -23,16 +23,17 @@ export type ClubCreateProps = {};
  */
 export default function ClubCreate(props: ClubCreateProps) {
     const [t] = useTranslation();
-    const [tC] = useTranslation("club-create");
+    const [tC] = useTranslation("admin-club-create");
 
     const navigate = Route.useNavigate();
 
     const createForm = useForm({
         defaultValues: {
             name: "",
+            domain: "",
         },
         onSubmit: async ({ value, formApi }) => {
-            const res = await Api.admin.clubs.create({ name: value.name });
+            const res = await Api.admin.clubs.create({ name: value.name, domain: value.domain });
 
             res.match(
                 (res) => {
@@ -68,6 +69,24 @@ export default function ClubCreate(props: ClubCreateProps) {
                                         <Description>{tC("description.club-name")}</Description>
                                         <Input
                                             autoFocus={true}
+                                            required={true}
+                                            value={fieldApi.state.value}
+                                            onChange={(e) => fieldApi.setValue(e.target.value)}
+                                            invalid={fieldApi.state.meta.errors.length > 0}
+                                        />
+                                        {fieldApi.state.meta.errors.map((x) => (
+                                            <ErrorMessage>{x}</ErrorMessage>
+                                        ))}
+                                    </Field>
+                                )}
+                            </createForm.Field>
+
+                            <createForm.Field name={"domain"}>
+                                {(fieldApi) => (
+                                    <Field>
+                                        <RequiredLabel>{tC("label.domain")}</RequiredLabel>
+                                        <Description>{tC("description.domain")}</Description>
+                                        <Input
                                             required={true}
                                             value={fieldApi.state.value}
                                             onChange={(e) => fieldApi.setValue(e.target.value)}

@@ -1,9 +1,11 @@
 {
     "description": {
-        "club-name": "The legal name of the club"
+        "club-name": "The legal name of the club",
+        "domain": "The domain that should be used as base-domain for mail accounts of club users"
     },
     "label": {
-        "club-name": "Club name"
+        "club-name": "Club name",
+        "domain": "Maildomain"
     },
     "heading": {
         "create-club": "Create club"
