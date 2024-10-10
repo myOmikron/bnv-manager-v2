@@ -28,7 +28,7 @@ export type ClubViewProps = {};
  */
 function ClubView(props: ClubViewProps) {
     const [t] = useTranslation();
-    const [tC] = useTranslation("club-view");
+    const [tC] = useTranslation("admin-club-view");
 
     const { clubId } = Route.useParams();
     const navigate = Route.useNavigate();
@@ -129,6 +129,7 @@ function ClubView(props: ClubViewProps) {
 
                 <div className={"grid grid-cols-1 gap-6 sm:grid-cols-3"}>
                     <Stats label={tC("label.user-count")} value={club.user_count} />
+                    <Stats label={tC("label.website-count")} value={club.website_count} />
                 </div>
             </div>
 

@@ -34,6 +34,7 @@ use crate::http::common::schemas::FormResult;
 use crate::http::common::schemas::SingleUuid;
 use crate::http::extractors::api_json::ApiJson;
 use crate::http::extractors::session_user::SessionUser;
+use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
 use crate::http::handler_frontend::websites::schema::AddDomainToWebsiteForm;
 use crate::http::handler_frontend::websites::schema::AddDomainToWebsiteRequest;
 use crate::http::handler_frontend::websites::schema::CreateWebsiteRequest;
@@ -49,6 +50,7 @@ use crate::http::handler_frontend::ws::schema::DnsQueryResult;
 use crate::http::handler_frontend::ws::schema::WsServerMsg;
 use crate::models::website::Website;
 use crate::models::website::WebsiteDomain;
+use crate::models::Club;
 use crate::models::User;
 use crate::utils::schemars::SchemaDateTime;
 
@@ -239,13 +241,18 @@ pub async fn add_domain_to_website(
 #[delete("/:website_uuid/domains/:domain_uuid")]
 #[instrument(ret, err)]
 pub async fn remove_domain_from_website(
-    SessionUser { user, .. }: SessionUser,
+    SessionUser { user, role }: SessionUser,
     Path(RemoveDomainPath {
         website_uuid,
         domain_uuid,
     }): Path<RemoveDomainPath>,
 ) -> ApiResult<()> {
     let user = user.0;
+    let club = if let UserRoleWithClub::User { club } = role {
+        club
+    } else {
+        return Err(ApiError::new_internal_server_error("received invalid role"));
+    };
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let website = query!(&mut tx, Website)
@@ -284,6 +291,17 @@ pub async fn remove_domain_from_website(
         .exec()
         .await?;
 
+    let website_count = query!(&mut tx, (Club::F.website_count,))
+        .condition(Club::F.uuid.equals(club))
+        .one()
+        .await?
+        .0;
+
+    update!(&mut tx, Club)
+        .condition(Club::F.uuid.equals(club))
+        .set(Club::F.website_count, website_count + 1)
+        .await?;
+
     tx.commit().await?;
 
     Ok(())
@@ -293,10 +311,15 @@ pub async fn remove_domain_from_website(
 #[delete("/:uuid")]
 #[instrument(ret, err)]
 pub async fn delete_website(
-    SessionUser { user, .. }: SessionUser,
+    SessionUser { user, role }: SessionUser,
     Path(SingleUuid { uuid }): Path<SingleUuid>,
 ) -> ApiResult<()> {
     let user = user.0;
+    let club = if let UserRoleWithClub::User { club } = role {
+        club
+    } else {
+        return Err(ApiError::new_internal_server_error("received invalid role"));
+    };
     let mut tx = GLOBAL.db.start_transaction().await?;
 
     let website = query!(&mut tx, Website)
@@ -317,6 +340,17 @@ pub async fn delete_website(
         .condition(User::F.uuid.equals(user.uuid))
         .set(User::F.website_count, user.website_count - 1)
         .exec()
+        .await?;
+
+    let website_count = query!(&mut tx, (Club::F.website_count,))
+        .condition(Club::F.uuid.equals(club))
+        .one()
+        .await?
+        .0;
+
+    update!(&mut tx, Club)
+        .condition(Club::F.uuid.equals(club))
+        .set(Club::F.website_count, website_count - 1)
         .await?;
 
     tx.commit().await?;

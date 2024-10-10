@@ -197,6 +197,12 @@ export interface CreateClubErrors {
  */
 export interface CreateClubRequest {
     /**
+     * The domain associated with the club
+     * @type {string}
+     * @memberof CreateClubRequest
+     */
+    domain: string;
+    /**
      * The name of the club
      * @type {string}
      * @memberof CreateClubRequest
@@ -747,6 +753,12 @@ export interface FullClub {
      */
     admins: Array<SimpleUser>;
     /**
+     * Domain that is used in mailcow
+     * @type {string}
+     * @memberof FullClub
+     */
+    domain: string;
+    /**
      * Name of the club
      * @type {string}
      * @memberof FullClub
@@ -1001,6 +1013,12 @@ export interface SimpleClub {
      * @memberof SimpleClub
      */
     uuid: string;
+    /**
+     * The count of the websites of all users
+     * @type {number}
+     * @memberof SimpleClub
+     */
+    website_count: number;
 }
 /**
  * The simple representation for the user

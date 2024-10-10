@@ -6,6 +6,7 @@ use serde::Serialize;
 use uuid::Uuid;
 
 use crate::http::handler_frontend::users::schema::SimpleUser;
+use crate::utils::checked_string::CheckedString;
 
 /// A full representation of a club
 #[derive(Clone, Debug, JsonSchema, Serialize, Deserialize)]
@@ -14,6 +15,8 @@ pub struct FullClub {
     pub uuid: Uuid,
     /// Name of the club
     pub name: String,
+    /// Domain that is used in mailcow
+    pub domain: String,
     /// User count associated with the club
     pub user_count: u64,
     /// The users that are admins of the club
@@ -31,6 +34,8 @@ pub struct SimpleClub {
     pub name: String,
     /// User count associated with the club
     pub user_count: u64,
+    /// The count of the websites of all users
+    pub website_count: u64,
 }
 
 /// A list of clubs
@@ -44,7 +49,9 @@ pub struct ClubList {
 #[derive(Clone, Debug, JsonSchema, Serialize, Deserialize)]
 pub struct CreateClubRequest {
     /// The name of the club
-    pub name: String,
+    pub name: CheckedString<1, 255>,
+    /// The domain associated with the club
+    pub domain: CheckedString<1, 255>,
 }
 
 /// Errors that may occur during creation of a club

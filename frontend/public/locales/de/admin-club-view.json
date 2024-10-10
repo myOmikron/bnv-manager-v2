@@ -18,7 +18,8 @@
     },
     "label": {
         "new-club-name": "Neuer Name des Vereins",
-        "user-count": "Nutzerzahl"
+        "user-count": "Nutzerzahl",
+        "website-count": "Zahl der Webseiten"
     },
     "toast": {
         "club-deleted": "Verein wurde gelöscht"

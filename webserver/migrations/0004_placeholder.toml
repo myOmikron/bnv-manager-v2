@@ -1,0 +1,23 @@
+[Migration]
+Hash = "17660103346724450166"
+Initial = false
+Dependency = 3
+Replaces = []
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "club"
+
+[Migration.Operations.Field]
+Name = "domain"
+Type = "varchar"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Field.Annotations]]
+Type = "unique"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"

@@ -663,6 +663,48 @@
                 }
             }
         },
+        "/api/frontend/v1/club-admin/clubs/clubs/my": {
+            "get": {
+                "tags": [
+                    "clubs"
+                ],
+                "summary": "Get the club of the current logged-in clubadmin",
+                "description": "Get the club of the current logged-in clubadmin",
+                "operationId": "get_club_club_admin",
+                "responses": {
+                    "400": {
+                        "description": "Client side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server side error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FullClub"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/frontend/v1/club-admin/user-invites": {
             "post": {
                 "tags": [
@@ -1468,12 +1510,21 @@
                 "description": "The request to create a club",
                 "type": "object",
                 "properties": {
+                    "domain": {
+                        "description": "The domain associated with the club",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                    },
                     "name": {
                         "description": "The name of the club",
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
                     }
                 },
                 "required": [
+                    "domain",
                     "name"
                 ]
             },
@@ -1926,6 +1977,10 @@
                             "$ref": "#/components/schemas/SimpleUser"
                         }
                     },
+                    "domain": {
+                        "description": "Domain that is used in mailcow",
+                        "type": "string"
+                    },
                     "name": {
                         "description": "Name of the club",
                         "type": "string"
@@ -1950,6 +2005,7 @@
                 },
                 "required": [
                     "admins",
+                    "domain",
                     "name",
                     "user_count",
                     "uuid",
@@ -2173,12 +2229,19 @@
                         "description": "Primary key",
                         "type": "string",
                         "format": "uuid"
+                    },
+                    "website_count": {
+                        "description": "The count of the websites of all users",
+                        "type": "integer",
+                        "format": "uint64",
+                        "minimum": 0
                     }
                 },
                 "required": [
                     "name",
                     "user_count",
-                    "uuid"
+                    "uuid",
+                    "website_count"
                 ]
             },
             "SimpleUser": {

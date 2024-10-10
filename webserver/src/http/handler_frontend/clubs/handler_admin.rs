@@ -51,6 +51,7 @@ pub async fn get_all_clubs() -> ApiResult<ApiJson<ClubList>> {
             uuid: club.uuid,
             name: club.name,
             user_count: club_users as u64,
+            website_count: club.website_count as u64,
         })
     }
 
@@ -99,6 +100,7 @@ pub async fn get_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<
     Ok(ApiJson(FullClub {
         uuid,
         name: club.name,
+        domain: club.domain,
         user_count: club_users as u64,
         admins: users,
         website_count,
@@ -108,7 +110,7 @@ pub async fn get_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<
 /// Create a new club
 #[post("/create")]
 pub async fn create_club(
-    ApiJson(CreateClubRequest { name }): ApiJson<CreateClubRequest>,
+    ApiJson(CreateClubRequest { name, domain }): ApiJson<CreateClubRequest>,
 ) -> ApiResult<ApiJson<FormResult<SingleUuid, CreateClubErrors>>> {
     let mut tx = GLOBAL.db.start_transaction().await?;
 
@@ -127,7 +129,9 @@ pub async fn create_club(
         .return_primary_key()
         .single(&Club {
             uuid: Uuid::new_v4(),
-            name,
+            name: name.into_inner(),
+            domain: domain.into_inner(),
+            website_count: 0,
         })
         .await?;
 

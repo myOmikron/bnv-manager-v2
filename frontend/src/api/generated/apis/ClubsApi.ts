@@ -182,6 +182,34 @@ export class ClubsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get the club of the current logged-in clubadmin
+     * Get the club of the current logged-in clubadmin
+     */
+    async getClubClubAdminRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FullClub>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/frontend/v1/club-admin/clubs/clubs/my`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     * Get the club of the current logged-in clubadmin
+     * Get the club of the current logged-in clubadmin
+     */
+    async getClubClubAdmin(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FullClub> {
+        const response = await this.getClubClubAdminRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Updates an existing club  One of the attributes must be set
      * Updates an existing club
      */

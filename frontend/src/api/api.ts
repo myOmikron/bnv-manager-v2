@@ -96,6 +96,9 @@ export const Api = {
         },
     },
     clubAdmin: {
+        clubs: {
+            get: () => handleError(clubsApi.getClub({ uuid })),
+        },
         userInvites: {
             create: (createUserInvite: CreateUserInviteRequestClubAdmin) =>
                 handleError(

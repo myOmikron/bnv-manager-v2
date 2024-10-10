@@ -1,0 +1,20 @@
+[Migration]
+Hash = "6790464308673549946"
+Initial = false
+Dependency = 2
+Replaces = []
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "club"
+
+[Migration.Operations.Field]
+Name = "website_count"
+Type = "int64"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "default_value"
+Value = 0
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"

@@ -6,7 +6,11 @@
         "export-csv": "CSV",
         "export-json": "JSON"
     },
+    "description": {
+        "confirm-delete-user": "Diese Aktion wird alle Nutzerdaten löschen. Dies beinhaltet das Postfach und die Webseiten des Nutzers."
+    },
     "heading": {
+        "confirm-delete-user": "Löschen des Nutzers \"{{user}}\" bestätigen",
         "user-overview": "Nutzer Übersicht"
     },
     "label": {

@@ -18,6 +18,16 @@ pub struct Club {
     /// Name of the club
     #[rorm(unique, max_length = 255)]
     pub name: String,
+
+    /// The domain associated to the club.
+    ///
+    /// That domain is used as mail domain
+    #[rorm(unique, max_length = 255)]
+    pub domain: String,
+
+    /// The count of all websites of the users of the club
+    #[rorm(default = 0)]
+    pub website_count: i64,
 }
 
 /// Representation of an admin of a club

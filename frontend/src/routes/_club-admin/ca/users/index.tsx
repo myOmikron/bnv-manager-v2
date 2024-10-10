@@ -6,7 +6,7 @@ import { Text } from "src/components/base/text";
 import { useTranslation } from "react-i18next";
 import HeadingLayout from "src/components/base/heading-layout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "src/components/base/table";
-import { Api } from "src/api/api";
+import { Api, UUID } from "src/api/api";
 import { Button } from "src/components/base/button";
 import { toast } from "react-toastify";
 import { SimpleUser } from "src/api/generated";
@@ -14,6 +14,7 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } f
 import { ArrowDownOnSquareStackIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { Field, Label } from "src/components/base/fieldset";
 import { Input } from "src/components/base/input";
+import ConfirmDialog from "src/components/confirm-dialog";
 
 /**
  * The properties for {@link UserOverview}
@@ -29,6 +30,17 @@ function UserOverview(props: UserDashboardProps) {
 
     const [clubUsers, setClubUsers] = React.useState<Array<SimpleUser>>([]);
     const [searchQuery, setSearchQuery] = React.useState("");
+
+    const [openDeleteUser, setOpenDeleteUser] = React.useState<SimpleUser>();
+
+    const deleteUser = async (uuid: UUID) => {
+        const res = await Api.clubAdmin.users.delete(uuid);
+
+        res.match(
+            (ok) => {},
+            (err) => toast.error(err.message),
+        );
+    };
 
     /**
      * Refresh club users
@@ -83,7 +95,7 @@ function UserOverview(props: UserDashboardProps) {
                     </div>
                 </div>
 
-                <Table>
+                <Table dense={true}>
                     <TableHead>
                         <TableRow>
                             <TableHeader>{t("label.username")}</TableHeader>
@@ -99,7 +111,7 @@ function UserOverview(props: UserDashboardProps) {
                             <TableRow key={x.uuid}>
                                 <TableCell>{x.username}</TableCell>
                                 <TableCell>{x.display_name}</TableCell>
-                                <TableCell>{}</TableCell>
+                                <TableCell>{x.website_count}</TableCell>
                                 <TableCell>
                                     <Dropdown>
                                         <DropdownButton plain={true}>
@@ -110,7 +122,7 @@ function UserOverview(props: UserDashboardProps) {
                                             <DropdownItem>
                                                 <DropdownLabel>{tU("button.create-reset-link")}</DropdownLabel>
                                             </DropdownItem>
-                                            <DropdownItem>
+                                            <DropdownItem onClick={() => setOpenDeleteUser(x)}>
                                                 <DropdownLabel>{t("button.delete")}</DropdownLabel>
                                             </DropdownItem>
                                         </DropdownMenu>
@@ -121,6 +133,21 @@ function UserOverview(props: UserDashboardProps) {
                     </TableBody>
                 </Table>
             </HeadingLayout>
+
+            {openDeleteUser && (
+                <ConfirmDialog
+                    title={tU("heading.confirm-delete-user", { user: openDeleteUser.username })}
+                    description={tU("description.confirm-delete-user")}
+                    onConfirm={async () => {
+                        if (openDeleteUser) {
+                            await deleteUser(openDeleteUser.uuid);
+                            await refreshClubUsers();
+                            setOpenDeleteUser(undefined);
+                        }
+                    }}
+                    onCancel={() => setOpenDeleteUser(undefined)}
+                />
+            )}
         </>
     );
 }

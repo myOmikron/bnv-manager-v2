@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Stats from "src/components/base/stats";
 import { useTranslation } from "react-i18next";
 import USER_CONTEXT from "src/context/user";
 import { Heading } from "src/components/base/heading";
 import { Button } from "src/components/base/button";
+import { Api } from "src/api/api";
 
 /**
  * The properties for {@link ClubAdminDashboard}
@@ -20,6 +21,17 @@ function ClubAdminDashboard(props: ClubAdminDashboardProps) {
     const [tD] = useTranslation("club-admin-dashboard");
 
     const { user } = React.useContext(USER_CONTEXT);
+
+    /**
+     * Refresh the club
+     */
+    const refreshClub = async () => {
+        const res = await Api.clubAdmin;
+    };
+
+    useEffect(() => {
+        refreshClub().then();
+    }, []);
 
     return (
         <div className={"flex flex-col gap-12"}>

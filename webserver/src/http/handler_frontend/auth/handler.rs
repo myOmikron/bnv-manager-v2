@@ -7,6 +7,7 @@ use rorm::update;
 use rorm::FieldAccess;
 use rorm::Model;
 use swaggapi::post;
+use time::OffsetDateTime;
 use tower_sessions_rorm_store::tower_sessions::Session;
 use tracing::info;
 use tracing::instrument;
@@ -65,6 +66,12 @@ pub async fn login(
             models::Session::F.user,
             Some(ForeignModelByField::Key(user.uuid)),
         )
+        .exec()
+        .await?;
+
+    update!(&mut tx, User)
+        .condition(User::F.uuid.equals(user.uuid))
+        .set(User::F.last_login, Some(OffsetDateTime::now_utc()))
         .exec()
         .await?;
 

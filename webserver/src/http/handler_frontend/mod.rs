@@ -48,6 +48,12 @@ pub fn admin() -> ApiContext<Router> {
 pub fn club_admin() -> ApiContext<Router> {
     ApiContext::new()
         .nest(
+            "/clubs",
+            ApiContext::new()
+                .tag("clubs")
+                .handler(clubs::handler_club_admin::get_club_club_admin),
+        )
+        .nest(
             "/user-invites",
             ApiContext::new()
                 .tag("user-invites")

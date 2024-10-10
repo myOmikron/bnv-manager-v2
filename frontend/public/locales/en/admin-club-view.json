@@ -18,7 +18,8 @@
     },
     "label": {
         "new-club-name": "New club name",
-        "user-count": "User count"
+        "user-count": "User count",
+        "website-count": "Website count"
     },
     "toast": {
         "club-deleted": "Club was deleted"

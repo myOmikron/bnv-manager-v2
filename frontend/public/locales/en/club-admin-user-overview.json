@@ -6,7 +6,11 @@
         "export-csv": "CSV",
         "export-json": "JSON"
     },
+    "description": {
+        "confirm-delete-user": "This action will delete all user information, including the mailbox and websites of the user."
+    },
     "heading": {
+        "confirm-delete-user": "Confirm the deletion of \"{{user}}\"",
         "user-overview": "User overview"
     },
     "label": {
