@@ -6,6 +6,7 @@
         "welcome": "Willkommen, {{user}}"
     },
     "label": {
+        "mail-domain": "Hauptdomain für Mails",
         "user-count": "Nutzerzahl",
         "website-count": "Zahl der Webseiten"
     }

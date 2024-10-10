@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import HeadingLayout from "src/components/base/heading-layout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "src/components/base/table";
 import { Api, UUID } from "src/api/api";
-import { Button } from "src/components/base/button";
+import { Button, ExternalButton } from "src/components/base/button";
 import { toast } from "react-toastify";
 import { SimpleUser } from "src/api/generated";
 import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } from "src/components/base/dropdown";
@@ -84,14 +84,14 @@ function UserOverview(props: UserDashboardProps) {
                     </Field>
 
                     <div className={"flex gap-3"}>
-                        <Button outline={true}>
+                        <ExternalButton outline={true} href={"/api/frontend/v1/club-admin/users/export/csv"}>
                             <span>{tU("button.export-csv")}</span>
                             <ArrowDownOnSquareStackIcon className={"!size-5"} />
-                        </Button>
-                        <Button outline={true}>
+                        </ExternalButton>
+                        <ExternalButton outline={true} href={"/api/frontend/v1/club-admin/users/export/json"}>
                             <span>{tU("button.export-json")}</span>
                             <ArrowDownOnSquareStackIcon className={"!size-5"} />
-                        </Button>
+                        </ExternalButton>
                     </div>
                 </div>
 
