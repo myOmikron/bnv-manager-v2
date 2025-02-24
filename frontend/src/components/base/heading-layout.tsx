@@ -1,5 +1,5 @@
 import React from "react";
-import { Heading } from "src/components/base/heading";
+import { Heading } from "src/components/base/heading.tsx";
 import { clsx } from "clsx";
 
 /**
@@ -25,7 +25,8 @@ export type HeadingLayoutProps = {
 export default function HeadingLayout(props: HeadingLayoutProps) {
     return (
         <div className={clsx("flex flex-col gap-8", props.className)}>
-            <div className="flex w-full flex-wrap items-end justify-between gap-4 border-b border-zinc-950/10 pb-6 dark:border-white/10">
+            <div
+                className="flex w-full flex-wrap items-end justify-between gap-4 border-b border-zinc-950/10 pb-6 dark:border-white/10">
                 <Heading>{props.heading}</Heading>
                 {props.headingChildren !== undefined ? (
                     <div className={"flex gap-4"}>{props.headingChildren}</div>

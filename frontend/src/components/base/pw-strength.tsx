@@ -1,5 +1,6 @@
+import React from "react";
 import { clsx } from "clsx";
-import { Text } from "./text";
+import { Text } from "src/components/base/text.tsx";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en";
 import * as zxcvbnDePackage from "@zxcvbn-ts/language-de";
@@ -10,10 +11,10 @@ const options = {
     dictionary: {
         ...zxcvbnCommonPackage.dictionary,
         ...zxcvbnEnPackage.dictionary,
-        ...zxcvbnDePackage.dictionary,
+        ...zxcvbnDePackage.dictionary
     },
     graphs: zxcvbnCommonPackage.adjacencyGraphs,
-    translations: zxcvbnEnPackage.translations,
+    translations: zxcvbnEnPackage.translations
 };
 zxcvbnOptions.setOptions(options);
 
@@ -49,18 +50,18 @@ export default function PasswordStrength(props: PasswordStrengthProps) {
         seconds / century > 1
             ? t("label.centuries")
             : seconds / year > 1
-              ? t("label.years")
-              : seconds / month > 1
-                ? t("label.months")
-                : seconds / week > 1
-                  ? t("label.weeks")
-                  : seconds / day > 1
-                    ? t("label.days")
-                    : seconds / hour > 1
-                      ? t("label.hours")
-                      : seconds / minute > 1
-                        ? t("label.minutes")
-                        : t("label.seconds");
+                ? t("label.years")
+                : seconds / month > 1
+                    ? t("label.months")
+                    : seconds / week > 1
+                        ? t("label.weeks")
+                        : seconds / day > 1
+                            ? t("label.days")
+                            : seconds / hour > 1
+                                ? t("label.hours")
+                                : seconds / minute > 1
+                                    ? t("label.minutes")
+                                    : t("label.seconds");
 
     return (
         <div>
@@ -71,7 +72,7 @@ export default function PasswordStrength(props: PasswordStrengthProps) {
                         score === 4 && "bg-green-500",
                         score === 3 && "bg-yellow-500",
                         score === 2 && "bg-orange-500",
-                        (score === 1 || score === 0) && "bg-purple-500",
+                        (score === 1 || score === 0) && "bg-purple-500"
                     )}
                 />
                 <div
@@ -79,20 +80,20 @@ export default function PasswordStrength(props: PasswordStrengthProps) {
                         "rounded border border-zinc-400 dark:border-zinc-700",
                         score === 4 && "bg-green-500",
                         score === 3 && "bg-yellow-500",
-                        score === 2 && "bg-orange-500",
+                        score === 2 && "bg-orange-500"
                     )}
                 />
                 <div
                     className={clsx(
                         "rounded border border-zinc-400 dark:border-zinc-700",
                         score === 4 && "bg-green-500",
-                        score === 3 && "bg-yellow-500",
+                        score === 3 && "bg-yellow-500"
                     )}
                 />
                 <div
                     className={clsx(
                         "rounded border border-zinc-400 dark:border-zinc-700",
-                        score === 4 && "bg-green-500",
+                        score === 4 && "bg-green-500"
                     )}
                 />
             </div>

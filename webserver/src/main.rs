@@ -2,91 +2,68 @@
 
 #![warn(missing_docs, clippy::unwrap_used, clippy::expect_used)]
 
-use std::env;
+use std::error::Error;
 use std::io;
 use std::io::Write;
-use std::sync::Arc;
 
 use clap::Parser;
+use galvyn_core::re_exports::rorm::Database;
+use galvyn_core::re_exports::rorm::DatabaseConfiguration;
 use rorm::cli as rorm_cli;
-use rorm::Database;
-use rorm::DatabaseConfiguration;
-use tracing::instrument;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::EnvFilter;
 
 use crate::cli::Cli;
 use crate::cli::Command;
-use crate::config::Config;
-use crate::global::dns::GlobalDns;
-use crate::global::webconf_updater::GlobalWebconfUpdater;
-use crate::global::ws::GlobalWs;
-use crate::global::GlobalEntities;
-use crate::global::GLOBAL;
-use crate::http::handler_frontend::user_invites::schema::UserRoleWithClub;
-use crate::models::User;
+use crate::config::DB;
+use crate::tracing::init_tracing_panic_hook;
+use crate::tracing::opentelemetry_layer;
 
 mod cli;
 pub mod config;
-pub mod global;
 pub mod http;
-pub mod ldap;
-mod migrate;
-pub mod models;
+pub mod tracing;
 pub mod utils;
 
-#[instrument(skip_all)]
-async fn start(config: &Config) -> Result<(), Box<dyn std::error::Error>> {
-    // Connect to the database
-    let mut conf = DatabaseConfiguration::new(config.database.clone().into());
-    conf.disable_logging = Some(true);
-    let db = Database::connect(conf).await?;
+async fn start() -> Result<(), Box<dyn Error>> {
+    galvyn_core::module::registry::Registry::builder()
+        .register_module::<Database>()
+        .init()
+        .await?;
 
-    let ws = GlobalWs::new();
-
-    let dns = GlobalDns::new();
-
-    let webconf_updater = GlobalWebconfUpdater::new(
-        config.http.webconf_updater_url.clone(),
-        config.http.webconf_updater_token.clone(),
-    );
-
-    // Initialize Globals
-    GLOBAL.init(GlobalEntities {
-        db,
-        ws,
-        dns,
-        conf: config.clone(),
-        webconf_updater,
-    });
-
-    let c = Arc::new(config.clone());
-
-    // Start the ldap server
-    ldap::server::start_server(c.clone()).await?;
-
-    // Start the webserver
-    http::server::run(c).await?;
+    http::server::run().await?;
 
     Ok(())
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    if env::var("RUST_LOG").is_err() {
-        env::set_var("RUST_LOG", "INFO");
+async fn main() -> Result<(), Box<dyn Error>> {
+    if let Err(errors) = config::load_env() {
+        for error in errors {
+            eprintln!("{error}");
+        }
+        return Err("Failed to load configuration".into());
     }
-    tracing_subscriber::fmt::init();
+
+    let registry = tracing_subscriber::registry()
+        .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("INFO")))
+        .with(tracing_subscriber::fmt::layer());
+
+    let registry = registry.with(opentelemetry_layer()?);
+
+    registry.init();
+    init_tracing_panic_hook();
 
     let cli = Cli::parse();
 
-    let config = Config::try_from_path(&cli.config_path)?;
-
     match cli.command {
-        Command::Start => start(&config).await?,
+        Command::Start => start().await?,
         #[cfg(debug_assertions)]
         Command::MakeMigrations { migrations_dir } => {
             use std::io::Write;
 
-            const MODELS: &str = ".models.json";
+            const MODELS: &str = "/tmp/.models.json";
 
             let mut file = std::fs::File::create(MODELS)?;
             rorm::write_models(&mut file)?;
@@ -105,13 +82,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             std::fs::remove_file(MODELS)?;
         }
         Command::Migrate { migrations_dir } => {
-            migrate::migrate(config.database.clone(), migrations_dir).await?
+            rorm::cli::migrate::run_migrate_custom(
+                rorm::config::DatabaseConfig {
+                    driver: DB.clone(),
+                    last_migration_table_name: None,
+                },
+                migrations_dir,
+                false,
+                None,
+            )
+            .await?
         }
         Command::CreateAdmin => {
             // Connect to the database
-            let mut conf = DatabaseConfiguration::new(config.database.clone().into());
-            conf.disable_logging = Some(true);
-            let db = Database::connect(conf).await?;
+            let db = Database::connect(DatabaseConfiguration {
+                ..DatabaseConfiguration::new(DB.clone())
+            })
+            .await?;
 
             create_user(db).await?;
         }
@@ -145,20 +132,6 @@ async fn create_user(db: Database) -> Result<(), String> {
     #[allow(clippy::unwrap_used)]
     stdin.read_line(&mut display_name).unwrap();
     let display_name = display_name.trim().to_string();
-
-    #[allow(clippy::unwrap_used)]
-    let password = rpassword::prompt_password("Enter password: ").unwrap();
-
-    User::create_user(
-        username.to_string(),
-        password,
-        display_name,
-        UserRoleWithClub::Administrator,
-        "EN".to_string(),
-        &db,
-    )
-    .await
-    .map_err(|e| format!("Failed to create user: {e}"))?;
 
     println!("Created user {username}");
 

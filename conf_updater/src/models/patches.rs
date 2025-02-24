@@ -27,5 +27,5 @@ pub(crate) struct NewWebsite {
 pub(crate) struct NewDomain {
     pub(crate) domain: String,
     pub(crate) forwarded: bool,
-    pub(crate) website: ForeignModelByField<field!(Website::F.uuid)>,
+    pub(crate) website: ForeignModelByField<field!(Website.uuid)>,
 }

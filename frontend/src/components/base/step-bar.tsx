@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text } from "src/components/base/text";
+import { Text } from "src/components/base/text.tsx";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { clsx } from "clsx";
 
@@ -35,29 +35,19 @@ export default function StepBar(props: StepBarProps) {
     const { space, steps } = props;
 
     return (
-        <nav
-            aria-label={t("accessibility.progress")}
-            className={props.className}
-        >
+        <nav aria-label={t("accessibility.progress")} className={props.className}>
             <ol role={"list"} className={"overflow-hidden"}>
                 {steps.map((step, idx) => (
                     <li
                         key={step.label}
-                        className={clsx(
-                            "relative",
-                            idx !== steps.length - 1 && space === undefined
-                                ? "pb-10"
-                                : space,
-                        )}
+                        className={clsx("relative", idx !== steps.length - 1 && space === undefined ? "pb-10" : space)}
                     >
                         {/* connection */}
                         {idx !== steps.length - 1 && (
                             <div
                                 className={clsx(
                                     "absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5",
-                                    step.state === "finished"
-                                        ? "bg-blue-600"
-                                        : "bg-zinc-400 dark:bg-zinc-700",
+                                    step.state === "finished" ? "bg-blue-600" : "bg-zinc-400 dark:bg-zinc-700"
                                 )}
                                 aria-hidden={"true"}
                             />
@@ -72,20 +62,14 @@ export default function StepBar(props: StepBarProps) {
                                     }
                                 >
                                     {step.state === "finished" ? (
-                                        <CheckIcon
-                                            className={"h-5 w-5 text-white"}
-                                        />
+                                        <CheckIcon className={"h-5 w-5 text-white"} />
                                     ) : step.state === "active" ? (
                                         <span
                                             className={
                                                 "relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 border-blue-600 bg-white dark:bg-zinc-900"
                                             }
                                         >
-                                            <span
-                                                className={
-                                                    "h-2.5 w-2.5 animate-pulse rounded-full bg-blue-600"
-                                                }
-                                            />
+                                            <span className={"h-2.5 w-2.5 animate-pulse rounded-full bg-blue-600"} />
                                         </span>
                                     ) : (
                                         <span
@@ -93,35 +77,19 @@ export default function StepBar(props: StepBarProps) {
                                                 "relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-900"
                                             }
                                         >
-                                            <span
-                                                className={
-                                                    "h-2.5 w-2.5 rounded-full bg-transparent"
-                                                }
-                                            />
+                                            <span className={"h-2.5 w-2.5 rounded-full bg-transparent"} />
                                         </span>
                                     )}
                                 </span>
                             </span>
 
                             {/* Text */}
-                            <span
-                                className={
-                                    "ml-4 flex min-w-0 flex-col justify-center"
-                                }
-                            >
-                                <Text
-                                    className={
-                                        "!text-sm font-medium !text-zinc-800 dark:!text-zinc-50"
-                                    }
-                                >
+                            <span className={"ml-4 flex min-w-0 flex-col justify-center"}>
+                                <Text className={"!text-sm font-medium !text-zinc-800 dark:!text-zinc-50"}>
                                     {step.label}
                                 </Text>
                                 {step.description && (
-                                    <span
-                                        className={
-                                            "text-sm text-zinc-600 dark:text-zinc-400"
-                                        }
-                                    >
+                                    <span className={"text-sm text-zinc-600 dark:text-zinc-400"}>
                                         {step.description}
                                     </span>
                                 )}

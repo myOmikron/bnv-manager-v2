@@ -4,8 +4,8 @@ import * as Headless from "@headlessui/react";
 import clsx from "clsx";
 import { LayoutGroup, motion } from "framer-motion";
 import React, { useId } from "react";
-import { TouchTarget } from "src/components/base/button";
-import { Link, LinkProps } from "src/components/base/link";
+import { TouchTarget } from "src/components/base/button.tsx";
+import { Link, LinkProps } from "src/components/base/link.tsx";
 
 export function Navbar({ className, ...props }: React.ComponentPropsWithoutRef<"nav">) {
     return <nav {...props} className={clsx(className, "flex flex-1 items-center gap-4 py-2.5")} />;
@@ -40,8 +40,8 @@ export const NavbarItem = React.forwardRef(function NavbarItem(
     }: { current?: boolean; className?: string; children: React.ReactNode } & (
         | Omit<Headless.ButtonProps, "className">
         | Omit<LinkProps, "className" | "render">
-    ),
-    ref: React.ForwardedRef<HTMLButtonElement>,
+        ),
+    ref: React.ForwardedRef<HTMLButtonElement>
 ) {
     const classes = clsx(
         // Base
@@ -59,16 +59,16 @@ export const NavbarItem = React.forwardRef(function NavbarItem(
         // Dark mode
         "dark:text-white dark:data-[slot=icon]:*:fill-zinc-400",
         "dark:data-[hover]:bg-white/5 dark:data-[slot=icon]:*:data-[hover]:fill-white",
-        "dark:data-[active]:bg-white/5 dark:data-[slot=icon]:*:data-[active]:fill-white",
+        "dark:data-[active]:bg-white/5 dark:data-[slot=icon]:*:data-[active]:fill-white"
     );
 
     return (
         <span className={clsx(className, "relative")}>
             {"href" in props ? (
-                <Link
+                <Headless.CloseButton
+                    as={Link}
                     {...props}
                     className={classes}
-                    data-current={current ? "true" : undefined}
                     ref={ref as React.ForwardedRef<HTMLAnchorElement>}
                     render={({ isActive }: { isActive: boolean }) => {
                         return (
@@ -101,3 +101,4 @@ export const NavbarItem = React.forwardRef(function NavbarItem(
 export function NavbarLabel({ className, ...props }: React.ComponentPropsWithoutRef<"span">) {
     return <span {...props} className={clsx(className, "truncate")} />;
 }
+

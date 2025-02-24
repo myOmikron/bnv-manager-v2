@@ -1,18 +1,1 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-@font-face {
-    font-family: Inter;
-    font-style: normal;
-    font-weight: 100 900;
-    font-display: swap;
-    src: url('/Inter-variable.ttf') format('truetype');
-}
-
-@layer base {
-    .toast-message {
-        @apply dark:!bg-zinc-900;
-    }
-}
+@import "tailwindcss";

@@ -1,6 +1,6 @@
 import * as Headless from "@headlessui/react";
 import React from "react";
-import { Input } from "src/components/base/input";
+import { Input } from "src/components/base/input.tsx";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { AnimatePresence, motion } from "framer-motion";
 import { clsx } from "clsx";
@@ -40,7 +40,7 @@ export function ComboboxOption<TType>(props: ComboboxOptionProps<TType>) {
                 // Selected
                 "data-[selected]:bg-blue-300 dark:data-[selected]:bg-blue-600",
                 // Focus
-                "data-[focus]:bg-blue-200 dark:data-[focus]:bg-blue-700",
+                "data-[focus]:bg-blue-200 dark:data-[focus]:bg-blue-700"
             ])}
         />
     );
@@ -67,7 +67,7 @@ function ComboboxOptions<TType>(props: ComboboxOptionsProps<TType>) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={true}
+            transition={{ duration: 0.1 }}
             className={clsx(
                 // Anchor positioning
                 "[--anchor-gap:theme(spacing.2)] [--anchor-padding:theme(spacing.1)] data-[anchor~=start]:[--anchor-offset:-6px] data-[anchor~=end]:[--anchor-offset:6px] sm:data-[anchor~=start]:[--anchor-offset:-4px] sm:data-[anchor~=end]:[--anchor-offset:4px]",
@@ -80,7 +80,7 @@ function ComboboxOptions<TType>(props: ComboboxOptionsProps<TType>) {
                 // Popover background
                 "bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75",
                 // Shadows
-                "shadow-lg ring-1 ring-zinc-950/10 dark:ring-inset dark:ring-white/10",
+                "shadow-lg ring-1 ring-zinc-950/10 dark:ring-inset dark:ring-white/10"
             )}
             children={props.children}
         />
@@ -125,7 +125,8 @@ export function Combobox<TType>(props: ComboboxProps<TType>) {
                             onChange={(ev) => onQueryChange(ev.target.value)}
                         />
                         <Headless.ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
-                            <ChevronDownIcon className="size-4 fill-zinc-950/60 group-data-[hover]:fill-zinc-950 dark:fill-white/60 dark:group-data-[hover]:fill-white" />
+                            <ChevronDownIcon
+                                className="size-4 fill-zinc-950/60 group-data-[hover]:fill-zinc-950 dark:fill-white/60 dark:group-data-[hover]:fill-white" />
                         </Headless.ComboboxButton>
                     </div>
 

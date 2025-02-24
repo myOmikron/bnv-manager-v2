@@ -1,7 +1,7 @@
 import React from "react";
-import { Link, LinkProps } from "./link";
+import { Link, LinkProps } from "src/components/base/link.tsx";
 import { motion } from "framer-motion";
-import { TouchTarget } from "./button";
+import { TouchTarget } from "src/components/base/button.tsx";
 import clsx from "clsx";
 
 /**
@@ -40,7 +40,7 @@ export function Tab(props: TabProps) {
         // Dark mode
         "dark:text-white dark:data-[slot=icon]:*:fill-zinc-400",
         "dark:data-[slot=icon]:*:data-[hover]:fill-white",
-        "dark:data-[slot=icon]:*:data-[current]:fill-white",
+        "dark:data-[slot=icon]:*:data-[current]:fill-white"
     );
 
     return (
@@ -84,7 +84,7 @@ export function LocalTab(props: LocalTabProps) {
 
     const classes = clsx(
         // Base
-        "flex flex-col w-fit items-center gap-3 rounded-lg text-left text-base/6 font-medium text-zinc-950 sm:text-sm/5 cursor-pointer",
+        "flex flex-col w-fit items-center gap-2 rounded-lg text-left text-base/6 font-medium text-zinc-950 sm:text-sm/5 cursor-pointer",
         // Hover
         "data-[slot=icon]:*:hover:fill-zinc-950",
         // Current
@@ -92,7 +92,7 @@ export function LocalTab(props: LocalTabProps) {
         // Dark mode
         "dark:text-white dark:data-[slot=icon]:*:fill-zinc-400",
         "dark:data-[slot=icon]:*:hover:fill-white",
-        "dark:data-[slot=icon]:*:data-[current]:fill-white",
+        "dark:data-[slot=icon]:*:data-[current]:fill-white"
     );
 
     return (

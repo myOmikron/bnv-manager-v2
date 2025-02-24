@@ -1,95 +1,57 @@
 [package]
 name = "webserver"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 authors = ["myOmikron <git@omikron.dev>"]
 publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-# webframework
-axum = { version = "~0.7", features = ["ws", "macros"] }
-# Extra utilities for axum
-axum-extra = { version = "~0.9" }
-# abstractions for requests
-tower = { version = "~0.5", features = ["full"] }
-# common middlewares
-tower-http = { version = "~0.6", features = ["trace", "normalize-path"] }
-# Session middleware
-tower-sessions = { version = "~0.13" }
-tower-sessions-rorm-store = { version = "~0.3" }
+thiserror = "~2"
 
-# openapi and swagger ui
-swaggapi = { version = "*", default-features = false, features = ["axum"], git = "https://github.com/gammelalf/swaggapi" }
-schemars = { version = "~0.8", features = ["uuid1"] }
+# Webframework
+axum = "~0.8" # Main web library
+galvyn-core = { version = "0.1.0", git = "https://github.com/myOmikron/galvyn.git", rev = "26fb732f3cc0688726e591018acf9fa12ce8af4d", default-features = false }
+tower = { version = "~0.5", features = ["full"] } # Base traits
+tower-http = { version = "~0.6", features = ["trace"] } # Common middlewares
+tower-sessions = { version = "~0.14" } # Cookie based sessions
+swaggapi = { version = "*", default-features = false, features = ["axum", "tracing-instrument"], git = "https://github.com/gammelalf/swaggapi" } # Auto-generate OpenAPI
+schemars = { version = "~0.8", features = ["uuid1", "raw_value"] } # Derive json schema description
 
-# Cli
-clap = { version = "~4", features = ["derive"] }
-# Reading passwords from stdin
-rpassword = { version = "~7" }
-# password hashing
-argon2 = { version = "~0.5", features = ["std"] }
-
-# totp
-totp-rs = { version = "~5" }
-# webauthn
+# Account authentication
 # The feature is necessary as we want to save the state to a database
 webauthn-rs = { version = "~0.5", features = ["danger-allow-state-serialisation"] }
 
-# Serialization libraries
+# Cli
+clap = { version = "~4", features = ["derive"] }
+
+# Logging
+tracing = { version = "~0.1" } # Base API
+tracing-subscriber = { version = "~0.3", features = ["tracing-log", "env-filter"] }
+tracing-opentelemetry = { version = "0.25" }
+opentelemetry = { version = "0.24" }
+opentelemetry_sdk = { version = "0.24", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.17" }
+
+# Datatypes
+uuid = { version = "~1", features = ["serde", "v4"] }
+url = { version = "~2", features = ["serde"] }
+time = { version = "~0.3" }
+bytes = { version = "~1" }
+
+# Database
+rorm = { version = "~0.6", git = "https://github.com/rorm-orm/rorm.git", branch = "dev", default-features = false, features = ["postgres-only", "cli", "time", "uuid", "schemars"] }
+
+# Async
+tokio = { version = "~1", features = ["full"] }
+signal-hook = { version = "~0.3" }
+signal-hook-tokio = { version = "~0.3", features = ["futures-v0_3"] }
+futures-lite = { version = "~2" }
+futures-sink = { version = "~0.3" }
+async-trait = "~0.1"
+
+# Json
 serde = { version = "~1", features = ["derive"] }
 serde_repr = { version = "~0.1" }
 serde_json = { version = "~1" }
-toml = { version = "~0.8" }
-csv = { version = "~1" }
-uuid = { version = "~1", features = ["v4", "serde"] }
-url = { version = "~2", features = ["serde"] }
-# Time library
-time = { version = "~0.3", features = ["serde-well-known"] }
-
-# Derives for enums
-strum = { version = "~0.26", features = ["derive"] }
-
-# For custom_db_enum
-linkme = { version = "~0.3" }
-
-# Errors
-thiserror = { version = "~1" }
-
-# Logging
-tracing = { version = "~0.1" }
-tracing-subscriber = { version = "~0.3", features = ["tracing-log", "env-filter"] }
-
-# RNG
-rand = { version = "~0.8" }
-
-# ORM
-rorm = { version = "~0.6", default-features = false, features = ["tokio", "postgres-only", "cli", "uuid"] }
-
-# Async runtime
-tokio = { version = ">=1.23.1", features = ["macros", "rt-multi-thread", "sync"] }
-# Utils for streams
-tokio-util = { version = "~0.7" }
-# TLS certificates for ldap
-tokio-rustls = { version = "~0.26" }
-# Signal hook for tokio
-signal-hook = { version = "~0.3" }
-signal-hook-tokio = { version = "~0.3", features = ["futures-v0_3"] }
-futures = { version = "~0.3" }
-futures-util = { version = "~0.3" }
-
-# LDAP
-ldap3_proto = { version = "~0.5" }
-
-# http client
-reqwest = { version = "~0.12", features = ["json"] }
-
-# DNS client
-hickory-resolver = { version = "~0.24", features = ["tokio"] }
-
-# Opentelemetry
-tracing-opentelemetry = { version = "~0.26", optional = true }
-opentelemetry = { version = "~0.25", optional = true }
-opentelemetry_sdk = { version = "~0.25", features = ["rt-tokio"], optional = true }
-opentelemetry-otlp = { version = "~0.25", optional = true }
