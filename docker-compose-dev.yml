@@ -36,6 +36,7 @@ services:
     restart: unless-stopped
     depends_on: [ postgres-dev ]
     networks: [ net-bnv-manager ]
+    stop_signal: SIGTERM
     volumes:
       - bnv-manager-vol:/var/lib/bnv-manager
       - ./webserver/migrations:/migrations

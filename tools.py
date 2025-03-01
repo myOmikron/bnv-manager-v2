@@ -54,10 +54,11 @@ def get_webserver_service() -> str | None:
         if "webserver" in [x.split("=")[0] for x in info["Labels"].split(",")]:
             return info["Service"]
 
+    return None
+
 
 def docker_compose_dev(command: str, unknown_args):
-    command = shlex.split(f"docker compose -f docker-compose-dev.yml {command} {' '.join(unknown_args)}")
-    subprocess.run(command)
+    subprocess.run(["docker", "compose", "-f", "docker-compose-dev.yml", command] + unknown_args)
 
 
 def docker_compose_prod(command: str, unknown_args):
