@@ -1,9 +1,32 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import { LoggingSwitch } from "./utils/console";
+import { ToastContainer } from "react-toastify";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import "react-toastify/dist/ReactToastify.css";
 
+// Import i18n to initialize it
+import "src/i18n.ts";
 
-createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-        <App />
-    </StrictMode>
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen";
+
+// Create a new router instance
+const router = createRouter({ routeTree });
+
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+    // eslint-disable-next-line
+    interface Register {
+        // eslint-disable-next-line
+        router: typeof router;
+    }
+}
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+    <>
+        <LoggingSwitch />
+        <ToastContainer toastClassName={"toast-message"} closeOnClick={true} />
+        <RouterProvider router={router} />
+    </>
 );
