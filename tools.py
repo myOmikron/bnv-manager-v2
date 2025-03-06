@@ -15,13 +15,21 @@ def signal_handler(_sig, _frame):
     sys.exit(1)
 
 
+def check_return_code(code):
+    if code != 0:
+        print(f"Command failed with code {code}", file=sys.stderr)
+        sys.exit(code)
+
+
 def get_branch() -> str:
     process = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=subprocess.PIPE)
+    check_return_code(process.returncode)
     return process.stdout.decode("utf-8").strip()
 
 
 def get_tag() -> str | None:
     process = subprocess.run(["git", "tag", "--points-at"], stdout=subprocess.PIPE)
+    check_return_code(process.returncode)
     tags = process.stdout.decode("utf-8").strip().split('\n')
     if len(tags) == 0:
         return None
@@ -34,6 +42,7 @@ def get_docker_compose_name() -> str:
         command,
         stdout=subprocess.PIPE,
     )
+    check_return_code(process.returncode)
     return json.loads(process.stdout.decode("utf-8").strip())[0]["Name"]
 
 
@@ -43,6 +52,7 @@ def get_webserver_service() -> str | None:
         command,
         stdout=subprocess.PIPE,
     )
+    check_return_code(process.returncode)
     lines = process.stdout.decode("utf-8").strip()
 
     if len(lines) == 0:
@@ -54,16 +64,15 @@ def get_webserver_service() -> str | None:
         if "webserver" in [x.split("=")[0] for x in info["Labels"].split(",")]:
             return info["Service"]
 
-    return None
-
 
 def docker_compose_dev(command: str, unknown_args):
-    subprocess.run(["docker", "compose", "-f", "docker-compose-dev.yml", command] + unknown_args)
+    process = subprocess.run(["docker", "compose", "-f", "docker-compose-dev.yml", command, *unknown_args])
+    check_return_code(process.returncode)
 
 
 def docker_compose_prod(command: str, unknown_args):
-    command = shlex.split(f"docker compose {command} {' '.join(unknown_args)}")
-    subprocess.run(command)
+    process = subprocess.run(["docker", "compose", command, *unknown_args])
+    check_return_code(process.returncode)
 
 
 def main():

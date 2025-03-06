@@ -3,36 +3,44 @@
 #![warn(missing_docs, clippy::unwrap_used, clippy::expect_used)]
 
 use std::error::Error;
-use std::io;
-use std::io::Write;
+use std::ops::Add;
+use std::process::exit;
 
 use clap::Parser;
-use galvyn_core::re_exports::rorm::Database;
-use galvyn_core::re_exports::rorm::DatabaseConfiguration;
+use galvyn::rorm::Database;
+use galvyn::rorm::DatabaseConfiguration;
+use galvyn::Galvyn;
 use rorm::cli as rorm_cli;
+use rorm::insert;
+use rorm::query;
+use time::Duration;
+use time::OffsetDateTime;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::EnvFilter;
+use uuid::Uuid;
 
 use crate::cli::Cli;
 use crate::cli::Command;
 use crate::config::DB;
-use crate::tracing::init_tracing_panic_hook;
-use crate::tracing::opentelemetry_layer;
+use crate::config::ORIGIN;
+use crate::models::invite::Invite;
+use crate::models::user::User;
+use crate::models::user::UserRole;
 
 mod cli;
 pub mod config;
 pub mod http;
+pub mod models;
 pub mod tracing;
 pub mod utils;
 
 async fn start() -> Result<(), Box<dyn Error>> {
-    galvyn_core::module::registry::Registry::builder()
+    let router = Galvyn::new()
         .register_module::<Database>()
-        .init()
+        .init_modules()
         .await?;
 
-    http::server::run().await?;
+    http::server::run(router).await?;
 
     Ok(())
 }
@@ -45,15 +53,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         return Err("Failed to load configuration".into());
     }
-
-    let registry = tracing_subscriber::registry()
-        .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("INFO")))
-        .with(tracing_subscriber::fmt::layer());
-
-    let registry = registry.with(opentelemetry_layer()?);
-
-    registry.init();
-    init_tracing_panic_hook();
 
     let cli = Cli::parse();
 
@@ -93,47 +92,52 @@ async fn main() -> Result<(), Box<dyn Error>> {
             )
             .await?
         }
-        Command::CreateAdmin => {
-            // Connect to the database
-            let db = Database::connect(DatabaseConfiguration {
-                ..DatabaseConfiguration::new(DB.clone())
-            })
-            .await?;
-
-            create_user(db).await?;
+        Command::CreateInvite {
+            username,
+            display_name,
+        } => {
+            create_invite(username, display_name).await?;
         }
     }
 
     Ok(())
 }
 
-/// Creates a new user
-///
-/// **Parameter**:
-/// - `db`: [Database]
-// Unwrap is okay, as no handling of errors is possible if we can't communicate with stdin / stdout
-async fn create_user(db: Database) -> Result<(), String> {
-    let stdin = io::stdin();
-    let mut stdout = io::stdout();
+async fn create_invite(username: String, display_name: String) -> Result<(), Box<dyn Error>> {
+    // Connect to the database
+    let db = Database::connect(DatabaseConfiguration {
+        ..DatabaseConfiguration::new(DB.clone())
+    })
+    .await?;
 
-    let mut username = String::new();
-    let mut display_name = String::new();
+    let mut tx = db.start_transaction().await?;
 
-    print!("Enter a username: ");
-    #[allow(clippy::unwrap_used)]
-    stdout.flush().unwrap();
-    #[allow(clippy::unwrap_used)]
-    stdin.read_line(&mut username).unwrap();
-    let username = username.trim();
+    let existing_user = query(&mut tx, User)
+        .condition(User.username.equals(&username))
+        .optional()
+        .await?;
 
-    print!("Enter a display name: ");
-    #[allow(clippy::unwrap_used)]
-    stdout.flush().unwrap();
-    #[allow(clippy::unwrap_used)]
-    stdin.read_line(&mut display_name).unwrap();
-    let display_name = display_name.trim().to_string();
+    if existing_user.is_some() {
+        eprintln!("Already existing user with that mail");
+        exit(1);
+    }
 
-    println!("Created user {username}");
+    let now = OffsetDateTime::now_utc();
+
+    let uuid = insert(&mut tx, Invite)
+        .return_primary_key()
+        .single(&Invite {
+            uuid: Uuid::new_v4(),
+            role: UserRole::Admin,
+            username,
+            display_name,
+            expires_at: now.add(Duration::days(7)),
+        })
+        .await?;
+
+    tx.commit().await?;
+
+    println!("Created invite: {}", ORIGIN.get().join(&uuid.to_string())?);
 
     db.close().await;
 

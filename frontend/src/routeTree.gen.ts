@@ -8,40 +8,71 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
 
+// Create Virtual Routes
+
+const InvitesInviteIdLazyImport = createFileRoute('/invites/$inviteId')()
+
 // Create/Update Routes
+
+const InvitesInviteIdLazyRoute = InvitesInviteIdLazyImport.update({
+  id: '/invites/$inviteId',
+  path: '/invites/$inviteId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/invites/$inviteId.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+  interface FileRoutesByPath {
+    '/invites/$inviteId': {
+      id: '/invites/$inviteId'
+      path: '/invites/$inviteId'
+      fullPath: '/invites/$inviteId'
+      preLoaderRoute: typeof InvitesInviteIdLazyImport
+      parentRoute: typeof rootRoute
+    }
+  }
 }
 
 // Create and export the route tree
 
-export interface FileRoutesByFullPath {}
+export interface FileRoutesByFullPath {
+  '/invites/$inviteId': typeof InvitesInviteIdLazyRoute
+}
 
-export interface FileRoutesByTo {}
+export interface FileRoutesByTo {
+  '/invites/$inviteId': typeof InvitesInviteIdLazyRoute
+}
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/invites/$inviteId': typeof InvitesInviteIdLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths: '/invites/$inviteId'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to: '/invites/$inviteId'
+  id: '__root__' | '/invites/$inviteId'
   fileRoutesById: FileRoutesById
 }
 
-export interface RootRouteChildren {}
+export interface RootRouteChildren {
+  InvitesInviteIdLazyRoute: typeof InvitesInviteIdLazyRoute
+}
 
-const rootRouteChildren: RootRouteChildren = {}
+const rootRouteChildren: RootRouteChildren = {
+  InvitesInviteIdLazyRoute: InvitesInviteIdLazyRoute,
+}
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
@@ -52,7 +83,12 @@ export const routeTree = rootRoute
   "routes": {
     "__root__": {
       "filePath": "__root.tsx",
-      "children": []
+      "children": [
+        "/invites/$inviteId"
+      ]
+    },
+    "/invites/$inviteId": {
+      "filePath": "invites/$inviteId.lazy.tsx"
     }
   }
 }

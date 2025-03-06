@@ -28,5 +28,10 @@ pub enum Command {
         migrations_dir: String,
     },
     /// Creates an invitation for an admin user
-    CreateAdmin,
+    CreateInvite {
+        /// The username that should be set
+        username: String,
+        /// The display name of the user
+        display_name: String,
+    },
 }

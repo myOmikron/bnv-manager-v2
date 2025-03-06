@@ -1,7 +1,7 @@
 [package]
 name = "webserver"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 authors = ["myOmikron <git@omikron.dev>"]
 publish = false
 
@@ -12,7 +12,7 @@ thiserror = "~2"
 
 # Webframework
 axum = "~0.8" # Main web library
-galvyn-core = { version = "0.1.0", git = "https://github.com/myOmikron/galvyn.git", rev = "26fb732f3cc0688726e591018acf9fa12ce8af4d", default-features = false }
+galvyn = { git = "https://github.com/myOmikron/galvyn.git", features = ["openapi"] }
 tower = { version = "~0.5", features = ["full"] } # Base traits
 tower-http = { version = "~0.6", features = ["trace"] } # Common middlewares
 tower-sessions = { version = "~0.14" } # Cookie based sessions
@@ -41,17 +41,22 @@ time = { version = "~0.3" }
 bytes = { version = "~1" }
 
 # Database
-rorm = { version = "~0.6", git = "https://github.com/rorm-orm/rorm.git", branch = "dev", default-features = false, features = ["postgres-only", "cli", "time", "uuid", "schemars"] }
+rorm = { version = "*", git = "https://github.com/rorm-orm/rorm.git", tag = "v0.7.0-pre-2", default-features = false, features = ["postgres-only", "cli", "time", "uuid", "schemars"] }
+# Custom DB enums
+linkme = { version = "~0.3" }
+strum = { version = "~0.27", features = ["derive"] }
 
 # Async
 tokio = { version = "~1", features = ["full"] }
 signal-hook = { version = "~0.3" }
 signal-hook-tokio = { version = "~0.3", features = ["futures-v0_3"] }
-futures-lite = { version = "~2" }
-futures-sink = { version = "~0.3" }
+futures-core = { version = "~0.3" }
 async-trait = "~0.1"
 
 # Json
 serde = { version = "~1", features = ["derive"] }
 serde_repr = { version = "~0.1" }
 serde_json = { version = "~1" }
+
+# Password hashing
+bcrypt = { version = "~0.17" }

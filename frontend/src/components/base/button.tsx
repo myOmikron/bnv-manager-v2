@@ -2,6 +2,8 @@ import * as Headless from "@headlessui/react";
 import { clsx } from "clsx";
 import React from "react";
 import { Link, LinkProps } from "src/components/base/link.tsx";
+import { ChevronLeftIcon } from "@heroicons/react/20/solid";
+import { Text } from "src/components/base/text";
 
 const styles = {
     base: [
@@ -199,4 +201,27 @@ export function TouchTarget({ children }: { children: React.ReactNode }) {
             {children}
         </>
     );
+}
+
+type BackButtonProps = ButtonProps & {
+    color?: never;
+    outline?: never;
+    plain?: never;
+};
+
+export function BackButton(props: BackButtonProps) {
+    const { children, ...other } = props;
+
+    return (
+        <Button plain={true} {...other}>
+            <ChevronLeftIcon />
+            <Text>{children}</Text>
+        </Button>
+    );
+}
+
+type PrimaryButtonProps = ButtonProps & { color?: never; outline?: never; plain?: never };
+
+export function PrimaryButton(props: PrimaryButtonProps) {
+    return <Button color={"blue"} {...props} />;
 }
