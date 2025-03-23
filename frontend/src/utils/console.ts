@@ -47,46 +47,26 @@ export class LoggingSwitch extends React.PureComponent {
 /* eslint-disable jsdoc/require-jsdoc, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 /** Dummy `console` whose methods do nothing */
 const NOOP_CONSOLE: Console = {
-    assert(condition?: boolean, ...data: any[]) {
-    },
-    clear() {
-    },
-    count(label?: string) {
-    },
-    countReset(label?: string) {
-    },
-    debug(...data: any[]) {
-    },
-    dir(item?: any, options?: any) {
-    },
-    dirxml(...data: any[]) {
-    },
-    error(...data: any[]) {
-    },
-    group(...data: any[]) {
-    },
-    groupCollapsed(...data: any[]) {
-    },
-    groupEnd() {
-    },
-    info(...data: any[]) {
-    },
-    log(...data: any[]) {
-    },
-    table(tabularData?: any, properties?: string[]) {
-    },
-    time(label?: string) {
-    },
-    timeEnd(label?: string) {
-    },
-    timeLog(label?: string, ...data: any[]) {
-    },
-    timeStamp(label?: string) {
-    },
-    trace(...data: any[]) {
-    },
-    warn(...data: any[]) {
-    }
+    assert(condition?: boolean, ...data: any[]) {},
+    clear() {},
+    count(label?: string) {},
+    countReset(label?: string) {},
+    debug(...data: any[]) {},
+    dir(item?: any, options?: any) {},
+    dirxml(...data: any[]) {},
+    error(...data: any[]) {},
+    group(...data: any[]) {},
+    groupCollapsed(...data: any[]) {},
+    groupEnd() {},
+    info(...data: any[]) {},
+    log(...data: any[]) {},
+    table(tabularData?: any, properties?: string[]) {},
+    time(label?: string) {},
+    timeEnd(label?: string) {},
+    timeLog(label?: string, ...data: any[]) {},
+    timeStamp(label?: string) {},
+    trace(...data: any[]) {},
+    warn(...data: any[]) {},
 };
 /* eslint-enable jsdoc/require-jsdoc, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 

@@ -1,7 +1,7 @@
 [package]
 name = "webserver"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 authors = ["myOmikron <git@omikron.dev>"]
 publish = false
 
@@ -13,10 +13,6 @@ thiserror = "~2"
 # Webframework
 axum = "~0.8" # Main web library
 galvyn = { git = "https://github.com/myOmikron/galvyn.git", features = ["openapi"] }
-tower = { version = "~0.5", features = ["full"] } # Base traits
-tower-http = { version = "~0.6", features = ["trace"] } # Common middlewares
-tower-sessions = { version = "~0.14" } # Cookie based sessions
-swaggapi = { version = "*", default-features = false, features = ["axum", "tracing-instrument"], git = "https://github.com/gammelalf/swaggapi" } # Auto-generate OpenAPI
 schemars = { version = "~0.8", features = ["uuid1", "raw_value"] } # Derive json schema description
 
 # Account authentication
@@ -41,7 +37,7 @@ time = { version = "~0.3" }
 bytes = { version = "~1" }
 
 # Database
-rorm = { version = "*", git = "https://github.com/rorm-orm/rorm.git", tag = "v0.7.0-pre-2", default-features = false, features = ["postgres-only", "cli", "time", "uuid", "schemars"] }
+rorm = { version = "*", git = "https://github.com/rorm-orm/rorm.git", tag = "v0.7.0-pre-3", default-features = false, features = ["postgres-only", "cli", "time", "uuid", "schemars"] }
 # Custom DB enums
 linkme = { version = "~0.3" }
 strum = { version = "~0.27", features = ["derive"] }

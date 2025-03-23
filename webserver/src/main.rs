@@ -17,6 +17,7 @@ use time::Duration;
 use time::OffsetDateTime;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::EnvFilter;
 use uuid::Uuid;
 
 use crate::cli::Cli;
@@ -26,17 +27,17 @@ use crate::config::ORIGIN;
 use crate::models::invite::Invite;
 use crate::models::user::User;
 use crate::models::user::UserRole;
+use crate::tracing::opentelemetry_layer;
 
 mod cli;
 pub mod config;
 pub mod http;
 pub mod models;
 pub mod tracing;
-pub mod utils;
 
 async fn start() -> Result<(), Box<dyn Error>> {
     let router = Galvyn::new()
-        .register_module::<Database>()
+        .register_module::<Database>(Default::default())
         .init_modules()
         .await?;
 
@@ -53,6 +54,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         return Err("Failed to load configuration".into());
     }
+
+    tracing_subscriber::registry()
+        .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("INFO")))
+        .with(tracing_subscriber::fmt::layer())
+        .with(opentelemetry_layer()?)
+        .init();
 
     let cli = Cli::parse();
 

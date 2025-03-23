@@ -18,6 +18,9 @@ services:
     volumes:
       - bnv-manager-vol:/var/lib/bnv-manager
     env_file: [ .env ]
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4173
+      - RUST_LOG=${RUST_LOG-info,webserver=debug,rorm=debug,galvyn=debug}
     image: bnv-manager-v2/bnv-manager:${PROD_TAG:-latest}
     build:
       dockerfile: ./build/dockerfiles/bnv-manager.Dockerfile

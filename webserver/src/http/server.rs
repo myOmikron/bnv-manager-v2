@@ -9,6 +9,7 @@ use galvyn::RouterBuilder;
 use crate::config::LISTEN_ADDRESS;
 use crate::config::LISTEN_PORT;
 use crate::http::handler::invites::handler::accept_invite;
+use crate::http::handler::invites::handler::get_invite;
 use crate::http::handler::openapi::handler::openapi;
 
 /// Start the http server
@@ -19,9 +20,12 @@ pub async fn run(mut router: RouterBuilder) -> Result<(), GalvynError> {
         .add_routes(
             GalvynRouter::new().nest(
                 "/api/v1",
-                GalvynRouter::new()
-                    .handler(openapi)
-                    .nest("/invites", GalvynRouter::new().handler(accept_invite)),
+                GalvynRouter::new().handler(openapi).nest(
+                    "/invites",
+                    GalvynRouter::new()
+                        .handler(accept_invite)
+                        .handler(get_invite),
+                ),
             ),
         )
         .start(addr)

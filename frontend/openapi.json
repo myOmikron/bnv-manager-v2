@@ -1,0 +1,218 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Unnamed Galvyn API",
+        "version": "v0.0.0"
+    },
+    "paths": {
+        "/api/v1/openapi.json": {
+            "get": {
+                "operationId": "openapi",
+                "responses": {}
+            }
+        },
+        "/api/v1/invites/{uuid}": {
+            "get": {
+                "operationId": "get_invite",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FullInvite"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "accept_invite",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AcceptInviteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AcceptInviteRequest": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "$ref": "#/components/schemas/MaxStr_72"
+                    }
+                },
+                "required": [
+                    "password"
+                ]
+            },
+            "ApiErrorResponse": {
+                "description": "The response that is sent in a case of an error",
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "description": "A human-readable error message.\n\nMay be used for displaying purposes",
+                        "type": "string"
+                    },
+                    "status_code": {
+                        "$ref": "#/components/schemas/ApiStatusCode"
+                    }
+                },
+                "required": [
+                    "message",
+                    "status_code"
+                ]
+            },
+            "ApiStatusCode": {
+                "description": "The Status code that are returned throughout the API",
+                "type": "integer",
+                "enum": [
+                    1000,
+                    1001,
+                    1002,
+                    1003,
+                    2000
+                ]
+            },
+            "FullInvite": {
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "type": "string"
+                    },
+                    "expires_at": {
+                        "$ref": "#/components/schemas/SchemaDateTime"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/UserRole"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "expires_at",
+                    "role",
+                    "username",
+                    "uuid"
+                ]
+            },
+            "MaxStr_72": {
+                "type": "string",
+                "maxLength": 72
+            },
+            "SchemaDateTime": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "UserRole": {
+                "description": "Roles for a user",
+                "oneOf": [
+                    {
+                        "description": "Admin user",
+                        "type": "string",
+                        "enum": [
+                            "Admin"
+                        ]
+                    },
+                    {
+                        "description": "The admin of a club",
+                        "type": "string",
+                        "enum": [
+                            "ClubAdmin"
+                        ]
+                    },
+                    {
+                        "description": "The user that's part of a club",
+                        "type": "string",
+                        "enum": [
+                            "ClubUser"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

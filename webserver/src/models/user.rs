@@ -1,10 +1,13 @@
 use rorm::DbEnum;
 use rorm::Model;
 use rorm::Patch;
+use schemars::JsonSchema;
+use serde::Deserialize;
+use serde::Serialize;
 use uuid::Uuid;
 
 /// Roles for a user
-#[derive(DbEnum)]
+#[derive(DbEnum, Serialize, Deserialize, Debug, Clone, Copy, JsonSchema)]
 pub enum UserRole {
     /// Admin user
     Admin,

@@ -110,19 +110,25 @@ def main():
             os.environ["PROD_TAG"] = tag
 
         if args.prod_command == "db":
-            docker_compose_prod("exec -it postgres su -c 'psql -U $POSTGRES_USER $POSTGRES_DB'", [])
+            docker_compose_prod(
+                "exec",
+                ["-it", "postgres", "su", "-c", "psql -U $POSTGRES_USER $POSTGRES_DB"],
+            )
         else:
             docker_compose_prod(args.prod_command, unknown_args)
     elif args.command == "db":
-        docker_compose_dev("exec -it postgres-dev su -c 'psql -U $POSTGRES_USER $POSTGRES_DB'", [])
+        docker_compose_dev(
+            "exec",
+            ["-it", "postgres-dev", "su", "-c", "psql -U $POSTGRES_USER $POSTGRES_DB"],
+        )
     elif args.command == "make-migrations":
         webserver_name = get_webserver_service()
         if webserver_name is None:
             print("No service is running. Please run `up` first")
             exit(1)
-        docker_compose_dev(f"exec -it {webserver_name} server make-migrations", unknown_args)
+        docker_compose_dev("exec", ["-it", webserver_name, "server", "make-migrations", *unknown_args])
     elif args.command == "gen-api":
-        docker_compose_dev(f"exec -it frontend-dev npm run gen-api", [])
+        docker_compose_dev("exec", ["-it", "frontend-dev", "npm", "run", "gen-api"])
     else:
         docker_compose_dev(args.command, unknown_args)
 

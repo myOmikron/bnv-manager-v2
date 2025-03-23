@@ -26,6 +26,8 @@ services:
     restart: unless-stopped
     env_file: [ .env ]
     networks: [ net-bnv-manager ]
+    ports:
+      - "127.0.0.1:16686:16686"
     image: bnv-manager-v2-dev/jaeger:${DEV_TAG}
     build:
       dockerfile: build/dockerfiles/jaeger-dev.Dockerfile
@@ -41,6 +43,9 @@ services:
       - bnv-manager-vol:/var/lib/bnv-manager
       - ./webserver/migrations:/migrations
     env_file: [ .env ]
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger-dev:4173
+      - RUST_LOG=${RUST_LOG-info,webserver=debug,rorm=debug,galvyn=debug}
     user: "${UID}:${GID}"
     image: bnv-manager-v2-dev/webserver-dev:${DEV_TAG}
     build:
