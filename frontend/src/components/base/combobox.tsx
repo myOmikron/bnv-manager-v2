@@ -28,7 +28,7 @@ export function ComboboxOption<TType>(props: ComboboxOptionProps<TType>) {
                 // Set minimum height for when no value is selected
                 "min-h-11 sm:min-h-9",
                 // Horizontal padding
-                "pl-[calc(theme(spacing[3.5])-1px)] pr-[calc(theme(spacing.7)-1px)] sm:pl-[calc(theme(spacing.3)-1px)]",
+                "pr-[calc(theme(spacing.7)-1px)] pl-[calc(theme(spacing[3.5])-1px)] sm:pl-[calc(theme(spacing.3)-1px)]",
                 // Typography
                 "text-left text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]",
                 // Background color
@@ -40,7 +40,7 @@ export function ComboboxOption<TType>(props: ComboboxOptionProps<TType>) {
                 // Selected
                 "data-[selected]:bg-blue-300 dark:data-[selected]:bg-blue-600",
                 // Focus
-                "data-[focus]:bg-blue-200 dark:data-[focus]:bg-blue-700"
+                "data-[focus]:bg-blue-200 dark:data-[focus]:bg-blue-700",
             ])}
         />
     );
@@ -67,20 +67,20 @@ function ComboboxOptions<TType>(props: ComboboxOptionsProps<TType>) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.1 }}
+            transition={true}
             className={clsx(
                 // Anchor positioning
-                "[--anchor-gap:theme(spacing.2)] [--anchor-padding:theme(spacing.1)] data-[anchor~=start]:[--anchor-offset:-6px] data-[anchor~=end]:[--anchor-offset:6px] sm:data-[anchor~=start]:[--anchor-offset:-4px] sm:data-[anchor~=end]:[--anchor-offset:4px]",
+                "[--anchor-gap:theme(spacing.2)] [--anchor-padding:theme(spacing.1)] data-[anchor~=end]:[--anchor-offset:6px] data-[anchor~=start]:[--anchor-offset:-6px] sm:data-[anchor~=end]:[--anchor-offset:4px] sm:data-[anchor~=start]:[--anchor-offset:-4px]",
                 // Base styles
                 "w-fit rounded-xl p-1",
                 // Invisible border that is only visible in `forced-colors` mode for accessibility purposes
-                "outline outline-1 outline-transparent focus:outline-none",
+                "outline-1 outline-transparent focus:outline-none",
                 // Handle scrolling when menu won't fit in viewport
                 "overflow-y-auto",
                 // Popover background
                 "bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75",
                 // Shadows
-                "shadow-lg ring-1 ring-zinc-950/10 dark:ring-inset dark:ring-white/10"
+                "shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 dark:ring-inset",
             )}
             children={props.children}
         />
@@ -125,8 +125,7 @@ export function Combobox<TType>(props: ComboboxProps<TType>) {
                             onChange={(ev) => onQueryChange(ev.target.value)}
                         />
                         <Headless.ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
-                            <ChevronDownIcon
-                                className="size-4 fill-zinc-950/60 group-data-[hover]:fill-zinc-950 dark:fill-white/60 dark:group-data-[hover]:fill-white" />
+                            <ChevronDownIcon className="size-4 fill-zinc-950/60 group-data-[hover]:fill-zinc-950 dark:fill-white/60 dark:group-data-[hover]:fill-white" />
                         </Headless.ComboboxButton>
                     </div>
 

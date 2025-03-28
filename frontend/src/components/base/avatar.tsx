@@ -1,8 +1,8 @@
 import * as Headless from "@headlessui/react";
 import clsx from "clsx";
 import React from "react";
-import { TouchTarget } from "src/components/base/button.tsx";
-import { Link, LinkProps } from "src/components/base/link.tsx";
+import { TouchTarget } from "./button";
+import { Link, LinkProps } from "./link";
 
 type AvatarProps = {
     src?: string | null;
@@ -13,13 +13,13 @@ type AvatarProps = {
 };
 
 export function Avatar({
-                           src = null,
-                           square = false,
-                           initials,
-                           alt = "",
-                           className,
-                           ...props
-                       }: AvatarProps & React.ComponentPropsWithoutRef<"span">) {
+    src = null,
+    square = false,
+    initials,
+    alt = "",
+    className,
+    ...props
+}: AvatarProps & React.ComponentPropsWithoutRef<"span">) {
     return (
         <span
             data-slot="avatar"
@@ -27,15 +27,15 @@ export function Avatar({
             className={clsx(
                 className,
                 // Basic layout
-                "inline-grid shrink-0 align-middle [--avatar-radius:20%] [--ring-opacity:20%] *:col-start-1 *:row-start-1",
-                "outline outline-1 -outline-offset-1 outline-black/[--ring-opacity] dark:outline-white/[--ring-opacity]",
-                // Add the correct border radius
-                square ? "rounded-[--avatar-radius] *:rounded-[--avatar-radius]" : "rounded-full *:rounded-full"
+                "inline-grid shrink-0 align-middle [--avatar-radius:20%] *:col-start-1 *:row-start-1",
+                "outline -outline-offset-1 outline-black/10 dark:outline-white/10",
+                // Border radius
+                square ? "rounded-(--avatar-radius) *:rounded-(--avatar-radius)" : "rounded-full *:rounded-full",
             )}
         >
             {initials && (
                 <svg
-                    className="select-none fill-current text-[48px] font-medium uppercase"
+                    className="size-full fill-current p-[5%] text-[48px] font-medium uppercase select-none"
                     viewBox="0 0 100 100"
                     aria-hidden={alt ? undefined : "true"}
                 >
@@ -52,7 +52,7 @@ export function Avatar({
                     </text>
                 </svg>
             )}
-            {src && <img src={src} alt={alt} />}
+            {src && <img className="size-full" src={src} alt={alt} />}
         </span>
     );
 }
@@ -66,12 +66,12 @@ export const AvatarButton = React.forwardRef(function AvatarButton(
         className,
         ...props
     }: AvatarProps & (Omit<LinkProps, "render"> | Headless.ButtonProps),
-    ref: React.ForwardedRef<HTMLElement>
+    ref: React.ForwardedRef<HTMLElement>,
 ) {
     const classes = clsx(
         className,
         square ? "rounded-[20%]" : "rounded-full",
-        "relative focus:outline-none data-[focus]:outline data-[focus]:outline-2 data-[focus]:outline-offset-2 data-[focus]:outline-blue-500"
+        "relative inline-grid focus:outline-hidden data-focus:outline-2 data-focus:outline-offset-2 data-focus:outline-blue-500",
     );
 
     return "href" in props ? (

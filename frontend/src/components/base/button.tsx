@@ -1,9 +1,9 @@
 import * as Headless from "@headlessui/react";
-import { clsx } from "clsx";
+import clsx from "clsx";
 import React from "react";
-import { Link, LinkProps } from "src/components/base/link.tsx";
+import { Link, LinkProps } from "./link";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
-import { Text } from "src/components/base/text";
+import { Text } from "./text";
 
 const styles = {
     base: [
@@ -225,5 +225,5 @@ export function BackButton(props: BackButtonProps) {
 type PrimaryButtonProps = ButtonProps & { color?: never; outline?: never; plain?: never };
 
 export function PrimaryButton(props: PrimaryButtonProps) {
-    return <Button color={"blue"} {...props} />;
+    return <Button color={"orange"} {...props} />;
 }

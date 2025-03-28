@@ -1,6 +1,6 @@
 import * as Headless from "@headlessui/react";
 import React from "react";
-import { LinkProps as RouterLinkProps, Link as RouterLink } from "@tanstack/react-router";
+import { Link as RouterLink, LinkProps as RouterLinkProps } from "@tanstack/react-router";
 
 /**
  * The properties of the Link
@@ -21,6 +21,8 @@ export type LinkProps = (
     href: RouterLinkProps["to"];
     /** The classname to set */
     className?: string;
+    /** TabIndex */
+    tabIndex?: number;
 } & Omit<RouterLinkProps, "to" | "children">;
 
 export const Link = React.forwardRef(function Link(props: LinkProps, ref: React.ForwardedRef<HTMLAnchorElement>) {
