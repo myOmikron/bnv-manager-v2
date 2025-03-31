@@ -2,15 +2,19 @@
 
 use std::net::SocketAddr;
 
+use galvyn::core::session;
 use galvyn::core::GalvynRouter;
 use galvyn::error::GalvynError;
 use galvyn::RouterBuilder;
+use tower::ServiceBuilder;
+use tower_http::trace::DefaultMakeSpan;
+use tower_http::trace::DefaultOnResponse;
+use tower_http::trace::TraceLayer;
+use tracing::Level;
 
 use crate::config::LISTEN_ADDRESS;
 use crate::config::LISTEN_PORT;
-use crate::http::handler::invites::handler::accept_invite;
-use crate::http::handler::invites::handler::get_invite;
-use crate::http::handler::openapi::handler::openapi;
+use crate::http::handler::initialize;
 
 /// Start the http server
 pub async fn run(mut router: RouterBuilder) -> Result<(), GalvynError> {
@@ -18,15 +22,22 @@ pub async fn run(mut router: RouterBuilder) -> Result<(), GalvynError> {
 
     router
         .add_routes(
-            GalvynRouter::new().nest(
-                "/api/v1",
-                GalvynRouter::new().handler(openapi).nest(
-                    "/invites",
-                    GalvynRouter::new()
-                        .handler(accept_invite)
-                        .handler(get_invite),
+            GalvynRouter::new()
+                .nest(
+                    "/api/v1",
+                    GalvynRouter::new().nest("/frontend", initialize()),
+                )
+                .layer(
+                    ServiceBuilder::new()
+                        .layer(
+                            TraceLayer::new_for_http()
+                                .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
+                                .on_response(DefaultOnResponse::new().level(Level::INFO))
+                                // Disable automatic failure logger because any handler returning a 500 should have already logged its reason™
+                                .on_failure(()),
+                        )
+                        .layer(session::layer()),
                 ),
-            ),
         )
         .start(addr)
         .await

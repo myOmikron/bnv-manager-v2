@@ -44,7 +44,7 @@ services:
       - ./webserver/migrations:/migrations
     env_file: [ .env ]
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger-dev:4173
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger-dev:4317
       - RUST_LOG=${RUST_LOG-info,webserver=debug,rorm=debug,galvyn=debug}
     user: "${UID}:${GID}"
     image: bnv-manager-v2-dev/webserver-dev:${DEV_TAG}

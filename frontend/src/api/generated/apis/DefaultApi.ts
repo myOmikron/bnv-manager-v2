@@ -17,7 +17,10 @@ import * as runtime from '../runtime';
 import type {
   AcceptInviteRequest,
   ApiErrorResponse,
+  FormResultForNullAndLoginResponse,
   FullInvite,
+  LoginRequest,
+  Me,
 } from '../models/index';
 
 export interface AcceptInviteOperationRequest {
@@ -27,6 +30,10 @@ export interface AcceptInviteOperationRequest {
 
 export interface GetInviteRequest {
     uuid: string;
+}
+
+export interface LoginOperationRequest {
+    LoginRequest?: LoginRequest;
 }
 
 /**
@@ -51,7 +58,7 @@ export class DefaultApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/v1/invites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/v1/frontend/invites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -82,7 +89,7 @@ export class DefaultApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/invites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/v1/frontend/invites/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -100,13 +107,64 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
+    async getMeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Me>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/common/users/me`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Me> {
+        const response = await this.getMeRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async loginRaw(requestParameters: LoginOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndLoginResponse>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/auth/login`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['LoginRequest'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async login(requestParameters: LoginOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndLoginResponse> {
+        const response = await this.loginRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
     async openapiRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/openapi.json`,
+            path: `/api/v1/frontend/openapi.json`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

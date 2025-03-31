@@ -1,0 +1,20 @@
+{
+    "button": {
+        "accept-invite": "Accept invite"
+    },
+    "description": {
+        "invite": "Please set a password for your new account"
+    },
+    "error": {
+        "password-mismatch": "Password mismatch",
+        "stronger-password": "Password is too weak"
+    },
+    "heading": {
+        "invite": "Welcome, {{name}}"
+    },
+    "label": {
+        "password": "Password",
+        "repeat-password": "Repeat password",
+        "username": "Username"
+    }
+}

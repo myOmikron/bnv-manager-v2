@@ -1,0 +1,20 @@
+{
+    "button": {
+        "accept-invite": "Einladung akzeptieren"
+    },
+    "description": {
+        "invite": "Bitte setze ein Passwort für dein neues Konto"
+    },
+    "error": {
+        "password-mismatch": "Passwörter sind nicht identiscch",
+        "stronger-password": "Passwort ist zu schwach"
+    },
+    "heading": {
+        "invite": "Willkommen, {{name}}"
+    },
+    "label": {
+        "password": "Passwort",
+        "repeat-password": "Passwort wiederholen",
+        "username": "Nutzername"
+    }
+}

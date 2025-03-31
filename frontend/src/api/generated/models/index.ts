@@ -51,6 +51,70 @@ export const ApiStatusCode = {
 export type ApiStatusCode = typeof ApiStatusCode[keyof typeof ApiStatusCode];
 
 /**
+ * @type FormResultForNullAndLoginResponse
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForNullAndLoginResponse = FormResultForNullAndLoginResponseOneOf | FormResultForNullAndLoginResponseOneOf1;
+/**
+ * 
+ * @export
+ * @interface FormResultForNullAndLoginResponseOneOf
+ */
+export interface FormResultForNullAndLoginResponseOneOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForNullAndLoginResponseOneOf
+     */
+    result: FormResultForNullAndLoginResponseOneOfResultEnum;
+    /**
+     * 
+     * @type {Null}
+     * @memberof FormResultForNullAndLoginResponseOneOf
+     */
+    value: Null;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForNullAndLoginResponseOneOfResultEnum = {
+    Ok: 'Ok'
+} as const;
+export type FormResultForNullAndLoginResponseOneOfResultEnum = typeof FormResultForNullAndLoginResponseOneOfResultEnum[keyof typeof FormResultForNullAndLoginResponseOneOfResultEnum];
+
+/**
+ * 
+ * @export
+ * @interface FormResultForNullAndLoginResponseOneOf1
+ */
+export interface FormResultForNullAndLoginResponseOneOf1 {
+    /**
+     * 
+     * @type {LoginResponse}
+     * @memberof FormResultForNullAndLoginResponseOneOf1
+     */
+    error: LoginResponse;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForNullAndLoginResponseOneOf1
+     */
+    result: FormResultForNullAndLoginResponseOneOf1ResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForNullAndLoginResponseOneOf1ResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForNullAndLoginResponseOneOf1ResultEnum = typeof FormResultForNullAndLoginResponseOneOf1ResultEnum[keyof typeof FormResultForNullAndLoginResponseOneOf1ResultEnum];
+
+/**
  * 
  * @export
  * @interface FullInvite
@@ -70,12 +134,6 @@ export interface FullInvite {
     expires_at: string;
     /**
      * 
-     * @type {UserRole}
-     * @memberof FullInvite
-     */
-    role: UserRole;
-    /**
-     * 
      * @type {string}
      * @memberof FullInvite
      */
@@ -88,8 +146,59 @@ export interface FullInvite {
     uuid: string;
 }
 /**
- * @type UserRole
- * Roles for a user
+ * 
  * @export
+ * @interface LoginRequest
  */
-export type UserRole = string;
+export interface LoginRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginRequest
+     */
+    password: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginRequest
+     */
+    username: string;
+}
+/**
+ * 
+ * @export
+ * @interface LoginResponse
+ */
+export interface LoginResponse {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LoginResponse
+     */
+    username_or_password: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface Me
+ */
+export interface Me {
+    /**
+     * 
+     * @type {string}
+     * @memberof Me
+     */
+    display_name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Me
+     */
+    username: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Me
+     */
+    uuid: string;
+}

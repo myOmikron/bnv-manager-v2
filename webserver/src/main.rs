@@ -26,7 +26,6 @@ use crate::config::DB;
 use crate::config::ORIGIN;
 use crate::models::invite::Invite;
 use crate::models::user::User;
-use crate::models::user::UserRole;
 use crate::tracing::opentelemetry_layer;
 
 mod cli;
@@ -125,7 +124,7 @@ async fn create_invite(username: String, display_name: String) -> Result<(), Box
         .await?;
 
     if existing_user.is_some() {
-        eprintln!("Already existing user with that mail");
+        eprintln!("Already existing user with that username");
         exit(1);
     }
 
@@ -135,7 +134,6 @@ async fn create_invite(username: String, display_name: String) -> Result<(), Box
         .return_primary_key()
         .single(&Invite {
             uuid: Uuid::new_v4(),
-            role: UserRole::Admin,
             username,
             display_name,
             expires_at: now.add(Duration::days(7)),
@@ -144,7 +142,10 @@ async fn create_invite(username: String, display_name: String) -> Result<(), Box
 
     tx.commit().await?;
 
-    println!("Created invite: {}", ORIGIN.get().join(&uuid.to_string())?);
+    println!(
+        "Created invite: {}",
+        ORIGIN.get().join(&format!("invites/{uuid}"))?
+    );
 
     db.close().await;
 

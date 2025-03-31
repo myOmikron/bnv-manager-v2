@@ -1,7 +1,6 @@
-import { Result } from "src/utils/result";
 import { parseError } from "src/api/error";
 import CONSOLE from "src/utils/console";
-import { Configuration, DefaultApi, RequiredError, ResponseError } from "src/api/generated";
+import { AcceptInviteRequest, Configuration, DefaultApi, RequiredError, ResponseError } from "src/api/generated";
 
 /** Hyphen separated uuid */
 export type UUID = string;
@@ -14,9 +13,21 @@ const api = new DefaultApi(configuration);
 
 /* eslint-disable */
 export const Api = {
+    auth: {
+        login: (username: string, password: string) => handleError(api.login({ LoginRequest: { username, password } })),
+    },
     invites: {
         get: (uuid: UUID) => handleError(api.getInvite({ uuid })),
-        accepted: (uuid: UUID) => handleError(api.acceptInvite({ uuid })),
+        accepted: (uuid: UUID, req: AcceptInviteRequest) =>
+            handleError(
+                api.acceptInvite({
+                    uuid,
+                    AcceptInviteRequest: req,
+                }),
+            ),
+    },
+    me: {
+        get: () => api.getMe(),
     },
 };
 

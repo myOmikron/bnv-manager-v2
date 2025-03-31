@@ -5,8 +5,6 @@ use serde::Deserialize;
 use serde::Serialize;
 use uuid::Uuid;
 
-use crate::models::user::UserRole;
-
 #[derive(JsonSchema, Deserialize, Serialize, Clone, Debug)]
 pub struct AcceptInviteRequest {
     pub password: MaxStr<72>,
@@ -18,5 +16,4 @@ pub struct FullInvite {
     pub username: String,
     pub display_name: String,
     pub expires_at: SchemaDateTime,
-    pub role: UserRole,
 }

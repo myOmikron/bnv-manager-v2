@@ -8,7 +8,7 @@ GENERATED="${PROJECT_ROOT}/src/api/generated"
 CONFIG="${GENERATED}/config.json"
 TMP="${PROJECT_ROOT}/tmp"
 
-wget --no-check-certificate "http://nginx-dev/api/v1/openapi.json" -O "$SPEC"
+wget --no-check-certificate "http://nginx-dev/api/v1/frontend/openapi.json" -O "$SPEC"
 
 mkdir -p "${TMP}"
 mkdir -p "${GENERATED}/.openapi-generator"

@@ -1,0 +1,12 @@
+{
+    "button": {
+        "sign-in": "Einloggen"
+    },
+    "error": {
+        "invalid-username-or-password": "Ungültiger Nutzername oder Passwort"
+    },
+    "label": {
+        "password": "Passwort",
+        "username": "Nutzername"
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "label": {
+        "centuries": "Jahrzehnte",
+        "days": "Tage",
+        "estimated-crack-time": "Geschätzte Offline-Crackzeit: {{time}}",
+        "hours": "Stunden",
+        "minutes": "Minuten",
+        "months": "Monate",
+        "seconds": "Sekunden",
+        "weeks": "Wochen",
+        "years": "Jahre"
+    }
+}

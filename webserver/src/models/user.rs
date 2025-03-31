@@ -1,31 +1,18 @@
-use rorm::DbEnum;
+use rorm::prelude::ForeignModel;
 use rorm::Model;
 use rorm::Patch;
-use schemars::JsonSchema;
-use serde::Deserialize;
-use serde::Serialize;
 use uuid::Uuid;
 
-/// Roles for a user
-#[derive(DbEnum, Serialize, Deserialize, Debug, Clone, Copy, JsonSchema)]
-pub enum UserRole {
-    /// Admin user
-    Admin,
-    /// The admin of a club
-    ClubAdmin,
-    /// The user that's part of a club
-    ClubUser,
-}
-
 /// User representation
-#[derive(Model)]
+#[derive(Model, Clone)]
 pub struct User {
     /// Primary key of the user
     #[rorm(primary_key)]
     pub uuid: Uuid,
 
-    /// Role of the user
-    pub role: UserRole,
+    /// An optional linked password of the user
+    #[rorm(on_update = "Cascade", on_delete = "SetNull")]
+    pub password: Option<ForeignModel<UserPassword>>,
 
     /// The name of the user
     #[rorm(max_length = 255, unique)]
@@ -34,10 +21,6 @@ pub struct User {
     /// The name of the user
     #[rorm(max_length = 255)]
     pub display_name: String,
-
-    /// User hash
-    #[rorm(max_length = 1024)]
-    pub password: String,
 
     /// Whether the user is disabled
     #[rorm(default = false)]
@@ -48,12 +31,23 @@ pub struct User {
     pub created_at: time::OffsetDateTime,
 }
 
+/// Representation of a user password
+#[derive(Model)]
+pub struct UserPassword {
+    /// Primary key of a user password
+    #[rorm(primary_key)]
+    pub uuid: Uuid,
+
+    /// User hash
+    #[rorm(max_length = 1024)]
+    pub password: String,
+}
+
 #[derive(Patch)]
 #[rorm(model = "User")]
 pub(crate) struct UserInsert {
     pub uuid: Uuid,
-    pub role: UserRole,
     pub username: String,
     pub display_name: String,
-    pub password: String,
+    pub password: Option<ForeignModel<UserPassword>>,
 }

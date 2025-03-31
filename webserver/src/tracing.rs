@@ -31,12 +31,12 @@ pub fn opentelemetry_layer<S: Subscriber + for<'span> LookupSpan<'span>>()
         .with_trace_config(
             trace::Config::default().with_resource(Resource::new([KeyValue {
                 key: Key::from_static_str("service.name"),
-                value: Value::from("admin-poc"),
+                value: Value::from("bnv-manager"),
             }])),
         )
         .install_batch(runtime::Tokio)?;
 
-    let tracer = provider.tracer("admin-poc");
+    let tracer = provider.tracer("bnv-manager");
 
     Ok(tracing_opentelemetry::layer()
         .with_threads(false) // It's a tokio worker anyway

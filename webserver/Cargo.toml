@@ -11,7 +11,9 @@ publish = false
 thiserror = "~2"
 
 # Webframework
-axum = "~0.8" # Main web library
+axum = { version = "~0.8" } # Main web library
+tower = { version = "~0.5", features = ["limit"] }
+tower-http = { version = "~0.6", features = ["trace", "limit"] }
 galvyn = { git = "https://github.com/myOmikron/galvyn.git", features = ["openapi"] }
 schemars = { version = "~0.8", features = ["uuid1", "raw_value"] } # Derive json schema description
 

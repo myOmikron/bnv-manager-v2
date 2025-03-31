@@ -5,13 +5,13 @@
         "version": "v0.0.0"
     },
     "paths": {
-        "/api/v1/openapi.json": {
+        "/api/v1/frontend/openapi.json": {
             "get": {
                 "operationId": "openapi",
                 "responses": {}
             }
         },
-        "/api/v1/invites/{uuid}": {
+        "/api/v1/frontend/invites/{uuid}": {
             "get": {
                 "operationId": "get_invite",
                 "parameters": [
@@ -108,6 +108,89 @@
                     }
                 }
             }
+        },
+        "/api/v1/frontend/auth/login": {
+            "post": {
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_Null_and_LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/common/users/me": {
+            "get": {
+                "operationId": "get_me",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Me"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -151,6 +234,47 @@
                     2000
                 ]
             },
+            "FormResult_for_Null_and_LoginResponse": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "type": "null"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/LoginResponse"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
             "FullInvite": {
                 "type": "object",
                 "properties": {
@@ -159,9 +283,6 @@
                     },
                     "expires_at": {
                         "$ref": "#/components/schemas/SchemaDateTime"
-                    },
-                    "role": {
-                        "$ref": "#/components/schemas/UserRole"
                     },
                     "username": {
                         "type": "string"
@@ -174,44 +295,63 @@
                 "required": [
                     "display_name",
                     "expires_at",
-                    "role",
                     "username",
                     "uuid"
+                ]
+            },
+            "LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "password",
+                    "username"
+                ]
+            },
+            "LoginResponse": {
+                "type": "object",
+                "properties": {
+                    "username_or_password": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "username_or_password"
                 ]
             },
             "MaxStr_72": {
                 "type": "string",
                 "maxLength": 72
             },
+            "Me": {
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "username",
+                    "uuid"
+                ]
+            },
             "SchemaDateTime": {
                 "type": "string",
                 "format": "date-time"
-            },
-            "UserRole": {
-                "description": "Roles for a user",
-                "oneOf": [
-                    {
-                        "description": "Admin user",
-                        "type": "string",
-                        "enum": [
-                            "Admin"
-                        ]
-                    },
-                    {
-                        "description": "The admin of a club",
-                        "type": "string",
-                        "enum": [
-                            "ClubAdmin"
-                        ]
-                    },
-                    {
-                        "description": "The user that's part of a club",
-                        "type": "string",
-                        "enum": [
-                            "ClubUser"
-                        ]
-                    }
-                ]
             }
         }
     }
