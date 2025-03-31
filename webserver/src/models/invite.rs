@@ -8,6 +8,9 @@ pub struct Invite {
     #[rorm(primary_key)]
     pub uuid: Uuid,
 
+    /// Whether the user should receive administrative privileges
+    pub admin: bool,
+
     /// The username
     #[rorm(max_length = 255)]
     pub username: String,

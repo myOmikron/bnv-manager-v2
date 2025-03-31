@@ -33,5 +33,8 @@ pub enum Command {
         username: String,
         /// The display name of the user
         display_name: String,
+        /// Should the user be an admin?
+        #[clap(short, long)]
+        admin: bool,
     },
 }

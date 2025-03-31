@@ -101,15 +101,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
         Command::CreateInvite {
             username,
             display_name,
+            admin,
         } => {
-            create_invite(username, display_name).await?;
+            create_invite(username, display_name, admin).await?;
         }
     }
 
     Ok(())
 }
 
-async fn create_invite(username: String, display_name: String) -> Result<(), Box<dyn Error>> {
+async fn create_invite(
+    username: String,
+    display_name: String,
+    is_admin: bool,
+) -> Result<(), Box<dyn Error>> {
     // Connect to the database
     let db = Database::connect(DatabaseConfiguration {
         ..DatabaseConfiguration::new(DB.clone())
@@ -134,6 +139,7 @@ async fn create_invite(username: String, display_name: String) -> Result<(), Box
         .return_primary_key()
         .single(&Invite {
             uuid: Uuid::new_v4(),
+            admin: is_admin,
             username,
             display_name,
             expires_at: now.add(Duration::days(7)),

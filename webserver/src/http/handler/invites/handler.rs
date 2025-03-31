@@ -73,6 +73,7 @@ pub async fn accept_invite(
         .return_nothing()
         .single(&UserInsert {
             uuid,
+            admin: invite.admin,
             username: invite.username.clone(),
             display_name: invite.display_name,
             password: Some(ForeignModelByField(password)),

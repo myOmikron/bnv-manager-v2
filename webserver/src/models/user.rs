@@ -10,6 +10,9 @@ pub struct User {
     #[rorm(primary_key)]
     pub uuid: Uuid,
 
+    /// If true, the user has admin privileges
+    pub admin: bool,
+
     /// An optional linked password of the user
     #[rorm(on_update = "Cascade", on_delete = "SetNull")]
     pub password: Option<ForeignModel<UserPassword>>,
@@ -47,6 +50,7 @@ pub struct UserPassword {
 #[rorm(model = "User")]
 pub(crate) struct UserInsert {
     pub uuid: Uuid,
+    pub admin: bool,
     pub username: String,
     pub display_name: String,
     pub password: Option<ForeignModel<UserPassword>>,
