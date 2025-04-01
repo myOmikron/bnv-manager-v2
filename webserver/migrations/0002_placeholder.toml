@@ -1,0 +1,52 @@
+[Migration]
+Hash = "6993225128033862074"
+Initial = false
+Dependency = 1
+Replaces = []
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "club"
+
+[Migration.Operations.Field]
+Name = "created_at"
+Type = "datetime"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "auto_create_time"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/club.rs"
+Line = 17
+Column = 9
+
+[[Migration.Operations]]
+Type = "DeleteField"
+Model = "club"
+Name = "name"
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "club"
+
+[Migration.Operations.Field]
+Name = "name"
+Type = "varchar"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Field.Annotations]]
+Type = "unique"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/club.rs"
+Line = 14
+Column = 9

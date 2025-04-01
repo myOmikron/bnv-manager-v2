@@ -3695,12 +3695,12 @@ dependencies = [
 name = "webserver"
 version = "0.1.0"
 dependencies = [
- "async-trait",
  "axum 0.8.3",
  "bcrypt",
  "bytes",
  "clap",
  "futures-core",
+ "futures-util",
  "galvyn",
  "linkme",
  "opentelemetry",

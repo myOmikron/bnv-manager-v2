@@ -1,4 +1,10 @@
 {
+    "button": {
+        "cancel": "Cancel"
+    },
+    "heading": {
+        "danger-zone": "Danger zone"
+    },
     "label": {
         "centuries": "centuries",
         "days": "days",

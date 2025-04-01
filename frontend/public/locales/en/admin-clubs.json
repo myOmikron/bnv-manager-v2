@@ -1,0 +1,13 @@
+{
+    "button": {
+        "create-club": "Create club",
+        "delete-club": "Delete club"
+    },
+    "heading": {
+        "clubs-overview": "Overview of clubs"
+    },
+    "label": {
+        "club-name": "Clubname",
+        "created-at": "Created at"
+    }
+}

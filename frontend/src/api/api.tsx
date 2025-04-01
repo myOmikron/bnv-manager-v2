@@ -1,6 +1,13 @@
 import { parseError } from "src/api/error";
 import CONSOLE from "src/utils/console";
-import { AcceptInviteRequest, Configuration, DefaultApi, RequiredError, ResponseError } from "src/api/generated";
+import {
+    AcceptInviteRequest,
+    Configuration,
+    CreateClubRequest,
+    DefaultApi,
+    RequiredError,
+    ResponseError
+} from "src/api/generated";
 
 /** Hyphen separated uuid */
 export type UUID = string;
@@ -13,6 +20,13 @@ const api = new DefaultApi(configuration);
 
 /* eslint-disable */
 export const Api = {
+    admin: {
+        clubs: {
+            getAll: () => handleError(api.adminGetClubs()),
+            create: (createClub: CreateClubRequest) =>
+                handleError(api.adminCreateClub({ CreateClubRequest: createClub })),
+        },
+    },
     auth: {
         login: (username: string, password: string) => handleError(api.login({ LoginRequest: { username, password } })),
         logout: () => handleError(api.logout()),

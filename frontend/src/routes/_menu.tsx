@@ -11,12 +11,13 @@ import {
     SidebarHeader,
     SidebarHeading,
     SidebarItem,
+    SidebarLabel,
     SidebarSection
 } from "src/components/base/sidebar";
 import { SidebarLayout } from "src/components/base/sidebar-layout";
 import { Navbar, NavbarItem, NavbarLabel, NavbarSpacer } from "src/components/base/navbar";
 import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } from "src/components/base/dropdown";
-import { ArrowRightStartOnRectangleIcon, ChevronUpIcon, UserIcon } from "@heroicons/react/20/solid";
+import { ArrowRightStartOnRectangleIcon, ChevronUpIcon, UserGroupIcon, UserIcon } from "@heroicons/react/20/solid";
 import { Api } from "src/api/api";
 
 /**
@@ -50,6 +51,11 @@ function Menu(props: MenuProps) {
                                 <SidebarDivider />
                                 <SidebarSection>
                                     <SidebarHeading>{t("heading.admin-settings")}</SidebarHeading>
+
+                                    <SidebarItem href={"/a/clubs"}>
+                                        <UserGroupIcon />
+                                        <SidebarLabel>{t("button.club-overview")}</SidebarLabel>
+                                    </SidebarItem>
                                 </SidebarSection>
                             </>
                         )}

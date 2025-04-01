@@ -84,10 +84,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {}
-                        }
+                        "description": ""
                     },
                     "400": {
                         "description": "",
@@ -163,10 +160,7 @@
                 "operationId": "logout",
                 "responses": {
                     "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {}
-                        }
+                        "description": ""
                     },
                     "400": {
                         "description": "",
@@ -201,6 +195,90 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/Me"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/admin/clubs": {
+            "get": {
+                "operationId": "admin_get_clubs",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SimpleClub"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "admin_create_club",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateClubRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_SingleUuid_and_CreateClubResponseError"
                                 }
                             }
                         }
@@ -270,6 +348,28 @@
                     2000
                 ]
             },
+            "CreateClubRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "CreateClubResponseError": {
+                "type": "object",
+                "properties": {
+                    "name_already_occupied": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "name_already_occupied"
+                ]
+            },
             "FormResult_for_Null_and_LoginResponse": {
                 "description": "A `Result` with a custom serialization",
                 "oneOf": [
@@ -296,6 +396,47 @@
                         "properties": {
                             "error": {
                                 "$ref": "#/components/schemas/LoginResponse"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
+            "FormResult_for_SingleUuid_and_CreateClubResponseError": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/SingleUuid"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/CreateClubResponseError"
                             },
                             "result": {
                                 "type": "string",
@@ -392,6 +533,39 @@
             "SchemaDateTime": {
                 "type": "string",
                 "format": "date-time"
+            },
+            "SimpleClub": {
+                "type": "object",
+                "properties": {
+                    "created_at": {
+                        "$ref": "#/components/schemas/SchemaDateTime"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "name",
+                    "uuid"
+                ]
+            },
+            "SingleUuid": {
+                "description": "A single uuid wrapped in a struct",
+                "type": "object",
+                "properties": {
+                    "uuid": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "required": [
+                    "uuid"
+                ]
             }
         }
     }

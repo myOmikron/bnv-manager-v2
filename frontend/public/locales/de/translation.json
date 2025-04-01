@@ -1,4 +1,10 @@
 {
+    "button": {
+        "cancel": "Abbrechen"
+    },
+    "heading": {
+        "danger-zone": "Gefahrenbereich"
+    },
     "label": {
         "centuries": "Jahrzehnte",
         "days": "Tage",

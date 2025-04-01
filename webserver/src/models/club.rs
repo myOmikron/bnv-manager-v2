@@ -1,5 +1,6 @@
 use rorm::prelude::ForeignModel;
 use rorm::Model;
+use rorm::Patch;
 use uuid::Uuid;
 
 use crate::models::user::User;
@@ -9,7 +10,17 @@ pub struct Club {
     #[rorm(primary_key)]
     pub uuid: Uuid,
 
-    #[rorm(max_length = 255)]
+    #[rorm(max_length = 255, unique)]
+    pub name: String,
+
+    #[rorm(auto_create_time)]
+    pub created_at: time::OffsetDateTime,
+}
+
+#[derive(Patch)]
+#[rorm(model = "Club")]
+pub struct ClubInsert {
+    pub uuid: Uuid,
     pub name: String,
 }
 

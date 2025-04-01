@@ -131,7 +131,7 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
                 !bleed && "sm:first:pl-1 sm:last:pr-1",
             )}
         >
-            {href && (
+            {href ? (
                 <Link
                     data-row-link
                     href={href}
@@ -144,6 +144,8 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
                 >
                     {children}
                 </Link>
+            ) : (
+                children
             )}
         </td>
     );

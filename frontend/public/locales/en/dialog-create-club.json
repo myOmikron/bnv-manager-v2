@@ -1,0 +1,11 @@
+{
+    "button": {
+        "create-club": "Create club"
+    },
+    "heading": {
+        "create-club": "Create club"
+    },
+    "label": {
+        "club-name": "Club name"
+    }
+}

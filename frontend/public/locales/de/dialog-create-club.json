@@ -1,0 +1,11 @@
+{
+    "button": {
+        "create-club": "Verein anlegen"
+    },
+    "heading": {
+        "create-club": "Verein anlegen"
+    },
+    "label": {
+        "club-name": "Name des Vereins"
+    }
+}

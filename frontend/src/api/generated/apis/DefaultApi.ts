@@ -17,15 +17,22 @@ import * as runtime from '../runtime';
 import type {
   AcceptInviteRequest,
   ApiErrorResponse,
+  CreateClubRequest,
   FormResultForNullAndLoginResponse,
+  FormResultForSingleUuidAndCreateClubResponseError,
   FullInvite,
   LoginRequest,
   Me,
+  SimpleClub,
 } from '../models/index';
 
 export interface AcceptInviteOperationRequest {
     uuid: string;
     AcceptInviteRequest?: AcceptInviteRequest;
+}
+
+export interface AdminCreateClubRequest {
+    CreateClubRequest?: CreateClubRequest;
 }
 
 export interface GetInviteRequest {
@@ -72,6 +79,57 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async acceptInvite(requestParameters: AcceptInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.acceptInviteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async adminCreateClubRaw(requestParameters: AdminCreateClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleUuidAndCreateClubResponseError>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['CreateClubRequest'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async adminCreateClub(requestParameters: AdminCreateClubRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleUuidAndCreateClubResponseError> {
+        const response = await this.adminCreateClubRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async adminGetClubsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SimpleClub>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async adminGetClubs(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SimpleClub>> {
+        const response = await this.adminGetClubsRaw(initOverrides);
+        return await response.value();
     }
 
     /**

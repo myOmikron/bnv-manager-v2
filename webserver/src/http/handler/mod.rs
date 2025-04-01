@@ -9,13 +9,17 @@ use crate::http::middlewares::auth_required::auth_required;
 use crate::http::middlewares::auth_required::club_admin_required;
 
 pub(crate) mod auth;
+pub(crate) mod clubs;
 pub(crate) mod invites;
 pub(crate) mod me;
 pub(crate) mod openapi;
 
 /// Handler for the admin
 pub fn router_admin() -> GalvynRouter {
-    GalvynRouter::new().layer(middleware::from_fn(admin_required))
+    GalvynRouter::new()
+        .handler(clubs::handler::admin_get_clubs)
+        .handler(clubs::handler::admin_create_club)
+        .layer(middleware::from_fn(admin_required))
 }
 
 /// Handler for the club admin

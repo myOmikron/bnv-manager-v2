@@ -1,0 +1,13 @@
+{
+    "button": {
+        "create-club": "Verein anlegen",
+        "delete-club": "Verein löschen"
+    },
+    "heading": {
+        "clubs-overview": "Übersicht der Vereine"
+    },
+    "label": {
+        "club-name": "Vereinsname",
+        "created-at": "Angelegt am"
+    }
+}

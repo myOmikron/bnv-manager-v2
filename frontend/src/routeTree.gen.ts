@@ -15,6 +15,7 @@ import { Route as MenuImport } from './routes/_menu'
 import { Route as MenuIndexImport } from './routes/_menu/index'
 import { Route as InvitesInviteIdImport } from './routes/invites/$inviteId'
 import { Route as MenuProfileImport } from './routes/_menu/profile'
+import { Route as MenuAClubsIndexImport } from './routes/_menu/a/clubs/index'
 
 // Create/Update Routes
 
@@ -38,6 +39,12 @@ const InvitesInviteIdRoute = InvitesInviteIdImport.update({
 const MenuProfileRoute = MenuProfileImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => MenuRoute,
+} as any)
+
+const MenuAClubsIndexRoute = MenuAClubsIndexImport.update({
+  id: '/a/clubs/',
+  path: '/a/clubs/',
   getParentRoute: () => MenuRoute,
 } as any)
 
@@ -73,6 +80,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MenuIndexImport
       parentRoute: typeof MenuImport
     }
+    '/_menu/a/clubs/': {
+      id: '/_menu/a/clubs/'
+      path: '/a/clubs'
+      fullPath: '/a/clubs'
+      preLoaderRoute: typeof MenuAClubsIndexImport
+      parentRoute: typeof MenuImport
+    }
   }
 }
 
@@ -81,11 +95,13 @@ declare module '@tanstack/react-router' {
 interface MenuRouteChildren {
   MenuProfileRoute: typeof MenuProfileRoute
   MenuIndexRoute: typeof MenuIndexRoute
+  MenuAClubsIndexRoute: typeof MenuAClubsIndexRoute
 }
 
 const MenuRouteChildren: MenuRouteChildren = {
   MenuProfileRoute: MenuProfileRoute,
   MenuIndexRoute: MenuIndexRoute,
+  MenuAClubsIndexRoute: MenuAClubsIndexRoute,
 }
 
 const MenuRouteWithChildren = MenuRoute._addFileChildren(MenuRouteChildren)
@@ -95,12 +111,14 @@ export interface FileRoutesByFullPath {
   '/profile': typeof MenuProfileRoute
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/': typeof MenuIndexRoute
+  '/a/clubs': typeof MenuAClubsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/profile': typeof MenuProfileRoute
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/': typeof MenuIndexRoute
+  '/a/clubs': typeof MenuAClubsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -109,19 +127,21 @@ export interface FileRoutesById {
   '/_menu/profile': typeof MenuProfileRoute
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/_menu/': typeof MenuIndexRoute
+  '/_menu/a/clubs/': typeof MenuAClubsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/profile' | '/invites/$inviteId' | '/'
+  fullPaths: '' | '/profile' | '/invites/$inviteId' | '/' | '/a/clubs'
   fileRoutesByTo: FileRoutesByTo
-  to: '/profile' | '/invites/$inviteId' | '/'
+  to: '/profile' | '/invites/$inviteId' | '/' | '/a/clubs'
   id:
     | '__root__'
     | '/_menu'
     | '/_menu/profile'
     | '/invites/$inviteId'
     | '/_menu/'
+    | '/_menu/a/clubs/'
   fileRoutesById: FileRoutesById
 }
 
@@ -153,7 +173,8 @@ export const routeTree = rootRoute
       "filePath": "_menu.tsx",
       "children": [
         "/_menu/profile",
-        "/_menu/"
+        "/_menu/",
+        "/_menu/a/clubs/"
       ]
     },
     "/_menu/profile": {
@@ -165,6 +186,10 @@ export const routeTree = rootRoute
     },
     "/_menu/": {
       "filePath": "_menu/index.tsx",
+      "parent": "/_menu"
+    },
+    "/_menu/a/clubs/": {
+      "filePath": "_menu/a/clubs/index.tsx",
       "parent": "/_menu"
     }
   }

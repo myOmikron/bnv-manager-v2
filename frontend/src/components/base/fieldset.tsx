@@ -24,7 +24,7 @@ export function Legend({
             {...props}
             className={clsx(
                 className,
-                "text-base/6 font-semibold text-zinc-950 data-disabled:opacity-50 sm:text-sm/6 dark:text-white",
+                "data-disabled:opacity-50 text-base/6 font-semibold text-zinc-950 sm:text-sm/6 dark:text-white",
             )}
         />
     );
@@ -58,7 +58,7 @@ export function Label({ className, ...props }: { className?: string } & Omit<Hea
             {...props}
             className={clsx(
                 className,
-                "text-base/6 text-zinc-950 select-none data-[disabled]:opacity-50 sm:text-sm/6 dark:text-white",
+                "select-none text-base/6 text-zinc-950 data-[disabled]:opacity-50 sm:text-sm/6 dark:text-white",
             )}
         />
     );
@@ -76,7 +76,9 @@ export function RequiredLabel({
             {...props}
             className={clsx(
                 className,
-                "text-base/6 text-zinc-950 select-none data-disabled:opacity-50 sm:text-sm/6 dark:text-white",
+                "data-disabled:opacity-50 select-none text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white",
+                // asterics
+                "after:ml-1 after:text-red-500 after:content-['*']",
             )}
         />
     );
@@ -92,7 +94,7 @@ export function Description({
             {...props}
             className={clsx(
                 className,
-                "text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400",
+                "data-disabled:opacity-50 text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400",
             )}
         />
     );
@@ -108,7 +110,7 @@ export function ErrorMessage({
             {...props}
             className={clsx(
                 className,
-                "text-base/6 text-red-600 data-disabled:opacity-50 sm:text-sm/6 dark:text-red-500",
+                "data-disabled:opacity-50 text-base/6 text-red-600 sm:text-sm/6 dark:text-red-500",
             )}
         />
     );
