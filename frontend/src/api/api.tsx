@@ -15,6 +15,7 @@ const api = new DefaultApi(configuration);
 export const Api = {
     auth: {
         login: (username: string, password: string) => handleError(api.login({ LoginRequest: { username, password } })),
+        logout: () => handleError(api.logout()),
     },
     invites: {
         get: (uuid: UUID) => handleError(api.getInvite({ uuid })),

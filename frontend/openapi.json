@@ -84,7 +84,10 @@
                 },
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
                     },
                     "400": {
                         "description": "",
@@ -130,6 +133,39 @@
                                     "$ref": "#/components/schemas/FormResult_for_Null_and_LoginResponse"
                                 }
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/auth/logout": {
+            "post": {
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
                         }
                     },
                     "400": {
@@ -332,6 +368,9 @@
             "Me": {
                 "type": "object",
                 "properties": {
+                    "admin": {
+                        "type": "boolean"
+                    },
                     "display_name": {
                         "type": "string"
                     },
@@ -344,6 +383,7 @@
                     }
                 },
                 "required": [
+                    "admin",
                     "display_name",
                     "username",
                     "uuid"

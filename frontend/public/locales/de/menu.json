@@ -1,0 +1,10 @@
+{
+    "button": {
+        "profile": "Profil",
+        "sign-out": "Ausloggen"
+    },
+    "heading": {
+        "admin-settings": "Admin Einstellungen",
+        "user-settings": "Nutzer Einstellungen"
+    }
+}

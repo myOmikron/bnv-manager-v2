@@ -29,6 +29,7 @@ pub async fn get_me(session: Session) -> ApiResult<ApiJson<Me>> {
 
     Ok(ApiJson(Me {
         uuid: me.uuid,
+        admin: me.admin,
         username: me.username,
         display_name: me.display_name,
     }))

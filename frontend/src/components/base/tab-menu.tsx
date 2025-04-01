@@ -1,7 +1,7 @@
 import React from "react";
-import { Link, LinkProps } from "src/components/base/link.tsx";
+import { Link, LinkProps } from "src/components/base/link";
 import { motion } from "framer-motion";
-import { TouchTarget } from "src/components/base/button.tsx";
+import { TouchTarget } from "src/components/base/button";
 import clsx from "clsx";
 
 /**
@@ -40,7 +40,7 @@ export function Tab(props: TabProps) {
         // Dark mode
         "dark:text-white dark:data-[slot=icon]:*:fill-zinc-400",
         "dark:data-[slot=icon]:*:data-[hover]:fill-white",
-        "dark:data-[slot=icon]:*:data-[current]:fill-white"
+        "dark:data-[slot=icon]:*:data-[current]:fill-white",
     );
 
     return (
@@ -92,7 +92,7 @@ export function LocalTab(props: LocalTabProps) {
         // Dark mode
         "dark:text-white dark:data-[slot=icon]:*:fill-zinc-400",
         "dark:data-[slot=icon]:*:hover:fill-white",
-        "dark:data-[slot=icon]:*:data-[current]:fill-white"
+        "dark:data-[slot=icon]:*:data-[current]:fill-white",
     );
 
     return (

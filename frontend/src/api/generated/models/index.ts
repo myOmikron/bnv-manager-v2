@@ -185,6 +185,12 @@ export interface LoginResponse {
 export interface Me {
     /**
      * 
+     * @type {boolean}
+     * @memberof Me
+     */
+    admin: boolean;
+    /**
+     * 
      * @type {string}
      * @memberof Me
      */

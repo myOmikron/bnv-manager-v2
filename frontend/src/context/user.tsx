@@ -23,6 +23,7 @@ export type UserContext = {
 const USER_CONTEXT = React.createContext<UserContext>({
     user: {
         uuid: "",
+        admin: false,
         display_name: "",
         username: "",
     },
@@ -71,32 +72,29 @@ export class UserProvider extends React.Component<UserProviderProps, UserProvide
 
         this.setState({ user: "loading" });
 
-        const f = async () => {
-            try {
-                return await Api.me.get();
-            } catch (e) {
-                let msg;
-                if (e instanceof ResponseError) {
-                    const err = await parseError(e.response);
-                    if (err.status_code === StatusCode.Unauthenticated) {
-                        return "unauthenticated";
-                    }
-                } else if (e instanceof RequiredError) {
-                    CONSOLE.error(e);
-                    msg = "The server's response didn't match the spec";
-                } else {
-                    CONSOLE.error("Unknown error occurred:", e);
-                    msg = "Unknown error occurred";
+        try {
+            const me = await Api.me.get();
+            this.setState({ user: me });
+        } catch (e) {
+            let msg;
+            if (e instanceof ResponseError) {
+                const err = await parseError(e.response);
+                if (err.status_code === StatusCode.Unauthenticated) {
+                    this.setState({ user: "unauthenticated" });
                 }
-                toast.error(msg);
-                throw e;
-            } finally {
-                // Clear guard against a lot of calls
-                this.fetching = false;
+            } else if (e instanceof RequiredError) {
+                CONSOLE.error(e);
+                msg = "The server's response didn't match the spec";
+            } else {
+                CONSOLE.error("Unknown error occurred:", e);
+                msg = "Unknown error occurred";
             }
-        };
-
-        await f().then((me) => this.setState({ user: me }));
+            toast.error(msg);
+            throw e;
+        } finally {
+            // Clear guard against a lot of calls
+            this.fetching = false;
+        }
     };
 
     /**

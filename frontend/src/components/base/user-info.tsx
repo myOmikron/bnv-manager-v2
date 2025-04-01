@@ -1,6 +1,6 @@
 import React from "react";
-import { Avatar } from "src/components/base/avatar.tsx";
-import { Button } from "src/components/base/button.tsx";
+import { Avatar } from "src/components/base/avatar";
+import { Button } from "src/components/base/button";
 
 /**
  * The properties for {@link UserInfo}

@@ -6,6 +6,7 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
 pub struct Me {
     pub uuid: Uuid,
+    pub admin: bool,
     pub username: String,
     pub display_name: String,
 }

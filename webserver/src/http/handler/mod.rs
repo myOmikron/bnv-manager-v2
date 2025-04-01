@@ -50,7 +50,8 @@ pub fn router_unauthenticated() -> GalvynRouter {
             "/auth",
             GalvynRouter::new()
                 .handler(auth::handler::login)
-                .route_layer(ServiceBuilder::new().concurrency_limit(10)),
+                .route_layer(ServiceBuilder::new().concurrency_limit(10))
+                .handler(auth::handler::logout),
         )
 }
 

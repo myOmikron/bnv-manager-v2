@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { Text } from "src/components/base/text.tsx";
+import { Text } from "src/components/base/text";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en";
 import * as zxcvbnDePackage from "@zxcvbn-ts/language-de";
@@ -64,7 +64,7 @@ export default function PasswordStrength(props: PasswordStrengthProps) {
 
     return (
         <div>
-            <div className={"mt-3 mb-2 grid h-1 w-full grid-cols-4 gap-3"}>
+            <div className={"mb-2 mt-3 grid h-1 w-full grid-cols-4 gap-3"}>
                 <div
                     className={clsx(
                         "rounded border border-zinc-400 dark:border-zinc-700",

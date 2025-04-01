@@ -1,6 +1,6 @@
 import * as Headless from "@headlessui/react";
 import React from "react";
-import { Input } from "src/components/base/input.tsx";
+import { Input } from "src/components/base/input";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { AnimatePresence, motion } from "framer-motion";
 import { clsx } from "clsx";
@@ -28,7 +28,7 @@ export function ComboboxOption<TType>(props: ComboboxOptionProps<TType>) {
                 // Set minimum height for when no value is selected
                 "min-h-11 sm:min-h-9",
                 // Horizontal padding
-                "pr-[calc(theme(spacing.7)-1px)] pl-[calc(theme(spacing[3.5])-1px)] sm:pl-[calc(theme(spacing.3)-1px)]",
+                "pl-[calc(theme(spacing[3.5])-1px)] pr-[calc(theme(spacing.7)-1px)] sm:pl-[calc(theme(spacing.3)-1px)]",
                 // Typography
                 "text-left text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]",
                 // Background color
@@ -70,7 +70,7 @@ function ComboboxOptions<TType>(props: ComboboxOptionsProps<TType>) {
             transition={true}
             className={clsx(
                 // Anchor positioning
-                "[--anchor-gap:theme(spacing.2)] [--anchor-padding:theme(spacing.1)] data-[anchor~=end]:[--anchor-offset:6px] data-[anchor~=start]:[--anchor-offset:-6px] sm:data-[anchor~=end]:[--anchor-offset:4px] sm:data-[anchor~=start]:[--anchor-offset:-4px]",
+                "[--anchor-gap:theme(spacing.2)] [--anchor-padding:theme(spacing.1)] data-[anchor~=start]:[--anchor-offset:-6px] data-[anchor~=end]:[--anchor-offset:6px] sm:data-[anchor~=start]:[--anchor-offset:-4px] sm:data-[anchor~=end]:[--anchor-offset:4px]",
                 // Base styles
                 "w-fit rounded-xl p-1",
                 // Invisible border that is only visible in `forced-colors` mode for accessibility purposes
@@ -80,7 +80,7 @@ function ComboboxOptions<TType>(props: ComboboxOptionsProps<TType>) {
                 // Popover background
                 "bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75",
                 // Shadows
-                "shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 dark:ring-inset",
+                "shadow-lg ring-1 ring-zinc-950/10 dark:ring-inset dark:ring-white/10",
             )}
             children={props.children}
         />

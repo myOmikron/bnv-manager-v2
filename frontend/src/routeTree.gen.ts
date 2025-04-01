@@ -11,15 +11,22 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
+import { Route as MenuImport } from './routes/_menu'
+import { Route as MenuIndexImport } from './routes/_menu/index'
 import { Route as InvitesInviteIdImport } from './routes/invites/$inviteId'
+import { Route as MenuProfileImport } from './routes/_menu/profile'
 
 // Create/Update Routes
 
-const IndexRoute = IndexImport.update({
+const MenuRoute = MenuImport.update({
+  id: '/_menu',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MenuIndexRoute = MenuIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => MenuRoute,
 } as any)
 
 const InvitesInviteIdRoute = InvitesInviteIdImport.update({
@@ -28,16 +35,29 @@ const InvitesInviteIdRoute = InvitesInviteIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const MenuProfileRoute = MenuProfileImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => MenuRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_menu': {
+      id: '/_menu'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MenuImport
       parentRoute: typeof rootRoute
+    }
+    '/_menu/profile': {
+      id: '/_menu/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof MenuProfileImport
+      parentRoute: typeof MenuImport
     }
     '/invites/$inviteId': {
       id: '/invites/$inviteId'
@@ -46,43 +66,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvitesInviteIdImport
       parentRoute: typeof rootRoute
     }
+    '/_menu/': {
+      id: '/_menu/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof MenuIndexImport
+      parentRoute: typeof MenuImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface MenuRouteChildren {
+  MenuProfileRoute: typeof MenuProfileRoute
+  MenuIndexRoute: typeof MenuIndexRoute
+}
+
+const MenuRouteChildren: MenuRouteChildren = {
+  MenuProfileRoute: MenuProfileRoute,
+  MenuIndexRoute: MenuIndexRoute,
+}
+
+const MenuRouteWithChildren = MenuRoute._addFileChildren(MenuRouteChildren)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '': typeof MenuRouteWithChildren
+  '/profile': typeof MenuProfileRoute
   '/invites/$inviteId': typeof InvitesInviteIdRoute
+  '/': typeof MenuIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/profile': typeof MenuProfileRoute
   '/invites/$inviteId': typeof InvitesInviteIdRoute
+  '/': typeof MenuIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
+  '/_menu': typeof MenuRouteWithChildren
+  '/_menu/profile': typeof MenuProfileRoute
   '/invites/$inviteId': typeof InvitesInviteIdRoute
+  '/_menu/': typeof MenuIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/invites/$inviteId'
+  fullPaths: '' | '/profile' | '/invites/$inviteId' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/invites/$inviteId'
-  id: '__root__' | '/' | '/invites/$inviteId'
+  to: '/profile' | '/invites/$inviteId' | '/'
+  id:
+    | '__root__'
+    | '/_menu'
+    | '/_menu/profile'
+    | '/invites/$inviteId'
+    | '/_menu/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  MenuRoute: typeof MenuRouteWithChildren
   InvitesInviteIdRoute: typeof InvitesInviteIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  MenuRoute: MenuRouteWithChildren,
   InvitesInviteIdRoute: InvitesInviteIdRoute,
 }
 
@@ -96,15 +145,27 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
+        "/_menu",
         "/invites/$inviteId"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_menu": {
+      "filePath": "_menu.tsx",
+      "children": [
+        "/_menu/profile",
+        "/_menu/"
+      ]
+    },
+    "/_menu/profile": {
+      "filePath": "_menu/profile.tsx",
+      "parent": "/_menu"
     },
     "/invites/$inviteId": {
       "filePath": "invites/$inviteId.tsx"
+    },
+    "/_menu/": {
+      "filePath": "_menu/index.tsx",
+      "parent": "/_menu"
     }
   }
 }

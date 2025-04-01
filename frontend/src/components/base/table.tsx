@@ -3,7 +3,7 @@
 import { clsx } from "clsx";
 import type React from "react";
 import { createContext, useContext, useState } from "react";
-import { Link, LinkProps } from "src/components/base/link.tsx";
+import { Link, LinkProps } from "src/components/base/link";
 
 const TableContext = createContext<{ bleed: boolean; dense: boolean; grid: boolean; striped: boolean }>({
     bleed: false,

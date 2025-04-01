@@ -53,3 +53,10 @@ pub async fn login(
 
     Ok(ApiJson(FormResult::ok(())))
 }
+
+#[galvyn::post("/logout")]
+pub async fn logout(session: Session) -> ApiResult<()> {
+    session.delete().await?;
+
+    Ok(())
+}
