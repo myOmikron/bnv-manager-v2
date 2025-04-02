@@ -129,6 +129,7 @@ function Menu(props: MenuProps) {
 }
 
 export const Route = createFileRoute("/_menu")({
+    // eslint-disable-next-line
     component: () => (
         <UserProvider>
             <Menu />
