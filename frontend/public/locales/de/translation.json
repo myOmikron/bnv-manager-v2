@@ -1,4 +1,7 @@
 {
+    "accessibility": {
+        "actions": "Aktionen"
+    },
     "button": {
         "cancel": "Abbrechen"
     },

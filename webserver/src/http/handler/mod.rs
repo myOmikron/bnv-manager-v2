@@ -19,6 +19,7 @@ pub fn router_admin() -> GalvynRouter {
     GalvynRouter::new()
         .handler(clubs::handler::admin_get_clubs)
         .handler(clubs::handler::admin_create_club)
+        .handler(clubs::handler::admin_delete_club)
         .layer(middleware::from_fn(admin_required))
 }
 

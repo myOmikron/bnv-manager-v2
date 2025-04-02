@@ -38,7 +38,7 @@ function Menu(props: MenuProps) {
             sidebar={
                 <Sidebar>
                     <SidebarHeader>
-                        <span className={"text-xl font-bold"}>BNV Manager</span>
+                        <span className={"text-xl font-bold text-black dark:text-white"}>BNV Manager</span>
                     </SidebarHeader>
 
                     <SidebarBody>

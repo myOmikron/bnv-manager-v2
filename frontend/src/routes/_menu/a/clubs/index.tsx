@@ -17,6 +17,8 @@ import {
     DropdownMenu,
     DropdownSection
 } from "src/components/base/dropdown";
+import { SimpleClub } from "src/api/generated";
+import AdminDeleteClubDialog from "src/components/dialogs/admin-delete-club";
 
 /**
  * The properties for {@link AdminClubOverview}
@@ -34,6 +36,7 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
     const clubs = Route.useLoaderData();
 
     const [openCreateClub, setOpenCreateClub] = React.useState(false);
+    const [openDeleteClub, setOpenDeleteClub] = React.useState<SimpleClub>();
 
     return (
         <HeadingLayout
@@ -69,7 +72,7 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                                         <DropdownSection>
                                             <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
 
-                                            <DropdownItem>
+                                            <DropdownItem onClick={() => setOpenDeleteClub(club)}>
                                                 <TrashIcon />
                                                 <DropdownLabel>{t("button.delete-club")}</DropdownLabel>
                                             </DropdownItem>
@@ -89,6 +92,19 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                         onCreate={() => {
                             setOpenCreateClub(false);
                             router.invalidate({ sync: true });
+                        }}
+                    />
+                </Suspense>
+            )}
+
+            {openDeleteClub && (
+                <Suspense>
+                    <AdminDeleteClubDialog
+                        club={openDeleteClub}
+                        onClose={() => setOpenDeleteClub(undefined)}
+                        onDelete={() => {
+                            setOpenDeleteClub(undefined);
+                            router.invalidate({ sync: false });
                         }}
                     />
                 </Suspense>

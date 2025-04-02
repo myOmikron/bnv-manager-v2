@@ -1,4 +1,6 @@
+use axum::extract::Path;
 use futures_util::TryStreamExt;
+use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
@@ -61,4 +63,21 @@ pub async fn admin_create_club(
     tx.commit().await?;
 
     Ok(ApiJson(FormResult::ok(SingleUuid { uuid })))
+}
+
+#[galvyn::delete("/clubs/{uuid}")]
+pub async fn admin_delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let club = rorm::query(&mut tx, Club)
+        .condition(Club.uuid.equals(uuid))
+        .optional()
+        .await?
+        .ok_or(ApiError::bad_request("Club not found"))?;
+
+    rorm::delete(&mut tx, Club).single(&club).await?;
+
+    tx.commit().await?;
+
+    Ok(())
 }
