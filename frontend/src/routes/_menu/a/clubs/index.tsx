@@ -15,7 +15,7 @@ import {
     DropdownItem,
     DropdownLabel,
     DropdownMenu,
-    DropdownSection
+    DropdownSection,
 } from "src/components/base/dropdown";
 import { SimpleClub } from "src/api/generated";
 import AdminDeleteClubDialog from "src/components/dialogs/admin-delete-club";

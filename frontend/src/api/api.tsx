@@ -6,7 +6,7 @@ import {
     CreateClubRequest,
     DefaultApi,
     RequiredError,
-    ResponseError
+    ResponseError,
 } from "src/api/generated";
 
 /** Hyphen separated uuid */

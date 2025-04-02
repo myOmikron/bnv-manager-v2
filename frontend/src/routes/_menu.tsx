@@ -12,7 +12,7 @@ import {
     SidebarHeading,
     SidebarItem,
     SidebarLabel,
-    SidebarSection
+    SidebarSection,
 } from "src/components/base/sidebar";
 import { SidebarLayout } from "src/components/base/sidebar-layout";
 import { Navbar, NavbarItem, NavbarLabel, NavbarSpacer } from "src/components/base/navbar";

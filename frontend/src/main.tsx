@@ -28,5 +28,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <LoggingSwitch />
         <ToastContainer toastClassName={"toast-message"} closeOnClick={true} />
         <RouterProvider router={router} />
-    </>
+    </>,
 );
