@@ -1,5 +1,5 @@
-use rorm::prelude::ForeignModel;
 use rorm::Model;
+use rorm::prelude::ForeignModel;
 
 use crate::models::club::Club;
 

@@ -1,13 +1,13 @@
+use galvyn::core::Module;
 use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
-use galvyn::core::Module;
 use rorm::Database;
 use uuid::Uuid;
 
-use crate::http::handler::me::schema::Me;
 use crate::http::SESSION_USER;
+use crate::http::handler::me::schema::Me;
 use crate::models::user::User;
 
 #[galvyn::get("/me")]

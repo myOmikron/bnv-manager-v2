@@ -2,10 +2,10 @@
 
 use std::net::SocketAddr;
 
-use galvyn::core::session;
-use galvyn::core::GalvynRouter;
-use galvyn::error::GalvynError;
 use galvyn::RouterBuilder;
+use galvyn::core::GalvynRouter;
+use galvyn::core::session;
+use galvyn::error::GalvynError;
 use tower::ServiceBuilder;
 use tower_http::trace::DefaultMakeSpan;
 use tower_http::trace::DefaultOnResponse;

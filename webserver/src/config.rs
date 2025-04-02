@@ -231,9 +231,9 @@ mod env {
 mod deserializer {
     use std::fmt::Display;
 
+    use serde::Deserializer;
     use serde::de::Error;
     use serde::de::Visitor;
-    use serde::Deserializer;
     use thiserror::Error;
 
     /// An improved [`StringDeserializer`](serde::de::value::StringDeserializer)

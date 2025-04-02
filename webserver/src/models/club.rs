@@ -1,6 +1,6 @@
-use rorm::prelude::ForeignModel;
 use rorm::Model;
 use rorm::Patch;
+use rorm::prelude::ForeignModel;
 use uuid::Uuid;
 
 use crate::models::user::User;

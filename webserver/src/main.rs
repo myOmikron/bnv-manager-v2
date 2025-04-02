@@ -7,17 +7,17 @@ use std::ops::Add;
 use std::process::exit;
 
 use clap::Parser;
+use galvyn::Galvyn;
 use galvyn::rorm::Database;
 use galvyn::rorm::DatabaseConfiguration;
-use galvyn::Galvyn;
 use rorm::cli as rorm_cli;
 use rorm::insert;
 use rorm::query;
 use time::Duration;
 use time::OffsetDateTime;
+use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::EnvFilter;
 use uuid::Uuid;
 
 use crate::cli::Cli;
