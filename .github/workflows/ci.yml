@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+  push:
+    paths-ignore:
+      - "**/*.md"
+  workflow_dispatch:
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    env:
+      CARGO_TERM_COLOR: always
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: moonrepo/setup-rust@v1
+        with:
+          components: rustfmt
+          channel: nightly
+          bins: cargo-deny
+
+      - name: Check formatting
+        run: cargo +nightly fmt --check
+
+      - name: Run cargo-deny
+        run: cargo deny check --hide-inclusion-graph
+        if: github.ref == 'refs/heads/main'
+
+  frontend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm clean-install
+
+      - name: Prettier
+        working-directory: frontend
+        run: npm run ci
+
+  build-docker-dev:
+    needs:
+      - backend-test
+      - frontend-test
+    runs-on: ubuntu-latest
+    concurrency:
+      cancel-in-progress: true
+      group: "${{ github.ref }}-dev"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build docker dev images
+        run: python3 tools.py build
+
+
+  build-docker:
+    needs:
+      - backend-test
+      - frontend-test
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' ||  startsWith(github.ref, 'refs/tags/') )
+    concurrency:
+      cancel-in-progress: true
+      group: "${{ github.ref }}-prod"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build docker images
+        run: python3 tools.py prod build
