@@ -23,3 +23,11 @@ allow = [
 
 [licenses.private]
 ignore = true
+
+[sources]
+unknown-git = "deny"
+
+allow-git = [
+    "https://github.com/myOmikron/galvyn.git",
+    "https://github.com/rorm-orm/rorm.git",
+]
