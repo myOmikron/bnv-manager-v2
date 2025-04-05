@@ -9,7 +9,7 @@ use crate::http::handler::users::schema::AdminUser;
 use crate::models::user::User;
 
 #[galvyn::get("/users/admins")]
-pub async fn admin_get_admins() -> ApiResult<ApiJson<Vec<AdminUser>>> {
+pub async fn get_admins() -> ApiResult<ApiJson<Vec<AdminUser>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let users = rorm::query(&mut tx, User)

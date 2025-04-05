@@ -20,12 +20,12 @@ pub fn router_admin() -> GalvynRouter {
     GalvynRouter::new()
         .merge(
             GalvynRouter::new()
-                .handler(clubs::handler::admin_get_clubs)
-                .handler(clubs::handler::admin_get_club)
-                .handler(clubs::handler::admin_create_club)
-                .handler(clubs::handler::admin_delete_club),
+                .handler(clubs::handler_admin::admin_get_clubs)
+                .handler(clubs::handler_admin::admin_get_club)
+                .handler(clubs::handler_admin::create_club)
+                .handler(clubs::handler_admin::delete_club),
         )
-        .merge(GalvynRouter::new().handler(users::handler::admin_get_admins))
+        .merge(GalvynRouter::new().handler(users::handler_admin::get_admins))
         .layer(middleware::from_fn(admin_required))
 }
 
@@ -37,7 +37,10 @@ pub fn router_club_admin() -> GalvynRouter {
 /// Common handler
 pub fn router_common() -> GalvynRouter {
     GalvynRouter::new()
-        .nest("/users", GalvynRouter::new().handler(me::handler::get_me))
+        .nest(
+            "/users",
+            GalvynRouter::new().handler(me::handler_common::get_me),
+        )
         .layer(middleware::from_fn(auth_required))
 }
 
@@ -47,22 +50,22 @@ pub fn router_unauthenticated() -> GalvynRouter {
 
     #[cfg(debug_assertions)]
     {
-        router = router.handler(openapi::handler::openapi);
+        router = router.handler(openapi::handler_common::openapi);
     }
 
     router
         .nest(
             "/invites",
             GalvynRouter::new()
-                .handler(invites::handler::accept_invite)
-                .handler(invites::handler::get_invite),
+                .handler(invites::handler_common::accept_invite)
+                .handler(invites::handler_common::get_invite),
         )
         .nest(
             "/auth",
             GalvynRouter::new()
-                .handler(auth::handler::login)
+                .handler(auth::handler_common::login)
                 .route_layer(ServiceBuilder::new().concurrency_limit(10))
-                .handler(auth::handler::logout),
+                .handler(auth::handler_common::logout),
         )
 }
 

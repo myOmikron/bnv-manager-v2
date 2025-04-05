@@ -1,2 +1,2 @@
-pub(crate) mod handler;
+pub(crate) mod handler_admin;
 pub(crate) mod schema;

@@ -58,7 +58,7 @@ pub async fn admin_get_club(
 }
 
 #[galvyn::post("/clubs")]
-pub async fn admin_create_club(
+pub async fn create_club(
     ApiJson(CreateClubRequest { name }): ApiJson<CreateClubRequest>,
 ) -> ApiResult<ApiJson<FormResult<SingleUuid, CreateClubResponseError>>> {
     let mut tx = Database::global().start_transaction().await?;
@@ -88,7 +88,7 @@ pub async fn admin_create_club(
 }
 
 #[galvyn::delete("/clubs/{uuid}")]
-pub async fn admin_delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
+pub async fn delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
     let mut tx = Database::global().start_transaction().await?;
 
     let club = rorm::query(&mut tx, Club)

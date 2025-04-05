@@ -1,2 +1,2 @@
-pub mod handler;
-mod schema;
+pub mod handler_common;
+pub mod schema;
