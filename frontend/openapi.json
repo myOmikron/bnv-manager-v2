@@ -262,7 +262,7 @@
                 }
             },
             "post": {
-                "operationId": "admin_create_club",
+                "operationId": "create_club",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -355,7 +355,7 @@
                 }
             },
             "delete": {
-                "operationId": "admin_delete_club",
+                "operationId": "delete_club",
                 "parameters": [
                     {
                         "in": "path",
@@ -397,7 +397,7 @@
         },
         "/api/v1/frontend/admin/users/admins": {
             "get": {
-                "operationId": "admin_get_admins",
+                "operationId": "get_admins",
                 "responses": {
                     "200": {
                         "description": "",

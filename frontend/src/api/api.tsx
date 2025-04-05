@@ -6,14 +6,14 @@ import {
     CreateClubRequest,
     DefaultApi,
     RequiredError,
-    ResponseError
+    ResponseError,
 } from "src/api/generated";
 
 /** Hyphen separated uuid */
 export type UUID = string;
 
 const configuration = new Configuration({
-    basePath: window.location.origin
+    basePath: window.location.origin,
 });
 
 const api = new DefaultApi(configuration);
@@ -22,19 +22,19 @@ const api = new DefaultApi(configuration);
 export const Api = {
     admin: {
         admins: {
-            getAll: () => handleError(api.adminGetAdmins())
+            getAll: () => handleError(api.adminGetAdmins()),
         },
         clubs: {
             getAll: () => handleError(api.adminGetClubs()),
             get: (uuid: UUID) => handleError(api.adminGetClub({ uuid })),
             create: (createClub: CreateClubRequest) =>
                 handleError(api.adminCreateClub({ CreateClubRequest: createClub })),
-            delete: (uuid: UUID) => handleError(api.adminDeleteClub({ uuid }))
-        }
+            delete: (uuid: UUID) => handleError(api.adminDeleteClub({ uuid })),
+        },
     },
     auth: {
         login: (username: string, password: string) => handleError(api.login({ LoginRequest: { username, password } })),
-        logout: () => handleError(api.logout())
+        logout: () => handleError(api.logout()),
     },
     invites: {
         get: (uuid: UUID) => handleError(api.getInvite({ uuid })),
@@ -42,13 +42,13 @@ export const Api = {
             handleError(
                 api.acceptInvite({
                     uuid,
-                    AcceptInviteRequest: req
-                })
-            )
+                    AcceptInviteRequest: req,
+                }),
+            ),
     },
     me: {
-        get: () => api.getMe()
-    }
+        get: () => api.getMe(),
+    },
 };
 
 /* eslint-enable */

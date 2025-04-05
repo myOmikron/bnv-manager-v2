@@ -17,7 +17,6 @@ export default function AdminClubDashboard(props: AdminClubDashboardProps) {
     return <div></div>;
 }
 
-
 export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/dashboard")({
-    component: AdminClubDashboard
+    component: AdminClubDashboard,
 });

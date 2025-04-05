@@ -17,12 +17,11 @@ const ADMIN_SINGLE_CLUB = React.createContext<AdminSingleClubContext>({
     data: {
         created_at: "",
         name: "",
-        uuid: ""
+        uuid: "",
     },
 
     /** Reset the context */
-    reset: () => {
-    }
+    reset: () => {},
 });
 ADMIN_SINGLE_CLUB.displayName = "AdminSingleClubContext";
 export default ADMIN_SINGLE_CLUB;
@@ -70,7 +69,7 @@ export function AdminSingleClubProvider(props: AdminSingleClubProviderProps) {
         <ADMIN_SINGLE_CLUB.Provider
             value={{
                 data,
-                reset: fetch
+                reset: fetch,
             }}
         >
             {props.children}

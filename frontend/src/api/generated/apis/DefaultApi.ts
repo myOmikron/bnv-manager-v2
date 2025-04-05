@@ -32,15 +32,15 @@ export interface AcceptInviteOperationRequest {
     AcceptInviteRequest?: AcceptInviteRequest;
 }
 
-export interface AdminCreateClubRequest {
-    CreateClubRequest?: CreateClubRequest;
-}
-
-export interface AdminDeleteClubRequest {
+export interface AdminGetClubRequest {
     uuid: string;
 }
 
-export interface AdminGetClubRequest {
+export interface CreateClubOperationRequest {
+    CreateClubRequest?: CreateClubRequest;
+}
+
+export interface DeleteClubRequest {
     uuid: string;
 }
 
@@ -88,87 +88,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async acceptInvite(requestParameters: AcceptInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.acceptInviteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async adminCreateClubRaw(requestParameters: AdminCreateClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleUuidAndCreateClubResponseError>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/api/v1/frontend/admin/clubs`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: requestParameters['CreateClubRequest'],
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response);
-    }
-
-    /**
-     */
-    async adminCreateClub(requestParameters: AdminCreateClubRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleUuidAndCreateClubResponseError> {
-        const response = await this.adminCreateClubRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async adminDeleteClubRaw(requestParameters: AdminDeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters['uuid'] == null) {
-            throw new runtime.RequiredError(
-                'uuid',
-                'Required parameter "uuid" was null or undefined when calling adminDeleteClub().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/frontend/admin/clubs/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async adminDeleteClub(requestParameters: AdminDeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.adminDeleteClubRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async adminGetAdminsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AdminUser>>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/frontend/admin/users/admins`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response);
-    }
-
-    /**
-     */
-    async adminGetAdmins(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AdminUser>> {
-        const response = await this.adminGetAdminsRaw(initOverrides);
-        return await response.value();
     }
 
     /**
@@ -223,6 +142,87 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async adminGetClubs(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SimpleClub>> {
         const response = await this.adminGetClubsRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async createClubRaw(requestParameters: CreateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleUuidAndCreateClubResponseError>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['CreateClubRequest'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async createClub(requestParameters: CreateClubOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleUuidAndCreateClubResponseError> {
+        const response = await this.createClubRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async deleteClubRaw(requestParameters: DeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling deleteClub().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async deleteClub(requestParameters: DeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteClubRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async getAdminsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AdminUser>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/users/admins`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getAdmins(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AdminUser>> {
+        const response = await this.getAdminsRaw(initOverrides);
         return await response.value();
     }
 

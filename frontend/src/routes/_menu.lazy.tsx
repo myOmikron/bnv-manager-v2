@@ -12,7 +12,7 @@ import {
     SidebarHeading,
     SidebarItem,
     SidebarLabel,
-    SidebarSection
+    SidebarSection,
 } from "src/components/base/sidebar";
 import { SidebarLayout } from "src/components/base/sidebar-layout";
 import { Navbar, NavbarItem, NavbarLabel, NavbarSpacer } from "src/components/base/navbar";
@@ -22,7 +22,7 @@ import {
     ChevronUpIcon,
     UserGroupIcon,
     UserIcon,
-    UserPlusIcon
+    UserPlusIcon,
 } from "@heroicons/react/20/solid";
 import { Api } from "src/api/api";
 
@@ -67,7 +67,6 @@ function Menu(props: MenuProps) {
                                         <UserPlusIcon />
                                         <SidebarLabel>{t("button.admin-overview")}</SidebarLabel>
                                     </SidebarItem>
-
                                 </SidebarSection>
                             </>
                         )}
@@ -78,12 +77,10 @@ function Menu(props: MenuProps) {
                                 <span className="grid h-10 w-full min-w-0 grid-cols-[30px_1fr_20px] items-center gap-3">
                                     <UserIcon />
                                     <span className="min-w-0">
-                                        <span
-                                            className="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">
+                                        <span className="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">
                                             {ctx.user.display_name}
                                         </span>
-                                        <span
-                                            className="block truncate text-xs/5 font-normal text-zinc-500 dark:text-zinc-400">
+                                        <span className="block truncate text-xs/5 font-normal text-zinc-500 dark:text-zinc-400">
                                             {ctx.user.username}
                                         </span>
                                     </span>
@@ -150,5 +147,5 @@ export const Route = createLazyFileRoute("/_menu")({
         <UserProvider>
             <Menu />
         </UserProvider>
-    )
+    ),
 });

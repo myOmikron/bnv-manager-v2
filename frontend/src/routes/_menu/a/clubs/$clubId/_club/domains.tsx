@@ -17,7 +17,6 @@ export default function AdminClubDomains(props: AdminClubDomainsProps) {
     return <div></div>;
 }
 
-
 export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/domains")({
-    component: AdminClubDomains
+    component: AdminClubDomains,
 });

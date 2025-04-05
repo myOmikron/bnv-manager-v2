@@ -15,7 +15,7 @@ import {
     DropdownItem,
     DropdownLabel,
     DropdownMenu,
-    DropdownSection
+    DropdownSection,
 } from "src/components/base/dropdown";
 import { SimpleClub } from "src/api/generated";
 import AdminDeleteClubDialog from "src/components/dialogs/admin-delete-club";
@@ -116,5 +116,5 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
 export const Route = createFileRoute("/_menu/a/clubs/")({
     component: AdminClubOverview,
     // eslint-disable-next-line
-    loader: async () => await Api.admin.clubs.getAll()
+    loader: async () => await Api.admin.clubs.getAll(),
 });

@@ -22,38 +22,39 @@ export default function AdminOverview(props: AdminOverviewProps) {
 
     const data = Route.useLoaderData();
 
-    return <HeadingLayout heading={t("heading.admin-overview")}>
-
-        <Table dense={true}>
-            <TableHead>
-                <TableHeader>{t("label.username")}</TableHeader>
-                <TableHeader>{t("label.display-name")}</TableHeader>
-                <TableHeader className={"w-0"}>
-                    <span className={"sr-only"}>{tg("accessibility.actions")}</span>
-                </TableHeader>
-            </TableHead>
-            <TableBody>
-                {data.map((user) => <TableRow key={user.uuid}>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.display_name}</TableCell>
-                    <TableCell>
-                        <Dropdown>
-                            <DropdownButton plain={true}>
-                                <EllipsisVerticalIcon />
-                            </DropdownButton>
-                            <DropdownMenu anchor={"bottom end"}></DropdownMenu>
-                        </Dropdown>
-                    </TableCell>
-                </TableRow>)}
-            </TableBody>
-        </Table>
-
-    </HeadingLayout>;
+    return (
+        <HeadingLayout heading={t("heading.admin-overview")}>
+            <Table dense={true}>
+                <TableHead>
+                    <TableHeader>{t("label.username")}</TableHeader>
+                    <TableHeader>{t("label.display-name")}</TableHeader>
+                    <TableHeader className={"w-0"}>
+                        <span className={"sr-only"}>{tg("accessibility.actions")}</span>
+                    </TableHeader>
+                </TableHead>
+                <TableBody>
+                    {data.map((user) => (
+                        <TableRow key={user.uuid}>
+                            <TableCell>{user.username}</TableCell>
+                            <TableCell>{user.display_name}</TableCell>
+                            <TableCell>
+                                <Dropdown>
+                                    <DropdownButton plain={true}>
+                                        <EllipsisVerticalIcon />
+                                    </DropdownButton>
+                                    <DropdownMenu anchor={"bottom end"}></DropdownMenu>
+                                </Dropdown>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </HeadingLayout>
+    );
 }
-
 
 export const Route = createFileRoute("/_menu/a/admins/")({
     component: AdminOverview,
     // eslint-disable-next-line
-    loader: async () => await Api.admin.admins.getAll()
+    loader: async () => await Api.admin.admins.getAll(),
 });
