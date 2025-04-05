@@ -21,6 +21,9 @@ const api = new DefaultApi(configuration);
 /* eslint-disable */
 export const Api = {
     admin: {
+        admins: {
+            getAll: () => handleError(api.adminGetAdmins())
+        },
         clubs: {
             getAll: () => handleError(api.adminGetClubs()),
             get: (uuid: UUID) => handleError(api.adminGetClub({ uuid })),

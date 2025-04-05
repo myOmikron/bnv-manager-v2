@@ -14,6 +14,43 @@ export interface AcceptInviteRequest {
     password: string;
 }
 /**
+ * 
+ * @export
+ * @interface AdminUser
+ */
+export interface AdminUser {
+    /**
+     * 
+     * @type {string}
+     * @memberof AdminUser
+     */
+    created_at: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AdminUser
+     */
+    disabled: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdminUser
+     */
+    display_name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdminUser
+     */
+    username: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AdminUser
+     */
+    uuid: string;
+}
+/**
  * The response that is sent in a case of an error
  * @export
  * @interface ApiErrorResponse

@@ -13,14 +13,19 @@ pub(crate) mod clubs;
 pub(crate) mod invites;
 pub(crate) mod me;
 pub(crate) mod openapi;
+pub(crate) mod users;
 
 /// Handler for the admin
 pub fn router_admin() -> GalvynRouter {
     GalvynRouter::new()
-        .handler(clubs::handler::admin_get_clubs)
-        .handler(clubs::handler::admin_get_club)
-        .handler(clubs::handler::admin_create_club)
-        .handler(clubs::handler::admin_delete_club)
+        .merge(
+            GalvynRouter::new()
+                .handler(clubs::handler::admin_get_clubs)
+                .handler(clubs::handler::admin_get_club)
+                .handler(clubs::handler::admin_create_club)
+                .handler(clubs::handler::admin_delete_club),
+        )
+        .merge(GalvynRouter::new().handler(users::handler::admin_get_admins))
         .layer(middleware::from_fn(admin_required))
 }
 

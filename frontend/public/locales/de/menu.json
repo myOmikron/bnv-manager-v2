@@ -1,5 +1,6 @@
 {
     "button": {
+        "admin-overview": "Admin Übersicht",
         "club-overview": "Vereine-Übersicht",
         "profile": "Profil",
         "sign-out": "Ausloggen"

@@ -16,6 +16,7 @@
 import * as runtime from '../runtime';
 import type {
   AcceptInviteRequest,
+  AdminUser,
   ApiErrorResponse,
   CreateClubRequest,
   FormResultForNullAndLoginResponse,
@@ -144,6 +145,30 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async adminDeleteClub(requestParameters: AdminDeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.adminDeleteClubRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async adminGetAdminsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AdminUser>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/users/admins`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async adminGetAdmins(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AdminUser>> {
+        const response = await this.adminGetAdminsRaw(initOverrides);
+        return await response.value();
     }
 
     /**

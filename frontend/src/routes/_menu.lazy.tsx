@@ -17,7 +17,13 @@ import {
 import { SidebarLayout } from "src/components/base/sidebar-layout";
 import { Navbar, NavbarItem, NavbarLabel, NavbarSpacer } from "src/components/base/navbar";
 import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } from "src/components/base/dropdown";
-import { ArrowRightStartOnRectangleIcon, ChevronUpIcon, UserGroupIcon, UserIcon } from "@heroicons/react/20/solid";
+import {
+    ArrowRightStartOnRectangleIcon,
+    ChevronUpIcon,
+    UserGroupIcon,
+    UserIcon,
+    UserPlusIcon
+} from "@heroicons/react/20/solid";
 import { Api } from "src/api/api";
 
 /**
@@ -56,6 +62,12 @@ function Menu(props: MenuProps) {
                                         <UserGroupIcon />
                                         <SidebarLabel>{t("button.club-overview")}</SidebarLabel>
                                     </SidebarItem>
+
+                                    <SidebarItem href={"/a/admins"}>
+                                        <UserPlusIcon />
+                                        <SidebarLabel>{t("button.admin-overview")}</SidebarLabel>
+                                    </SidebarItem>
+
                                 </SidebarSection>
                             </>
                         )}
