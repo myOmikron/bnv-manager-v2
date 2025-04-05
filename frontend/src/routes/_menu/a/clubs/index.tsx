@@ -15,7 +15,7 @@ import {
     DropdownItem,
     DropdownLabel,
     DropdownMenu,
-    DropdownSection,
+    DropdownSection
 } from "src/components/base/dropdown";
 import { SimpleClub } from "src/api/generated";
 import AdminDeleteClubDialog from "src/components/dialogs/admin-delete-club";
@@ -48,7 +48,7 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                 </PrimaryButton>
             }
         >
-            <Table>
+            <Table dense={true}>
                 <TableHead>
                     <TableRow>
                         <TableHeader>{t("label.club-name")}</TableHeader>
@@ -60,7 +60,7 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                 </TableHead>
                 <TableBody>
                     {clubs.map((club) => (
-                        <TableRow key={club.uuid}>
+                        <TableRow key={club.uuid} href={"/a/clubs/$clubId/dashboard"} params={{ clubId: club.uuid }}>
                             <TableCell>{club.name}</TableCell>
                             <TableCell>{new Date(club.created_at).toLocaleDateString("de-de")}</TableCell>
                             <TableCell>
@@ -116,5 +116,5 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
 export const Route = createFileRoute("/_menu/a/clubs/")({
     component: AdminClubOverview,
     // eslint-disable-next-line
-    loader: async () => await Api.admin.clubs.getAll(),
+    loader: async () => await Api.admin.clubs.getAll()
 });

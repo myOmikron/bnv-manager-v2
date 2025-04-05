@@ -36,6 +36,27 @@ pub async fn admin_get_clubs() -> ApiResult<ApiJson<Vec<SimpleClub>>> {
     Ok(ApiJson(clubs))
 }
 
+#[galvyn::get("/clubs/{uuid}")]
+pub async fn admin_get_club(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+) -> ApiResult<ApiJson<SimpleClub>> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let club = rorm::query(&mut tx, Club)
+        .condition(Club.uuid.equals(uuid))
+        .optional()
+        .await?
+        .ok_or(ApiError::bad_request("Club not found."))?;
+
+    tx.commit().await?;
+
+    Ok(ApiJson(SimpleClub {
+        uuid,
+        name: club.name,
+        created_at: SchemaDateTime(club.created_at),
+    }))
+}
+
 #[galvyn::post("/clubs")]
 pub async fn admin_create_club(
     ApiJson(CreateClubRequest { name }): ApiJson<CreateClubRequest>,

@@ -1,6 +1,6 @@
 import { createLazyFileRoute, Outlet } from "@tanstack/react-router";
 
-import React, { useContext } from "react";
+import React, { Suspense, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import USER_CONTEXT, { UserProvider } from "src/context/user";
 import {
@@ -125,7 +125,9 @@ function Menu(props: MenuProps) {
                 </Navbar>
             }
         >
-            <Outlet />
+            <Suspense>
+                <Outlet />
+            </Suspense>
         </SidebarLayout>
     );
 }

@@ -17,10 +17,14 @@ import { Route as MenuIndexImport } from './routes/_menu/index'
 import { Route as InvitesInviteIdImport } from './routes/invites/$inviteId'
 import { Route as MenuProfileImport } from './routes/_menu/profile'
 import { Route as MenuAClubsIndexImport } from './routes/_menu/a/clubs/index'
+import { Route as MenuAClubsClubIdClubImport } from './routes/_menu/a/clubs/$clubId/_club'
+import { Route as MenuAClubsClubIdClubDomainsImport } from './routes/_menu/a/clubs/$clubId/_club/domains'
+import { Route as MenuAClubsClubIdClubDashboardImport } from './routes/_menu/a/clubs/$clubId/_club/dashboard'
 
 // Create Virtual Routes
 
 const MenuLazyImport = createFileRoute('/_menu')()
+const MenuAClubsClubIdImport = createFileRoute('/_menu/a/clubs/$clubId')()
 
 // Create/Update Routes
 
@@ -47,11 +51,36 @@ const MenuProfileRoute = MenuProfileImport.update({
   getParentRoute: () => MenuLazyRoute,
 } as any)
 
+const MenuAClubsClubIdRoute = MenuAClubsClubIdImport.update({
+  id: '/a/clubs/$clubId',
+  path: '/a/clubs/$clubId',
+  getParentRoute: () => MenuLazyRoute,
+} as any)
+
 const MenuAClubsIndexRoute = MenuAClubsIndexImport.update({
   id: '/a/clubs/',
   path: '/a/clubs/',
   getParentRoute: () => MenuLazyRoute,
 } as any)
+
+const MenuAClubsClubIdClubRoute = MenuAClubsClubIdClubImport.update({
+  id: '/_club',
+  getParentRoute: () => MenuAClubsClubIdRoute,
+} as any)
+
+const MenuAClubsClubIdClubDomainsRoute =
+  MenuAClubsClubIdClubDomainsImport.update({
+    id: '/domains',
+    path: '/domains',
+    getParentRoute: () => MenuAClubsClubIdClubRoute,
+  } as any)
+
+const MenuAClubsClubIdClubDashboardRoute =
+  MenuAClubsClubIdClubDashboardImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => MenuAClubsClubIdClubRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -92,21 +121,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MenuAClubsIndexImport
       parentRoute: typeof MenuLazyImport
     }
+    '/_menu/a/clubs/$clubId': {
+      id: '/_menu/a/clubs/$clubId'
+      path: '/a/clubs/$clubId'
+      fullPath: '/a/clubs/$clubId'
+      preLoaderRoute: typeof MenuAClubsClubIdImport
+      parentRoute: typeof MenuLazyImport
+    }
+    '/_menu/a/clubs/$clubId/_club': {
+      id: '/_menu/a/clubs/$clubId/_club'
+      path: '/a/clubs/$clubId'
+      fullPath: '/a/clubs/$clubId'
+      preLoaderRoute: typeof MenuAClubsClubIdClubImport
+      parentRoute: typeof MenuAClubsClubIdRoute
+    }
+    '/_menu/a/clubs/$clubId/_club/dashboard': {
+      id: '/_menu/a/clubs/$clubId/_club/dashboard'
+      path: '/dashboard'
+      fullPath: '/a/clubs/$clubId/dashboard'
+      preLoaderRoute: typeof MenuAClubsClubIdClubDashboardImport
+      parentRoute: typeof MenuAClubsClubIdClubImport
+    }
+    '/_menu/a/clubs/$clubId/_club/domains': {
+      id: '/_menu/a/clubs/$clubId/_club/domains'
+      path: '/domains'
+      fullPath: '/a/clubs/$clubId/domains'
+      preLoaderRoute: typeof MenuAClubsClubIdClubDomainsImport
+      parentRoute: typeof MenuAClubsClubIdClubImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface MenuAClubsClubIdClubRouteChildren {
+  MenuAClubsClubIdClubDashboardRoute: typeof MenuAClubsClubIdClubDashboardRoute
+  MenuAClubsClubIdClubDomainsRoute: typeof MenuAClubsClubIdClubDomainsRoute
+}
+
+const MenuAClubsClubIdClubRouteChildren: MenuAClubsClubIdClubRouteChildren = {
+  MenuAClubsClubIdClubDashboardRoute: MenuAClubsClubIdClubDashboardRoute,
+  MenuAClubsClubIdClubDomainsRoute: MenuAClubsClubIdClubDomainsRoute,
+}
+
+const MenuAClubsClubIdClubRouteWithChildren =
+  MenuAClubsClubIdClubRoute._addFileChildren(MenuAClubsClubIdClubRouteChildren)
+
+interface MenuAClubsClubIdRouteChildren {
+  MenuAClubsClubIdClubRoute: typeof MenuAClubsClubIdClubRouteWithChildren
+}
+
+const MenuAClubsClubIdRouteChildren: MenuAClubsClubIdRouteChildren = {
+  MenuAClubsClubIdClubRoute: MenuAClubsClubIdClubRouteWithChildren,
+}
+
+const MenuAClubsClubIdRouteWithChildren =
+  MenuAClubsClubIdRoute._addFileChildren(MenuAClubsClubIdRouteChildren)
+
 interface MenuLazyRouteChildren {
   MenuProfileRoute: typeof MenuProfileRoute
   MenuIndexRoute: typeof MenuIndexRoute
   MenuAClubsIndexRoute: typeof MenuAClubsIndexRoute
+  MenuAClubsClubIdRoute: typeof MenuAClubsClubIdRouteWithChildren
 }
 
 const MenuLazyRouteChildren: MenuLazyRouteChildren = {
   MenuProfileRoute: MenuProfileRoute,
   MenuIndexRoute: MenuIndexRoute,
   MenuAClubsIndexRoute: MenuAClubsIndexRoute,
+  MenuAClubsClubIdRoute: MenuAClubsClubIdRouteWithChildren,
 }
 
 const MenuLazyRouteWithChildren = MenuLazyRoute._addFileChildren(
@@ -119,6 +202,9 @@ export interface FileRoutesByFullPath {
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/': typeof MenuIndexRoute
   '/a/clubs': typeof MenuAClubsIndexRoute
+  '/a/clubs/$clubId': typeof MenuAClubsClubIdClubRouteWithChildren
+  '/a/clubs/$clubId/dashboard': typeof MenuAClubsClubIdClubDashboardRoute
+  '/a/clubs/$clubId/domains': typeof MenuAClubsClubIdClubDomainsRoute
 }
 
 export interface FileRoutesByTo {
@@ -126,6 +212,9 @@ export interface FileRoutesByTo {
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/': typeof MenuIndexRoute
   '/a/clubs': typeof MenuAClubsIndexRoute
+  '/a/clubs/$clubId': typeof MenuAClubsClubIdClubRouteWithChildren
+  '/a/clubs/$clubId/dashboard': typeof MenuAClubsClubIdClubDashboardRoute
+  '/a/clubs/$clubId/domains': typeof MenuAClubsClubIdClubDomainsRoute
 }
 
 export interface FileRoutesById {
@@ -135,13 +224,32 @@ export interface FileRoutesById {
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/_menu/': typeof MenuIndexRoute
   '/_menu/a/clubs/': typeof MenuAClubsIndexRoute
+  '/_menu/a/clubs/$clubId': typeof MenuAClubsClubIdRouteWithChildren
+  '/_menu/a/clubs/$clubId/_club': typeof MenuAClubsClubIdClubRouteWithChildren
+  '/_menu/a/clubs/$clubId/_club/dashboard': typeof MenuAClubsClubIdClubDashboardRoute
+  '/_menu/a/clubs/$clubId/_club/domains': typeof MenuAClubsClubIdClubDomainsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/profile' | '/invites/$inviteId' | '/' | '/a/clubs'
+  fullPaths:
+    | ''
+    | '/profile'
+    | '/invites/$inviteId'
+    | '/'
+    | '/a/clubs'
+    | '/a/clubs/$clubId'
+    | '/a/clubs/$clubId/dashboard'
+    | '/a/clubs/$clubId/domains'
   fileRoutesByTo: FileRoutesByTo
-  to: '/profile' | '/invites/$inviteId' | '/' | '/a/clubs'
+  to:
+    | '/profile'
+    | '/invites/$inviteId'
+    | '/'
+    | '/a/clubs'
+    | '/a/clubs/$clubId'
+    | '/a/clubs/$clubId/dashboard'
+    | '/a/clubs/$clubId/domains'
   id:
     | '__root__'
     | '/_menu'
@@ -149,6 +257,10 @@ export interface FileRouteTypes {
     | '/invites/$inviteId'
     | '/_menu/'
     | '/_menu/a/clubs/'
+    | '/_menu/a/clubs/$clubId'
+    | '/_menu/a/clubs/$clubId/_club'
+    | '/_menu/a/clubs/$clubId/_club/dashboard'
+    | '/_menu/a/clubs/$clubId/_club/domains'
   fileRoutesById: FileRoutesById
 }
 
@@ -181,7 +293,8 @@ export const routeTree = rootRoute
       "children": [
         "/_menu/profile",
         "/_menu/",
-        "/_menu/a/clubs/"
+        "/_menu/a/clubs/",
+        "/_menu/a/clubs/$clubId"
       ]
     },
     "/_menu/profile": {
@@ -198,6 +311,29 @@ export const routeTree = rootRoute
     "/_menu/a/clubs/": {
       "filePath": "_menu/a/clubs/index.tsx",
       "parent": "/_menu"
+    },
+    "/_menu/a/clubs/$clubId": {
+      "filePath": "_menu/a/clubs/$clubId",
+      "parent": "/_menu",
+      "children": [
+        "/_menu/a/clubs/$clubId/_club"
+      ]
+    },
+    "/_menu/a/clubs/$clubId/_club": {
+      "filePath": "_menu/a/clubs/$clubId/_club.tsx",
+      "parent": "/_menu/a/clubs/$clubId",
+      "children": [
+        "/_menu/a/clubs/$clubId/_club/dashboard",
+        "/_menu/a/clubs/$clubId/_club/domains"
+      ]
+    },
+    "/_menu/a/clubs/$clubId/_club/dashboard": {
+      "filePath": "_menu/a/clubs/$clubId/_club/dashboard.tsx",
+      "parent": "/_menu/a/clubs/$clubId/_club"
+    },
+    "/_menu/a/clubs/$clubId/_club/domains": {
+      "filePath": "_menu/a/clubs/$clubId/_club/domains.tsx",
+      "parent": "/_menu/a/clubs/$clubId/_club"
     }
   }
 }
