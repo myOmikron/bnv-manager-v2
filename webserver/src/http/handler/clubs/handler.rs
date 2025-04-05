@@ -21,6 +21,7 @@ pub async fn admin_get_clubs() -> ApiResult<ApiJson<Vec<SimpleClub>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let clubs = rorm::query(&mut tx, Club)
+        .order_asc(Club.name)
         .stream()
         .map_ok(|x| SimpleClub {
             uuid: x.uuid,
