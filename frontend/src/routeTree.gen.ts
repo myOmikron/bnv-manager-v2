@@ -8,26 +8,31 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as MenuImport } from './routes/_menu'
 import { Route as MenuIndexImport } from './routes/_menu/index'
 import { Route as InvitesInviteIdImport } from './routes/invites/$inviteId'
 import { Route as MenuProfileImport } from './routes/_menu/profile'
 import { Route as MenuAClubsIndexImport } from './routes/_menu/a/clubs/index'
 
+// Create Virtual Routes
+
+const MenuLazyImport = createFileRoute('/_menu')()
+
 // Create/Update Routes
 
-const MenuRoute = MenuImport.update({
+const MenuLazyRoute = MenuLazyImport.update({
   id: '/_menu',
   getParentRoute: () => rootRoute,
-} as any)
+} as any).lazy(() => import('./routes/_menu.lazy').then((d) => d.Route))
 
 const MenuIndexRoute = MenuIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => MenuRoute,
+  getParentRoute: () => MenuLazyRoute,
 } as any)
 
 const InvitesInviteIdRoute = InvitesInviteIdImport.update({
@@ -39,13 +44,13 @@ const InvitesInviteIdRoute = InvitesInviteIdImport.update({
 const MenuProfileRoute = MenuProfileImport.update({
   id: '/profile',
   path: '/profile',
-  getParentRoute: () => MenuRoute,
+  getParentRoute: () => MenuLazyRoute,
 } as any)
 
 const MenuAClubsIndexRoute = MenuAClubsIndexImport.update({
   id: '/a/clubs/',
   path: '/a/clubs/',
-  getParentRoute: () => MenuRoute,
+  getParentRoute: () => MenuLazyRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -56,7 +61,7 @@ declare module '@tanstack/react-router' {
       id: '/_menu'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof MenuImport
+      preLoaderRoute: typeof MenuLazyImport
       parentRoute: typeof rootRoute
     }
     '/_menu/profile': {
@@ -64,7 +69,7 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof MenuProfileImport
-      parentRoute: typeof MenuImport
+      parentRoute: typeof MenuLazyImport
     }
     '/invites/$inviteId': {
       id: '/invites/$inviteId'
@@ -78,36 +83,38 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof MenuIndexImport
-      parentRoute: typeof MenuImport
+      parentRoute: typeof MenuLazyImport
     }
     '/_menu/a/clubs/': {
       id: '/_menu/a/clubs/'
       path: '/a/clubs'
       fullPath: '/a/clubs'
       preLoaderRoute: typeof MenuAClubsIndexImport
-      parentRoute: typeof MenuImport
+      parentRoute: typeof MenuLazyImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface MenuRouteChildren {
+interface MenuLazyRouteChildren {
   MenuProfileRoute: typeof MenuProfileRoute
   MenuIndexRoute: typeof MenuIndexRoute
   MenuAClubsIndexRoute: typeof MenuAClubsIndexRoute
 }
 
-const MenuRouteChildren: MenuRouteChildren = {
+const MenuLazyRouteChildren: MenuLazyRouteChildren = {
   MenuProfileRoute: MenuProfileRoute,
   MenuIndexRoute: MenuIndexRoute,
   MenuAClubsIndexRoute: MenuAClubsIndexRoute,
 }
 
-const MenuRouteWithChildren = MenuRoute._addFileChildren(MenuRouteChildren)
+const MenuLazyRouteWithChildren = MenuLazyRoute._addFileChildren(
+  MenuLazyRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
-  '': typeof MenuRouteWithChildren
+  '': typeof MenuLazyRouteWithChildren
   '/profile': typeof MenuProfileRoute
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/': typeof MenuIndexRoute
@@ -123,7 +130,7 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/_menu': typeof MenuRouteWithChildren
+  '/_menu': typeof MenuLazyRouteWithChildren
   '/_menu/profile': typeof MenuProfileRoute
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/_menu/': typeof MenuIndexRoute
@@ -146,12 +153,12 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
-  MenuRoute: typeof MenuRouteWithChildren
+  MenuLazyRoute: typeof MenuLazyRouteWithChildren
   InvitesInviteIdRoute: typeof InvitesInviteIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  MenuRoute: MenuRouteWithChildren,
+  MenuLazyRoute: MenuLazyRouteWithChildren,
   InvitesInviteIdRoute: InvitesInviteIdRoute,
 }
 
@@ -170,7 +177,7 @@ export const routeTree = rootRoute
       ]
     },
     "/_menu": {
-      "filePath": "_menu.tsx",
+      "filePath": "_menu.lazy.tsx",
       "children": [
         "/_menu/profile",
         "/_menu/",
