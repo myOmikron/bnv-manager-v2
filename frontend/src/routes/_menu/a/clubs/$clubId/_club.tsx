@@ -4,7 +4,6 @@ import { Tab, TabMenu } from "src/components/base/tab-menu";
 import { BackButton } from "src/components/base/button";
 import { useTranslation } from "react-i18next";
 import TabLayout from "src/components/base/tab-layout";
-import { Badge } from "src/components/base/badge";
 
 /**
  * Props for {@link AdminClubLayout}

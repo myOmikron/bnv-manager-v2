@@ -22,14 +22,13 @@ const api = new DefaultApi(configuration);
 export const Api = {
     admin: {
         admins: {
-            getAll: () => handleError(api.adminGetAdmins()),
+            getAll: () => handleError(api.getAdmins()),
         },
         clubs: {
             getAll: () => handleError(api.adminGetClubs()),
             get: (uuid: UUID) => handleError(api.adminGetClub({ uuid })),
-            create: (createClub: CreateClubRequest) =>
-                handleError(api.adminCreateClub({ CreateClubRequest: createClub })),
-            delete: (uuid: UUID) => handleError(api.adminDeleteClub({ uuid })),
+            create: (createClub: CreateClubRequest) => handleError(api.createClub({ CreateClubRequest: createClub })),
+            delete: (uuid: UUID) => handleError(api.deleteClub({ uuid })),
         },
     },
     auth: {

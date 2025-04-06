@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 /**
  * The properties for {@link AdminClubDashboard}
@@ -12,7 +11,7 @@ export type AdminClubDashboardProps = {};
  * Dashboard for admins that show a single club
  */
 export default function AdminClubDashboard(props: AdminClubDashboardProps) {
-    const [t] = useTranslation("admin-club-view");
+    //const [t] = useTranslation("admin-club-view");
 
     return <div></div>;
 }
