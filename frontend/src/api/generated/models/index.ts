@@ -50,16 +50,31 @@ export interface AdminAccount {
      */
     uuid: string;
 }
-
 /**
  * 
  * @export
+ * @interface AdminCreateInviteError
  */
-export const AdminCreateInviteError = {
-    UsernameAlreadyOccupied: 'UsernameAlreadyOccupied'
-} as const;
-export type AdminCreateInviteError = typeof AdminCreateInviteError[keyof typeof AdminCreateInviteError];
-
+export interface AdminCreateInviteError {
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof AdminCreateInviteError
+     */
+    invalid_clubs: Array<string>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AdminCreateInviteError
+     */
+    username_already_occupied: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AdminCreateInviteError
+     */
+    valid_days_too_small: boolean;
+}
 /**
  * 
  * @export
@@ -74,10 +89,22 @@ export interface AdminCreateInviteRequest {
     display_name: string;
     /**
      * 
+     * @type {Permissions}
+     * @memberof AdminCreateInviteRequest
+     */
+    permissions: Permissions;
+    /**
+     * 
      * @type {string}
      * @memberof AdminCreateInviteRequest
      */
     username: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AdminCreateInviteRequest
+     */
+    valid_days: number;
 }
 /**
  * The response that is sent in a case of an error
@@ -382,10 +409,10 @@ export interface Me {
     display_name: string;
     /**
      * 
-     * @type {SessionPermissions}
+     * @type {Permissions}
      * @memberof Me
      */
-    permissions: SessionPermissions;
+    permissions: Permissions;
     /**
      * 
      * @type {string}
@@ -402,25 +429,25 @@ export interface Me {
 /**
  * Permissions of a session
  * @export
- * @interface SessionPermissions
+ * @interface Permissions
  */
-export interface SessionPermissions {
+export interface Permissions {
     /**
      * User is admin
      * @type {boolean}
-     * @memberof SessionPermissions
+     * @memberof Permissions
      */
     admin: boolean;
     /**
      * The clubs an account is admin in
      * @type {Array<string>}
-     * @memberof SessionPermissions
+     * @memberof Permissions
      */
     club_admin: Array<string>;
     /**
      * The clubs an account is user in
      * @type {Array<string>}
-     * @memberof SessionPermissions
+     * @memberof Permissions
      */
     club_user: Array<string>;
 }

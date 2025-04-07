@@ -15,7 +15,9 @@ use crate::http::handler::invites::schema::FullInvite;
 use crate::models::account::Account;
 use crate::models::account::AccountInsert;
 use crate::models::account::AccountPassword;
+use crate::models::account::AccountRole;
 use crate::models::invite::Invite;
+use crate::models::invite::InviteRole;
 
 #[galvyn::get("/{uuid}")]
 pub async fn get_invite(
@@ -52,6 +54,15 @@ pub async fn accept_invite(
         .await?
         .ok_or(ApiError::bad_request("Invite not found"))?;
 
+    let invite_roles = rorm::query(&mut tx, InviteRole)
+        .condition(InviteRole.invite.equals(uuid))
+        .all()
+        .await?;
+
+    if invite_roles.is_empty() {
+        return Err(ApiError::server_error("Invite without roles are invalid"));
+    }
+
     let now = OffsetDateTime::now_utc();
 
     if invite.expires_at < now {
@@ -69,14 +80,23 @@ pub async fn accept_invite(
         })
         .await?;
 
-    rorm::insert(&mut tx, Account)
-        .return_nothing()
+    let account_uuid = rorm::insert(&mut tx, Account)
+        .return_primary_key()
         .single(&AccountInsert {
             uuid,
             username: invite.username.clone(),
             display_name: invite.display_name,
             password: Some(ForeignModelByField(password)),
         })
+        .await?;
+
+    rorm::insert(&mut tx, AccountRole)
+        .bulk(invite_roles.into_iter().map(|role| AccountRole {
+            uuid: Uuid::new_v4(),
+            account: ForeignModelByField(account_uuid),
+            role: role.role,
+            club: role.club,
+        }))
         .await?;
 
     rorm::delete(&mut tx, Invite)

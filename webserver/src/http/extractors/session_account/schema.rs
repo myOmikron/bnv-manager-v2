@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 /// Permissions of a session
 #[derive(Debug, Clone, Deserialize, Serialize, JsonSchema)]
-pub struct SessionPermissions {
+pub struct Permissions {
     /// User is admin
     pub admin: bool,
     /// The clubs an account is admin in

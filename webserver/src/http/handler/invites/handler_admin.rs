@@ -8,6 +8,7 @@ use rorm::Database;
 use crate::http::handler::invites::schema::AdminCreateInviteError;
 use crate::http::handler::invites::schema::AdminCreateInviteRequest;
 use crate::models::account::Account;
+use crate::models::club::Club;
 use crate::models::invite::impls::CreateInviteParams;
 use crate::models::invite::Invite;
 
@@ -16,8 +17,19 @@ pub async fn admin_create_invite(
     ApiJson(AdminCreateInviteRequest {
         username,
         display_name,
+        permissions,
+        valid_days,
     }): ApiJson<AdminCreateInviteRequest>,
 ) -> ApiResult<ApiJson<FormResult<SingleUuid, AdminCreateInviteError>>> {
+    let mut error = None;
+
+    if valid_days == 0 {
+        error = Some(AdminCreateInviteError {
+            valid_days_too_small: true,
+            ..Default::default()
+        });
+    }
+
     let mut tx = Database::global().start_transaction().await?;
 
     let existing = rorm::query(&mut tx, Account)
@@ -26,9 +38,31 @@ pub async fn admin_create_invite(
         .await?;
 
     if existing.is_some() {
-        return Ok(ApiJson(FormResult::err(
-            AdminCreateInviteError::UsernameAlreadyOccupied,
-        )));
+        let mut tmp = error.unwrap_or_default();
+        tmp.username_already_occupied = true;
+        error = Some(tmp);
+    }
+
+    let mut invalid_clubs = vec![];
+
+    for club in permissions.club_admin.iter().chain(&permissions.club_user) {
+        let c = rorm::query(&mut tx, Club)
+            .condition(Club.uuid.equals(*club))
+            .optional()
+            .await?;
+
+        if c.is_none() {
+            invalid_clubs.push(*club);
+        }
+    }
+    if !invalid_clubs.is_empty() {
+        let mut tmp = error.unwrap_or_default();
+        tmp.invalid_clubs = invalid_clubs;
+        error = Some(tmp);
+    }
+
+    if let Some(err) = error {
+        return Ok(ApiJson(FormResult::err(err)));
     }
 
     let uuid = Invite::create(
@@ -36,9 +70,10 @@ pub async fn admin_create_invite(
         CreateInviteParams {
             username,
             display_name,
-            is_admin: true,
-            is_club_admin: false,
-            valid_days: 8,
+            is_admin: permissions.admin,
+            club_admin: permissions.club_admin,
+            club_user: permissions.club_user,
+            valid_days,
         },
     )
     .await?;

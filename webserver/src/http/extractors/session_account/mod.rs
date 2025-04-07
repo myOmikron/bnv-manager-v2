@@ -9,7 +9,7 @@ use rorm::Database;
 use tracing::warn;
 use uuid::Uuid;
 
-use crate::http::extractors::session_account::schema::SessionPermissions;
+use crate::http::extractors::session_account::schema::Permissions;
 use crate::http::SESSION_ACCOUNT;
 use crate::models::account::Account;
 use crate::models::account::AccountRole;
@@ -28,7 +28,7 @@ pub struct SessionAccount {
     /// Displayname of the associated account
     pub display_name: String,
     /// Permissions of the associated user
-    pub permissions: SessionPermissions,
+    pub permissions: Permissions,
 }
 
 impl<S> FromRequest<S> for SessionAccount
@@ -92,7 +92,7 @@ where
             uuid: account.uuid,
             username: account.username,
             display_name: account.display_name,
-            permissions: SessionPermissions {
+            permissions: Permissions {
                 admin,
                 club_admin,
                 club_user,

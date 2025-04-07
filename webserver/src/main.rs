@@ -113,7 +113,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     username,
                     display_name,
                     is_admin: admin,
-                    is_club_admin: false,
+                    club_admin: vec![],
+                    club_user: vec![],
                     valid_days: 7,
                 },
             )

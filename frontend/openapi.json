@@ -524,9 +524,26 @@
                 ]
             },
             "AdminCreateInviteError": {
-                "type": "string",
-                "enum": [
-                    "UsernameAlreadyOccupied"
+                "type": "object",
+                "properties": {
+                    "invalid_clubs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    "username_already_occupied": {
+                        "type": "boolean"
+                    },
+                    "valid_days_too_small": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "invalid_clubs",
+                    "username_already_occupied",
+                    "valid_days_too_small"
                 ]
             },
             "AdminCreateInviteRequest": {
@@ -535,13 +552,23 @@
                     "display_name": {
                         "type": "string"
                     },
+                    "permissions": {
+                        "$ref": "#/components/schemas/Permissions"
+                    },
                     "username": {
                         "type": "string"
+                    },
+                    "valid_days": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint8"
                     }
                 },
                 "required": [
                     "display_name",
-                    "username"
+                    "permissions",
+                    "username",
+                    "valid_days"
                 ]
             },
             "ApiErrorResponse": {
@@ -778,7 +805,7 @@
                         "type": "string"
                     },
                     "permissions": {
-                        "$ref": "#/components/schemas/SessionPermissions"
+                        "$ref": "#/components/schemas/Permissions"
                     },
                     "username": {
                         "type": "string"
@@ -795,11 +822,7 @@
                     "uuid"
                 ]
             },
-            "SchemaDateTime": {
-                "type": "string",
-                "format": "date-time"
-            },
-            "SessionPermissions": {
+            "Permissions": {
                 "description": "Permissions of a session",
                 "type": "object",
                 "properties": {
@@ -829,6 +852,10 @@
                     "club_admin",
                     "club_user"
                 ]
+            },
+            "SchemaDateTime": {
+                "type": "string",
+                "format": "date-time"
             },
             "SimpleClub": {
                 "type": "object",
