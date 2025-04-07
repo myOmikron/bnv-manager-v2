@@ -3,33 +3,28 @@
 #![warn(missing_docs, clippy::unwrap_used, clippy::expect_used)]
 
 use std::error::Error;
-use std::ops::Add;
-use std::process::exit;
 
 use clap::Parser;
-use galvyn::Galvyn;
 use galvyn::rorm::Database;
 use galvyn::rorm::DatabaseConfiguration;
+use galvyn::Galvyn;
 use rorm::cli as rorm_cli;
-use rorm::insert;
-use rorm::query;
-use time::Duration;
-use time::OffsetDateTime;
-use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use uuid::Uuid;
+use tracing_subscriber::EnvFilter;
 
 use crate::cli::Cli;
 use crate::cli::Command;
 use crate::config::DB;
 use crate::config::ORIGIN;
+use crate::galvyn_modules::migrator::Migrator;
+use crate::models::invite::impls::CreateInviteParams;
 use crate::models::invite::Invite;
-use crate::models::user::User;
 use crate::tracing::opentelemetry_layer;
 
 mod cli;
 pub mod config;
+pub mod galvyn_modules;
 pub mod http;
 pub mod models;
 pub mod tracing;
@@ -37,6 +32,7 @@ pub mod tracing;
 async fn start() -> Result<(), Box<dyn Error>> {
     let router = Galvyn::new()
         .register_module::<Database>(Default::default())
+        .register_module::<Migrator>(())
         .init_modules()
         .await?;
 
@@ -103,57 +99,34 @@ async fn main() -> Result<(), Box<dyn Error>> {
             display_name,
             admin,
         } => {
-            create_invite(username, display_name, admin).await?;
+            // Connect to the database
+            let db = Database::connect(DatabaseConfiguration {
+                ..DatabaseConfiguration::new(DB.clone())
+            })
+            .await?;
+
+            let mut tx = db.start_transaction().await?;
+
+            let uuid = Invite::create(
+                &mut tx,
+                CreateInviteParams {
+                    username,
+                    display_name,
+                    is_admin: admin,
+                    is_club_admin: false,
+                    valid_days: 7,
+                },
+            )
+            .await?;
+
+            tx.commit().await?;
+
+            println!(
+                "Created invite: {}",
+                ORIGIN.get().join(&format!("invites/{uuid}"))?
+            );
         }
     }
-
-    Ok(())
-}
-
-async fn create_invite(
-    username: String,
-    display_name: String,
-    is_admin: bool,
-) -> Result<(), Box<dyn Error>> {
-    // Connect to the database
-    let db = Database::connect(DatabaseConfiguration {
-        ..DatabaseConfiguration::new(DB.clone())
-    })
-    .await?;
-
-    let mut tx = db.start_transaction().await?;
-
-    let existing_user = query(&mut tx, User)
-        .condition(User.username.equals(&username))
-        .optional()
-        .await?;
-
-    if existing_user.is_some() {
-        eprintln!("Already existing user with that username");
-        exit(1);
-    }
-
-    let now = OffsetDateTime::now_utc();
-
-    let uuid = insert(&mut tx, Invite)
-        .return_primary_key()
-        .single(&Invite {
-            uuid: Uuid::new_v4(),
-            admin: is_admin,
-            username,
-            display_name,
-            expires_at: now.add(Duration::days(7)),
-        })
-        .await?;
-
-    tx.commit().await?;
-
-    println!(
-        "Created invite: {}",
-        ORIGIN.get().join(&format!("invites/{uuid}"))?
-    );
-
-    db.close().await;
 
     Ok(())
 }

@@ -5,7 +5,7 @@ use serde::Serialize;
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct AdminUser {
+pub struct AdminAccount {
     pub uuid: Uuid,
     pub username: String,
     pub display_name: String,

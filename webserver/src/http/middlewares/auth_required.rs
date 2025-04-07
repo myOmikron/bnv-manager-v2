@@ -9,9 +9,9 @@ use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::schema::ApiStatusCode;
 use uuid::Uuid;
 
-use crate::http::SESSION_USER;
+use crate::http::SESSION_ACCOUNT;
 
-/// Checks the session if the [SESSION_USER] is present which will be the indicator
+/// Checks the session if the [SESSION_ACCOUNT] is present which will be the indicator
 /// if the user is logged-in
 pub(crate) async fn auth_required(
     session: Session,
@@ -19,7 +19,7 @@ pub(crate) async fn auth_required(
     next: Next,
 ) -> ApiResult<Response> {
     session
-        .get::<Uuid>(SESSION_USER)
+        .get::<Uuid>(SESSION_ACCOUNT)
         .await?
         .ok_or(ApiError::new(
             ApiStatusCode::Unauthenticated,
@@ -29,7 +29,7 @@ pub(crate) async fn auth_required(
     Ok(next.run(req).await)
 }
 
-/// Checks the session if the [SESSION_USER] is present which will be the indicator
+/// Checks the session if the [SESSION_ACCOUNT] is present which will be the indicator
 /// if the user is logged-in
 pub(crate) async fn club_admin_required(
     session: Session,
@@ -37,7 +37,7 @@ pub(crate) async fn club_admin_required(
     next: Next,
 ) -> ApiResult<Response> {
     session
-        .get::<Uuid>(SESSION_USER)
+        .get::<Uuid>(SESSION_ACCOUNT)
         .await?
         .ok_or(ApiError::new(
             ApiStatusCode::Unauthenticated,
@@ -47,7 +47,7 @@ pub(crate) async fn club_admin_required(
     Ok(next.run(req).await)
 }
 
-/// Checks the session if the [SESSION_USER] is present which will be the indicator
+/// Checks the session if the [SESSION_ACCOUNT] is present which will be the indicator
 /// if the user is logged-in
 pub(crate) async fn admin_required(
     session: Session,
@@ -55,7 +55,7 @@ pub(crate) async fn admin_required(
     next: Next,
 ) -> ApiResult<Response> {
     session
-        .get::<Uuid>(SESSION_USER)
+        .get::<Uuid>(SESSION_ACCOUNT)
         .await?
         .ok_or(ApiError::new(
             ApiStatusCode::Unauthenticated,

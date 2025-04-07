@@ -17,3 +17,14 @@ pub struct FullInvite {
     pub display_name: String,
     pub expires_at: SchemaDateTime,
 }
+
+#[derive(JsonSchema, Deserialize, Serialize, Clone, Debug)]
+pub struct AdminCreateInviteRequest {
+    pub username: String,
+    pub display_name: String,
+}
+
+#[derive(JsonSchema, Deserialize, Serialize, Clone, Debug)]
+pub enum AdminCreateInviteError {
+    UsernameAlreadyOccupied,
+}

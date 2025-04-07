@@ -2,7 +2,7 @@ import React from "react";
 import { Api } from "../api/api";
 import CONSOLE from "../utils/console";
 import Login from "../components/login";
-import { ApiError, parseError, StatusCode } from "../api/error";
+import { parseError, StatusCode } from "../api/error";
 import { Navigate } from "@tanstack/react-router";
 import { Me, RequiredError, ResponseError } from "src/api/generated";
 import { toast } from "react-toastify";
@@ -23,9 +23,13 @@ export type UserContext = {
 const USER_CONTEXT = React.createContext<UserContext>({
     user: {
         uuid: "",
-        admin: false,
-        display_name: "",
         username: "",
+        display_name: "",
+        permissions: {
+            admin: false,
+            club_user: [],
+            club_admin: [],
+        },
     },
 
     /**
@@ -148,21 +152,5 @@ export class UserProvider extends React.Component<UserProviderProps, UserProvide
                     </USER_CONTEXT.Provider>
                 );
         }
-    }
-}
-
-/**
- * Inspect an error and handle the {@link StatusCode.Unauthenticated} status code by requiring the user to log in again.
- *
- * @param error {@link ApiError} to inspect for {@link StatusCode.Unauthenticated}
- */
-export function inspectError(error: ApiError) {
-    switch (error.status_code) {
-        case StatusCode.Unauthenticated:
-            if (USER_PROVIDER !== null) USER_PROVIDER.setState({ user: "unauthenticated" });
-            else CONSOLE.warn("inspectError has been called without a UserProvider");
-            break;
-        default:
-            break;
     }
 }

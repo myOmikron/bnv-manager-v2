@@ -406,8 +406,54 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/AdminUser"
+                                        "$ref": "#/components/schemas/AdminAccount"
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/admin/invites": {
+            "post": {
+                "operationId": "admin_create_invite",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AdminCreateInviteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_SingleUuid_and_AdminCreateInviteError"
                                 }
                             }
                         }
@@ -449,7 +495,7 @@
                     "password"
                 ]
             },
-            "AdminUser": {
+            "AdminAccount": {
                 "type": "object",
                 "properties": {
                     "created_at": {
@@ -475,6 +521,27 @@
                     "display_name",
                     "username",
                     "uuid"
+                ]
+            },
+            "AdminCreateInviteError": {
+                "type": "string",
+                "enum": [
+                    "UsernameAlreadyOccupied"
+                ]
+            },
+            "AdminCreateInviteRequest": {
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "username"
                 ]
             },
             "ApiErrorResponse": {
@@ -553,6 +620,47 @@
                         "properties": {
                             "error": {
                                 "$ref": "#/components/schemas/LoginResponse"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
+            "FormResult_for_SingleUuid_and_AdminCreateInviteError": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/SingleUuid"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/AdminCreateInviteError"
                             },
                             "result": {
                                 "type": "string",
@@ -666,11 +774,11 @@
             "Me": {
                 "type": "object",
                 "properties": {
-                    "admin": {
-                        "type": "boolean"
-                    },
                     "display_name": {
                         "type": "string"
+                    },
+                    "permissions": {
+                        "$ref": "#/components/schemas/SessionPermissions"
                     },
                     "username": {
                         "type": "string"
@@ -681,8 +789,8 @@
                     }
                 },
                 "required": [
-                    "admin",
                     "display_name",
+                    "permissions",
                     "username",
                     "uuid"
                 ]
@@ -690,6 +798,37 @@
             "SchemaDateTime": {
                 "type": "string",
                 "format": "date-time"
+            },
+            "SessionPermissions": {
+                "description": "Permissions of a session",
+                "type": "object",
+                "properties": {
+                    "admin": {
+                        "description": "User is admin",
+                        "type": "boolean"
+                    },
+                    "club_admin": {
+                        "description": "The clubs an account is admin in",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    "club_user": {
+                        "description": "The clubs an account is user in",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                },
+                "required": [
+                    "admin",
+                    "club_admin",
+                    "club_user"
+                ]
             },
             "SimpleClub": {
                 "type": "object",

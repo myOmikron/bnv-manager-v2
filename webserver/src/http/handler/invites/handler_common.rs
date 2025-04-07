@@ -1,21 +1,21 @@
 use axum::extract::Path;
-use galvyn::core::Module;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::SchemaDateTime;
 use galvyn::core::stuff::schema::SingleUuid;
-use rorm::Database;
+use galvyn::core::Module;
 use rorm::prelude::ForeignModelByField;
+use rorm::Database;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
 use crate::http::handler::invites::schema::AcceptInviteRequest;
 use crate::http::handler::invites::schema::FullInvite;
+use crate::models::account::Account;
+use crate::models::account::AccountInsert;
+use crate::models::account::AccountPassword;
 use crate::models::invite::Invite;
-use crate::models::user::User;
-use crate::models::user::UserInsert;
-use crate::models::user::UserPassword;
 
 #[galvyn::get("/{uuid}")]
 pub async fn get_invite(
@@ -61,19 +61,18 @@ pub async fn accept_invite(
     let hashed = bcrypt::hash(password.into_inner(), 12)
         .map_err(ApiError::map_server_error("hashing failed"))?;
 
-    let password = rorm::insert(&mut tx, UserPassword)
+    let password = rorm::insert(&mut tx, AccountPassword)
         .return_primary_key()
-        .single(&UserPassword {
+        .single(&AccountPassword {
             uuid: Uuid::new_v4(),
             password: hashed,
         })
         .await?;
 
-    rorm::insert(&mut tx, User)
+    rorm::insert(&mut tx, Account)
         .return_nothing()
-        .single(&UserInsert {
+        .single(&AccountInsert {
             uuid,
-            admin: invite.admin,
             username: invite.username.clone(),
             display_name: invite.display_name,
             password: Some(ForeignModelByField(password)),

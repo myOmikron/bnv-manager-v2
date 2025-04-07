@@ -26,6 +26,7 @@ pub fn router_admin() -> GalvynRouter {
                 .handler(clubs::handler_admin::delete_club),
         )
         .merge(GalvynRouter::new().handler(users::handler_admin::get_admins))
+        .merge(GalvynRouter::new().handler(invites::handler_admin::admin_create_invite))
         .layer(middleware::from_fn(admin_required))
 }
 

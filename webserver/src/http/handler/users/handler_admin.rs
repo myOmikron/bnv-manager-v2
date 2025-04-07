@@ -1,21 +1,23 @@
 use futures_util::TryStreamExt;
-use galvyn::core::Module;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::SchemaDateTime;
+use galvyn::core::Module;
 use rorm::Database;
 
-use crate::http::handler::users::schema::AdminUser;
-use crate::models::user::User;
+use crate::http::handler::users::schema::AdminAccount;
+use crate::models::account::Account;
+use crate::models::account::AccountRole;
+use crate::models::role::ROLE_ADMIN;
 
 #[galvyn::get("/users/admins")]
-pub async fn get_admins() -> ApiResult<ApiJson<Vec<AdminUser>>> {
+pub async fn get_admins() -> ApiResult<ApiJson<Vec<AdminAccount>>> {
     let mut tx = Database::global().start_transaction().await?;
 
-    let users = rorm::query(&mut tx, User)
-        .condition(User.admin.equals(true))
+    let users = rorm::query(&mut tx, (AccountRole.account.query_as(Account),))
+        .condition(AccountRole.role.name.equals(ROLE_ADMIN))
         .stream()
-        .map_ok(|user| AdminUser {
+        .map_ok(|(user,)| AdminAccount {
             uuid: user.uuid,
             username: user.username,
             display_name: user.display_name,

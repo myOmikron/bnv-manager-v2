@@ -16,10 +16,12 @@
 import * as runtime from '../runtime';
 import type {
   AcceptInviteRequest,
-  AdminUser,
+  AdminAccount,
+  AdminCreateInviteRequest,
   ApiErrorResponse,
   CreateClubRequest,
   FormResultForNullAndLoginResponse,
+  FormResultForSingleUuidAndAdminCreateInviteError,
   FormResultForSingleUuidAndCreateClubResponseError,
   FullInvite,
   LoginRequest,
@@ -30,6 +32,10 @@ import type {
 export interface AcceptInviteOperationRequest {
     uuid: string;
     AcceptInviteRequest?: AcceptInviteRequest;
+}
+
+export interface AdminCreateInviteOperationRequest {
+    AdminCreateInviteRequest?: AdminCreateInviteRequest;
 }
 
 export interface AdminGetClubRequest {
@@ -88,6 +94,33 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async acceptInvite(requestParameters: AcceptInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.acceptInviteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async adminCreateInviteRaw(requestParameters: AdminCreateInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleUuidAndAdminCreateInviteError>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/invites`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['AdminCreateInviteRequest'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async adminCreateInvite(requestParameters: AdminCreateInviteOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleUuidAndAdminCreateInviteError> {
+        const response = await this.adminCreateInviteRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**
@@ -204,7 +237,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getAdminsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AdminUser>>> {
+    async getAdminsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AdminAccount>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -221,7 +254,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getAdmins(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AdminUser>> {
+    async getAdmins(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AdminAccount>> {
         const response = await this.getAdminsRaw(initOverrides);
         return await response.value();
     }

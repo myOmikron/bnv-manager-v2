@@ -1,9 +1,9 @@
+use rorm::prelude::ForeignModel;
 use rorm::Model;
 use rorm::Patch;
-use rorm::prelude::ForeignModel;
 use uuid::Uuid;
 
-use crate::models::user::User;
+use crate::models::account::Account;
 
 #[derive(Model)]
 pub struct Club {
@@ -30,7 +30,7 @@ pub struct ClubAdmin {
     pub uuid: Uuid,
 
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
-    pub user: ForeignModel<User>,
+    pub user: ForeignModel<Account>,
 
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub club: ForeignModel<Club>,
@@ -42,7 +42,7 @@ pub struct ClubUser {
     pub uuid: Uuid,
 
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
-    pub user: ForeignModel<User>,
+    pub user: ForeignModel<Account>,
 
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub club: ForeignModel<Club>,
