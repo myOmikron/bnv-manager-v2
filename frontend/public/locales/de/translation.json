@@ -3,7 +3,9 @@
         "actions": "Aktionen"
     },
     "button": {
-        "cancel": "Abbrechen"
+        "cancel": "Abbrechen",
+        "close": "Schließen",
+        "options": "Optionen"
     },
     "heading": {
         "danger-zone": "Gefahrenbereich"
@@ -18,5 +20,8 @@
         "seconds": "Sekunden",
         "weeks": "Wochen",
         "years": "Jahre"
+    },
+    "toast": {
+        "copied-to-clipboard": "In die Zwischenablage kopiert"
     }
 }

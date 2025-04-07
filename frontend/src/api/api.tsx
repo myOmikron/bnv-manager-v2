@@ -2,11 +2,12 @@ import { parseError } from "src/api/error";
 import CONSOLE from "src/utils/console";
 import {
     AcceptInviteRequest,
+    AdminCreateInviteRequest,
     Configuration,
     CreateClubRequest,
     DefaultApi,
     RequiredError,
-    ResponseError,
+    ResponseError
 } from "src/api/generated";
 
 /** Hyphen separated uuid */
@@ -29,6 +30,10 @@ export const Api = {
             get: (uuid: UUID) => handleError(api.adminGetClub({ uuid })),
             create: (createClub: CreateClubRequest) => handleError(api.createClub({ CreateClubRequest: createClub })),
             delete: (uuid: UUID) => handleError(api.deleteClub({ uuid })),
+        },
+        invites: {
+            create: (invite: AdminCreateInviteRequest) =>
+                handleError(api.adminCreateInvite({ AdminCreateInviteRequest: invite })),
         },
     },
     auth: {

@@ -1,4 +1,8 @@
 {
+    "button": {
+        "assign-admin": "Administrator zuordnen",
+        "create-admin": "Administrator anlegen"
+    },
     "heading": {
         "admin-overview": "Admin Übersicht"
     },

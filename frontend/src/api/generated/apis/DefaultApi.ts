@@ -20,8 +20,8 @@ import type {
   AdminCreateInviteRequest,
   ApiErrorResponse,
   CreateClubRequest,
+  FormResultForInviteResponseAndAdminCreateInviteError,
   FormResultForNullAndLoginResponse,
-  FormResultForSingleUuidAndAdminCreateInviteError,
   FormResultForSingleUuidAndCreateClubResponseError,
   FullInvite,
   LoginRequest,
@@ -98,7 +98,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async adminCreateInviteRaw(requestParameters: AdminCreateInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleUuidAndAdminCreateInviteError>> {
+    async adminCreateInviteRaw(requestParameters: AdminCreateInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForInviteResponseAndAdminCreateInviteError>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -118,7 +118,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async adminCreateInvite(requestParameters: AdminCreateInviteOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleUuidAndAdminCreateInviteError> {
+    async adminCreateInvite(requestParameters: AdminCreateInviteOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForInviteResponseAndAdminCreateInviteError> {
         const response = await this.adminCreateInviteRaw(requestParameters, initOverrides);
         return await response.value();
     }

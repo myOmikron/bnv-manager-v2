@@ -170,6 +170,70 @@ export interface CreateClubResponseError {
     name_already_occupied: boolean;
 }
 /**
+ * @type FormResultForInviteResponseAndAdminCreateInviteError
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForInviteResponseAndAdminCreateInviteError = FormResultForInviteResponseAndAdminCreateInviteErrorOneOf | FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1;
+/**
+ * 
+ * @export
+ * @interface FormResultForInviteResponseAndAdminCreateInviteErrorOneOf
+ */
+export interface FormResultForInviteResponseAndAdminCreateInviteErrorOneOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForInviteResponseAndAdminCreateInviteErrorOneOf
+     */
+    result: FormResultForInviteResponseAndAdminCreateInviteErrorOneOfResultEnum;
+    /**
+     * 
+     * @type {InviteResponse}
+     * @memberof FormResultForInviteResponseAndAdminCreateInviteErrorOneOf
+     */
+    value: InviteResponse;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForInviteResponseAndAdminCreateInviteErrorOneOfResultEnum = {
+    Ok: 'Ok'
+} as const;
+export type FormResultForInviteResponseAndAdminCreateInviteErrorOneOfResultEnum = typeof FormResultForInviteResponseAndAdminCreateInviteErrorOneOfResultEnum[keyof typeof FormResultForInviteResponseAndAdminCreateInviteErrorOneOfResultEnum];
+
+/**
+ * 
+ * @export
+ * @interface FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1
+ */
+export interface FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1 {
+    /**
+     * 
+     * @type {AdminCreateInviteError}
+     * @memberof FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1
+     */
+    error: AdminCreateInviteError;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1
+     */
+    result: FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1ResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1ResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1ResultEnum = typeof FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1ResultEnum[keyof typeof FormResultForInviteResponseAndAdminCreateInviteErrorOneOf1ResultEnum];
+
+/**
  * @type FormResultForNullAndLoginResponse
  * A `Result` with a custom serialization
  * @export
@@ -234,75 +298,11 @@ export const FormResultForNullAndLoginResponseOneOf1ResultEnum = {
 export type FormResultForNullAndLoginResponseOneOf1ResultEnum = typeof FormResultForNullAndLoginResponseOneOf1ResultEnum[keyof typeof FormResultForNullAndLoginResponseOneOf1ResultEnum];
 
 /**
- * @type FormResultForSingleUuidAndAdminCreateInviteError
- * A `Result` with a custom serialization
- * @export
- */
-export type FormResultForSingleUuidAndAdminCreateInviteError = FormResultForSingleUuidAndAdminCreateInviteErrorOneOf | FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1;
-/**
- * 
- * @export
- * @interface FormResultForSingleUuidAndAdminCreateInviteErrorOneOf
- */
-export interface FormResultForSingleUuidAndAdminCreateInviteErrorOneOf {
-    /**
-     * 
-     * @type {string}
-     * @memberof FormResultForSingleUuidAndAdminCreateInviteErrorOneOf
-     */
-    result: FormResultForSingleUuidAndAdminCreateInviteErrorOneOfResultEnum;
-    /**
-     * 
-     * @type {SingleUuid}
-     * @memberof FormResultForSingleUuidAndAdminCreateInviteErrorOneOf
-     */
-    value: SingleUuid;
-}
-
-
-/**
- * @export
- */
-export const FormResultForSingleUuidAndAdminCreateInviteErrorOneOfResultEnum = {
-    Ok: 'Ok'
-} as const;
-export type FormResultForSingleUuidAndAdminCreateInviteErrorOneOfResultEnum = typeof FormResultForSingleUuidAndAdminCreateInviteErrorOneOfResultEnum[keyof typeof FormResultForSingleUuidAndAdminCreateInviteErrorOneOfResultEnum];
-
-/**
- * 
- * @export
- * @interface FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1
- */
-export interface FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1 {
-    /**
-     * 
-     * @type {AdminCreateInviteError}
-     * @memberof FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1
-     */
-    error: AdminCreateInviteError;
-    /**
-     * 
-     * @type {string}
-     * @memberof FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1
-     */
-    result: FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1ResultEnum;
-}
-
-
-/**
- * @export
- */
-export const FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1ResultEnum = {
-    Err: 'Err'
-} as const;
-export type FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1ResultEnum = typeof FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1ResultEnum[keyof typeof FormResultForSingleUuidAndAdminCreateInviteErrorOneOf1ResultEnum];
-
-/**
  * @type FormResultForSingleUuidAndCreateClubResponseError
  * A `Result` with a custom serialization
  * @export
  */
-export type FormResultForSingleUuidAndCreateClubResponseError = FormResultForSingleUuidAndAdminCreateInviteErrorOneOf | FormResultForSingleUuidAndCreateClubResponseErrorOneOf;
+export type FormResultForSingleUuidAndCreateClubResponseError = FormResultForSingleUuidAndCreateClubResponseErrorOneOf | FormResultForSingleUuidAndCreateClubResponseErrorOneOf1;
 /**
  * 
  * @export
@@ -311,16 +311,16 @@ export type FormResultForSingleUuidAndCreateClubResponseError = FormResultForSin
 export interface FormResultForSingleUuidAndCreateClubResponseErrorOneOf {
     /**
      * 
-     * @type {CreateClubResponseError}
-     * @memberof FormResultForSingleUuidAndCreateClubResponseErrorOneOf
-     */
-    error: CreateClubResponseError;
-    /**
-     * 
      * @type {string}
      * @memberof FormResultForSingleUuidAndCreateClubResponseErrorOneOf
      */
     result: FormResultForSingleUuidAndCreateClubResponseErrorOneOfResultEnum;
+    /**
+     * 
+     * @type {SingleUuid}
+     * @memberof FormResultForSingleUuidAndCreateClubResponseErrorOneOf
+     */
+    value: SingleUuid;
 }
 
 
@@ -328,9 +328,38 @@ export interface FormResultForSingleUuidAndCreateClubResponseErrorOneOf {
  * @export
  */
 export const FormResultForSingleUuidAndCreateClubResponseErrorOneOfResultEnum = {
-    Err: 'Err'
+    Ok: 'Ok'
 } as const;
 export type FormResultForSingleUuidAndCreateClubResponseErrorOneOfResultEnum = typeof FormResultForSingleUuidAndCreateClubResponseErrorOneOfResultEnum[keyof typeof FormResultForSingleUuidAndCreateClubResponseErrorOneOfResultEnum];
+
+/**
+ * 
+ * @export
+ * @interface FormResultForSingleUuidAndCreateClubResponseErrorOneOf1
+ */
+export interface FormResultForSingleUuidAndCreateClubResponseErrorOneOf1 {
+    /**
+     * 
+     * @type {CreateClubResponseError}
+     * @memberof FormResultForSingleUuidAndCreateClubResponseErrorOneOf1
+     */
+    error: CreateClubResponseError;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForSingleUuidAndCreateClubResponseErrorOneOf1
+     */
+    result: FormResultForSingleUuidAndCreateClubResponseErrorOneOf1ResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForSingleUuidAndCreateClubResponseErrorOneOf1ResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForSingleUuidAndCreateClubResponseErrorOneOf1ResultEnum = typeof FormResultForSingleUuidAndCreateClubResponseErrorOneOf1ResultEnum[keyof typeof FormResultForSingleUuidAndCreateClubResponseErrorOneOf1ResultEnum];
 
 /**
  * 
@@ -362,6 +391,19 @@ export interface FullInvite {
      * @memberof FullInvite
      */
     uuid: string;
+}
+/**
+ * 
+ * @export
+ * @interface InviteResponse
+ */
+export interface InviteResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof InviteResponse
+     */
+    link: string;
 }
 /**
  * 

@@ -1,12 +1,13 @@
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
-use galvyn::core::stuff::schema::SingleUuid;
 use galvyn::core::Module;
 use rorm::Database;
 
+use crate::config::ORIGIN;
 use crate::http::handler::invites::schema::AdminCreateInviteError;
 use crate::http::handler::invites::schema::AdminCreateInviteRequest;
+use crate::http::handler::invites::schema::InviteResponse;
 use crate::models::account::Account;
 use crate::models::club::Club;
 use crate::models::invite::impls::CreateInviteParams;
@@ -20,7 +21,7 @@ pub async fn admin_create_invite(
         permissions,
         valid_days,
     }): ApiJson<AdminCreateInviteRequest>,
-) -> ApiResult<ApiJson<FormResult<SingleUuid, AdminCreateInviteError>>> {
+) -> ApiResult<ApiJson<FormResult<InviteResponse, AdminCreateInviteError>>> {
     let mut error = None;
 
     if valid_days == 0 {
@@ -80,5 +81,7 @@ pub async fn admin_create_invite(
 
     tx.commit().await?;
 
-    Ok(ApiJson(FormResult::ok(SingleUuid { uuid })))
+    Ok(ApiJson(FormResult::ok(InviteResponse {
+        link: ORIGIN.join(&format!("invites/{uuid}")).unwrap().to_string(),
+    })))
 }

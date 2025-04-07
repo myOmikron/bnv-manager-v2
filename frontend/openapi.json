@@ -453,7 +453,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/FormResult_for_SingleUuid_and_AdminCreateInviteError"
+                                    "$ref": "#/components/schemas/FormResult_for_InviteResponse_and_AdminCreateInviteError"
                                 }
                             }
                         }
@@ -621,6 +621,47 @@
                     "name_already_occupied"
                 ]
             },
+            "FormResult_for_InviteResponse_and_AdminCreateInviteError": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/InviteResponse"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/AdminCreateInviteError"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
             "FormResult_for_Null_and_LoginResponse": {
                 "description": "A `Result` with a custom serialization",
                 "oneOf": [
@@ -647,47 +688,6 @@
                         "properties": {
                             "error": {
                                 "$ref": "#/components/schemas/LoginResponse"
-                            },
-                            "result": {
-                                "type": "string",
-                                "enum": [
-                                    "Err"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "error",
-                            "result"
-                        ]
-                    }
-                ]
-            },
-            "FormResult_for_SingleUuid_and_AdminCreateInviteError": {
-                "description": "A `Result` with a custom serialization",
-                "oneOf": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "result": {
-                                "type": "string",
-                                "enum": [
-                                    "Ok"
-                                ]
-                            },
-                            "value": {
-                                "$ref": "#/components/schemas/SingleUuid"
-                            }
-                        },
-                        "required": [
-                            "result",
-                            "value"
-                        ]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "error": {
-                                "$ref": "#/components/schemas/AdminCreateInviteError"
                             },
                             "result": {
                                 "type": "string",
@@ -766,6 +766,17 @@
                     "expires_at",
                     "username",
                     "uuid"
+                ]
+            },
+            "InviteResponse": {
+                "type": "object",
+                "properties": {
+                    "link": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "link"
                 ]
             },
             "LoginRequest": {

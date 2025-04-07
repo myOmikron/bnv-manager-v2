@@ -1,0 +1,13 @@
+{
+    "button": {
+        "create-invite": "Einladung anlegen"
+    },
+    "heading": {
+        "create-admin": "Administrator anlegen"
+    },
+    "label": {
+        "display-name": "Anzeigename",
+        "username": "Nutzername",
+        "valid-days": "Valide Tage"
+    }
+}

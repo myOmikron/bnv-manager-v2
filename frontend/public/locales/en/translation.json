@@ -3,7 +3,9 @@
         "actions": "Actions"
     },
     "button": {
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "close": "Close",
+        "options": "Options"
     },
     "heading": {
         "danger-zone": "Danger zone"
@@ -18,5 +20,8 @@
         "seconds": "seconds",
         "weeks": "weeks",
         "years": "years"
+    },
+    "toast": {
+        "copied-to-clipboard": "Copied to clipboard"
     }
 }

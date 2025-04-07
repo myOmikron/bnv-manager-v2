@@ -28,6 +28,11 @@ pub struct AdminCreateInviteRequest {
     pub valid_days: u8,
 }
 
+#[derive(JsonSchema, Deserialize, Serialize, Clone, Debug)]
+pub struct InviteResponse {
+    pub link: String,
+}
+
 #[derive(JsonSchema, Deserialize, Serialize, Clone, Debug, Default)]
 pub struct AdminCreateInviteError {
     pub username_already_occupied: bool,

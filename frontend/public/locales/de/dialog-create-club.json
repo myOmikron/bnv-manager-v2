@@ -2,6 +2,9 @@
     "button": {
         "create-club": "Verein anlegen"
     },
+    "error": {
+        "username-already-occupied": "Nutzername ist bereits vergeben"
+    },
     "heading": {
         "create-club": "Verein anlegen"
     },

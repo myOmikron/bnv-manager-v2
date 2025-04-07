@@ -1,0 +1,16 @@
+{
+    "button": {
+        "create-invite": "Create invite"
+    },
+    "error": {
+        "username-already-occupied": "Username is already occupied"
+    },
+    "heading": {
+        "create-admin": "Create administrative account"
+    },
+    "label": {
+        "display-name": "Display name",
+        "username": "Username",
+        "valid-days": "Valid days"
+    }
+}
