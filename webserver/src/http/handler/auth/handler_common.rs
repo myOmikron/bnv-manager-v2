@@ -9,6 +9,7 @@ use galvyn::rorm::Database;
 use crate::http::handler::auth::schema::LoginRequest;
 use crate::http::handler::auth::schema::LoginResponse;
 use crate::http::SESSION_ACCOUNT;
+use crate::http::SESSION_PERMISSIONS;
 use crate::models::account::Account;
 
 #[galvyn::post("/login")]
@@ -23,7 +24,7 @@ pub async fn login(
         .optional()
         .await?;
 
-    let account = if let Some((account, pw_hash)) = data {
+    let mut account = if let Some((account, pw_hash)) = data {
         let pw_correct = bcrypt::verify(password, &pw_hash)
             .map_err(ApiError::map_server_error("Hashing error"))?;
 
@@ -47,9 +48,11 @@ pub async fn login(
         })));
     };
 
+    let permissions = account.get_permissions(&mut tx).await?;
     tx.commit().await?;
 
     session.insert(SESSION_ACCOUNT, &account.uuid).await?;
+    session.insert(SESSION_PERMISSIONS, permissions).await?;
 
     Ok(ApiJson(FormResult::ok(())))
 }

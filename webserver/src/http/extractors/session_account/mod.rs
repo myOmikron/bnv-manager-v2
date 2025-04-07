@@ -6,18 +6,11 @@ use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::Module;
 use rorm::Database;
-use tracing::warn;
 use uuid::Uuid;
 
-use crate::http::extractors::session_account::schema::Permissions;
+use crate::http::handler::users::schema::Permissions;
 use crate::http::SESSION_ACCOUNT;
 use crate::models::account::Account;
-use crate::models::account::AccountRole;
-use crate::models::role::ROLE_ADMIN;
-use crate::models::role::ROLE_CLUB_ADMIN;
-use crate::models::role::ROLE_USER;
-
-pub mod schema;
 
 /// The account of the currently logged-in user
 pub struct SessionAccount {
@@ -57,46 +50,15 @@ where
 
         Account.roles.populate(&mut tx, &mut account).await?;
 
+        let permissions = account.get_permissions(&mut tx).await?;
+
         tx.commit().await?;
-
-        let roles: Vec<AccountRole> = account.roles.cached.unwrap();
-
-        let mut admin = false;
-        let mut club_admin = vec![];
-        let mut club_user = vec![];
-
-        for role in roles {
-            if role.role.0 == ROLE_ADMIN {}
-
-            match role.role.0.as_str() {
-                ROLE_ADMIN => {
-                    admin = true;
-                }
-                ROLE_CLUB_ADMIN => {
-                    club_admin.push(
-                        role.club
-                            .ok_or(ApiError::server_error("Clubadmin without associated club"))?
-                            .0,
-                    );
-                }
-                ROLE_USER => club_user.push(
-                    role.club
-                        .ok_or(ApiError::server_error("Clubuser without associated club"))?
-                        .0,
-                ),
-                _ => warn!("Encountered invalid account role: {}", role.role.0),
-            }
-        }
 
         Ok(SessionAccount {
             uuid: account.uuid,
             username: account.username,
             display_name: account.display_name,
-            permissions: Permissions {
-                admin,
-                club_admin,
-                club_user,
-            },
+            permissions,
         })
     }
 }

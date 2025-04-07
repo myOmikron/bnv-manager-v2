@@ -8,6 +8,8 @@ use uuid::Uuid;
 use crate::models::club::Club;
 use crate::models::role::Role;
 
+pub(crate) mod impls;
+
 /// User representation
 #[derive(Model)]
 pub struct Account {
@@ -40,7 +42,7 @@ pub struct Account {
 }
 
 /// M2M between Accounts and Roles
-#[derive(Model)]
+#[derive(Model, Clone)]
 pub struct AccountRole {
     /// Primary key
     #[rorm(primary_key)]

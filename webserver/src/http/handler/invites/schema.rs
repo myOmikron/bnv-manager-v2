@@ -5,7 +5,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use uuid::Uuid;
 
-use crate::http::extractors::session_account::schema::Permissions;
+use crate::http::handler::users::schema::Permissions;
 
 #[derive(JsonSchema, Deserialize, Serialize, Clone, Debug)]
 pub struct AcceptInviteRequest {
