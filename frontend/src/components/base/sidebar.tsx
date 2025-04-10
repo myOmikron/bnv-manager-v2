@@ -112,12 +112,6 @@ export const SidebarItem = forwardRef(function SidebarItem(
 
     return (
         <span className={clsx(className, "relative")}>
-            {current && (
-                <motion.span
-                    layoutId="current-indicator"
-                    className="absolute inset-y-2 -left-4 w-0.5 rounded-full bg-zinc-950 dark:bg-white"
-                />
-            )}
             {"href" in props ? (
                 <Headless.CloseButton
                     as={Link}
@@ -125,9 +119,20 @@ export const SidebarItem = forwardRef(function SidebarItem(
                     className={classes}
                     data-current={current ? "true" : undefined}
                     ref={ref}
-                >
-                    <TouchTarget>{children}</TouchTarget>
-                </Headless.CloseButton>
+                    render={({ isActive }: { isActive: boolean }) => {
+                        return (
+                            <>
+                                {isActive && (
+                                    <motion.span
+                                        layoutId="current-indicator"
+                                        className="absolute inset-y-2 -left-4 w-0.5 rounded-full bg-zinc-950 dark:bg-white"
+                                    />
+                                )}
+                                <TouchTarget>{children}</TouchTarget>
+                            </>
+                        );
+                    }}
+                />
             ) : (
                 <Headless.Button
                     {...props}

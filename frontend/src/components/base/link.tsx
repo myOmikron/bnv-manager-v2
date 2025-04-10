@@ -30,7 +30,14 @@ export const Link = React.forwardRef(function Link(props: LinkProps, ref: React.
 
     return (
         <Headless.DataInteractive>
-            <RouterLink to={href} params={params} {...other} ref={ref} children={children ? children : render} />
+            <RouterLink
+                preload={"intent"}
+                to={href}
+                params={params}
+                {...other}
+                ref={ref}
+                children={children ? children : render}
+            />
         </Headless.DataInteractive>
     );
 });
