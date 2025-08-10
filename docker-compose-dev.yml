@@ -45,7 +45,7 @@ services:
     env_file: [ .env ]
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger-dev:4317
-      - RUST_LOG=${RUST_LOG-info,webserver=debug,rorm=debug,galvyn=debug}
+      - RUST_LOG=${RUST_LOG-info,webserver=debug}
       - POSTGRES_HOST=postgres-dev
     user: "${UID}:${GID}"
     image: bnv-manager-v2-dev/webserver-dev:${DEV_TAG}

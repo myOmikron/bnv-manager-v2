@@ -29,4 +29,11 @@ pub enum Command {
         #[clap(default_value_t = String::from("/migrations"))]
         migrations_dir: String,
     },
+    /// Create a superadmin account
+    CreateAdmin {
+        /// The username that should be set for the new account
+        username: String,
+        /// The display name for the user
+        display_name: String,
+    },
 }

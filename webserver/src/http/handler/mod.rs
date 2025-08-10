@@ -2,7 +2,8 @@
 
 use galvyn::core::GalvynRouter;
 
-pub(crate) mod openapi;
+pub mod me;
+pub mod openapi;
 
 /// Handler for the admin
 pub fn router_admin() -> GalvynRouter {

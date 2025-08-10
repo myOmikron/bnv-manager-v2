@@ -4,12 +4,14 @@
 
 use std::error::Error;
 
+use ::tracing::error;
 use clap::Parser;
 use galvyn::Galvyn;
 use galvyn::core::DatabaseSetup;
 use galvyn::rorm::Database;
 use rorm::DatabaseConfiguration;
 use rorm::cli as rorm_cli;
+use rorm::fields::types::MaxStr;
 use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -17,7 +19,11 @@ use tracing_subscriber::util::SubscriberInitExt;
 use crate::cli::Cli;
 use crate::cli::Command;
 use crate::config::DB;
+use crate::models::invite::CreateInviteParams;
+use crate::models::invite::Invite;
+use crate::models::role::Role;
 use crate::tracing::opentelemetry_layer;
+use crate::utils::links::Link;
 
 mod cli;
 pub mod config;
@@ -90,7 +96,38 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 false,
                 None,
             )
-            .await?
+            .await?;
+        }
+        Command::CreateAdmin {
+            username,
+            display_name,
+        } => {
+            let username = MaxStr::new(username)?;
+            let display_name = MaxStr::new(display_name)?;
+
+            let db = Database::connect(DatabaseConfiguration::new(DB.clone())).await?;
+            let res = Invite::create(
+                &db,
+                CreateInviteParams {
+                    username,
+                    display_name,
+                    roles: vec![Role::SuperAdmin],
+                },
+            )
+            .await?;
+
+            db.close().await;
+
+            match res {
+                Ok(invite) => {
+                    let link = Link::invite(invite.uuid);
+                    println!("Invite link: {}", link);
+                }
+                Err(err) => {
+                    error!("{err}");
+                    return Err(err.into());
+                }
+            }
         }
     }
 
