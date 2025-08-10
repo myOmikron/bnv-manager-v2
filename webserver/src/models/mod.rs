@@ -1,7 +1,6 @@
-//! Models of this project
+//! This module holds the database models as well as the business representations and abstractions
 
-pub(crate) mod account;
-pub(crate) mod club;
-pub(crate) mod domain;
-pub(crate) mod invite;
-pub(crate) mod role;
+pub mod account;
+pub mod club;
+pub mod invite;
+pub mod role;

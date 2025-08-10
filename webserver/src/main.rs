@@ -5,34 +5,32 @@
 use std::error::Error;
 
 use clap::Parser;
-use galvyn::rorm::Database;
-use galvyn::rorm::DatabaseConfiguration;
 use galvyn::Galvyn;
+use galvyn::core::DatabaseSetup;
+use galvyn::rorm::Database;
+use rorm::DatabaseConfiguration;
 use rorm::cli as rorm_cli;
+use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::EnvFilter;
 
 use crate::cli::Cli;
 use crate::cli::Command;
 use crate::config::DB;
-use crate::config::ORIGIN;
-use crate::galvyn_modules::migrator::Migrator;
-use crate::models::invite::impls::CreateInviteParams;
-use crate::models::invite::Invite;
 use crate::tracing::opentelemetry_layer;
 
 mod cli;
 pub mod config;
-pub mod galvyn_modules;
 pub mod http;
 pub mod models;
 pub mod tracing;
+pub mod utils;
 
 async fn start() -> Result<(), Box<dyn Error>> {
     let router = Galvyn::new()
-        .register_module::<Database>(Default::default())
-        .register_module::<Migrator>(())
+        .register_module::<Database>(DatabaseSetup::Custom(DatabaseConfiguration::new(
+            DB.clone(),
+        )))
         .init_modules()
         .await?;
 
@@ -52,7 +50,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     tracing_subscriber::registry()
         .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("INFO")))
-        .with(tracing_subscriber::fmt::layer())
+        .with(tracing_forest::ForestLayer::default())
         .with(opentelemetry_layer()?)
         .init();
 
@@ -93,39 +91,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 None,
             )
             .await?
-        }
-        Command::CreateInvite {
-            username,
-            display_name,
-            admin,
-        } => {
-            // Connect to the database
-            let db = Database::connect(DatabaseConfiguration {
-                ..DatabaseConfiguration::new(DB.clone())
-            })
-            .await?;
-
-            let mut tx = db.start_transaction().await?;
-
-            let uuid = Invite::create(
-                &mut tx,
-                CreateInviteParams {
-                    username,
-                    display_name,
-                    is_admin: admin,
-                    club_admin: vec![],
-                    club_user: vec![],
-                    valid_days: 7,
-                },
-            )
-            .await?;
-
-            tx.commit().await?;
-
-            println!(
-                "Created invite: {}",
-                ORIGIN.get().join(&format!("invites/{uuid}"))?
-            );
         }
     }
 

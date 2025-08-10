@@ -19,22 +19,14 @@ pub enum Command {
     /// Run the migrations on the database
     Migrate {
         /// The directory where the migration files are located in
+        #[clap(default_value_t = String::from("/migrations"))]
         migrations_dir: String,
     },
     /// Create new migrations
     #[cfg(debug_assertions)]
     MakeMigrations {
         /// The directory where the migration files are located in
+        #[clap(default_value_t = String::from("/migrations"))]
         migrations_dir: String,
-    },
-    /// Creates an invitation for an admin user
-    CreateInvite {
-        /// The username that should be set
-        username: String,
-        /// The display name of the user
-        display_name: String,
-        /// Should the user be an admin?
-        #[clap(short, long)]
-        admin: bool,
     },
 }

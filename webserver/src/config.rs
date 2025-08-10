@@ -72,13 +72,13 @@ pub static MAILCOW_API_KEY: EnvVar = EnvVar::required("MAILCOW_API_KEY");
 pub static POSTGRES_HOST: EnvVar = EnvVar::optional("POSTGRES_HOST", || "postgres".to_string());
 
 /// The database name
-pub static POSTGRES_DB: EnvVar = EnvVar::optional("POSTGRES_DB", || "bnv-manager".to_string());
+pub static POSTGRES_DB: EnvVar = EnvVar::required("POSTGRES_DB");
 
 /// The port of the database server
 pub static POSTGRES_PORT: EnvVar<u16> = EnvVar::optional("POSTGRES_PORT", || 5432);
 
 /// The user to use for the database connection
-pub static POSTGRES_USER: EnvVar = EnvVar::required("POSTGRES_USER");
+pub static POSTGRES_USER: EnvVar = EnvVar::optional("POSTGRES_USER", || "postgres".to_string());
 
 /// Password for the user
 pub static POSTGRES_PASSWORD: EnvVar = EnvVar::optional("POSTGRES_PASSWORD", || "".to_string());
