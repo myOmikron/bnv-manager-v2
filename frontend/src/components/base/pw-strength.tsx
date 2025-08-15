@@ -29,7 +29,7 @@ export type PasswordStrengthProps = {
  * A display for the password strength
  */
 export default function PasswordStrength(props: PasswordStrengthProps) {
-    const [t] = useTranslation();
+    const [tg] = useTranslation();
 
     const { password } = props;
 
@@ -47,20 +47,20 @@ export default function PasswordStrength(props: PasswordStrengthProps) {
 
     const display =
         seconds / century > 1
-            ? t("label.centuries")
+            ? tg("label.centuries")
             : seconds / year > 1
-              ? t("label.years")
+              ? tg("label.years")
               : seconds / month > 1
-                ? t("label.months")
+                ? tg("label.months")
                 : seconds / week > 1
-                  ? t("label.weeks")
+                  ? tg("label.weeks")
                   : seconds / day > 1
-                    ? t("label.days")
+                    ? tg("label.days")
                     : seconds / hour > 1
-                      ? t("label.hours")
+                      ? tg("label.hours")
                       : seconds / minute > 1
-                        ? t("label.minutes")
-                        : t("label.seconds");
+                        ? tg("label.minutes")
+                        : tg("label.seconds");
 
     return (
         <div>
@@ -96,7 +96,7 @@ export default function PasswordStrength(props: PasswordStrengthProps) {
                     )}
                 />
             </div>
-            <Text>{t("label.estimated-crack-time", { time: display })}</Text>
+            <Text>{tg("label.estimated-crack-time", { time: display })}</Text>
         </div>
     );
 }

@@ -10,6 +10,8 @@ export type FormProps = {
     onSubmit: () => void;
     /** The child elements of the form */
     children?: React.ReactNode | Array<React.ReactNode>;
+    /** Optional ref */
+    ref?: React.ForwardedRef<HTMLFormElement>;
 };
 
 /**
@@ -24,6 +26,7 @@ export default function Form(props: FormProps) {
                 e.preventDefault();
                 props.onSubmit();
             }}
+            ref={props.ref}
         >
             {props.children}
         </form>

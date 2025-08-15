@@ -1,3 +1,5 @@
 //! Openapi handlers
 
-pub mod handler_common;
+pub use handler_common::*;
+
+mod handler_common;

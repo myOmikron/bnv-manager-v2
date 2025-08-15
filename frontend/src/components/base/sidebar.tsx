@@ -124,7 +124,7 @@ export const SidebarItem = forwardRef(function SidebarItem(
                             <>
                                 {isActive && (
                                     <motion.span
-                                        layoutId="current-indicator"
+                                        layoutId="current-indicator-menu"
                                         className="absolute inset-y-2 -left-4 w-0.5 rounded-full bg-zinc-950 dark:bg-white"
                                     />
                                 )}

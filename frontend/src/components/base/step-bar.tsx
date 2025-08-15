@@ -30,12 +30,12 @@ export type Step = {
  * A bar which has defined steps with explanation text for each step
  */
 export default function StepBar(props: StepBarProps) {
-    const [t] = useTranslation();
+    const [tg] = useTranslation();
 
     const { space, steps } = props;
 
     return (
-        <nav aria-label={t("accessibility.progress")} className={props.className}>
+        <nav aria-label={tg("accessibility.progress")} className={props.className}>
             <ol role={"list"} className={"overflow-hidden"}>
                 {steps.map((step, idx) => (
                     <li

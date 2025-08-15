@@ -1,11 +1,14 @@
 //! Common handlers of the openapi
 
-use axum::Json;
-use axum::response::IntoResponse;
-use axum::response::Response;
+use galvyn::core::re_exports::axum::Json;
+use galvyn::core::re_exports::axum::response::IntoResponse;
+use galvyn::core::re_exports::axum::response::Response;
+use galvyn::get;
+use tracing::instrument;
 
 /// Generate the openapi definition
-#[galvyn::get("/openapi.json")]
+#[get("/openapi.json")]
+#[instrument(name = "Api::openapi")]
 pub async fn openapi() -> Response {
     Json(galvyn::openapi::get_openapi()).into_response()
 }

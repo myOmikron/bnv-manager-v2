@@ -2,6 +2,9 @@
     "button": {
         "create-club": "Create club"
     },
+    "error": {
+        "name-already-occupied": "error.name-already-occupied"
+    },
     "heading": {
         "create-club": "Create club"
     },

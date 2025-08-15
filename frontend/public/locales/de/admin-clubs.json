@@ -1,10 +1,10 @@
 {
     "button": {
         "create-club": "Verein anlegen",
-        "delete-club": "Verein löschen"
+        "delete-club": "Verein l\u00f6schen"
     },
     "heading": {
-        "clubs-overview": "Übersicht der Vereine"
+        "clubs-overview": "\u00dcbersicht der Vereine"
     },
     "label": {
         "club-name": "Vereinsname",

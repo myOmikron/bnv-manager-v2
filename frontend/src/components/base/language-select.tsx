@@ -21,17 +21,17 @@ export type LanguageSelectProps = {
 export default function LanguageSelect(props: LanguageSelectProps) {
     const { lang, setLang } = props;
 
-    const [t] = useTranslation();
+    const [tg] = useTranslation();
 
     return (
         <Listbox value={lang} onChange={(e) => setLang(e)}>
             <ListboxOption value={"EN"} className={"gap-3"}>
                 🇺🇸
-                <ListboxLabel>{t("label.english")}</ListboxLabel>
+                <ListboxLabel>{tg("label.english")}</ListboxLabel>
             </ListboxOption>
             <ListboxOption value={"DE"} className={"gap-3"}>
                 🇩🇪
-                <ListboxLabel>{t("label.german")}</ListboxLabel>
+                <ListboxLabel>{tg("label.german")}</ListboxLabel>
             </ListboxOption>
         </Listbox>
     );

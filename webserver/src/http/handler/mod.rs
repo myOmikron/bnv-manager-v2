@@ -2,6 +2,8 @@
 
 use galvyn::core::GalvynRouter;
 
+mod auth;
+pub mod invites;
 pub mod me;
 pub mod openapi;
 
@@ -17,7 +19,7 @@ pub fn router_club_admin() -> GalvynRouter {
 
 /// Common handler
 pub fn router_common() -> GalvynRouter {
-    GalvynRouter::new()
+    GalvynRouter::new().handler(me::get_me)
 }
 
 /// Unauthenticated handler
@@ -26,10 +28,15 @@ pub fn router_unauthenticated() -> GalvynRouter {
 
     #[cfg(debug_assertions)]
     {
-        router = router.handler(openapi::handler_common::openapi);
+        router = router.handler(openapi::openapi);
     }
 
-    router
+    router.nest(
+        "/invite",
+        GalvynRouter::new()
+            .handler(invites::get_invite_common)
+            .handler(invites::accept_invite),
+    )
 }
 
 /// Initialize the router

@@ -3,10 +3,10 @@
         "accept-invite": "Einladung akzeptieren"
     },
     "description": {
-        "invite": "Bitte setze ein Passwort für dein neues Konto"
+        "invite": "Bitte setze ein Passwort f\u00fcr dein neues Konto"
     },
     "error": {
-        "password-mismatch": "Passwörter sind nicht identiscch",
+        "password-mismatch": "Passw\u00f6rter sind nicht identiscch",
         "stronger-password": "Passwort ist zu schwach"
     },
     "heading": {

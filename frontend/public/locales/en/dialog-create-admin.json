@@ -1,9 +1,13 @@
 {
+    "accessibility": {
+        "copy": "accessibility.copy"
+    },
     "button": {
         "create-invite": "Create invite"
     },
     "error": {
-        "username-already-occupied": "Username is already occupied"
+        "username-already-occupied": "Username is already occupied",
+        "valid-days-too-small": "error.valid-days-too-small"
     },
     "heading": {
         "create-admin": "Create administrative account"

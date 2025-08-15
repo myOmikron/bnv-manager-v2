@@ -24,7 +24,7 @@ export type TabLayoutProps = {
 export default function TabLayout(props: TabLayoutProps) {
     return (
         <>
-            <div className={"flex w-full flex-wrap items-end justify-between gap-4 pb-6"}>
+            <div className={"flex w-full flex-wrap items-end justify-between gap-4 pb-6 lg:flex-nowrap"}>
                 <div className={"flex flex-col gap-3"}>
                     <Heading>{props.heading}</Heading>
                     {props.headingDescription && <Text>{props.headingDescription}</Text>}
@@ -35,7 +35,7 @@ export default function TabLayout(props: TabLayoutProps) {
             </div>
 
             {props.tabs}
-            <div className={"mt-6"}>{props.children}</div>
+            <div className={"mt-6 w-full max-w-full"}>{props.children}</div>
         </>
     );
 }

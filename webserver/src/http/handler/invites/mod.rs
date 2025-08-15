@@ -1,4 +1,4 @@
-//! Handlers regarding the currently logged-in user
+//! Handler for handling invites
 
 pub use handler_common::*;
 pub use schema::*;

@@ -24,7 +24,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
     const data = Route.useLoaderData();
 
     const [openCreateAdmin, setOpenCreateAdmin] = React.useState(false);
-    const [openAssignAdmin, setOpenAssignAdmin] = React.useState(false);
+    const [_openAssignAdmin, setOpenAssignAdmin] = React.useState(false);
 
     return (
         <HeadingLayout

@@ -1,6 +1,7 @@
 {
     "accessibility": {
-        "actions": "Actions"
+        "actions": "Actions",
+        "progress": "accessibility.progress"
     },
     "button": {
         "cancel": "Cancel",
@@ -11,17 +12,20 @@
         "danger-zone": "Danger zone"
     },
     "label": {
-        "centuries": "centuries",
-        "days": "days",
-        "estimated-crack-time": "Estimated offline cracktime: {{time}}",
-        "hours": "hours",
-        "minutes": "minutes",
-        "months": "months",
-        "seconds": "seconds",
-        "weeks": "weeks",
-        "years": "years"
+        "centuries": "label.centuries",
+        "days": "label.days",
+        "english": "label.english",
+        "estimated-crack-time": "label.estimated-crack-time",
+        "german": "label.german",
+        "hours": "label.hours",
+        "minutes": "label.minutes",
+        "months": "label.months",
+        "seconds": "label.seconds",
+        "weeks": "label.weeks",
+        "years": "label.years"
     },
     "toast": {
-        "copied-to-clipboard": "Copied to clipboard"
+        "copied-to-clipboard": "Copied to clipboard",
+        "unsaved-changes": "toast.unsaved-changes"
     }
 }

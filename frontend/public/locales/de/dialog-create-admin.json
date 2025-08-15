@@ -1,6 +1,13 @@
 {
+    "accessibility": {
+        "copy": "accessibility.copy"
+    },
     "button": {
         "create-invite": "Einladung anlegen"
+    },
+    "error": {
+        "username-already-occupied": "error.username-already-occupied",
+        "valid-days-too-small": "error.valid-days-too-small"
     },
     "heading": {
         "create-admin": "Administrator anlegen"

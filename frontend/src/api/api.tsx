@@ -1,14 +1,6 @@
 import { parseError } from "src/api/error";
 import CONSOLE from "src/utils/console";
-import {
-    AcceptInviteRequest,
-    AdminCreateInviteRequest,
-    Configuration,
-    CreateClubRequest,
-    DefaultApi,
-    RequiredError,
-    ResponseError
-} from "src/api/generated";
+import { AcceptInvite, Configuration, DefaultApi, RequiredError, ResponseError } from "src/api/generated";
 
 /** Hyphen separated uuid */
 export type UUID = string;
@@ -41,12 +33,12 @@ export const Api = {
         logout: () => handleError(api.logout()),
     },
     invites: {
-        get: (uuid: UUID) => handleError(api.getInvite({ uuid })),
-        accepted: (uuid: UUID, req: AcceptInviteRequest) =>
+        get: (uuid: UUID) => handleError(api.getInviteCommon({ uuid })),
+        accepted: (uuid: UUID, req: AcceptInvite) =>
             handleError(
                 api.acceptInvite({
                     uuid,
-                    AcceptInviteRequest: req,
+                    AcceptInvite: req,
                 }),
             ),
     },

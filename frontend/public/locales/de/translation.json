@@ -1,27 +1,31 @@
 {
     "accessibility": {
-        "actions": "Aktionen"
+        "actions": "Aktionen",
+        "progress": "accessibility.progress"
     },
     "button": {
         "cancel": "Abbrechen",
-        "close": "Schließen",
+        "close": "Schlie\u00dfen",
         "options": "Optionen"
     },
     "heading": {
         "danger-zone": "Gefahrenbereich"
     },
     "label": {
-        "centuries": "Jahrzehnte",
-        "days": "Tage",
-        "estimated-crack-time": "Geschätzte Offline-Crackzeit: {{time}}",
-        "hours": "Stunden",
-        "minutes": "Minuten",
-        "months": "Monate",
-        "seconds": "Sekunden",
-        "weeks": "Wochen",
-        "years": "Jahre"
+        "centuries": "label.centuries",
+        "days": "label.days",
+        "english": "label.english",
+        "estimated-crack-time": "label.estimated-crack-time",
+        "german": "label.german",
+        "hours": "label.hours",
+        "minutes": "label.minutes",
+        "months": "label.months",
+        "seconds": "label.seconds",
+        "weeks": "label.weeks",
+        "years": "label.years"
     },
     "toast": {
-        "copied-to-clipboard": "In die Zwischenablage kopiert"
+        "copied-to-clipboard": "In die Zwischenablage kopiert",
+        "unsaved-changes": "toast.unsaved-changes"
     }
 }

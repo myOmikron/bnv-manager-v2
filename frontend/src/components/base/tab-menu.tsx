@@ -53,7 +53,7 @@ export function Tab(props: TabProps) {
                         <span className={"flex gap-3"}>{children}</span>
                         {isActive && (
                             <motion.span
-                                layoutId={"current-indicator"}
+                                layoutId={"current-indicator-tabs"}
                                 className={"relative -bottom-1.5 h-0.5 w-full rounded-full bg-zinc-950 dark:bg-white"}
                             />
                         )}

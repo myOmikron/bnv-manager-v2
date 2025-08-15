@@ -50,6 +50,64 @@ pub struct Invite {
 pub struct InviteUuid(pub Uuid);
 
 impl Invite {
+    /// Find an invitation by its uuid
+    #[instrument(skip(exe))]
+    pub async fn find_by_uuid(
+        exe: impl Executor<'_>,
+        InviteUuid(invite_uuid): InviteUuid,
+    ) -> anyhow::Result<Option<Invite>> {
+        let mut guard = exe.ensure_transaction().await?;
+
+        let Some(invite) = rorm::query(guard.get_transaction(), InviteModel)
+            .condition(InviteModel.uuid.equals(invite_uuid))
+            .optional()
+            .await?
+        else {
+            return Ok(None);
+        };
+
+        let mut roles = vec![];
+
+        // Superadmin
+        let super_admin = rorm::query(guard.get_transaction(), InvitedSuperAdminModel)
+            .condition(InvitedSuperAdminModel.invite.equals(invite.uuid))
+            .optional()
+            .await?;
+
+        if super_admin.is_some() {
+            roles.push(Role::SuperAdmin);
+        }
+
+        // ClubAdmin
+        let club_admins = rorm::query(guard.get_transaction(), InvitedClubAdminModel)
+            .condition(InvitedClubAdminModel.invite.equals(invite.uuid))
+            .stream()
+            .map_ok(|x| Role::ClubAdmin(ClubUuid(x.club.0)))
+            .try_collect::<Vec<_>>()
+            .await?;
+        roles.extend(club_admins);
+
+        // ClubMember
+        let club_members = rorm::query(guard.get_transaction(), InvitedClubMemberModel)
+            .condition(InvitedClubMemberModel.invite.equals(invite.uuid))
+            .stream()
+            .map_ok(|x| Role::ClubMember(ClubUuid(x.club.0)))
+            .try_collect::<Vec<_>>()
+            .await?;
+        roles.extend(club_members);
+
+        guard.commit().await?;
+
+        Ok(Some(Invite {
+            uuid: InviteUuid(invite.uuid),
+            username: invite.username,
+            display_name: invite.display_name,
+            roles,
+            expires_at: invite.expires_at,
+            created_at: invite.created_at,
+        }))
+    }
+
     /// Migrate an [Invite] instance to an actual account.
     #[instrument(skip(exe))]
     pub async fn accept_invite(

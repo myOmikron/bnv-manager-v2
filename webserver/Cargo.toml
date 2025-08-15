@@ -13,7 +13,6 @@ thiserror = { version = "~2" }
 anyhow = { version = "~1" }
 
 # Webframework
-axum = { version = "~0.8" } # Main web library
 tower = { version = "~0.5", features = ["limit"] }
 tower-http = { version = "~0.6", features = ["trace", "limit"] }
 galvyn = { git = "https://github.com/myOmikron/galvyn.git" }

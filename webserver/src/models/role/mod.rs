@@ -1,11 +1,13 @@
 //! Roles are defined in this module
 
+use schemars::JsonSchema;
+
 use crate::models::club::ClubUuid;
 
 pub(in crate::models) mod db;
 
 /// The available roles of the manager
-#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize, JsonSchema)]
 pub enum Role {
     /// The super administrator. Has rights to manager clubs.
     SuperAdmin,

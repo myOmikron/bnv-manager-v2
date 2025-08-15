@@ -3,7 +3,7 @@
         "sign-in": "Einloggen"
     },
     "error": {
-        "invalid-username-or-password": "Ungültiger Nutzername oder Passwort"
+        "invalid-username-or-password": "Ung\u00fcltiger Nutzername oder Passwort"
     },
     "label": {
         "password": "Passwort",
