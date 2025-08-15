@@ -35,6 +35,7 @@ pub struct Account {
     pub modified_at: time::OffsetDateTime,
     /// The point in time the account was created
     pub created_at: time::OffsetDateTime,
+    hashed_password: MaxStr<255>,
 }
 
 /// New-type for the account's primary key
@@ -88,6 +89,12 @@ impl Account {
             .await?;
 
         Ok(())
+    }
+
+    /// Check whether the given password matches the stored one
+    #[instrument(skip(self))]
+    pub fn check_password(&self, password: MaxStr<72>) -> anyhow::Result<bool> {
+        bcrypt::verify(&*password, &self.hashed_password).map_err(|err| anyhow!("{err}"))
     }
 
     /// Add a new role to the account
@@ -225,6 +232,7 @@ impl From<AccountModel> for Account {
             username: value.username,
             modified_at: value.modified_at,
             created_at: value.created_at,
+            hashed_password: value.hashed_password,
         }
     }
 }

@@ -29,7 +29,7 @@ export const Api = {
         },
     },
     auth: {
-        login: (username: string, password: string) => handleError(api.login({ LoginRequest: { username, password } })),
+        login: (username: string, password: string) => api.signIn({ SignInRequest: { username, password } }),
         logout: () => handleError(api.logout()),
     },
     invites: {

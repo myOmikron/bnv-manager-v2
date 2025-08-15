@@ -243,5 +243,5 @@ export function BackButton(props: BackButtonProps) {
 type PrimaryButtonProps = ButtonProps & { color?: never; outline?: never; plain?: never };
 
 export function PrimaryButton(props: PrimaryButtonProps) {
-    return <Button color={"blue"} {...props} />;
+    return <Button color={"orange"} {...props} />;
 }

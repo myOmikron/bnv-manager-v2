@@ -2,7 +2,7 @@
 
 use galvyn::core::GalvynRouter;
 
-mod auth;
+pub mod auth;
 pub mod invites;
 pub mod me;
 pub mod openapi;
@@ -31,12 +31,14 @@ pub fn router_unauthenticated() -> GalvynRouter {
         router = router.handler(openapi::openapi);
     }
 
-    router.nest(
-        "/invite",
-        GalvynRouter::new()
-            .handler(invites::get_invite_common)
-            .handler(invites::accept_invite),
-    )
+    router
+        .nest(
+            "/invite",
+            GalvynRouter::new()
+                .handler(invites::get_invite_common)
+                .handler(invites::accept_invite),
+        )
+        .nest("/auth", GalvynRouter::new().handler(auth::sign_in))
 }
 
 /// Initialize the router

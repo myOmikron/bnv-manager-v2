@@ -229,3 +229,22 @@ export interface RoleOneOf1 {
      */
     ClubMember: string;
 }
+/**
+ * Sign in request
+ * @export
+ * @interface SignInRequest
+ */
+export interface SignInRequest {
+    /**
+     * Password
+     * @type {string}
+     * @memberof SignInRequest
+     */
+    password: string;
+    /**
+     * Username
+     * @type {string}
+     * @memberof SignInRequest
+     */
+    username: string;
+}

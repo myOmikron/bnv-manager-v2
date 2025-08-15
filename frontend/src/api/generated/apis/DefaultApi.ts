@@ -20,6 +20,7 @@ import type {
   FormResultForNullAndAcceptInviteError,
   GetInvite,
   Me,
+  SignInRequest,
 } from '../models/index';
 
 export interface AcceptInviteRequest {
@@ -29,6 +30,10 @@ export interface AcceptInviteRequest {
 
 export interface GetInviteCommonRequest {
     uuid: string;
+}
+
+export interface SignInOperationRequest {
+    SignInRequest?: SignInRequest;
 }
 
 /**
@@ -150,6 +155,32 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async openapi(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.openapiRaw(initOverrides);
+    }
+
+    /**
+     */
+    async signInRaw(requestParameters: SignInOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/auth/sign-in`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['SignInRequest'],
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async signIn(requestParameters: SignInOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.signInRaw(requestParameters, initOverrides);
     }
 
 }

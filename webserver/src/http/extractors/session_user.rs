@@ -1,7 +1,6 @@
 //! Extractors for the session user.
 
 use galvyn::core::re_exports::axum::extract::FromRequestParts;
-use galvyn::core::re_exports::axum::http::StatusCode;
 use galvyn::core::re_exports::axum::http::request::Parts;
 use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;

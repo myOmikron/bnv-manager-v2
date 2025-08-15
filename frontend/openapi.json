@@ -120,6 +120,45 @@
                 }
             }
         },
+        "/api/v1/frontend/auth/sign-in": {
+            "post": {
+                "operationId": "sign_in",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SignInRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/frontend/common/me": {
             "get": {
                 "operationId": "get_me",
@@ -401,6 +440,32 @@
                 "example": "1970-01-01T00:00:00.0Z",
                 "type": "string",
                 "format": "date-time"
+            },
+            "SignInRequest": {
+                "description": "Sign in request",
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "description": "Password",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_72"
+                            }
+                        ]
+                    },
+                    "username": {
+                        "description": "Username",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "password",
+                    "username"
+                ]
             }
         }
     }

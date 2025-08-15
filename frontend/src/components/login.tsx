@@ -8,6 +8,8 @@ import Form from "src/components/base/form";
 import { Heading } from "src/components/base/heading";
 import { Api } from "src/api/api";
 import { Text } from "src/components/base/text";
+import { AuthLayout } from "src/components/base/auth-layout";
+import { toast } from "react-toastify";
 
 /**
  * The properties for {@link Login}
@@ -31,13 +33,27 @@ export default function Login(props: LoginProps) {
         validators: {
             // eslint-disable-next-line
             onSubmitAsync: async ({ formApi, value }) => {
-                const res = await Api.auth.login(value.username, value.password);
-
-                if (res.result === "Err") {
+                const id = toast.loading(t("toast.signing-in"));
+                try {
+                    await Api.auth.login(value.username, value.password);
+                } catch (e) {
+                    toast.update(id, {
+                        isLoading: false,
+                        render: t("toast.sign-in-failed"),
+                        type: "error",
+                        autoClose: 3500,
+                    });
                     return {
                         form: t("error.invalid-username-or-password"),
                     };
                 }
+
+                toast.update(id, {
+                    isLoading: false,
+                    render: t("toast.signed-in"),
+                    type: "success",
+                    autoClose: 3500,
+                });
 
                 props.onLogin();
             },
@@ -45,64 +61,64 @@ export default function Login(props: LoginProps) {
     });
 
     return (
-        <div className={"flex h-screen w-full items-center justify-center bg-zinc-50 p-3 dark:bg-neutral-950"}>
-            <div className="w-full max-w-md rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:before:pointer-events-none forced-colors:outline">
-                <Form className={"p-12"} onSubmit={form.handleSubmit}>
-                    <Fieldset className={"w-full"}>
-                        <FieldGroup>
-                            <Heading>BNV Manager</Heading>
+        <AuthLayout>
+            <Form onSubmit={form.handleSubmit} className={"grid w-full max-w-sm grid-cols-1 gap-8"}>
+                <Fieldset className={"w-full"}>
+                    <FieldGroup>
+                        <Heading>BNV Manager</Heading>
 
-                            <form.Field name={"username"}>
-                                {(fieldApi) => (
-                                    <Field>
-                                        <Label>{t("label.username")}</Label>
-                                        <Input
-                                            autoFocus={true}
-                                            autoComplete={"username"}
-                                            required={true}
-                                            value={fieldApi.state.value}
-                                            onChange={(e) => fieldApi.handleChange(e.target.value)}
-                                        />
-                                    </Field>
-                                )}
-                            </form.Field>
+                        <form.Subscribe selector={(state) => [state.errorMap]}>
+                            {([errorMap]) =>
+                                errorMap.onSubmit ? (
+                                    <Text
+                                        className={
+                                            "!data-disabled:opacity-50 !dark:text-red-500 !text-base/6 !text-red-600 sm:!text-sm/6"
+                                        }
+                                    >
+                                        {errorMap.onSubmit.form}
+                                    </Text>
+                                ) : null
+                            }
+                        </form.Subscribe>
 
-                            <form.Field name={"password"}>
-                                {(fieldApi) => (
-                                    <Field>
-                                        <Label>{t("label.password")}</Label>
-                                        <Input
-                                            required={true}
-                                            type={"password"}
-                                            autoComplete={"current-password"}
-                                            value={fieldApi.state.value}
-                                            onChange={(e) => fieldApi.handleChange(e.target.value)}
-                                        />
-                                    </Field>
-                                )}
-                            </form.Field>
+                        <form.Field name={"username"}>
+                            {(fieldApi) => (
+                                <Field>
+                                    <Label>{t("label.username")}</Label>
+                                    <Input
+                                        autoFocus={true}
+                                        autoComplete={"username"}
+                                        required={true}
+                                        value={fieldApi.state.value}
+                                        onChange={(e) => fieldApi.handleChange(e.target.value)}
+                                        invalid={fieldApi.form.state.errors.length > 0}
+                                    />
+                                </Field>
+                            )}
+                        </form.Field>
 
-                            <form.Subscribe selector={(state) => [state.errorMap]}>
-                                {([errorMap]) =>
-                                    errorMap.onSubmit ? (
-                                        <Text
-                                            className={
-                                                "!data-disabled:opacity-50 !dark:text-red-500 !text-base/6 !text-red-600 sm:!text-sm/6"
-                                            }
-                                        >
-                                            {errorMap.onSubmit.form}
-                                        </Text>
-                                    ) : null
-                                }
-                            </form.Subscribe>
+                        <form.Field name={"password"}>
+                            {(fieldApi) => (
+                                <Field>
+                                    <Label>{t("label.password")}</Label>
+                                    <Input
+                                        required={true}
+                                        type={"password"}
+                                        autoComplete={"current-password"}
+                                        value={fieldApi.state.value}
+                                        onChange={(e) => fieldApi.handleChange(e.target.value)}
+                                        invalid={fieldApi.form.state.errors.length > 0}
+                                    />
+                                </Field>
+                            )}
+                        </form.Field>
 
-                            <PrimaryButton type={"submit"} className={"w-full"}>
-                                {t("button.sign-in")}
-                            </PrimaryButton>
-                        </FieldGroup>
-                    </Fieldset>
-                </Form>
-            </div>
-        </div>
+                        <PrimaryButton type={"submit"} className={"w-full"}>
+                            {t("button.sign-in")}
+                        </PrimaryButton>
+                    </FieldGroup>
+                </Fieldset>
+            </Form>
+        </AuthLayout>
     );
 }
