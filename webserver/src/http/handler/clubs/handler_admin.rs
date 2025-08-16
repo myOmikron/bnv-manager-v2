@@ -1,8 +1,11 @@
 use galvyn::core::Module;
+use galvyn::core::re_exports::axum::extract::Path;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
 use galvyn::core::stuff::schema::SchemaDateTime;
+use galvyn::core::stuff::schema::SingleUuid;
+use galvyn::delete;
 use galvyn::get;
 use galvyn::post;
 use rorm::Database;
@@ -58,4 +61,19 @@ pub async fn create_club_admin(
     tx.commit().await?;
 
     Ok(ApiJson(FormResult::ok(uuid)))
+}
+
+#[delete("/{uuid}")]
+#[instrument(name = "Api::delete_club_admin")]
+pub async fn delete_club_admin(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid)).await?;
+    if let Some(club) = club {
+        club.delete(&mut tx).await?;
+    }
+
+    tx.commit().await?;
+
+    Ok(())
 }

@@ -14,7 +14,8 @@ pub fn router_admin() -> GalvynRouter {
         "/clubs",
         GalvynRouter::new()
             .handler(clubs::get_clubs_admin)
-            .handler(clubs::create_club_admin),
+            .handler(clubs::create_club_admin)
+            .handler(clubs::delete_club_admin),
     )
 }
 

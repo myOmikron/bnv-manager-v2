@@ -35,9 +35,19 @@ pub struct Club {
 pub struct ClubUuid(pub Uuid);
 
 impl Club {
+    /// Delete a club
+    #[instrument(name = "Club::delete", skip(self, exe))]
+    pub async fn delete(self, exe: impl Executor<'_>) -> anyhow::Result<()> {
+        rorm::delete(exe, ClubModel)
+            .condition(ClubModel.uuid.equals(self.uuid.0))
+            .await?;
+
+        Ok(())
+    }
+
     /// Retrieve a club by uuid
-    #[instrument(skip(exe))]
-    pub async fn get_by_uuid(
+    #[instrument(name = "Club::find_by_uuid", skip(exe))]
+    pub async fn find_by_uuid(
         exe: impl Executor<'_>,
         uuid: ClubUuid,
     ) -> anyhow::Result<Option<Club>> {

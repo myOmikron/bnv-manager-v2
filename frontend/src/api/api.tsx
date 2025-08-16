@@ -29,7 +29,7 @@ export const Api = {
             get: (uuid: UUID) => handleError(api.adminGetClub({ uuid })),
             create: (createClub: CreateClubRequest) =>
                 handleError(api.createClubAdmin({ CreateClubRequest: createClub })),
-            delete: (uuid: UUID) => handleError(api.deleteClub({ uuid })),
+            delete: (uuid: UUID) => handleError(api.deleteClubAdmin({ uuid })),
         },
         invites: {
             create: (invite: AdminCreateInviteRequest) =>
