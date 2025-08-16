@@ -1,7 +1,12 @@
 use rorm::Model;
 use rorm::Patch;
+use rorm::field;
 use rorm::fields::types::MaxStr;
+use rorm::prelude::BackRef;
 use uuid::Uuid;
+
+use crate::models::role::db::ClubAdminModel;
+use crate::models::role::db::ClubMemberModel;
 
 #[derive(Debug, Model)]
 #[rorm(rename = "Club")]
@@ -15,6 +20,9 @@ pub struct ClubModel {
     pub modified_at: time::OffsetDateTime,
     #[rorm(auto_create_time)]
     pub created_at: time::OffsetDateTime,
+
+    pub members: BackRef<field!(ClubMemberModel.club)>,
+    pub admins: BackRef<field!(ClubAdminModel.club)>,
 }
 
 #[derive(Debug, Patch)]

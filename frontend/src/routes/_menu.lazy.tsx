@@ -25,6 +25,7 @@ import {
     UserPlusIcon,
 } from "@heroicons/react/20/solid";
 import { Api } from "src/api/api";
+import Logo from "src/assets/bnv_plain.svg?react";
 
 /**
  * The properties for {@link Menu}
@@ -44,7 +45,7 @@ function Menu(props: MenuProps) {
             sidebar={
                 <Sidebar>
                     <SidebarHeader>
-                        <span className={"text-xl font-bold text-black dark:text-white"}>BNV Manager</span>
+                        <Logo className={"w-full p-5 text-white"} />
                     </SidebarHeader>
 
                     <SidebarBody>

@@ -17,8 +17,9 @@ import {
     DropdownMenu,
     DropdownSection,
 } from "src/components/base/dropdown";
-import { SimpleClub } from "src/api/generated";
 import AdminDeleteClubDialog from "src/components/dialogs/admin-delete-club";
+import { Text } from "src/components/base/text";
+import { Club } from "src/api/generated";
 
 /**
  * The properties for {@link AdminClubOverview}
@@ -36,7 +37,7 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
     const clubs = Route.useLoaderData();
 
     const [openCreateClub, setOpenCreateClub] = React.useState(false);
-    const [openDeleteClub, setOpenDeleteClub] = React.useState<SimpleClub>();
+    const [openDeleteClub, setOpenDeleteClub] = React.useState<Club>();
 
     return (
         <HeadingLayout
@@ -48,50 +49,58 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                 </PrimaryButton>
             }
         >
-            <Table dense={true}>
-                <TableHead>
-                    <TableRow>
-                        <TableHeader>{t("label.club-name")}</TableHeader>
-                        <TableHeader>{t("label.created-at")}</TableHeader>
-                        <TableHeader className={"w-0"}>
-                            <span className={"sr-only"}>{tg("accessibility.actions")}</span>
-                        </TableHeader>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {clubs.map((club) => (
-                        <TableRow key={club.uuid} href={"/a/clubs/$clubId/dashboard"} params={{ clubId: club.uuid }}>
-                            <TableCell>{club.name}</TableCell>
-                            <TableCell>{new Date(club.created_at).toLocaleDateString("de-de")}</TableCell>
-                            <TableCell>
-                                <Dropdown>
-                                    <DropdownButton plain={true}>
-                                        <EllipsisVerticalIcon />
-                                    </DropdownButton>
-                                    <DropdownMenu anchor={"bottom end"}>
-                                        <DropdownSection>
-                                            <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
-
-                                            <DropdownItem onClick={() => setOpenDeleteClub(club)}>
-                                                <TrashIcon />
-                                                <DropdownLabel>{t("button.delete-club")}</DropdownLabel>
-                                            </DropdownItem>
-                                        </DropdownSection>
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </TableCell>
+            {clubs.length === 0 ? (
+                <Text>{t("label.no-clubs-created-yet")}</Text>
+            ) : (
+                <Table dense={true}>
+                    <TableHead>
+                        <TableRow>
+                            <TableHeader>{t("label.club-name")}</TableHeader>
+                            <TableHeader>{t("label.created-at")}</TableHeader>
+                            <TableHeader className={"w-0"}>
+                                <span className={"sr-only"}>{tg("accessibility.actions")}</span>
+                            </TableHeader>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHead>
+                    <TableBody>
+                        {clubs.map((club) => (
+                            <TableRow
+                                key={club.uuid}
+                                href={"/a/clubs/$clubId/dashboard"}
+                                params={{ clubId: club.uuid }}
+                            >
+                                <TableCell>{club.name}</TableCell>
+                                <TableCell>{new Date(club.created_at).toLocaleDateString("de-de")}</TableCell>
+                                <TableCell>
+                                    <Dropdown>
+                                        <DropdownButton plain={true}>
+                                            <EllipsisVerticalIcon />
+                                        </DropdownButton>
+                                        <DropdownMenu anchor={"bottom end"}>
+                                            <DropdownSection>
+                                                <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
+
+                                                <DropdownItem onClick={() => setOpenDeleteClub(club)}>
+                                                    <TrashIcon />
+                                                    <DropdownLabel>{t("button.delete-club")}</DropdownLabel>
+                                                </DropdownItem>
+                                            </DropdownSection>
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            )}
 
             {openCreateClub && (
                 <Suspense>
                     <AdminCreateClubDialog
                         onClose={() => setOpenCreateClub(false)}
-                        onCreate={() => {
+                        onCreate={async () => {
                             setOpenCreateClub(false);
-                            router.invalidate({ sync: true });
+                            await router.invalidate({ sync: true });
                         }}
                     />
                 </Suspense>
@@ -102,9 +111,9 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                     <AdminDeleteClubDialog
                         club={openDeleteClub}
                         onClose={() => setOpenDeleteClub(undefined)}
-                        onDelete={() => {
+                        onDelete={async () => {
                             setOpenDeleteClub(undefined);
-                            router.invalidate({ sync: false });
+                            await router.invalidate({ sync: false });
                         }}
                     />
                 </Suspense>

@@ -225,6 +225,90 @@
                     }
                 }
             }
+        },
+        "/api/v1/frontend/admin/clubs": {
+            "get": {
+                "operationId": "get_clubs_admin",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Club"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "create_club_admin",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateClubRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_ClubUuid_and_CreateClubError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -292,10 +376,157 @@
                     2000
                 ]
             },
+            "Club": {
+                "description": "A single club",
+                "type": "object",
+                "properties": {
+                    "admin_count": {
+                        "description": "The number of admins in the club",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "created_at": {
+                        "description": "The point in time the club was created",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/SchemaDateTime"
+                            }
+                        ]
+                    },
+                    "description": {
+                        "description": "Description for a club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_1024"
+                            }
+                        ]
+                    },
+                    "member_count": {
+                        "description": "The number of members in the club",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "modified_at": {
+                        "description": "The last point in time the club was modified",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/SchemaDateTime"
+                            }
+                        ]
+                    },
+                    "name": {
+                        "description": "Name of the club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "uuid": {
+                        "description": "Primary key of a club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "admin_count",
+                    "created_at",
+                    "description",
+                    "member_count",
+                    "modified_at",
+                    "name",
+                    "uuid"
+                ]
+            },
             "ClubUuid": {
                 "description": "New-type for the primary key of the club",
                 "type": "string",
                 "format": "uuid"
+            },
+            "CreateClubError": {
+                "description": "Error when creating a club",
+                "type": "object",
+                "properties": {
+                    "name_already_exists": {
+                        "description": "Whether the club name already exists",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "name_already_exists"
+                ]
+            },
+            "CreateClubRequest": {
+                "description": "Request to create a club",
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "description": "Description for a club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_1024"
+                            }
+                        ]
+                    },
+                    "name": {
+                        "description": "Name of the club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "description",
+                    "name"
+                ]
+            },
+            "FormResult_for_ClubUuid_and_CreateClubError": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/CreateClubError"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
             },
             "FormResult_for_Null_and_AcceptInviteError": {
                 "description": "A `Result` with a custom serialization",
@@ -387,6 +618,10 @@
                     "username",
                     "uuid"
                 ]
+            },
+            "MaxStr_1024": {
+                "type": "string",
+                "maxLength": 1024
             },
             "MaxStr_255": {
                 "type": "string",

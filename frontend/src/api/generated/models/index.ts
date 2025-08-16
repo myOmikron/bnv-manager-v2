@@ -66,6 +66,151 @@ export const ApiStatusCode = {
 export type ApiStatusCode = typeof ApiStatusCode[keyof typeof ApiStatusCode];
 
 /**
+ * A single club
+ * @export
+ * @interface Club
+ */
+export interface Club {
+    /**
+     * The number of admins in the club
+     * @type {number}
+     * @memberof Club
+     */
+    admin_count: number;
+    /**
+     * The point in time the club was created
+     * @type {string}
+     * @memberof Club
+     */
+    created_at: string;
+    /**
+     * Description for a club
+     * @type {string}
+     * @memberof Club
+     */
+    description: string;
+    /**
+     * The number of members in the club
+     * @type {number}
+     * @memberof Club
+     */
+    member_count: number;
+    /**
+     * The last point in time the club was modified
+     * @type {string}
+     * @memberof Club
+     */
+    modified_at: string;
+    /**
+     * Name of the club
+     * @type {string}
+     * @memberof Club
+     */
+    name: string;
+    /**
+     * Primary key of a club
+     * @type {string}
+     * @memberof Club
+     */
+    uuid: string;
+}
+/**
+ * Error when creating a club
+ * @export
+ * @interface CreateClubError
+ */
+export interface CreateClubError {
+    /**
+     * Whether the club name already exists
+     * @type {boolean}
+     * @memberof CreateClubError
+     */
+    name_already_exists: boolean;
+}
+/**
+ * Request to create a club
+ * @export
+ * @interface CreateClubRequest
+ */
+export interface CreateClubRequest {
+    /**
+     * Description for a club
+     * @type {string}
+     * @memberof CreateClubRequest
+     */
+    description: string;
+    /**
+     * Name of the club
+     * @type {string}
+     * @memberof CreateClubRequest
+     */
+    name: string;
+}
+/**
+ * @type FormResultForClubUuidAndCreateClubError
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForClubUuidAndCreateClubError = FormResultForClubUuidAndCreateClubErrorOneOf | FormResultForClubUuidAndCreateClubErrorOneOf1;
+/**
+ * 
+ * @export
+ * @interface FormResultForClubUuidAndCreateClubErrorOneOf
+ */
+export interface FormResultForClubUuidAndCreateClubErrorOneOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForClubUuidAndCreateClubErrorOneOf
+     */
+    result: FormResultForClubUuidAndCreateClubErrorOneOfResultEnum;
+    /**
+     * New-type for the primary key of the club
+     * @type {string}
+     * @memberof FormResultForClubUuidAndCreateClubErrorOneOf
+     */
+    value: string;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForClubUuidAndCreateClubErrorOneOfResultEnum = {
+    Ok: 'Ok'
+} as const;
+export type FormResultForClubUuidAndCreateClubErrorOneOfResultEnum = typeof FormResultForClubUuidAndCreateClubErrorOneOfResultEnum[keyof typeof FormResultForClubUuidAndCreateClubErrorOneOfResultEnum];
+
+/**
+ * 
+ * @export
+ * @interface FormResultForClubUuidAndCreateClubErrorOneOf1
+ */
+export interface FormResultForClubUuidAndCreateClubErrorOneOf1 {
+    /**
+     * 
+     * @type {CreateClubError}
+     * @memberof FormResultForClubUuidAndCreateClubErrorOneOf1
+     */
+    error: CreateClubError;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForClubUuidAndCreateClubErrorOneOf1
+     */
+    result: FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum = typeof FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum[keyof typeof FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum];
+
+/**
  * @type FormResultForNullAndAcceptInviteError
  * A `Result` with a custom serialization
  * @export

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
-import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
+import { ErrorMessage, Field, FieldGroup, Fieldset, Label, RequiredLabel } from "src/components/base/fieldset";
 import { Input } from "src/components/base/input";
 import { Button, PrimaryButton } from "src/components/base/button";
 import { Api } from "src/api/api";
@@ -29,15 +29,16 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
     const form = useForm({
         defaultValues: {
             name: "",
+            description: "",
         },
         validators: {
             // eslint-disable-next-line
             onSubmitAsync: async ({ formApi, value }) => {
-                const res = await Api.admin.clubs.create({ name: value.name });
+                const res = await Api.admin.clubs.create({ name: value.name, description: value.description });
                 if (res.result === "Err") {
                     return {
                         fields: {
-                            name: [res.error.name_already_occupied ? t("error.name-already-occupied") : undefined],
+                            name: [res.error.name_already_exists ? t("error.name-already-occupied") : undefined],
                         },
                     };
                 }
@@ -66,6 +67,21 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
                                             value={fieldApi.state.value}
                                             onChange={(e) => fieldApi.handleChange(e.target.value)}
                                             invalid={fieldApi.state.meta.errors.length > 0}
+                                        />
+                                        {fieldApi.state.meta.errors.map((err) => (
+                                            <ErrorMessage>{err}</ErrorMessage>
+                                        ))}
+                                    </Field>
+                                )}
+                            </form.Field>
+
+                            <form.Field name={"description"}>
+                                {(fieldApi) => (
+                                    <Field>
+                                        <Label>{t("label.club-description")}</Label>
+                                        <Input
+                                            value={fieldApi.state.value}
+                                            onChange={(e) => fieldApi.handleChange(e.target.value)}
                                         />
                                         {fieldApi.state.meta.errors.map((err) => (
                                             <ErrorMessage>{err}</ErrorMessage>

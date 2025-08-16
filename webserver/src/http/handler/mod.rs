@@ -3,13 +3,19 @@
 use galvyn::core::GalvynRouter;
 
 pub mod auth;
+pub mod clubs;
 pub mod invites;
 pub mod me;
 pub mod openapi;
 
 /// Handler for the admin
 pub fn router_admin() -> GalvynRouter {
-    GalvynRouter::new()
+    GalvynRouter::new().nest(
+        "/clubs",
+        GalvynRouter::new()
+            .handler(clubs::get_clubs_admin)
+            .handler(clubs::create_club_admin),
+    )
 }
 
 /// Handler for the club admin
