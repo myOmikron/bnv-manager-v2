@@ -30,7 +30,7 @@ export const Api = {
     },
     auth: {
         login: (username: string, password: string) => api.signIn({ SignInRequest: { username, password } }),
-        logout: () => handleError(api.logout()),
+        logout: () => handleError(api.signOut()),
     },
     invites: {
         get: (uuid: UUID) => handleError(api.getInviteCommon({ uuid })),

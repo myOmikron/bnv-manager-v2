@@ -25,7 +25,11 @@ const USER_CONTEXT = React.createContext<UserContext>({
         uuid: "",
         username: "",
         display_name: "",
-        roles: [],
+        roles: {
+            admins: [],
+            member: [],
+            super_admin: false,
+        },
     },
 
     /**

@@ -10,7 +10,9 @@ use tracing::instrument;
 
 use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler::me::Me;
+use crate::http::handler::me::Roles;
 use crate::models::account::Account;
+use crate::models::role::Role;
 
 #[get("/me")]
 #[instrument(name = "Api::get_me")]
@@ -31,6 +33,24 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
         uuid: account.uuid.0,
         username: account.username.to_string(),
         display_name: account.display_name.to_string(),
-        roles,
+        roles: Roles {
+            super_admin: roles.contains(&Role::SuperAdmin),
+            member: roles
+                .clone()
+                .into_iter()
+                .flat_map(|x| match x {
+                    Role::ClubMember(_) => Some(x),
+                    _ => None,
+                })
+                .collect(),
+            admins: roles
+                .clone()
+                .into_iter()
+                .flat_map(|x| match x {
+                    Role::ClubAdmin(_) => Some(x),
+                    _ => None,
+                })
+                .collect(),
+        },
     }))
 }

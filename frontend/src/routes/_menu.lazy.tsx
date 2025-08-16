@@ -52,7 +52,7 @@ function Menu(props: MenuProps) {
                             <SidebarHeading>{t("heading.user-settings")}</SidebarHeading>
                         </SidebarSection>
 
-                        {ctx.user.permissions.admin && (
+                        {ctx.user.roles.super_admin && (
                             <>
                                 <SidebarDivider />
                                 <SidebarSection>

@@ -17,5 +17,16 @@ pub struct Me {
     /// The user's display name.
     pub display_name: String,
     /// The user's roles.
-    pub roles: Vec<Role>,
+    pub roles: Roles,
+}
+
+/// The roles of a user.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct Roles {
+    /// Whether the user is a super admin.
+    pub super_admin: bool,
+    /// The user's membership roles
+    pub member: Vec<Role>,
+    /// The user's admin roles.
+    pub admins: Vec<Role>,
 }

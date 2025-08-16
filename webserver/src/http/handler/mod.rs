@@ -19,7 +19,9 @@ pub fn router_club_admin() -> GalvynRouter {
 
 /// Common handler
 pub fn router_common() -> GalvynRouter {
-    GalvynRouter::new().handler(me::get_me)
+    GalvynRouter::new()
+        .handler(me::get_me)
+        .nest("/auth", GalvynRouter::new().handler(auth::sign_out))
 }
 
 /// Unauthenticated handler

@@ -180,10 +180,10 @@ export interface Me {
     display_name: string;
     /**
      * The user's roles.
-     * @type {Array<Role>}
+     * @type {Roles}
      * @memberof Me
      */
-    roles: Array<Role>;
+    roles: Roles;
     /**
      * The user's username.
      * @type {string}
@@ -228,6 +228,31 @@ export interface RoleOneOf1 {
      * @memberof RoleOneOf1
      */
     ClubMember: string;
+}
+/**
+ * The roles of a user.
+ * @export
+ * @interface Roles
+ */
+export interface Roles {
+    /**
+     * The user's admin roles.
+     * @type {Array<Role>}
+     * @memberof Roles
+     */
+    admins: Array<Role>;
+    /**
+     * The user's membership roles
+     * @type {Array<Role>}
+     * @memberof Roles
+     */
+    member: Array<Role>;
+    /**
+     * Whether the user is a super admin.
+     * @type {boolean}
+     * @memberof Roles
+     */
+    super_admin: boolean;
 }
 /**
  * Sign in request

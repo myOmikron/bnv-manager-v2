@@ -36,3 +36,10 @@ pub async fn sign_in(
 
     Ok(())
 }
+
+#[post("/sign-out")]
+#[instrument(name = "Api::sign_out")]
+pub async fn sign_out(session: Session) -> ApiResult<()> {
+    session.remove::<SessionUser>(SESSION_USER).await?;
+    Ok(())
+}

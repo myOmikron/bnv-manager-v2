@@ -183,4 +183,27 @@ export class DefaultApi extends runtime.BaseAPI {
         await this.signInRaw(requestParameters, initOverrides);
     }
 
+    /**
+     */
+    async signOutRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/common/auth/sign-out`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async signOut(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.signOutRaw(initOverrides);
+    }
+
 }

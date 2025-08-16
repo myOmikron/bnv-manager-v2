@@ -195,6 +195,36 @@
                     }
                 }
             }
+        },
+        "/api/v1/frontend/common/auth/sign-out": {
+            "post": {
+                "operationId": "sign_out",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -376,10 +406,11 @@
                     },
                     "roles": {
                         "description": "The user's roles.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Role"
-                        }
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Roles"
+                            }
+                        ]
                     },
                     "username": {
                         "description": "The user's username.",
@@ -434,6 +465,35 @@
                         ],
                         "additionalProperties": false
                     }
+                ]
+            },
+            "Roles": {
+                "description": "The roles of a user.",
+                "type": "object",
+                "properties": {
+                    "admins": {
+                        "description": "The user's admin roles.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Role"
+                        }
+                    },
+                    "member": {
+                        "description": "The user's membership roles",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Role"
+                        }
+                    },
+                    "super_admin": {
+                        "description": "Whether the user is a super admin.",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "admins",
+                    "member",
+                    "super_admin"
                 ]
             },
             "SchemaDateTime": {
