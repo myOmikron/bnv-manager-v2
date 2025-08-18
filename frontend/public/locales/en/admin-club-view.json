@@ -1,10 +1,17 @@
 {
     "button": {
-        "back-to-club-overview": "Back to club overview"
+        "back-to-overview": "Back to overview"
     },
     "heading": {
+        "admins": "Admins",
         "club": "Club: {{club}}",
         "dashboard": "Dashboard",
-        "domains": "Domains"
+        "domains": "Domains",
+        "members": "Members"
+    },
+    "label": {
+        "display-name": "Displayname",
+        "no-members": "No members found.",
+        "username": "Username"
     }
 }

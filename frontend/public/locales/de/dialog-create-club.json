@@ -9,6 +9,7 @@
         "create-club": "Verein anlegen"
     },
     "label": {
+        "club-description": "label.club-description",
         "club-name": "Name des Vereins"
     }
 }

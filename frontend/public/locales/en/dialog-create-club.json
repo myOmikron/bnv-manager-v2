@@ -9,6 +9,7 @@
         "create-club": "Create club"
     },
     "label": {
+        "club-description": "label.club-description",
         "club-name": "Club name"
     }
 }

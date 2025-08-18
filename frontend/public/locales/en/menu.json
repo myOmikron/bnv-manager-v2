@@ -1,7 +1,7 @@
 {
     "button": {
-        "admin-overview": "Admin overview",
-        "club-overview": "Clubs overview",
+        "admin-overview": "Superadmins",
+        "club-overview": "Clubs",
         "profile": "Profile",
         "sign-out": "Sign out"
     },

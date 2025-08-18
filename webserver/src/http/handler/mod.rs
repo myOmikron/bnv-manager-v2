@@ -2,6 +2,7 @@
 
 use galvyn::core::GalvynRouter;
 
+pub mod accounts;
 pub mod auth;
 pub mod clubs;
 pub mod invites;
@@ -13,9 +14,12 @@ pub fn router_admin() -> GalvynRouter {
     GalvynRouter::new().nest(
         "/clubs",
         GalvynRouter::new()
-            .handler(clubs::get_clubs_admin)
-            .handler(clubs::create_club_admin)
-            .handler(clubs::delete_club_admin),
+            .handler(clubs::get_club__admin)
+            .handler(clubs::get_clubs__admin)
+            .handler(clubs::create_club__admin)
+            .handler(clubs::delete_club__admin)
+            .handler(clubs::get_club_admins__admin)
+            .handler(clubs::get_club_members__admin),
     )
 }
 

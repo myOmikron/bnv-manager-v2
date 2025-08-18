@@ -226,9 +226,98 @@
                 }
             }
         },
+        "/api/v1/frontend/admin/clubs/{uuid}": {
+            "get": {
+                "operationId": "get_club__admin",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Club"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "delete_club__admin",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/frontend/admin/clubs": {
             "get": {
-                "operationId": "get_clubs_admin",
+                "operationId": "get_clubs__admin",
                 "responses": {
                     "200": {
                         "description": "",
@@ -266,7 +355,7 @@
                 }
             },
             "post": {
-                "operationId": "create_club_admin",
+                "operationId": "create_club__admin",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -310,9 +399,9 @@
                 }
             }
         },
-        "/api/v1/frontend/admin/clubs/{uuid}": {
-            "delete": {
-                "operationId": "delete_club_admin",
+        "/api/v1/frontend/admin/clubs/{uuid}/admins": {
+            "get": {
+                "operationId": "get_club_admins__admin",
                 "parameters": [
                     {
                         "in": "path",
@@ -323,11 +412,139 @@
                             "format": "uuid"
                         },
                         "style": "simple"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "description": "Limit for pagination",
+                            "type": "integer",
+                            "minimum": 0,
+                            "format": "uint64"
+                        },
+                        "style": "form"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "schema": {
+                            "description": "Offset for pagination",
+                            "type": "integer",
+                            "minimum": 0,
+                            "format": "uint64"
+                        },
+                        "style": "form"
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "nullable": true,
+                            "description": "Search for usernames",
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/MaxStr_255"
+                                }
+                            ]
+                        },
+                        "style": "form"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Page_for_SimpleAccount"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/admin/clubs/{uuid}/members": {
+            "get": {
+                "operationId": "get_club_members__admin",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "description": "Limit for pagination",
+                            "type": "integer",
+                            "minimum": 0,
+                            "format": "uint64"
+                        },
+                        "style": "form"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "schema": {
+                            "description": "Offset for pagination",
+                            "type": "integer",
+                            "minimum": 0,
+                            "format": "uint64"
+                        },
+                        "style": "form"
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "nullable": true,
+                            "description": "Search for usernames",
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/MaxStr_255"
+                                }
+                            ]
+                        },
+                        "style": "form"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Page_for_SimpleAccount"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "",
@@ -384,6 +601,11 @@
                 "required": [
                     "empty_password"
                 ]
+            },
+            "AccountUuid": {
+                "description": "New-type for the account's primary key",
+                "type": "string",
+                "format": "uuid"
             },
             "ApiErrorResponse": {
                 "description": "The response that is sent in a case of an error",
@@ -706,6 +928,42 @@
                     "uuid"
                 ]
             },
+            "Page_for_SimpleAccount": {
+                "description": "A page of items",
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "description": "The page's items",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SimpleAccount"
+                        }
+                    },
+                    "limit": {
+                        "description": "The limit this page was requested with",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "offset": {
+                        "description": "The offset this page was requested with",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "total": {
+                        "description": "The total number of items this page is a subset of",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "required": [
+                    "items",
+                    "limit",
+                    "offset",
+                    "total"
+                ]
+            },
             "Role": {
                 "description": "The available roles of the manager",
                 "oneOf": [
@@ -802,6 +1060,41 @@
                 "required": [
                     "password",
                     "username"
+                ]
+            },
+            "SimpleAccount": {
+                "description": "Simple representation of an account.",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "The account's display name.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "username": {
+                        "description": "The account's username.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "uuid": {
+                        "description": "The account's UUID.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AccountUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "username",
+                    "uuid"
                 ]
             }
         }

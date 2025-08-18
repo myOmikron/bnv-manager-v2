@@ -8,6 +8,7 @@
     },
     "label": {
         "club-name": "Vereinsname",
-        "created-at": "Angelegt am"
+        "created-at": "Angelegt am",
+        "no-clubs-created-yet": "label.no-clubs-created-yet"
     }
 }

@@ -25,7 +25,7 @@ import {
     UserPlusIcon,
 } from "@heroicons/react/20/solid";
 import { Api } from "src/api/api";
-import Logo from "src/assets/bnv_plain.svg?react";
+import Logo from "src/assets/bnv.svg?react";
 
 /**
  * The properties for {@link Menu}

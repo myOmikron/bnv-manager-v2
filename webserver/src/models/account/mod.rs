@@ -9,6 +9,7 @@ use rorm::and;
 use rorm::db::Executor;
 use rorm::fields::types::MaxStr;
 use rorm::prelude::ForeignModelByField;
+use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use tracing::instrument;
@@ -39,7 +40,7 @@ pub struct Account {
 }
 
 /// New-type for the account's primary key
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 pub struct AccountUuid(pub Uuid);
 
 impl Account {

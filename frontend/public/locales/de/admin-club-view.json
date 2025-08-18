@@ -1,10 +1,17 @@
 {
     "button": {
-        "back-to-club-overview": "Zur\u00fcck zur Vereins\u00fcbersicht"
+        "back-to-overview": "Zur\u00fcck zur \u00dcbersicht"
     },
     "heading": {
+        "admins": "Administratoren",
         "club": "Verein: {{club}}",
         "dashboard": "Dashboard",
-        "domains": "Domains"
+        "domains": "Domains",
+        "members": "Mitglieder"
+    },
+    "label": {
+        "display-name": "Anzeigename",
+        "no-members": "Keine Mitglieder vorhanden.",
+        "username": "Nutzername"
     }
 }

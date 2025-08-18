@@ -24,7 +24,7 @@ function AdminClubLayout(props: AdminClubLayoutProps) {
                 {(ctx) => (
                     <div className={"flex flex-col gap-6"}>
                         <BackButton className={"self-start"} href={"/a/clubs"}>
-                            {t("button.back-to-club-overview")}
+                            {t("button.back-to-overview")}
                         </BackButton>
 
                         <TabLayout
@@ -32,6 +32,8 @@ function AdminClubLayout(props: AdminClubLayoutProps) {
                             tabs={
                                 <TabMenu>
                                     <Tab href={"/a/clubs/$clubId/dashboard"}>{t("heading.dashboard")}</Tab>
+                                    <Tab href={"/a/clubs/$clubId/members"}>{t("heading.members")}</Tab>
+                                    <Tab href={"/a/clubs/$clubId/admins"}>{t("heading.admins")}</Tab>
                                     <Tab href={"/a/clubs/$clubId/domains"}>{t("heading.domains")}</Tab>
                                 </TabMenu>
                             }

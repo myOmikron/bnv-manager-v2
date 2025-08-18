@@ -1,8 +1,11 @@
 use galvyn::core::Module;
 use galvyn::core::re_exports::axum::extract::Path;
+use galvyn::core::re_exports::axum::extract::Query;
+use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
+use galvyn::core::stuff::schema::Page;
 use galvyn::core::stuff::schema::SchemaDateTime;
 use galvyn::core::stuff::schema::SingleUuid;
 use galvyn::delete;
@@ -11,15 +14,17 @@ use galvyn::post;
 use rorm::Database;
 use tracing::instrument;
 
+use crate::http::handler::accounts::SimpleAccount;
 use crate::http::handler::clubs::CreateClubError;
 use crate::http::handler::clubs::CreateClubRequest;
+use crate::http::handler::clubs::PageParams;
 use crate::http::handler::clubs::schema;
 use crate::models::club::Club;
 use crate::models::club::ClubUuid;
 
 #[get("/")]
-#[instrument(name = "Api::get_clubs_admin")]
-pub async fn get_clubs_admin() -> ApiResult<ApiJson<Vec<schema::Club>>> {
+#[instrument(name = "Api::get_clubs__admin")]
+pub async fn get_clubs__admin() -> ApiResult<ApiJson<Vec<schema::Club>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let clubs = Club::find_all(&mut tx)
@@ -42,8 +47,8 @@ pub async fn get_clubs_admin() -> ApiResult<ApiJson<Vec<schema::Club>>> {
 }
 
 #[post("/")]
-#[instrument(name = "Api::create_club_admin")]
-pub async fn create_club_admin(
+#[instrument(name = "Api::create_club__admin")]
+pub async fn create_club__admin(
     ApiJson(CreateClubRequest { name, description }): ApiJson<CreateClubRequest>,
 ) -> ApiResult<ApiJson<FormResult<ClubUuid, CreateClubError>>> {
     let mut tx = Database::global().start_transaction().await?;
@@ -64,8 +69,8 @@ pub async fn create_club_admin(
 }
 
 #[delete("/{uuid}")]
-#[instrument(name = "Api::delete_club_admin")]
-pub async fn delete_club_admin(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
+#[instrument(name = "Api::delete_club__admin")]
+pub async fn delete_club__admin(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
     let mut tx = Database::global().start_transaction().await?;
 
     let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid)).await?;
@@ -76,4 +81,96 @@ pub async fn delete_club_admin(Path(SingleUuid { uuid }): Path<SingleUuid>) -> A
     tx.commit().await?;
 
     Ok(())
+}
+
+#[get("/{uuid}")]
+#[instrument(name = "Api::get_club__admin")]
+pub async fn get_club__admin(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+) -> ApiResult<ApiJson<schema::Club>> {
+    let club = Club::find_by_uuid(Database::global(), ClubUuid(uuid))
+        .await?
+        .ok_or(ApiError::bad_request("Club not found"))?;
+
+    Ok(ApiJson(schema::Club {
+        uuid: club.uuid,
+        name: club.name,
+        description: club.description,
+        modified_at: SchemaDateTime(club.modified_at),
+        created_at: SchemaDateTime(club.created_at),
+        member_count: club.member_count,
+        admin_count: club.admin_count,
+    }))
+}
+
+#[get("/{uuid}/members")]
+#[instrument(name = "Api::get_club_members__admin")]
+pub async fn get_club_members__admin(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+    Query(PageParams {
+        limit,
+        offset,
+        search,
+    }): Query<PageParams>,
+) -> ApiResult<ApiJson<Page<SimpleAccount>>> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid))
+        .await?
+        .ok_or(ApiError::bad_request("Club not found"))?;
+
+    let page = club.members_page(&mut tx, limit, offset, search).await?;
+
+    tx.commit().await?;
+
+    Ok(ApiJson(Page {
+        items: page
+            .items
+            .into_iter()
+            .map(|x| SimpleAccount {
+                uuid: x.uuid,
+                username: x.username,
+                display_name: x.display_name,
+            })
+            .collect(),
+        limit: page.limit,
+        offset: page.offset,
+        total: page.total,
+    }))
+}
+
+#[get("/{uuid}/admins")]
+#[instrument(name = "Api::get_club_admins__admin")]
+pub async fn get_club_admins__admin(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+    Query(PageParams {
+        limit,
+        offset,
+        search,
+    }): Query<PageParams>,
+) -> ApiResult<ApiJson<Page<SimpleAccount>>> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid))
+        .await?
+        .ok_or(ApiError::bad_request("Club not found"))?;
+
+    let page = club.admins_page(&mut tx, limit, offset, search).await?;
+
+    tx.commit().await?;
+
+    Ok(ApiJson(Page {
+        items: page
+            .items
+            .into_iter()
+            .map(|x| SimpleAccount {
+                uuid: x.uuid,
+                display_name: x.display_name,
+                username: x.username,
+            })
+            .collect(),
+        limit: page.limit,
+        offset: page.offset,
+        total: page.total,
+    }))
 }

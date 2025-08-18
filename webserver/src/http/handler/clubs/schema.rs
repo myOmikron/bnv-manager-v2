@@ -40,3 +40,14 @@ pub struct CreateClubError {
     /// Whether the club name already exists
     pub name_already_exists: bool,
 }
+
+/// Parameters for pagination
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct PageParams {
+    /// Offset for pagination
+    pub offset: u64,
+    /// Limit for pagination
+    pub limit: u64,
+    /// Search for usernames
+    pub search: Option<MaxStr<255>>,
+}

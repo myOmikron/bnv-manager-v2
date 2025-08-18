@@ -20,6 +20,8 @@
         "hours": "label.hours",
         "minutes": "label.minutes",
         "months": "label.months",
+        "next": "label.next",
+        "prev": "label.prev",
         "seconds": "label.seconds",
         "weeks": "label.weeks",
         "years": "label.years"

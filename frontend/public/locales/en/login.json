@@ -8,5 +8,10 @@
     "label": {
         "password": "Password",
         "username": "Username"
+    },
+    "toast": {
+        "sign-in-failed": "Sign in failed",
+        "signed-in": "Signed in",
+        "signing-in": "Signing in"
     }
 }

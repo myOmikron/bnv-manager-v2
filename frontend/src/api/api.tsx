@@ -5,6 +5,8 @@ import {
     Configuration,
     CreateClubRequest,
     DefaultApi,
+    GetClubAdminsAdminRequest,
+    GetClubMembersAdminRequest,
     RequiredError,
     ResponseError,
 } from "src/api/generated";
@@ -26,7 +28,9 @@ export const Api = {
         },
         clubs: {
             getAll: () => handleError(api.getClubsAdmin()),
-            get: (uuid: UUID) => handleError(api.adminGetClub({ uuid })),
+            get: (uuid: UUID) => handleError(api.getClubAdmin({ uuid })),
+            clubMembers: (req: GetClubMembersAdminRequest) => handleError(api.getClubMembersAdmin(req)),
+            clubAdmins: (req: GetClubAdminsAdminRequest) => handleError(api.getClubAdminsAdminRaw(req)),
             create: (createClub: CreateClubRequest) =>
                 handleError(api.createClubAdmin({ CreateClubRequest: createClub })),
             delete: (uuid: UUID) => handleError(api.deleteClubAdmin({ uuid })),

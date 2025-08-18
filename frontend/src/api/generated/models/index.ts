@@ -343,6 +343,37 @@ export interface Me {
     uuid: string;
 }
 /**
+ * A page of items
+ * @export
+ * @interface PageForSimpleAccount
+ */
+export interface PageForSimpleAccount {
+    /**
+     * The page's items
+     * @type {Array<SimpleAccount>}
+     * @memberof PageForSimpleAccount
+     */
+    items: Array<SimpleAccount>;
+    /**
+     * The limit this page was requested with
+     * @type {number}
+     * @memberof PageForSimpleAccount
+     */
+    limit: number;
+    /**
+     * The offset this page was requested with
+     * @type {number}
+     * @memberof PageForSimpleAccount
+     */
+    offset: number;
+    /**
+     * The total number of items this page is a subset of
+     * @type {number}
+     * @memberof PageForSimpleAccount
+     */
+    total: number;
+}
+/**
  * @type Role
  * The available roles of the manager
  * @export
@@ -417,4 +448,29 @@ export interface SignInRequest {
      * @memberof SignInRequest
      */
     username: string;
+}
+/**
+ * Simple representation of an account.
+ * @export
+ * @interface SimpleAccount
+ */
+export interface SimpleAccount {
+    /**
+     * The account's display name.
+     * @type {string}
+     * @memberof SimpleAccount
+     */
+    display_name: string;
+    /**
+     * The account's username.
+     * @type {string}
+     * @memberof SimpleAccount
+     */
+    username: string;
+    /**
+     * The account's UUID.
+     * @type {string}
+     * @memberof SimpleAccount
+     */
+    uuid: string;
 }
