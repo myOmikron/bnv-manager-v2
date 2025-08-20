@@ -5,6 +5,9 @@
     "error": {
         "invalid-username-or-password": "Invalid username or password"
     },
+    "heading": {
+        "authentication": "Authentication"
+    },
     "label": {
         "password": "Password",
         "username": "Username"

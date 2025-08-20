@@ -1,15 +1,15 @@
 import { useTranslation } from "react-i18next";
 import React from "react";
-import { Field, FieldGroup, Fieldset, Label } from "src/components/base/fieldset";
+import { Field, FieldGroup, Fieldset, Label, Legend } from "src/components/base/fieldset";
 import { useForm } from "@tanstack/react-form";
 import { Input } from "src/components/base/input";
 import { PrimaryButton } from "src/components/base/button";
 import Form from "src/components/base/form";
-import { Heading } from "src/components/base/heading";
 import { Api } from "src/api/api";
 import { Text } from "src/components/base/text";
 import { AuthLayout } from "src/components/base/auth-layout";
 import { toast } from "react-toastify";
+import Logo from "src/assets/bnv.svg?react";
 
 /**
  * The properties for {@link Login}
@@ -65,7 +65,9 @@ export default function Login(props: LoginProps) {
             <Form onSubmit={form.handleSubmit} className={"grid w-full max-w-sm grid-cols-1 gap-8"}>
                 <Fieldset className={"w-full"}>
                     <FieldGroup>
-                        <Heading>BNV Manager</Heading>
+                        <Logo className={"h-8 w-fit dark:text-white"} />
+
+                        <Legend>{t("heading.authentication")}</Legend>
 
                         <form.Subscribe selector={(state) => [state.errorMap]}>
                             {([errorMap]) =>
