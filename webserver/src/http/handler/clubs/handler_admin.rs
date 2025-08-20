@@ -1,3 +1,5 @@
+//! Administrative endpoints for managing clubs.
+
 use galvyn::core::Module;
 use galvyn::core::re_exports::axum::extract::Path;
 use galvyn::core::re_exports::axum::extract::Query;
@@ -23,8 +25,8 @@ use crate::models::club::Club;
 use crate::models::club::ClubUuid;
 
 #[get("/")]
-#[instrument(name = "Api::get_clubs__admin")]
-pub async fn get_clubs__admin() -> ApiResult<ApiJson<Vec<schema::Club>>> {
+#[instrument(name = "Api::admin::get_clubs")]
+pub async fn get_clubs() -> ApiResult<ApiJson<Vec<schema::Club>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let clubs = Club::find_all(&mut tx)
@@ -47,8 +49,8 @@ pub async fn get_clubs__admin() -> ApiResult<ApiJson<Vec<schema::Club>>> {
 }
 
 #[post("/")]
-#[instrument(name = "Api::create_club__admin")]
-pub async fn create_club__admin(
+#[instrument(name = "Api::admin::create_club")]
+pub async fn create_club(
     ApiJson(CreateClubRequest { name, description }): ApiJson<CreateClubRequest>,
 ) -> ApiResult<ApiJson<FormResult<ClubUuid, CreateClubError>>> {
     let mut tx = Database::global().start_transaction().await?;
@@ -69,8 +71,8 @@ pub async fn create_club__admin(
 }
 
 #[delete("/{uuid}")]
-#[instrument(name = "Api::delete_club__admin")]
-pub async fn delete_club__admin(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
+#[instrument(name = "Api::admin::delete_club")]
+pub async fn delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResult<()> {
     let mut tx = Database::global().start_transaction().await?;
 
     let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid)).await?;
@@ -84,8 +86,8 @@ pub async fn delete_club__admin(Path(SingleUuid { uuid }): Path<SingleUuid>) -> 
 }
 
 #[get("/{uuid}")]
-#[instrument(name = "Api::get_club__admin")]
-pub async fn get_club__admin(
+#[instrument(name = "Api::admin::get_club")]
+pub async fn get_club(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
 ) -> ApiResult<ApiJson<schema::Club>> {
     let club = Club::find_by_uuid(Database::global(), ClubUuid(uuid))
@@ -104,8 +106,8 @@ pub async fn get_club__admin(
 }
 
 #[get("/{uuid}/members")]
-#[instrument(name = "Api::get_club_members__admin")]
-pub async fn get_club_members__admin(
+#[instrument(name = "Api::admin::get_club_members")]
+pub async fn get_club_members(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
     Query(PageParams {
         limit,
@@ -140,8 +142,8 @@ pub async fn get_club_members__admin(
 }
 
 #[get("/{uuid}/admins")]
-#[instrument(name = "Api::get_club_admins__admin")]
-pub async fn get_club_admins__admin(
+#[instrument(name = "Api::admin::get_club_admins")]
+pub async fn get_club_admins(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
     Query(PageParams {
         limit,

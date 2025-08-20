@@ -4,8 +4,8 @@ import {
     Configuration as AdminConfiguration,
     CreateClubRequest,
     DefaultApi as AdminDefaultApi,
-    GetClubAdminsAdminRequest,
-    GetClubMembersAdminRequest,
+    GetClubAdminsRequest,
+    GetClubMembersRequest,
     RequiredError,
     ResponseError,
 } from "src/api/generated/admin";
@@ -24,17 +24,17 @@ const commonApi = new CommonApi(new CommonConfiguration({ basePath: window.locat
 /* eslint-disable */
 export const Api = {
     admin: {
-        admins: {
-            getAll: () => handleError(adminApi.getAdmins()),
+        superadmins: {
+            getAll: () => handleError(adminApi.getAllSuperadmins()),
         },
         clubs: {
-            getAll: () => handleError(adminApi.getClubsAdmin()),
-            get: (uuid: UUID) => handleError(adminApi.getClubAdmin({ uuid })),
-            clubMembers: (req: GetClubMembersAdminRequest) => handleError(adminApi.getClubMembersAdmin(req)),
-            clubAdmins: (req: GetClubAdminsAdminRequest) => handleError(adminApi.getClubAdminsAdmin(req)),
+            getAll: () => handleError(adminApi.getClubs()),
+            get: (uuid: UUID) => handleError(adminApi.getClub({ uuid })),
+            clubMembers: (req: GetClubMembersRequest) => handleError(adminApi.getClubMembers(req)),
+            clubAdmins: (req: GetClubAdminsRequest) => handleError(adminApi.getClubAdmins(req)),
             create: (createClub: CreateClubRequest) =>
-                handleError(adminApi.createClubAdmin({ CreateClubRequest: createClub })),
-            delete: (uuid: UUID) => handleError(adminApi.deleteClubAdmin({ uuid })),
+                handleError(adminApi.createClub({ CreateClubRequest: createClub })),
+            delete: (uuid: UUID) => handleError(adminApi.deleteClub({ uuid })),
         },
         invites: {
             create: (invite: AdminCreateInviteRequest) =>

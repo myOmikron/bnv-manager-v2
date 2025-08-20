@@ -14,8 +14,8 @@ use crate::http::handler::me::Roles;
 use crate::models::account::Account;
 use crate::models::role::Role;
 
-#[get("/me")]
-#[instrument(name = "Api::get_me")]
+#[get("/")]
+#[instrument(name = "Api::common::get_me")]
 pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>> {
     let mut tx = Database::global().start_transaction().await?;
 

@@ -19,16 +19,16 @@ pub fn router_admin() -> GalvynRouter {
         .nest(
             "/clubs",
             GalvynRouter::new()
-                .handler(clubs::get_club__admin)
-                .handler(clubs::get_clubs__admin)
-                .handler(clubs::create_club__admin)
-                .handler(clubs::delete_club__admin)
-                .handler(clubs::get_club_admins__admin)
-                .handler(clubs::get_club_members__admin),
+                .handler(clubs::handler_admin::get_club)
+                .handler(clubs::handler_admin::get_clubs)
+                .handler(clubs::handler_admin::create_club)
+                .handler(clubs::handler_admin::delete_club)
+                .handler(clubs::handler_admin::get_club_admins)
+                .handler(clubs::handler_admin::get_club_members),
         )
         .nest(
             "/accounts",
-            GalvynRouter::new().handler(accounts::get_all_superadmins__admin),
+            GalvynRouter::new().handler(accounts::handler_admin::get_all_superadmins),
         )
 }
 
@@ -55,20 +55,23 @@ pub fn router_unauthenticated() -> GalvynRouter {
     #[cfg(debug_assertions)]
     {
         router = router
-            .handler(openapi::openapi_admin)
-            .handler(openapi::openapi_club_admin)
-            .handler(openapi::openapi_club_member)
-            .handler(openapi::openapi_common);
+            .handler(openapi::handler_common::openapi_admin)
+            .handler(openapi::handler_common::openapi_club_admin)
+            .handler(openapi::handler_common::openapi_club_member)
+            .handler(openapi::handler_common::openapi_common);
     }
 
     router
         .nest(
             "/invite",
             GalvynRouter::new()
-                .handler(invites::get_invite_common)
-                .handler(invites::accept_invite),
+                .handler(invites::handler_common::get_invite_common)
+                .handler(invites::handler_common::accept_invite),
         )
-        .nest("/auth", GalvynRouter::new().handler(auth::sign_in))
+        .nest(
+            "/auth",
+            GalvynRouter::new().handler(auth::handler_common::sign_in),
+        )
 }
 
 /// Openapi page for the common API
@@ -77,8 +80,14 @@ pub struct CommonApi;
 /// Common handler
 pub fn router_common() -> GalvynRouter {
     GalvynRouter::with_openapi_page(CommonApi)
-        .handler(me::get_me)
-        .nest("/auth", GalvynRouter::new().handler(auth::sign_out))
+        .nest(
+            "/me",
+            GalvynRouter::new().handler(me::handler_common::get_me),
+        )
+        .nest(
+            "/auth",
+            GalvynRouter::new().handler(auth::handler_common::sign_out),
+        )
 }
 
 /// Initialize the router

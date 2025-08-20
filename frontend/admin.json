@@ -7,7 +7,7 @@
     "paths": {
         "/api/v1/frontend/admin/clubs/{uuid}": {
             "get": {
-                "operationId": "get_club__admin",
+                "operationId": "get_club",
                 "parameters": [
                     {
                         "in": "path",
@@ -54,7 +54,7 @@
                 }
             },
             "delete": {
-                "operationId": "delete_club__admin",
+                "operationId": "delete_club",
                 "parameters": [
                     {
                         "in": "path",
@@ -96,7 +96,7 @@
         },
         "/api/v1/frontend/admin/clubs": {
             "get": {
-                "operationId": "get_clubs__admin",
+                "operationId": "get_clubs",
                 "responses": {
                     "200": {
                         "description": "",
@@ -134,7 +134,7 @@
                 }
             },
             "post": {
-                "operationId": "create_club__admin",
+                "operationId": "create_club",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -180,7 +180,7 @@
         },
         "/api/v1/frontend/admin/clubs/{uuid}/admins": {
             "get": {
-                "operationId": "get_club_admins__admin",
+                "operationId": "get_club_admins",
                 "parameters": [
                     {
                         "in": "path",
@@ -265,7 +265,7 @@
         },
         "/api/v1/frontend/admin/clubs/{uuid}/members": {
             "get": {
-                "operationId": "get_club_members__admin",
+                "operationId": "get_club_members",
                 "parameters": [
                     {
                         "in": "path",
@@ -350,7 +350,7 @@
         },
         "/api/v1/frontend/admin/accounts/superadmins": {
             "get": {
-                "operationId": "get_all_superadmins__admin",
+                "operationId": "get_all_superadmins",
                 "responses": {
                     "200": {
                         "description": "",

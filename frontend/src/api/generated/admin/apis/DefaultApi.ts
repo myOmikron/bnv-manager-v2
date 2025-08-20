@@ -23,26 +23,26 @@ import type {
   SimpleAccount,
 } from '../models/index';
 
-export interface CreateClubAdminRequest {
+export interface CreateClubOperationRequest {
     CreateClubRequest?: CreateClubRequest;
 }
 
-export interface DeleteClubAdminRequest {
+export interface DeleteClubRequest {
     uuid: string;
 }
 
-export interface GetClubAdminRequest {
+export interface GetClubRequest {
     uuid: string;
 }
 
-export interface GetClubAdminsAdminRequest {
+export interface GetClubAdminsRequest {
     uuid: string;
     limit?: number;
     offset?: number;
     search?: string | null;
 }
 
-export interface GetClubMembersAdminRequest {
+export interface GetClubMembersRequest {
     uuid: string;
     limit?: number;
     offset?: number;
@@ -56,7 +56,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async createClubAdminRaw(requestParameters: CreateClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForClubUuidAndCreateClubError>> {
+    async createClubRaw(requestParameters: CreateClubOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForClubUuidAndCreateClubError>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -76,18 +76,18 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async createClubAdmin(requestParameters: CreateClubAdminRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForClubUuidAndCreateClubError> {
-        const response = await this.createClubAdminRaw(requestParameters, initOverrides);
+    async createClub(requestParameters: CreateClubOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForClubUuidAndCreateClubError> {
+        const response = await this.createClubRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async deleteClubAdminRaw(requestParameters: DeleteClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async deleteClubRaw(requestParameters: DeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
-                'Required parameter "uuid" was null or undefined when calling deleteClubAdmin().'
+                'Required parameter "uuid" was null or undefined when calling deleteClub().'
             );
         }
 
@@ -107,13 +107,13 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async deleteClubAdmin(requestParameters: DeleteClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.deleteClubAdminRaw(requestParameters, initOverrides);
+    async deleteClub(requestParameters: DeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteClubRaw(requestParameters, initOverrides);
     }
 
     /**
      */
-    async getAllSuperadminsAdminRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SimpleAccount>>> {
+    async getAllSuperadminsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SimpleAccount>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -130,18 +130,18 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getAllSuperadminsAdmin(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SimpleAccount>> {
-        const response = await this.getAllSuperadminsAdminRaw(initOverrides);
+    async getAllSuperadmins(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SimpleAccount>> {
+        const response = await this.getAllSuperadminsRaw(initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async getClubAdminRaw(requestParameters: GetClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Club>> {
+    async getClubRaw(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Club>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
-                'Required parameter "uuid" was null or undefined when calling getClubAdmin().'
+                'Required parameter "uuid" was null or undefined when calling getClub().'
             );
         }
 
@@ -161,18 +161,18 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubAdmin(requestParameters: GetClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Club> {
-        const response = await this.getClubAdminRaw(requestParameters, initOverrides);
+    async getClub(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Club> {
+        const response = await this.getClubRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async getClubAdminsAdminRaw(requestParameters: GetClubAdminsAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PageForSimpleAccount>> {
+    async getClubAdminsRaw(requestParameters: GetClubAdminsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PageForSimpleAccount>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
-                'Required parameter "uuid" was null or undefined when calling getClubAdminsAdmin().'
+                'Required parameter "uuid" was null or undefined when calling getClubAdmins().'
             );
         }
 
@@ -204,18 +204,18 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubAdminsAdmin(requestParameters: GetClubAdminsAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleAccount> {
-        const response = await this.getClubAdminsAdminRaw(requestParameters, initOverrides);
+    async getClubAdmins(requestParameters: GetClubAdminsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleAccount> {
+        const response = await this.getClubAdminsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async getClubMembersAdminRaw(requestParameters: GetClubMembersAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PageForSimpleAccount>> {
+    async getClubMembersRaw(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PageForSimpleAccount>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
-                'Required parameter "uuid" was null or undefined when calling getClubMembersAdmin().'
+                'Required parameter "uuid" was null or undefined when calling getClubMembers().'
             );
         }
 
@@ -247,14 +247,14 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubMembersAdmin(requestParameters: GetClubMembersAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleAccount> {
-        const response = await this.getClubMembersAdminRaw(requestParameters, initOverrides);
+    async getClubMembers(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleAccount> {
+        const response = await this.getClubMembersRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async getClubsAdminRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Club>>> {
+    async getClubsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Club>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -271,8 +271,8 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubsAdmin(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Club>> {
-        const response = await this.getClubsAdminRaw(initOverrides);
+    async getClubs(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Club>> {
+        const response = await this.getClubsRaw(initOverrides);
         return await response.value();
     }
 

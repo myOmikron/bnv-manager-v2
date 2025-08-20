@@ -1,3 +1,5 @@
+//! Common handlers for invites.
+
 use galvyn::core::Module;
 use galvyn::core::re_exports::axum::extract::Path;
 use galvyn::core::stuff::api_error::ApiError;
@@ -19,7 +21,7 @@ use crate::models::invite::Invite;
 use crate::models::invite::InviteUuid;
 
 #[get("/{uuid}")]
-#[instrument(name = "Api::get_invite")]
+#[instrument(name = "Api::common::get_invite")]
 pub async fn get_invite_common(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
 ) -> ApiResult<ApiJson<GetInvite>> {
@@ -41,7 +43,7 @@ pub async fn get_invite_common(
 }
 
 #[post("/{uuid}/accept")]
-#[instrument(name = "Api::accept_invite", skip(password))]
+#[instrument(name = "Api::common::accept_invite", skip(password))]
 pub async fn accept_invite(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
     ApiJson(AcceptInvite { password }): ApiJson<AcceptInvite>,

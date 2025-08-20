@@ -1,7 +1,6 @@
 //! Handlers regarding the currently logged-in user
 
-pub use handler_common::*;
 pub use schema::*;
 
-mod handler_common;
+pub mod handler_common;
 mod schema;

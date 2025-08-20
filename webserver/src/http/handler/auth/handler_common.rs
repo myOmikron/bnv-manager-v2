@@ -1,3 +1,5 @@
+//! Common handlers for authentication.
+
 use galvyn::core::Module;
 use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;
@@ -13,7 +15,7 @@ use crate::http::handler::auth::SignInRequest;
 use crate::models::account::Account;
 
 #[post("/sign-in")]
-#[instrument(name = "Api::sign_in", skip(password))]
+#[instrument(name = "Api::common::sign_in", skip(password))]
 pub async fn sign_in(
     session: Session,
     ApiJson(SignInRequest { username, password }): ApiJson<SignInRequest>,
@@ -38,7 +40,7 @@ pub async fn sign_in(
 }
 
 #[post("/sign-out")]
-#[instrument(name = "Api::sign_out")]
+#[instrument(name = "Api::common::sign_out")]
 pub async fn sign_out(session: Session) -> ApiResult<()> {
     session.remove::<SessionUser>(SESSION_USER).await?;
     Ok(())
