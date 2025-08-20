@@ -16,7 +16,6 @@ export type ClubMembersProps = {};
  */
 export default function ClubMembers(props: ClubMembersProps) {
     const [t] = useTranslation("admin-club-view");
-    const [tg] = useTranslation();
 
     const params = Route.useParams();
     const data = Route.useLoaderData();

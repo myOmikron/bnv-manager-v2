@@ -78,7 +78,7 @@ export function ReorderItem<T>(props: ReorderItemProps<T>) {
                 setDragged(false);
                 props.onDragEnd && props.onDragEnd();
             }}
-            onTap={(e) => {
+            onTap={(e: MouseEvent | TouchEvent | PointerEvent) => {
                 if (!isDragged && props.onClick) props.onClick(e);
             }}
             animate={{ scale: isDragged ? 1.05 : 1 }}

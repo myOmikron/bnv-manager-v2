@@ -1,16 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from "src/components/base/dialog";
-import { SimpleClub } from "src/api/generated";
 import { Button } from "src/components/base/button";
 import { Api } from "src/api/api";
+import { Club } from "src/api/generated/admin";
 
 /**
  * The properties for {@link AdminDeleteClubDialog}
  */
 export type AdminDeleteClubDialogProps = {
     /** The club to delete */
-    club: SimpleClub;
+    club: Club;
 
     /** Callback to call when the popup is closed */
     onClose: () => void;

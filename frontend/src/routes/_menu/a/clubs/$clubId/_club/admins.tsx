@@ -10,9 +10,11 @@ import { Text } from "src/components/base/text";
  */
 export type ClubAdminProps = {};
 
+/**
+ * Admins of the club
+ */
 export function ClubAdmins(props: ClubAdminProps) {
     const [t] = useTranslation("admin-club-view");
-    const [tg] = useTranslation();
 
     const params = Route.useParams();
     const data = Route.useLoaderData();

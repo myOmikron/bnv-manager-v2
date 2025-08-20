@@ -149,7 +149,6 @@ export default function Invite(props: InviteProps) {
 
 export const Route = createFileRoute("/invites/$inviteId")({
     component: Invite,
-    // eslint-disable-next-line
     errorComponent: InviteError,
     // eslint-disable-next-line
     loader: async ({ params: { inviteId } }) => Api.common.invites.get(inviteId),
