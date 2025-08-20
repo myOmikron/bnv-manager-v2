@@ -1,5 +1,7 @@
 //! Invite related code lives in this module
 
+use std::collections::HashMap;
+
 use anyhow::Context;
 use futures_util::TryStreamExt;
 use rorm::db::Executor;
@@ -113,6 +115,76 @@ impl Invite {
             expires_at: invite.expires_at,
             created_at: invite.created_at,
         }))
+    }
+
+    /// Find all invites for a given club
+    ///
+    /// This includes members and admins.
+    /// Superadmins aren't selected as they are not associated with a club
+    #[instrument(name = "Invite::find_by_club", skip(exe))]
+    pub async fn find_by_club(
+        exe: impl Executor<'_>,
+        ClubUuid(club_uuid): ClubUuid,
+    ) -> anyhow::Result<Vec<Self>> {
+        let mut guard = exe.ensure_transaction().await?;
+
+        // Query invited members
+        let mut invites = rorm::query(
+            guard.get_transaction(),
+            InvitedClubMemberModel.invite.query_as(InviteModel),
+        )
+        .condition(InvitedClubMemberModel.club.equals(club_uuid))
+        .stream()
+        .map_ok(|x| {
+            (
+                x.uuid,
+                Invite {
+                    uuid: InviteUuid(x.uuid),
+                    username: x.username,
+                    display_name: x.display_name,
+                    roles: vec![Role::ClubMember {
+                        club: ClubUuid(club_uuid),
+                    }],
+                    expires_at: x.expires_at,
+                    created_at: x.created_at,
+                },
+            )
+        })
+        .try_collect::<HashMap<_, _>>()
+        .await?;
+
+        // Query invited admins
+        rorm::query(
+            guard.get_transaction(),
+            InvitedClubAdminModel.invite.query_as(InviteModel),
+        )
+        .condition(InvitedClubAdminModel.club.equals(club_uuid))
+        .all()
+        .await?
+        .into_iter()
+        .for_each(|x| {
+            invites
+                .entry(x.uuid)
+                .and_modify(|existing| {
+                    existing.roles.push(Role::ClubAdmin {
+                        club: ClubUuid(club_uuid),
+                    })
+                })
+                .or_insert(Invite {
+                    uuid: InviteUuid(x.uuid),
+                    username: x.username,
+                    display_name: x.display_name,
+                    roles: vec![Role::ClubAdmin {
+                        club: ClubUuid(club_uuid),
+                    }],
+                    expires_at: x.expires_at,
+                    created_at: x.created_at,
+                });
+        });
+
+        guard.commit().await?;
+
+        Ok(invites.into_values().collect())
     }
 
     /// Get the point in time the invite expires

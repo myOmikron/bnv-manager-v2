@@ -21,8 +21,11 @@ use crate::http::handler::clubs::CreateClubError;
 use crate::http::handler::clubs::CreateClubRequest;
 use crate::http::handler::clubs::PageParams;
 use crate::http::handler::clubs::schema;
+use crate::http::handler::invites::GetInvite;
 use crate::models::club::Club;
 use crate::models::club::ClubUuid;
+use crate::models::invite::Invite;
+use crate::models::role::Role;
 
 #[get("/")]
 #[instrument(name = "Api::admin::get_clubs")]
@@ -175,4 +178,64 @@ pub async fn get_club_admins(
         offset: page.offset,
         total: page.total,
     }))
+}
+
+#[get("/{uuid}/admins/invites")]
+#[instrument(name = "Api::admin::get_club_admin_invites")]
+pub async fn get_club_admin_invites(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+) -> ApiResult<ApiJson<Vec<GetInvite>>> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let invites = Invite::find_by_club(&mut tx, ClubUuid(uuid))
+        .await?
+        .into_iter()
+        .filter_map(|x| {
+            x.roles
+                .contains(&Role::ClubAdmin {
+                    club: ClubUuid(uuid),
+                })
+                .then(|| GetInvite {
+                    expires_at: SchemaDateTime(x.expires_at()),
+                    uuid: x.uuid,
+                    username: x.username,
+                    display_name: x.display_name,
+                    created_at: SchemaDateTime(x.created_at),
+                })
+        })
+        .collect();
+
+    tx.commit().await?;
+
+    Ok(ApiJson(invites))
+}
+
+#[get("/{uuid}/members/invites")]
+#[instrument(name = "Api::admin::get_club_member_invites")]
+pub async fn get_club_member_invites(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+) -> ApiResult<ApiJson<Vec<GetInvite>>> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let invites = Invite::find_by_club(&mut tx, ClubUuid(uuid))
+        .await?
+        .into_iter()
+        .filter_map(|x| {
+            x.roles
+                .contains(&Role::ClubMember {
+                    club: ClubUuid(uuid),
+                })
+                .then(|| GetInvite {
+                    expires_at: SchemaDateTime(x.expires_at()),
+                    uuid: x.uuid,
+                    username: x.username,
+                    display_name: x.display_name,
+                    created_at: SchemaDateTime(x.created_at),
+                })
+        })
+        .collect();
+
+    tx.commit().await?;
+
+    Ok(ApiJson(invites))
 }

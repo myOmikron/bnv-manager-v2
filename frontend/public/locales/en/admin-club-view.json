@@ -1,16 +1,18 @@
 {
     "button": {
-        "back-to-overview": "Back to overview"
+        "back-to-overview": "Back to overview",
+        "create-club-admin": "Create new club admin"
     },
     "heading": {
         "admins": "Admins",
         "club": "Club: {{club}}",
         "dashboard": "Dashboard",
         "domains": "Domains",
+        "invited": "Invited",
         "members": "Members"
     },
     "label": {
-        "display-name": "Displayname",
+        "display-name": "Display name",
         "no-members": "No members found.",
         "username": "Username"
     }

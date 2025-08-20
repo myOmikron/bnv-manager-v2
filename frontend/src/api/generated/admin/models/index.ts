@@ -293,6 +293,43 @@ export const FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum = {
 export type FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum = typeof FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum[keyof typeof FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum];
 
 /**
+ * API representation of an invitation
+ * @export
+ * @interface GetInvite
+ */
+export interface GetInvite {
+    /**
+     * The point in time the invite was created
+     * @type {string}
+     * @memberof GetInvite
+     */
+    created_at: string;
+    /**
+     * Display-name of the user
+     * @type {string}
+     * @memberof GetInvite
+     */
+    display_name: string;
+    /**
+     * The point in time the invite expires
+     * @type {string}
+     * @memberof GetInvite
+     */
+    expires_at: string;
+    /**
+     * Reserved username
+     * @type {string}
+     * @memberof GetInvite
+     */
+    username: string;
+    /**
+     * Primary key of the invite
+     * @type {string}
+     * @memberof GetInvite
+     */
+    uuid: string;
+}
+/**
  * A page of items
  * @export
  * @interface PageForSimpleAccount

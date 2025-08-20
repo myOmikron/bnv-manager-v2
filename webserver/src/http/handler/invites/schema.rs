@@ -5,15 +5,15 @@ use rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
-use uuid::Uuid;
 
+use crate::models::invite::InviteUuid;
 use crate::models::role::Role;
 
 /// API representation of an invitation
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct GetInvite {
     /// Primary key of the invite
-    pub uuid: Uuid,
+    pub uuid: InviteUuid,
     /// Reserved username
     pub username: MaxStr<255>,
     /// Display-name of the user

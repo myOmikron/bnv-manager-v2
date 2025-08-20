@@ -1,12 +1,14 @@
 {
     "button": {
-        "back-to-overview": "Zur\u00fcck zur \u00dcbersicht"
+        "back-to-overview": "Zur\u00fcck zur \u00dcbersicht",
+        "create-club-admin": "Neuen Vereinsadministrator anlegen"
     },
     "heading": {
         "admins": "Administratoren",
         "club": "Verein: {{club}}",
         "dashboard": "Dashboard",
         "domains": "Domains",
+        "invited": "Eingeladen",
         "members": "Mitglieder"
     },
     "label": {

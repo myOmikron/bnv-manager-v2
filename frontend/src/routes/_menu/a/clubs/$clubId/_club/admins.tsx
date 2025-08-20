@@ -1,9 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Api } from "src/api/api";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "src/components/base/table";
 import TablePagination from "src/components/table-pagination";
 import { Text } from "src/components/base/text";
+import { Button } from "src/components/base/button";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import React, { Suspense } from "react";
+import DialogCreateClubAdmin from "src/components/dialogs/admin-create-club-admin";
+import { Subheading } from "src/components/base/heading";
 
 /**
  * Props for {@link ClubAdmins}
@@ -19,10 +24,42 @@ export function ClubAdmins(props: ClubAdminProps) {
     const params = Route.useParams();
     const data = Route.useLoaderData();
     const search = Route.useSearch();
+    const router = useRouter();
+
+    const [openCreateClubAdmin, setOpenCreateClubAdmin] = React.useState(false);
 
     return (
-        <>
-            {data.total > 0 ? (
+        <div className={"flex flex-col gap-6"}>
+            <div className={"flex justify-end"}>
+                <Button outline={true} onClick={() => setOpenCreateClubAdmin(true)}>
+                    <PlusIcon />
+                    <span>{t("button.create-club-admin")}</span>
+                </Button>
+            </div>
+            {data.invites.length > 0 && (
+                <>
+                    <Subheading>{t("heading.invited")}</Subheading>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableHeader>{t("label.username")}</TableHeader>
+                                <TableHeader>{t("label.display-name")}</TableHeader>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {data.invites.map((item) => (
+                                <TableRow key={item.uuid}>
+                                    <TableCell>{item.username}</TableCell>
+                                    <TableCell>{item.display_name}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </>
+            )}
+
+            <Subheading className={"mt-8"}>{t("heading.admins")}</Subheading>
+            {data.admins.total > 0 ? (
                 <>
                     <Table>
                         <TableHead>
@@ -32,7 +69,7 @@ export function ClubAdmins(props: ClubAdminProps) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data.items.map((item) => (
+                            {data.admins.items.map((item) => (
                                 <TableRow key={item.uuid}>
                                     <TableCell>{item.username}</TableCell>
                                     <TableCell>{item.display_name}</TableCell>
@@ -43,7 +80,7 @@ export function ClubAdmins(props: ClubAdminProps) {
                     <TablePagination
                         href={"/a/clubs/$clubId/admins"}
                         params={params}
-                        maxPages={Math.ceil(data.total / LIMIT)}
+                        maxPages={Math.ceil(data.admins.total / LIMIT)}
                         currentPage={search.page}
                         getSearchParams={(newPage) => ({ page: newPage, search: search.search })}
                     />
@@ -51,7 +88,20 @@ export function ClubAdmins(props: ClubAdminProps) {
             ) : (
                 <Text>{t("label.no-members")}</Text>
             )}
-        </>
+
+            <Suspense>
+                {openCreateClubAdmin && (
+                    <DialogCreateClubAdmin
+                        club={params.clubId}
+                        onClose={() => setOpenCreateClubAdmin(false)}
+                        onCreate={async () => {
+                            setOpenCreateClubAdmin(false);
+                            await router.invalidate({ sync: true });
+                        }}
+                    />
+                )}
+            </Suspense>
+        </div>
     );
 }
 
@@ -82,11 +132,13 @@ export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/admins")({
     loaderDeps: ({ search: { page, search } }) => ({ page, search }),
 
     // eslint-disable-next-line
-    loader: async ({ params, deps }) =>
-        await Api.admin.clubs.clubAdmins({
+    loader: async ({ params, deps }) => ({
+        admins: await Api.admin.clubs.clubAdmins({
             uuid: params.clubId,
             limit: LIMIT,
             offset: (deps.page - 1) * LIMIT,
             search: deps.search,
         }),
+        invites: await Api.admin.clubs.invitedClubAdmins(params.clubId),
+    }),
 });

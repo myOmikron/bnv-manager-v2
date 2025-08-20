@@ -405,8 +405,11 @@
                     },
                     "uuid": {
                         "description": "Primary key of the invite",
-                        "type": "string",
-                        "format": "uuid"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/InviteUuid"
+                            }
+                        ]
                     }
                 },
                 "required": [
@@ -416,6 +419,11 @@
                     "username",
                     "uuid"
                 ]
+            },
+            "InviteUuid": {
+                "description": "Wrapper for the primary key of the [Invite]",
+                "type": "string",
+                "format": "uuid"
             },
             "MaxStr_255": {
                 "type": "string",

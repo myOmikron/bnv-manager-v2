@@ -21,6 +21,7 @@ import type {
   CreateInviteRequest,
   FormResultForClubUuidAndCreateClubError,
   FormResultForSingleLinkAndCreateInviteError,
+  GetInvite,
   PageForSimpleAccount,
   SimpleAccount,
 } from '../models/index';
@@ -41,11 +42,19 @@ export interface GetClubRequest {
     uuid: string;
 }
 
+export interface GetClubAdminInvitesRequest {
+    uuid: string;
+}
+
 export interface GetClubAdminsRequest {
     uuid: string;
     limit?: number;
     offset?: number;
     search?: string | null;
+}
+
+export interface GetClubMemberInvitesRequest {
+    uuid: string;
 }
 
 export interface GetClubMembersRequest {
@@ -201,6 +210,37 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
+    async getClubAdminInvitesRaw(requestParameters: GetClubAdminInvitesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GetInvite>>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling getClubAdminInvites().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs/{uuid}/admins/invites`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getClubAdminInvites(requestParameters: GetClubAdminInvitesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GetInvite>> {
+        const response = await this.getClubAdminInvitesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
     async getClubAdminsRaw(requestParameters: GetClubAdminsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PageForSimpleAccount>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
@@ -239,6 +279,37 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getClubAdmins(requestParameters: GetClubAdminsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleAccount> {
         const response = await this.getClubAdminsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getClubMemberInvitesRaw(requestParameters: GetClubMemberInvitesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GetInvite>>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling getClubMemberInvites().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs/{uuid}/members/invites`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getClubMemberInvites(requestParameters: GetClubMemberInvitesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GetInvite>> {
+        const response = await this.getClubMemberInvitesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

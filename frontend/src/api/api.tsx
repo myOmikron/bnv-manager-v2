@@ -33,6 +33,8 @@ export const Api = {
             get: (uuid: UUID) => handleError(adminApi.getClub({ uuid })),
             clubMembers: (req: GetClubMembersRequest) => handleError(adminApi.getClubMembers(req)),
             clubAdmins: (req: GetClubAdminsRequest) => handleError(adminApi.getClubAdmins(req)),
+            invitedClubMembers: (uuid: UUID) => handleError(adminApi.getClubMemberInvites({ uuid })),
+            invitedClubAdmins: (uuid: UUID) => handleError(adminApi.getClubAdminInvites({ uuid })),
             create: (createClub: CreateClubRequest) =>
                 handleError(adminApi.createClub({ CreateClubRequest: createClub })),
             delete: (uuid: UUID) => handleError(adminApi.deleteClub({ uuid })),

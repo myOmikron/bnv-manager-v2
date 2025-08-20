@@ -28,7 +28,9 @@ pub fn router_admin() -> GalvynRouter {
                 .handler(clubs::handler_admin::create_club)
                 .handler(clubs::handler_admin::delete_club)
                 .handler(clubs::handler_admin::get_club_admins)
-                .handler(clubs::handler_admin::get_club_members),
+                .handler(clubs::handler_admin::get_club_members)
+                .handler(clubs::handler_admin::get_club_member_invites)
+                .handler(clubs::handler_admin::get_club_admin_invites),
         )
         .nest(
             "/invites",

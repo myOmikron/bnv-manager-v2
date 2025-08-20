@@ -34,8 +34,8 @@ pub async fn get_invite_common(
     tx.commit().await?;
 
     Ok(ApiJson(GetInvite {
-        uuid,
         expires_at: SchemaDateTime(invite.expires_at()),
+        uuid: invite.uuid,
         username: invite.username,
         display_name: invite.display_name,
         created_at: SchemaDateTime(invite.created_at),
