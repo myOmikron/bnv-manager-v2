@@ -5,227 +5,6 @@
         "version": "v0.0.0"
     },
     "paths": {
-        "/api/v1/frontend/openapi.json": {
-            "get": {
-                "summary": "Generate the openapi definition",
-                "description": "Generate the openapi definition",
-                "operationId": "openapi",
-                "responses": {}
-            }
-        },
-        "/api/v1/frontend/invite/{uuid}": {
-            "get": {
-                "operationId": "get_invite_common",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "uuid",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "uuid"
-                        },
-                        "style": "simple"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/GetInvite"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/frontend/invite/{uuid}/accept": {
-            "post": {
-                "operationId": "accept_invite",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "uuid",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "uuid"
-                        },
-                        "style": "simple"
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AcceptInvite"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/FormResult_for_Null_and_AcceptInviteError"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/frontend/auth/sign-in": {
-            "post": {
-                "operationId": "sign_in",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/SignInRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": ""
-                    },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/frontend/common/me": {
-            "get": {
-                "operationId": "get_me",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Me"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/frontend/common/auth/sign-out": {
-            "post": {
-                "operationId": "sign_out",
-                "responses": {
-                    "200": {
-                        "description": ""
-                    },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/frontend/admin/clubs/{uuid}": {
             "get": {
                 "operationId": "get_club__admin",
@@ -568,40 +347,50 @@
                     }
                 }
             }
+        },
+        "/api/v1/frontend/admin/accounts/superadmins": {
+            "get": {
+                "operationId": "get_all_superadmins__admin",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SimpleAccount"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
-            "AcceptInvite": {
-                "description": "Accept an open invite",
-                "type": "object",
-                "properties": {
-                    "password": {
-                        "description": "The new password to set",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_72"
-                            }
-                        ]
-                    }
-                },
-                "required": [
-                    "password"
-                ]
-            },
-            "AcceptInviteError": {
-                "description": "Errors that can occur while accepting an invitation",
-                "type": "object",
-                "properties": {
-                    "empty_password": {
-                        "description": "Empty password was supplied",
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "empty_password"
-                ]
-            },
             "AccountUuid": {
                 "description": "New-type for the account's primary key",
                 "type": "string",
@@ -792,97 +581,6 @@
                     }
                 ]
             },
-            "FormResult_for_Null_and_AcceptInviteError": {
-                "description": "A `Result` with a custom serialization",
-                "oneOf": [
-                    {
-                        "type": "object",
-                        "properties": {
-                            "result": {
-                                "type": "string",
-                                "enum": [
-                                    "Ok"
-                                ]
-                            },
-                            "value": {
-                                "nullable": true
-                            }
-                        },
-                        "required": [
-                            "result",
-                            "value"
-                        ]
-                    },
-                    {
-                        "type": "object",
-                        "properties": {
-                            "error": {
-                                "$ref": "#/components/schemas/AcceptInviteError"
-                            },
-                            "result": {
-                                "type": "string",
-                                "enum": [
-                                    "Err"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "error",
-                            "result"
-                        ]
-                    }
-                ]
-            },
-            "GetInvite": {
-                "description": "API representation of an invitation",
-                "type": "object",
-                "properties": {
-                    "created_at": {
-                        "description": "The point in time the invite was created",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/SchemaDateTime"
-                            }
-                        ]
-                    },
-                    "display_name": {
-                        "description": "Display-name of the user",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_255"
-                            }
-                        ]
-                    },
-                    "expires_at": {
-                        "description": "The point in time the invite expires",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/SchemaDateTime"
-                            }
-                        ]
-                    },
-                    "username": {
-                        "description": "Reserved username",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_255"
-                            }
-                        ]
-                    },
-                    "uuid": {
-                        "description": "Primary key of the invite",
-                        "type": "string",
-                        "format": "uuid"
-                    }
-                },
-                "required": [
-                    "created_at",
-                    "display_name",
-                    "expires_at",
-                    "username",
-                    "uuid"
-                ]
-            },
             "MaxStr_1024": {
                 "type": "string",
                 "maxLength": 1024
@@ -890,43 +588,6 @@
             "MaxStr_255": {
                 "type": "string",
                 "maxLength": 255
-            },
-            "MaxStr_72": {
-                "type": "string",
-                "maxLength": 72
-            },
-            "Me": {
-                "description": "Representation of the currently logged-in user.",
-                "type": "object",
-                "properties": {
-                    "display_name": {
-                        "description": "The user's display name.",
-                        "type": "string"
-                    },
-                    "roles": {
-                        "description": "The user's roles.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/Roles"
-                            }
-                        ]
-                    },
-                    "username": {
-                        "description": "The user's username.",
-                        "type": "string"
-                    },
-                    "uuid": {
-                        "description": "The user's UUID.",
-                        "type": "string",
-                        "format": "uuid"
-                    }
-                },
-                "required": [
-                    "display_name",
-                    "roles",
-                    "username",
-                    "uuid"
-                ]
             },
             "Page_for_SimpleAccount": {
                 "description": "A page of items",
@@ -964,103 +625,10 @@
                     "total"
                 ]
             },
-            "Role": {
-                "description": "The available roles of the manager",
-                "oneOf": [
-                    {
-                        "description": "The super administrator. Has rights to manager clubs.",
-                        "type": "string",
-                        "enum": [
-                            "SuperAdmin"
-                        ]
-                    },
-                    {
-                        "description": "The admin of a club. Can manage users and settings of its club",
-                        "type": "object",
-                        "properties": {
-                            "ClubAdmin": {
-                                "$ref": "#/components/schemas/ClubUuid"
-                            }
-                        },
-                        "required": [
-                            "ClubAdmin"
-                        ],
-                        "additionalProperties": false
-                    },
-                    {
-                        "description": "A member of a club.",
-                        "type": "object",
-                        "properties": {
-                            "ClubMember": {
-                                "$ref": "#/components/schemas/ClubUuid"
-                            }
-                        },
-                        "required": [
-                            "ClubMember"
-                        ],
-                        "additionalProperties": false
-                    }
-                ]
-            },
-            "Roles": {
-                "description": "The roles of a user.",
-                "type": "object",
-                "properties": {
-                    "admins": {
-                        "description": "The user's admin roles.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Role"
-                        }
-                    },
-                    "member": {
-                        "description": "The user's membership roles",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Role"
-                        }
-                    },
-                    "super_admin": {
-                        "description": "Whether the user is a super admin.",
-                        "type": "boolean"
-                    }
-                },
-                "required": [
-                    "admins",
-                    "member",
-                    "super_admin"
-                ]
-            },
             "SchemaDateTime": {
                 "example": "1970-01-01T00:00:00.0Z",
                 "type": "string",
                 "format": "date-time"
-            },
-            "SignInRequest": {
-                "description": "Sign in request",
-                "type": "object",
-                "properties": {
-                    "password": {
-                        "description": "Password",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_72"
-                            }
-                        ]
-                    },
-                    "username": {
-                        "description": "Username",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_255"
-                            }
-                        ]
-                    }
-                },
-                "required": [
-                    "password",
-                    "username"
-                ]
             },
             "SimpleAccount": {
                 "description": "Simple representation of an account.",

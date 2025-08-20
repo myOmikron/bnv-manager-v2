@@ -1,61 +1,64 @@
 import { parseError } from "src/api/error";
 import CONSOLE from "src/utils/console";
 import {
-    AcceptInvite,
-    Configuration,
+    Configuration as AdminConfiguration,
     CreateClubRequest,
-    DefaultApi,
+    DefaultApi as AdminDefaultApi,
     GetClubAdminsAdminRequest,
     GetClubMembersAdminRequest,
     RequiredError,
     ResponseError,
-} from "src/api/generated";
+} from "src/api/generated/admin";
+import { DefaultApi as CommonApi, Configuration as CommonConfiguration, AcceptInvite } from "src/api/generated/common";
 
 /** Hyphen separated uuid */
 export type UUID = string;
 
-const configuration = new Configuration({
-    basePath: window.location.origin,
-});
-
-const api = new DefaultApi(configuration);
+const adminApi = new AdminDefaultApi(
+    new AdminConfiguration({
+        basePath: window.location.origin,
+    }),
+);
+const commonApi = new CommonApi(new CommonConfiguration({ basePath: window.location.origin }));
 
 /* eslint-disable */
 export const Api = {
     admin: {
         admins: {
-            getAll: () => handleError(api.getAdmins()),
+            getAll: () => handleError(adminApi.getAdmins()),
         },
         clubs: {
-            getAll: () => handleError(api.getClubsAdmin()),
-            get: (uuid: UUID) => handleError(api.getClubAdmin({ uuid })),
-            clubMembers: (req: GetClubMembersAdminRequest) => handleError(api.getClubMembersAdmin(req)),
-            clubAdmins: (req: GetClubAdminsAdminRequest) => handleError(api.getClubAdminsAdminRaw(req)),
+            getAll: () => handleError(adminApi.getClubsAdmin()),
+            get: (uuid: UUID) => handleError(adminApi.getClubAdmin({ uuid })),
+            clubMembers: (req: GetClubMembersAdminRequest) => handleError(adminApi.getClubMembersAdmin(req)),
+            clubAdmins: (req: GetClubAdminsAdminRequest) => handleError(adminApi.getClubAdminsAdmin(req)),
             create: (createClub: CreateClubRequest) =>
-                handleError(api.createClubAdmin({ CreateClubRequest: createClub })),
-            delete: (uuid: UUID) => handleError(api.deleteClubAdmin({ uuid })),
+                handleError(adminApi.createClubAdmin({ CreateClubRequest: createClub })),
+            delete: (uuid: UUID) => handleError(adminApi.deleteClubAdmin({ uuid })),
         },
         invites: {
             create: (invite: AdminCreateInviteRequest) =>
-                handleError(api.adminCreateInvite({ AdminCreateInviteRequest: invite })),
+                handleError(adminApi.adminCreateInvite({ AdminCreateInviteRequest: invite })),
         },
     },
-    auth: {
-        login: (username: string, password: string) => api.signIn({ SignInRequest: { username, password } }),
-        logout: () => handleError(api.signOut()),
-    },
-    invites: {
-        get: (uuid: UUID) => handleError(api.getInviteCommon({ uuid })),
-        accepted: (uuid: UUID, req: AcceptInvite) =>
-            handleError(
-                api.acceptInvite({
-                    uuid,
-                    AcceptInvite: req,
-                }),
-            ),
-    },
-    me: {
-        get: () => api.getMe(),
+    common: {
+        auth: {
+            login: (username: string, password: string) => commonApi.signIn({ SignInRequest: { username, password } }),
+            logout: () => handleError(commonApi.signOut()),
+        },
+        invites: {
+            get: (uuid: UUID) => handleError(commonApi.getInviteCommon({ uuid })),
+            accept: (uuid: UUID, req: AcceptInvite) =>
+                handleError(
+                    commonApi.acceptInvite({
+                        uuid,
+                        AcceptInvite: req,
+                    }),
+                ),
+        },
+        me: {
+            get: () => commonApi.getMe(),
+        },
     },
 };
 

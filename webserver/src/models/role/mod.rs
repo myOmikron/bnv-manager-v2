@@ -1,8 +1,14 @@
 //! Roles are defined in this module
 
+use futures_util::TryStreamExt;
+use rorm::db::Executor;
 use schemars::JsonSchema;
+use tracing::instrument;
 
+use crate::models::account::Account;
+use crate::models::account::db::AccountModel;
 use crate::models::club::ClubUuid;
+use crate::models::role::db::SuperAdminModel;
 
 pub(in crate::models) mod db;
 
@@ -15,4 +21,18 @@ pub enum Role {
     ClubAdmin(ClubUuid),
     /// A member of a club.
     ClubMember(ClubUuid),
+}
+
+impl Role {
+    /// Returns all superadmins
+    #[instrument(skip(exe))]
+    pub async fn find_all_superadmins(exe: impl Executor<'_>) -> anyhow::Result<Vec<Account>> {
+        Ok(
+            rorm::query(exe, SuperAdminModel.account.query_as(AccountModel))
+                .stream()
+                .map_ok(Account::from)
+                .try_collect()
+                .await?,
+        )
+    }
 }

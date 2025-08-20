@@ -19,7 +19,7 @@ import {
 } from "src/components/base/dropdown";
 import AdminDeleteClubDialog from "src/components/dialogs/admin-delete-club";
 import { Text } from "src/components/base/text";
-import { Club } from "src/api/generated";
+import { Club } from "src/api/generated/admin";
 
 /**
  * The properties for {@link AdminClubOverview}

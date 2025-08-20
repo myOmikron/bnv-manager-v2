@@ -95,7 +95,7 @@ function Menu(props: MenuProps) {
                                 </DropdownItem>
                                 <DropdownItem
                                     onClick={async () => {
-                                        await Api.auth.logout();
+                                        await Api.common.auth.logout();
                                         ctx.reset();
                                     }}
                                 >
@@ -123,7 +123,7 @@ function Menu(props: MenuProps) {
                             </DropdownItem>
                             <DropdownItem
                                 onClick={async () => {
-                                    await Api.auth.logout();
+                                    await Api.common.auth.logout();
                                     ctx.reset();
                                 }}
                             >

@@ -3,7 +3,20 @@ window.onload = function () {
 
     // the following lines will be replaced by docker/configurator, when it runs in a docker-container
     window.ui = SwaggerUIBundle({
-        urls: [{name: "Galvyn API", url: "/api/v1/frontend/openapi.json"}],
+        urls: [
+            {
+                name: "Superadmins API", url: "/api/v1/frontend/admin.json"
+            },
+            {
+                name: "Club Admin API", url: "/api/v1/frontend/club-admin.json"
+            },
+            {
+                name: "Club Member API", url: "/api/v1/frontend/club-member.json"
+            },
+            {
+                name: "Common API", url: "/api/v1/frontend/common.json"
+            },
+        ],
         dom_id: "#swagger-ui",
         deepLinking: true,
         presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],

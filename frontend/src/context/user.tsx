@@ -4,7 +4,7 @@ import CONSOLE from "../utils/console";
 import Login from "../components/login";
 import { parseError, StatusCode } from "../api/error";
 import { Navigate } from "@tanstack/react-router";
-import { Me, RequiredError, ResponseError } from "src/api/generated";
+import { Me, RequiredError, ResponseError } from "src/api/generated/common";
 import { toast } from "react-toastify";
 
 /** The global {@link UserProvider} instance */
@@ -77,7 +77,7 @@ export class UserProvider extends React.Component<UserProviderProps, UserProvide
         this.setState({ user: "loading" });
 
         try {
-            const me = await Api.me.get();
+            const me = await Api.common.me.get();
             this.setState({ user: me });
         } catch (e) {
             let msg;

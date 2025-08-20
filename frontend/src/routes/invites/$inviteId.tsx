@@ -41,7 +41,7 @@ export default function Invite(props: InviteProps) {
         },
         // eslint-disable-next-line
         onSubmit: async ({ value }) => {
-            await Api.invites.accepted(inviteId, { password: value.password });
+            await Api.common.invites.accept(inviteId, { password: value.password });
             await navigate({ to: "/" });
         },
     });
@@ -145,5 +145,5 @@ export const Route = createFileRoute("/invites/$inviteId")({
     // eslint-disable-next-line
     errorComponent: InviteError,
     // eslint-disable-next-line
-    loader: async ({ params: { inviteId } }) => Api.invites.get(inviteId),
+    loader: async ({ params: { inviteId } }) => Api.common.invites.get(inviteId),
 });

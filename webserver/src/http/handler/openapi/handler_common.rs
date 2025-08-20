@@ -6,9 +6,35 @@ use galvyn::core::re_exports::axum::response::Response;
 use galvyn::get;
 use tracing::instrument;
 
-/// Generate the openapi definition
-#[get("/openapi.json")]
-#[instrument(name = "Api::openapi")]
-pub async fn openapi() -> Response {
-    Json(galvyn::openapi::get_openapi()).into_response()
+use crate::http::handler::AdminAPI;
+use crate::http::handler::ClubAdminApi;
+use crate::http::handler::ClubMemberApi;
+use crate::http::handler::CommonApi;
+
+/// Generate the openapi definition for the admin page
+#[get("/admin.json")]
+#[instrument(name = "Api::openapi_admin")]
+pub async fn openapi_admin() -> Response {
+    Json(galvyn::openapi::get_openapi_for_page(AdminAPI)).into_response()
+}
+
+/// Generate the openapi definition for the club admin page
+#[get("/club-admin.json")]
+#[instrument(name = "Api::openapi_club_admin")]
+pub async fn openapi_club_admin() -> Response {
+    Json(galvyn::openapi::get_openapi_for_page(ClubAdminApi)).into_response()
+}
+
+/// Generate the openapi definition for the club member page
+#[get("/club-member.json")]
+#[instrument(name = "Api::openapi_club_member")]
+pub async fn openapi_club_member() -> Response {
+    Json(galvyn::openapi::get_openapi_for_page(ClubMemberApi)).into_response()
+}
+
+/// Generate the openapi definition for the common
+#[get("/common.json")]
+#[instrument(name = "Api::openapi_common")]
+pub async fn openapi_common() -> Response {
+    Json(galvyn::openapi::get_openapi_for_page(CommonApi)).into_response()
 }

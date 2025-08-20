@@ -15,22 +15,13 @@
 
 import * as runtime from '../runtime';
 import type {
-  AcceptInvite,
   ApiErrorResponse,
   Club,
   CreateClubRequest,
   FormResultForClubUuidAndCreateClubError,
-  FormResultForNullAndAcceptInviteError,
-  GetInvite,
-  Me,
   PageForSimpleAccount,
-  SignInRequest,
+  SimpleAccount,
 } from '../models/index';
-
-export interface AcceptInviteRequest {
-    uuid: string;
-    AcceptInvite?: AcceptInvite;
-}
 
 export interface CreateClubAdminRequest {
     CreateClubRequest?: CreateClubRequest;
@@ -58,52 +49,10 @@ export interface GetClubMembersAdminRequest {
     search?: string | null;
 }
 
-export interface GetInviteCommonRequest {
-    uuid: string;
-}
-
-export interface SignInOperationRequest {
-    SignInRequest?: SignInRequest;
-}
-
 /**
  * 
  */
 export class DefaultApi extends runtime.BaseAPI {
-
-    /**
-     */
-    async acceptInviteRaw(requestParameters: AcceptInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndAcceptInviteError>> {
-        if (requestParameters['uuid'] == null) {
-            throw new runtime.RequiredError(
-                'uuid',
-                'Required parameter "uuid" was null or undefined when calling acceptInvite().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/api/v1/frontend/invite/{uuid}/accept`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: requestParameters['AcceptInvite'],
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response);
-    }
-
-    /**
-     */
-    async acceptInvite(requestParameters: AcceptInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndAcceptInviteError> {
-        const response = await this.acceptInviteRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
 
     /**
      */
@@ -160,6 +109,30 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async deleteClubAdmin(requestParameters: DeleteClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.deleteClubAdminRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async getAllSuperadminsAdminRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SimpleAccount>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/accounts/superadmins`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getAllSuperadminsAdmin(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SimpleAccount>> {
+        const response = await this.getAllSuperadminsAdminRaw(initOverrides);
+        return await response.value();
     }
 
     /**
@@ -301,137 +274,6 @@ export class DefaultApi extends runtime.BaseAPI {
     async getClubsAdmin(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Club>> {
         const response = await this.getClubsAdminRaw(initOverrides);
         return await response.value();
-    }
-
-    /**
-     */
-    async getInviteCommonRaw(requestParameters: GetInviteCommonRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetInvite>> {
-        if (requestParameters['uuid'] == null) {
-            throw new runtime.RequiredError(
-                'uuid',
-                'Required parameter "uuid" was null or undefined when calling getInviteCommon().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/frontend/invite/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response);
-    }
-
-    /**
-     */
-    async getInviteCommon(requestParameters: GetInviteCommonRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetInvite> {
-        const response = await this.getInviteCommonRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async getMeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Me>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/frontend/common/me`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response);
-    }
-
-    /**
-     */
-    async getMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Me> {
-        const response = await this.getMeRaw(initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Generate the openapi definition
-     * Generate the openapi definition
-     */
-    async openapiRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/frontend/openapi.json`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Generate the openapi definition
-     * Generate the openapi definition
-     */
-    async openapi(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.openapiRaw(initOverrides);
-    }
-
-    /**
-     */
-    async signInRaw(requestParameters: SignInOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/api/v1/frontend/auth/sign-in`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: requestParameters['SignInRequest'],
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async signIn(requestParameters: SignInOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.signInRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     */
-    async signOutRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/frontend/common/auth/sign-out`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async signOut(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.signOutRaw(initOverrides);
     }
 
 }
