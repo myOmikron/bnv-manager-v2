@@ -64,6 +64,7 @@ impl Club {
         let mut guard = exe.ensure_transaction().await?;
 
         let mut cm = rorm::query(guard.get_transaction(), ClubModel)
+            .order_asc(ClubModel.name)
             .all()
             .await?;
 
