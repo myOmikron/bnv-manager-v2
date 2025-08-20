@@ -5,6 +5,9 @@ use futures_util::TryStreamExt;
 use rorm::db::Executor;
 use rorm::fields::types::MaxStr;
 use rorm::prelude::ForeignModelByField;
+use schemars::JsonSchema;
+use serde::Deserialize;
+use serde::Serialize;
 use thiserror::Error;
 use tracing::instrument;
 use uuid::Uuid;
@@ -40,13 +43,13 @@ pub struct Invite {
     /// A list of roles the user possesses
     pub roles: Vec<Role>,
     /// The point in time the invite expires
-    pub expires_at: time::OffsetDateTime,
+    expires_at: time::OffsetDateTime,
     /// The point in time the invite was created
     pub created_at: time::OffsetDateTime,
 }
 
 /// Wrapper for the primary key of the [Invite]
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct InviteUuid(pub Uuid);
 
 impl Invite {
@@ -82,7 +85,9 @@ impl Invite {
         let club_admins = rorm::query(guard.get_transaction(), InvitedClubAdminModel)
             .condition(InvitedClubAdminModel.invite.equals(invite.uuid))
             .stream()
-            .map_ok(|x| Role::ClubAdmin(ClubUuid(x.club.0)))
+            .map_ok(|x| Role::ClubAdmin {
+                club: ClubUuid(x.club.0),
+            })
             .try_collect::<Vec<_>>()
             .await?;
         roles.extend(club_admins);
@@ -91,7 +96,9 @@ impl Invite {
         let club_members = rorm::query(guard.get_transaction(), InvitedClubMemberModel)
             .condition(InvitedClubMemberModel.invite.equals(invite.uuid))
             .stream()
-            .map_ok(|x| Role::ClubMember(ClubUuid(x.club.0)))
+            .map_ok(|x| Role::ClubMember {
+                club: ClubUuid(x.club.0),
+            })
             .try_collect::<Vec<_>>()
             .await?;
         roles.extend(club_members);
@@ -108,13 +115,22 @@ impl Invite {
         }))
     }
 
+    /// Get the point in time the invite expires
+    pub fn expires_at(&self) -> time::OffsetDateTime {
+        self.expires_at
+    }
+
     /// Migrate an [Invite] instance to an actual account.
     #[instrument(skip(exe))]
     pub async fn accept_invite(
         self,
         exe: impl Executor<'_>,
         AcceptInviteParams { password }: AcceptInviteParams,
-    ) -> anyhow::Result<Account> {
+    ) -> anyhow::Result<Result<Account, AcceptInviteError>> {
+        if self.expires_at < time::OffsetDateTime::now_utc() {
+            return Ok(Err(AcceptInviteError::Expired));
+        }
+
         let mut guard = exe.ensure_transaction().await?;
 
         #[allow(clippy::expect_used)]
@@ -182,7 +198,7 @@ impl Invite {
 
         guard.commit().await?;
 
-        Ok(Account::from(account))
+        Ok(Ok(Account::from(account)))
     }
 
     /// Create a new invite.
@@ -195,9 +211,11 @@ impl Invite {
             username,
             display_name,
             roles,
+            expires_at,
         }: CreateInviteParams,
     ) -> anyhow::Result<Result<Invite, CreateInviteError>> {
         let mut guard = exe.ensure_transaction().await?;
+        let username = MaxStr::new(username.to_lowercase())?;
 
         let account = Account::find_by_username(guard.get_transaction(), &username).await?;
         if account.is_some() {
@@ -218,7 +236,7 @@ impl Invite {
                 uuid: Uuid::new_v4(),
                 username,
                 display_name,
-                expires_at: time::OffsetDateTime::now_utc() + time::Duration::days(14),
+                expires_at,
             })
             .await?;
 
@@ -232,7 +250,9 @@ impl Invite {
                         })
                         .await?;
                 }
-                Role::ClubAdmin(ClubUuid(club_uuid)) => {
+                Role::ClubAdmin {
+                    club: ClubUuid(club_uuid),
+                } => {
                     rorm::insert(guard.get_transaction(), InvitedClubAdminModel)
                         .single(&InvitedClubAdminModel {
                             uuid: Uuid::new_v4(),
@@ -241,7 +261,9 @@ impl Invite {
                         })
                         .await?;
                 }
-                Role::ClubMember(ClubUuid(club_uuid)) => {
+                Role::ClubMember {
+                    club: ClubUuid(club_uuid),
+                } => {
                     rorm::insert(guard.get_transaction(), InvitedClubMemberModel)
                         .single(&InvitedClubMemberModel {
                             uuid: Uuid::new_v4(),
@@ -264,6 +286,20 @@ impl Invite {
             created_at: invite.created_at,
         }))
     }
+
+    /// Clear expired invites
+    #[instrument(name = "Invite::clear_expired", skip(exe))]
+    pub async fn clear_expired(exe: impl Executor<'_>) -> anyhow::Result<()> {
+        rorm::delete(exe, InviteModel)
+            .condition(
+                InviteModel
+                    .expires_at
+                    .less_than(time::OffsetDateTime::now_utc()),
+            )
+            .await?;
+
+        Ok(())
+    }
 }
 
 /// Parameters to create a new invite
@@ -275,6 +311,8 @@ pub struct CreateInviteParams {
     pub display_name: MaxStr<255>,
     /// Roles the new account should start with
     pub roles: Vec<Role>,
+    /// The point in time the invite expires
+    pub expires_at: time::OffsetDateTime,
 }
 
 /// Parameters to accept an invitation
@@ -290,4 +328,11 @@ pub struct AcceptInviteParams {
 pub enum CreateInviteError {
     #[error("Username is already taken")]
     UsernameTaken,
+}
+
+#[derive(Debug, Clone, Error)]
+#[allow(missing_docs)]
+pub enum AcceptInviteError {
+    #[error("Invite expired")]
+    Expired,
 }

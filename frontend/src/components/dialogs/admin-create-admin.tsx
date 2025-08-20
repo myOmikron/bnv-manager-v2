@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
-import { ErrorMessage, Field, FieldGroup, Fieldset, Label, RequiredLabel } from "src/components/base/fieldset";
+import { Description, ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
 import { Button, PrimaryButton } from "src/components/base/button";
 import { Api, UUID } from "src/api/api";
 import { Input } from "src/components/base/input";
@@ -40,18 +40,13 @@ export default function DialogCreateAdmin(props: DialogCreateAdminProps) {
                     username: value.username,
                     display_name: value.displayName,
                     valid_days: parseInt(value.validDays),
-                    permissions: {
-                        admin: true,
-                        club_admin: [],
-                        club_user: [],
-                    },
+                    roles: [{ type: "SuperAdmin" }],
                 });
 
                 if (res.result === "Err") {
                     return {
                         fields: {
                             username: res.error.username_already_occupied ? t("error.username-already-occupied") : null,
-                            validDays: res.error.valid_days_too_small ? t("error.valid-days-too-small") : null,
                         },
                     };
                 }
@@ -103,7 +98,8 @@ export default function DialogCreateAdmin(props: DialogCreateAdminProps) {
                             <form.Field name={"validDays"}>
                                 {(fieldApi) => (
                                     <Field>
-                                        <Label>{t("label.valid-days")}</Label>
+                                        <RequiredLabel>{t("label.valid-days")}</RequiredLabel>
+                                        <Description>{t("description.valid-days")}</Description>
                                         <Input
                                             required={true}
                                             type={"number"}
@@ -130,6 +126,7 @@ export default function DialogCreateAdmin(props: DialogCreateAdminProps) {
             {openShowInvite && (
                 <Suspense>
                     <Dialog open={true} onClose={props.onClose}>
+                        <DialogTitle>{t("heading.invite-created")}</DialogTitle>
                         <DialogBody>
                             <div className={"flex gap-3"}>
                                 <Input readOnly={true} defaultValue={openShowInvite} />

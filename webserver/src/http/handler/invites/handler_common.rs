@@ -35,9 +35,9 @@ pub async fn get_invite_common(
 
     Ok(ApiJson(GetInvite {
         uuid,
+        expires_at: SchemaDateTime(invite.expires_at()),
         username: invite.username,
         display_name: invite.display_name,
-        expires_at: SchemaDateTime(invite.expires_at),
         created_at: SchemaDateTime(invite.created_at),
     }))
 }
@@ -54,9 +54,20 @@ pub async fn accept_invite(
         .await?
         .ok_or(ApiError::bad_request("Invite not found"))?;
 
-    invite
+    let res = invite
         .accept_invite(&mut tx, AcceptInviteParams { password })
         .await?;
+
+    if let Err(err) = res {
+        return match err {
+            crate::models::invite::AcceptInviteError::Expired => {
+                Ok(ApiJson(FormResult::err(AcceptInviteError {
+                    expired: true,
+                    ..Default::default()
+                })))
+            }
+        };
+    }
 
     tx.commit().await?;
 

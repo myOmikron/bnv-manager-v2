@@ -6,6 +6,7 @@
         "invite": "Please set a password for your new account"
     },
     "error": {
+        "invite-expired": "error.invite-expired",
         "password-mismatch": "Password mismatch",
         "stronger-password": "Password is too weak"
     },

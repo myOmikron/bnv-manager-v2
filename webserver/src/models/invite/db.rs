@@ -10,6 +10,7 @@ use crate::models::club::db::ClubModel;
 pub struct InviteModel {
     #[rorm(primary_key)]
     pub uuid: Uuid,
+    /// Usernames **MUST** be lowercase to allow case-insensitive logins.
     #[rorm(unique)]
     pub username: MaxStr<255>,
     pub display_name: MaxStr<255>,

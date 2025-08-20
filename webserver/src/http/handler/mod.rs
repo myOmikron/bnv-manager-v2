@@ -17,6 +17,10 @@ pub struct AdminAPI;
 pub fn router_admin() -> GalvynRouter {
     GalvynRouter::with_openapi_page(AdminAPI)
         .nest(
+            "/accounts",
+            GalvynRouter::new().handler(accounts::handler_admin::get_all_superadmins),
+        )
+        .nest(
             "/clubs",
             GalvynRouter::new()
                 .handler(clubs::handler_admin::get_club)
@@ -27,8 +31,8 @@ pub fn router_admin() -> GalvynRouter {
                 .handler(clubs::handler_admin::get_club_members),
         )
         .nest(
-            "/accounts",
-            GalvynRouter::new().handler(accounts::handler_admin::get_all_superadmins),
+            "/invites",
+            GalvynRouter::new().handler(invites::handler_admin::create_invite),
         )
 }
 

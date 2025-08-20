@@ -64,6 +64,8 @@ impl Account {
         exe: impl Executor<'_>,
         username: &str,
     ) -> anyhow::Result<Option<Self>> {
+        let username = username.to_lowercase();
+
         rorm::query(exe, AccountModel)
             .condition(AccountModel.username.equals(username))
             .optional()
@@ -120,7 +122,9 @@ impl Account {
                     })
                     .await?;
             }
-            Role::ClubAdmin(ClubUuid(uuid)) => {
+            Role::ClubAdmin {
+                club: ClubUuid(uuid),
+            } => {
                 rorm::insert(guard.get_transaction(), ClubAdminModel)
                     .single(&ClubAdminModel {
                         uuid: Uuid::new_v4(),
@@ -129,7 +133,9 @@ impl Account {
                     })
                     .await?;
             }
-            Role::ClubMember(ClubUuid(uuid)) => {
+            Role::ClubMember {
+                club: ClubUuid(uuid),
+            } => {
                 rorm::insert(guard.get_transaction(), ClubMemberModel)
                     .single(&ClubMemberModel {
                         uuid: Uuid::new_v4(),
@@ -156,7 +162,9 @@ impl Account {
                     .condition(SuperAdminModel.account.equals(self.uuid.0))
                     .await?;
             }
-            Role::ClubAdmin(ClubUuid(club_uuid)) => {
+            Role::ClubAdmin {
+                club: ClubUuid(club_uuid),
+            } => {
                 rorm::delete(guard.get_transaction(), ClubAdminModel)
                     .condition(and![
                         ClubAdminModel.club.equals(club_uuid),
@@ -164,7 +172,9 @@ impl Account {
                     ])
                     .await?;
             }
-            Role::ClubMember(ClubUuid(club_uuid)) => {
+            Role::ClubMember {
+                club: ClubUuid(club_uuid),
+            } => {
                 rorm::delete(guard.get_transaction(), ClubMemberModel)
                     .condition(and![
                         ClubMemberModel.club.equals(club_uuid),
@@ -200,7 +210,9 @@ impl Account {
         let admin_roles: Vec<Role> = rorm::query(guard.get_transaction(), ClubAdminModel)
             .condition(ClubAdminModel.account.equals(self.uuid.0))
             .stream()
-            .map_ok(|x| Role::ClubAdmin(ClubUuid(x.club.0)))
+            .map_ok(|x| Role::ClubAdmin {
+                club: ClubUuid(x.club.0),
+            })
             .try_collect()
             .await?;
         roles.extend(admin_roles);
@@ -209,7 +221,9 @@ impl Account {
         let member_roles: Vec<Role> = rorm::query(guard.get_transaction(), ClubMemberModel)
             .condition(ClubMemberModel.account.equals(self.uuid.0))
             .stream()
-            .map_ok(|x| Role::ClubMember(ClubUuid(x.club.0)))
+            .map_ok(|x| Role::ClubMember {
+                club: ClubUuid(x.club.0),
+            })
             .try_collect()
             .await?;
         roles.extend(member_roles);

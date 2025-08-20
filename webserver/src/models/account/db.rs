@@ -9,6 +9,7 @@ pub struct AccountModel {
     #[rorm(primary_key)]
     pub uuid: Uuid,
 
+    /// Usernames **MUST** be lowercase to allow case-insensitive login.
     #[rorm(unique)]
     pub username: MaxStr<255>,
 

@@ -1,9 +1,13 @@
+use std::num::NonZeroU8;
+
 use galvyn::core::stuff::schema::SchemaDateTime;
 use rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use uuid::Uuid;
+
+use crate::models::role::Role;
 
 /// API representation of an invitation
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -28,8 +32,30 @@ pub struct AcceptInvite {
 }
 
 /// Errors that can occur while accepting an invitation
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
 pub struct AcceptInviteError {
     /// Empty password was supplied
     pub empty_password: bool,
+    /// Invite has expired
+    pub expired: bool,
+}
+
+/// Request to create an invitation
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct CreateInviteRequest {
+    /// Reserved username
+    pub username: MaxStr<255>,
+    /// Display-name of the user
+    pub display_name: MaxStr<255>,
+    /// The point in time the invite expires
+    pub valid_days: NonZeroU8,
+    /// Roles to assign to the user
+    pub roles: Vec<Role>,
+}
+
+/// Errors that can occur while creating an invitation
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct CreateInviteError {
+    /// Username is already taken
+    pub username_already_occupied: bool,
 }

@@ -39,7 +39,7 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
                 .clone()
                 .into_iter()
                 .flat_map(|x| match x {
-                    Role::ClubMember(_) => Some(x),
+                    Role::ClubMember { .. } => Some(x),
                     _ => None,
                 })
                 .collect(),
@@ -47,7 +47,7 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
                 .clone()
                 .into_iter()
                 .flat_map(|x| match x {
-                    Role::ClubAdmin(_) => Some(x),
+                    Role::ClubAdmin { .. } => Some(x),
                     _ => None,
                 })
                 .collect(),

@@ -277,10 +277,15 @@
                     "empty_password": {
                         "description": "Empty password was supplied",
                         "type": "boolean"
+                    },
+                    "expired": {
+                        "description": "Invite has expired",
+                        "type": "boolean"
                     }
                 },
                 "required": [
-                    "empty_password"
+                    "empty_password",
+                    "expired"
                 ]
             },
             "ApiErrorResponse": {
@@ -457,37 +462,57 @@
                 "description": "The available roles of the manager",
                 "oneOf": [
                     {
-                        "description": "The super administrator. Has rights to manager clubs.",
-                        "type": "string",
-                        "enum": [
-                            "SuperAdmin"
-                        ]
-                    },
-                    {
                         "description": "The admin of a club. Can manage users and settings of its club",
                         "type": "object",
                         "properties": {
-                            "ClubAdmin": {
+                            "club": {
                                 "$ref": "#/components/schemas/ClubUuid"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubAdmin"
+                                ]
                             }
                         },
                         "required": [
-                            "ClubAdmin"
-                        ],
-                        "additionalProperties": false
+                            "club",
+                            "type"
+                        ]
                     },
                     {
                         "description": "A member of a club.",
                         "type": "object",
                         "properties": {
-                            "ClubMember": {
+                            "club": {
                                 "$ref": "#/components/schemas/ClubUuid"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubMember"
+                                ]
                             }
                         },
                         "required": [
-                            "ClubMember"
-                        ],
-                        "additionalProperties": false
+                            "club",
+                            "type"
+                        ]
+                    },
+                    {
+                        "description": "The super administrator. Has rights to manager clubs.",
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "SuperAdmin"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "type"
+                        ]
                     }
                 ]
             },

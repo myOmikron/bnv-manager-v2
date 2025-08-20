@@ -5,6 +5,46 @@
         "version": "v0.0.0"
     },
     "paths": {
+        "/api/v1/frontend/admin/accounts/superadmins": {
+            "get": {
+                "operationId": "get_all_superadmins",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SimpleAccount"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/frontend/admin/clubs/{uuid}": {
             "get": {
                 "operationId": "get_club",
@@ -348,19 +388,25 @@
                 }
             }
         },
-        "/api/v1/frontend/admin/accounts/superadmins": {
-            "get": {
-                "operationId": "get_all_superadmins",
+        "/api/v1/frontend/admin/invites": {
+            "post": {
+                "operationId": "create_invite",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateInviteRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/SimpleAccount"
-                                    }
+                                    "$ref": "#/components/schemas/FormResult_for_SingleLink_and_CreateInviteError"
                                 }
                             }
                         }
@@ -540,6 +586,60 @@
                     "name"
                 ]
             },
+            "CreateInviteError": {
+                "description": "Errors that can occur while creating an invitation",
+                "type": "object",
+                "properties": {
+                    "username_already_occupied": {
+                        "description": "Username is already taken",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "username_already_occupied"
+                ]
+            },
+            "CreateInviteRequest": {
+                "description": "Request to create an invitation",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "Display-name of the user",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "roles": {
+                        "description": "Roles to assign to the user",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Role"
+                        }
+                    },
+                    "username": {
+                        "description": "Reserved username",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "valid_days": {
+                        "description": "The point in time the invite expires",
+                        "type": "integer",
+                        "minimum": 1,
+                        "format": "uint8"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "roles",
+                    "username",
+                    "valid_days"
+                ]
+            },
             "FormResult_for_ClubUuid_and_CreateClubError": {
                 "description": "A `Result` with a custom serialization",
                 "oneOf": [
@@ -566,6 +666,47 @@
                         "properties": {
                             "error": {
                                 "$ref": "#/components/schemas/CreateClubError"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
+            "FormResult_for_SingleLink_and_CreateInviteError": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/SingleLink"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/CreateInviteError"
                             },
                             "result": {
                                 "type": "string",
@@ -625,6 +766,64 @@
                     "total"
                 ]
             },
+            "Role": {
+                "description": "The available roles of the manager",
+                "oneOf": [
+                    {
+                        "description": "The admin of a club. Can manage users and settings of its club",
+                        "type": "object",
+                        "properties": {
+                            "club": {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubAdmin"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "club",
+                            "type"
+                        ]
+                    },
+                    {
+                        "description": "A member of a club.",
+                        "type": "object",
+                        "properties": {
+                            "club": {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubMember"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "club",
+                            "type"
+                        ]
+                    },
+                    {
+                        "description": "The super administrator. Has rights to manager clubs.",
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "SuperAdmin"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "type"
+                        ]
+                    }
+                ]
+            },
             "SchemaDateTime": {
                 "example": "1970-01-01T00:00:00.0Z",
                 "type": "string",
@@ -663,6 +862,18 @@
                     "display_name",
                     "username",
                     "uuid"
+                ]
+            },
+            "SingleLink": {
+                "description": "A single string representing a link wrapped in a struct",
+                "type": "object",
+                "properties": {
+                    "link": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "link"
                 ]
             }
         }

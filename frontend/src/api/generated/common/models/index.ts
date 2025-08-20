@@ -25,6 +25,12 @@ export interface AcceptInviteError {
      * @memberof AcceptInviteError
      */
     empty_password: boolean;
+    /**
+     * Invite has expired
+     * @type {boolean}
+     * @memberof AcceptInviteError
+     */
+    expired: boolean;
 }
 /**
  * The response that is sent in a case of an error
@@ -202,7 +208,7 @@ export interface Me {
  * The available roles of the manager
  * @export
  */
-export type Role = RoleOneOf | RoleOneOf1 | string;
+export type Role = RoleOneOf | RoleOneOf1 | RoleOneOf2;
 /**
  * The admin of a club. Can manage users and settings of its club
  * @export
@@ -214,8 +220,24 @@ export interface RoleOneOf {
      * @type {string}
      * @memberof RoleOneOf
      */
-    ClubAdmin: string;
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleOneOf
+     */
+    type: RoleOneOfTypeEnum;
 }
+
+
+/**
+ * @export
+ */
+export const RoleOneOfTypeEnum = {
+    ClubAdmin: 'ClubAdmin'
+} as const;
+export type RoleOneOfTypeEnum = typeof RoleOneOfTypeEnum[keyof typeof RoleOneOfTypeEnum];
+
 /**
  * A member of a club.
  * @export
@@ -227,8 +249,47 @@ export interface RoleOneOf1 {
      * @type {string}
      * @memberof RoleOneOf1
      */
-    ClubMember: string;
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleOneOf1
+     */
+    type: RoleOneOf1TypeEnum;
 }
+
+
+/**
+ * @export
+ */
+export const RoleOneOf1TypeEnum = {
+    ClubMember: 'ClubMember'
+} as const;
+export type RoleOneOf1TypeEnum = typeof RoleOneOf1TypeEnum[keyof typeof RoleOneOf1TypeEnum];
+
+/**
+ * The super administrator. Has rights to manager clubs.
+ * @export
+ * @interface RoleOneOf2
+ */
+export interface RoleOneOf2 {
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleOneOf2
+     */
+    type: RoleOneOf2TypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const RoleOneOf2TypeEnum = {
+    SuperAdmin: 'SuperAdmin'
+} as const;
+export type RoleOneOf2TypeEnum = typeof RoleOneOf2TypeEnum[keyof typeof RoleOneOf2TypeEnum];
+
 /**
  * The roles of a user.
  * @export

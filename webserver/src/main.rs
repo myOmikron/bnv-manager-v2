@@ -12,6 +12,8 @@ use galvyn::rorm::Database;
 use rorm::DatabaseConfiguration;
 use rorm::cli as rorm_cli;
 use rorm::fields::types::MaxStr;
+use time::Duration;
+use time::OffsetDateTime;
 use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -29,6 +31,7 @@ mod cli;
 pub mod config;
 pub mod http;
 pub mod models;
+pub mod modules;
 pub mod tracing;
 pub mod utils;
 
@@ -112,6 +115,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     username,
                     display_name,
                     roles: vec![Role::SuperAdmin],
+                    expires_at: OffsetDateTime::now_utc() + Duration::minutes(15),
                 },
             )
             .await?;

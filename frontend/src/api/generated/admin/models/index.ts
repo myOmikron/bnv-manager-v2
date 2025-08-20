@@ -121,6 +121,50 @@ export interface CreateClubRequest {
     name: string;
 }
 /**
+ * Errors that can occur while creating an invitation
+ * @export
+ * @interface CreateInviteError
+ */
+export interface CreateInviteError {
+    /**
+     * Username is already taken
+     * @type {boolean}
+     * @memberof CreateInviteError
+     */
+    username_already_occupied: boolean;
+}
+/**
+ * Request to create an invitation
+ * @export
+ * @interface CreateInviteRequest
+ */
+export interface CreateInviteRequest {
+    /**
+     * Display-name of the user
+     * @type {string}
+     * @memberof CreateInviteRequest
+     */
+    display_name: string;
+    /**
+     * Roles to assign to the user
+     * @type {Array<Role>}
+     * @memberof CreateInviteRequest
+     */
+    roles: Array<Role>;
+    /**
+     * Reserved username
+     * @type {string}
+     * @memberof CreateInviteRequest
+     */
+    username: string;
+    /**
+     * The point in time the invite expires
+     * @type {number}
+     * @memberof CreateInviteRequest
+     */
+    valid_days: number;
+}
+/**
  * @type FormResultForClubUuidAndCreateClubError
  * A `Result` with a custom serialization
  * @export
@@ -185,6 +229,70 @@ export const FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum = {
 export type FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum = typeof FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum[keyof typeof FormResultForClubUuidAndCreateClubErrorOneOf1ResultEnum];
 
 /**
+ * @type FormResultForSingleLinkAndCreateInviteError
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForSingleLinkAndCreateInviteError = FormResultForSingleLinkAndCreateInviteErrorOneOf | FormResultForSingleLinkAndCreateInviteErrorOneOf1;
+/**
+ * 
+ * @export
+ * @interface FormResultForSingleLinkAndCreateInviteErrorOneOf
+ */
+export interface FormResultForSingleLinkAndCreateInviteErrorOneOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForSingleLinkAndCreateInviteErrorOneOf
+     */
+    result: FormResultForSingleLinkAndCreateInviteErrorOneOfResultEnum;
+    /**
+     * 
+     * @type {SingleLink}
+     * @memberof FormResultForSingleLinkAndCreateInviteErrorOneOf
+     */
+    value: SingleLink;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForSingleLinkAndCreateInviteErrorOneOfResultEnum = {
+    Ok: 'Ok'
+} as const;
+export type FormResultForSingleLinkAndCreateInviteErrorOneOfResultEnum = typeof FormResultForSingleLinkAndCreateInviteErrorOneOfResultEnum[keyof typeof FormResultForSingleLinkAndCreateInviteErrorOneOfResultEnum];
+
+/**
+ * 
+ * @export
+ * @interface FormResultForSingleLinkAndCreateInviteErrorOneOf1
+ */
+export interface FormResultForSingleLinkAndCreateInviteErrorOneOf1 {
+    /**
+     * 
+     * @type {CreateInviteError}
+     * @memberof FormResultForSingleLinkAndCreateInviteErrorOneOf1
+     */
+    error: CreateInviteError;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForSingleLinkAndCreateInviteErrorOneOf1
+     */
+    result: FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum = typeof FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum[keyof typeof FormResultForSingleLinkAndCreateInviteErrorOneOf1ResultEnum];
+
+/**
  * A page of items
  * @export
  * @interface PageForSimpleAccount
@@ -216,6 +324,93 @@ export interface PageForSimpleAccount {
     total: number;
 }
 /**
+ * @type Role
+ * The available roles of the manager
+ * @export
+ */
+export type Role = RoleOneOf | RoleOneOf1 | RoleOneOf2;
+/**
+ * The admin of a club. Can manage users and settings of its club
+ * @export
+ * @interface RoleOneOf
+ */
+export interface RoleOneOf {
+    /**
+     * New-type for the primary key of the club
+     * @type {string}
+     * @memberof RoleOneOf
+     */
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleOneOf
+     */
+    type: RoleOneOfTypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const RoleOneOfTypeEnum = {
+    ClubAdmin: 'ClubAdmin'
+} as const;
+export type RoleOneOfTypeEnum = typeof RoleOneOfTypeEnum[keyof typeof RoleOneOfTypeEnum];
+
+/**
+ * A member of a club.
+ * @export
+ * @interface RoleOneOf1
+ */
+export interface RoleOneOf1 {
+    /**
+     * New-type for the primary key of the club
+     * @type {string}
+     * @memberof RoleOneOf1
+     */
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleOneOf1
+     */
+    type: RoleOneOf1TypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const RoleOneOf1TypeEnum = {
+    ClubMember: 'ClubMember'
+} as const;
+export type RoleOneOf1TypeEnum = typeof RoleOneOf1TypeEnum[keyof typeof RoleOneOf1TypeEnum];
+
+/**
+ * The super administrator. Has rights to manager clubs.
+ * @export
+ * @interface RoleOneOf2
+ */
+export interface RoleOneOf2 {
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleOneOf2
+     */
+    type: RoleOneOf2TypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const RoleOneOf2TypeEnum = {
+    SuperAdmin: 'SuperAdmin'
+} as const;
+export type RoleOneOf2TypeEnum = typeof RoleOneOf2TypeEnum[keyof typeof RoleOneOf2TypeEnum];
+
+/**
  * Simple representation of an account.
  * @export
  * @interface SimpleAccount
@@ -239,4 +434,17 @@ export interface SimpleAccount {
      * @memberof SimpleAccount
      */
     uuid: string;
+}
+/**
+ * A single string representing a link wrapped in a struct
+ * @export
+ * @interface SingleLink
+ */
+export interface SingleLink {
+    /**
+     * 
+     * @type {string}
+     * @memberof SingleLink
+     */
+    link: string;
 }

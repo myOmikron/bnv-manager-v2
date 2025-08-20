@@ -39,10 +39,17 @@ export default function Invite(props: InviteProps) {
             password: "",
             password2: "",
         },
-        // eslint-disable-next-line
-        onSubmit: async ({ value }) => {
-            await Api.common.invites.accept(inviteId, { password: value.password });
-            await navigate({ to: "/" });
+        validators: {
+            // eslint-disable-next-line
+            onSubmitAsync: async ({ value }) => {
+                const res = await Api.common.invites.accept(inviteId, { password: value.password });
+
+                if (res.result === "Err") {
+                    return { form: res.error.expired ? t("error.invite-expired") : undefined };
+                }
+
+                await navigate({ to: "/" });
+            },
         },
     });
 

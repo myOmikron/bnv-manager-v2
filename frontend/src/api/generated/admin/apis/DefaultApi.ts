@@ -18,13 +18,19 @@ import type {
   ApiErrorResponse,
   Club,
   CreateClubRequest,
+  CreateInviteRequest,
   FormResultForClubUuidAndCreateClubError,
+  FormResultForSingleLinkAndCreateInviteError,
   PageForSimpleAccount,
   SimpleAccount,
 } from '../models/index';
 
 export interface CreateClubOperationRequest {
     CreateClubRequest?: CreateClubRequest;
+}
+
+export interface CreateInviteOperationRequest {
+    CreateInviteRequest?: CreateInviteRequest;
 }
 
 export interface DeleteClubRequest {
@@ -78,6 +84,33 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async createClub(requestParameters: CreateClubOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForClubUuidAndCreateClubError> {
         const response = await this.createClubRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async createInviteRaw(requestParameters: CreateInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleLinkAndCreateInviteError>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/invites`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['CreateInviteRequest'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async createInvite(requestParameters: CreateInviteOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleLinkAndCreateInviteError> {
+        const response = await this.createInviteRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

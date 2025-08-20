@@ -3,6 +3,7 @@ import CONSOLE from "src/utils/console";
 import {
     Configuration as AdminConfiguration,
     CreateClubRequest,
+    CreateInviteRequest,
     DefaultApi as AdminDefaultApi,
     GetClubAdminsRequest,
     GetClubMembersRequest,
@@ -37,8 +38,8 @@ export const Api = {
             delete: (uuid: UUID) => handleError(adminApi.deleteClub({ uuid })),
         },
         invites: {
-            create: (invite: AdminCreateInviteRequest) =>
-                handleError(adminApi.adminCreateInvite({ AdminCreateInviteRequest: invite })),
+            create: (invite: CreateInviteRequest) =>
+                handleError(adminApi.createInvite({ CreateInviteRequest: invite })),
         },
     },
     common: {
