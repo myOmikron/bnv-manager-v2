@@ -1,6 +1,7 @@
 {
     "button": {
         "back-to-overview": "Zur\u00fcck zur \u00dcbersicht",
+        "copy-invite-link": "Einladungslink kopieren",
         "create-club-admin": "Neuen Vereinsadministrator anlegen"
     },
     "heading": {
@@ -13,6 +14,7 @@
     },
     "label": {
         "display-name": "Anzeigename",
+        "expires-at": "Läuft ab am",
         "no-members": "Keine Mitglieder vorhanden.",
         "username": "Nutzername"
     }

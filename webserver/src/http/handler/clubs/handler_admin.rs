@@ -195,13 +195,7 @@ pub async fn get_club_admin_invites(
                 .contains(&Role::ClubAdmin {
                     club: ClubUuid(uuid),
                 })
-                .then(|| GetInvite {
-                    expires_at: SchemaDateTime(x.expires_at()),
-                    uuid: x.uuid,
-                    username: x.username,
-                    display_name: x.display_name,
-                    created_at: SchemaDateTime(x.created_at),
-                })
+                .then(|| GetInvite::from(x))
         })
         .collect();
 
@@ -225,13 +219,7 @@ pub async fn get_club_member_invites(
                 .contains(&Role::ClubMember {
                     club: ClubUuid(uuid),
                 })
-                .then(|| GetInvite {
-                    expires_at: SchemaDateTime(x.expires_at()),
-                    uuid: x.uuid,
-                    username: x.username,
-                    display_name: x.display_name,
-                    created_at: SchemaDateTime(x.created_at),
-                })
+                .then(|| GetInvite::from(x))
         })
         .collect();
 

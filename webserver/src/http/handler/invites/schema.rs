@@ -6,8 +6,10 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 
+use crate::models::invite::Invite;
 use crate::models::invite::InviteUuid;
 use crate::models::role::Role;
+use crate::utils::links::Link;
 
 /// API representation of an invitation
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -22,6 +24,8 @@ pub struct GetInvite {
     pub expires_at: SchemaDateTime,
     /// The point in time the invite was created
     pub created_at: SchemaDateTime,
+    /// Public link for accessing the invite
+    pub link: String,
 }
 
 /// Accept an open invite
@@ -58,4 +62,17 @@ pub struct CreateInviteRequest {
 pub struct CreateInviteError {
     /// Username is already taken
     pub username_already_occupied: bool,
+}
+
+impl From<Invite> for GetInvite {
+    fn from(value: Invite) -> Self {
+        Self {
+            expires_at: SchemaDateTime(value.expires_at()),
+            uuid: value.uuid,
+            username: value.username,
+            display_name: value.display_name,
+            created_at: SchemaDateTime(value.created_at),
+            link: Link::invite(value.uuid).to_string(),
+        }
+    }
 }

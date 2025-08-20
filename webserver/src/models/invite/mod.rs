@@ -51,7 +51,7 @@ pub struct Invite {
 }
 
 /// Wrapper for the primary key of the [Invite]
-#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct InviteUuid(pub Uuid);
 
 impl Invite {

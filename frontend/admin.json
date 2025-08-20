@@ -854,6 +854,10 @@
                             }
                         ]
                     },
+                    "link": {
+                        "description": "Public link for accessing the invite",
+                        "type": "string"
+                    },
                     "username": {
                         "description": "Reserved username",
                         "allOf": [
@@ -875,6 +879,7 @@
                     "created_at",
                     "display_name",
                     "expires_at",
+                    "link",
                     "username",
                     "uuid"
                 ]

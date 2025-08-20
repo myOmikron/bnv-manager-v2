@@ -317,6 +317,12 @@ export interface GetInvite {
      */
     expires_at: string;
     /**
+     * Public link for accessing the invite
+     * @type {string}
+     * @memberof GetInvite
+     */
+    link: string;
+    /**
      * Reserved username
      * @type {string}
      * @memberof GetInvite

@@ -6,7 +6,6 @@ use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
-use galvyn::core::stuff::schema::SchemaDateTime;
 use galvyn::core::stuff::schema::SingleUuid;
 use galvyn::get;
 use galvyn::post;
@@ -33,13 +32,7 @@ pub async fn get_invite_common(
 
     tx.commit().await?;
 
-    Ok(ApiJson(GetInvite {
-        expires_at: SchemaDateTime(invite.expires_at()),
-        uuid: invite.uuid,
-        username: invite.username,
-        display_name: invite.display_name,
-        created_at: SchemaDateTime(invite.created_at),
-    }))
+    Ok(ApiJson(GetInvite::from(invite)))
 }
 
 #[post("/{uuid}/accept")]
