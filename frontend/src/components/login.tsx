@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 /**
  * The properties for {@link Login}
  */
-export type LoginProps = {
+type LoginProps = {
     /** The function that should be executed on a successful login */
     onLogin: () => void;
 };
@@ -35,7 +35,7 @@ export default function Login(props: LoginProps) {
             onSubmitAsync: async ({ formApi, value }) => {
                 const id = toast.loading(t("toast.signing-in"));
                 try {
-                    await Api.auth.login(value.username, value.password);
+                    await Api.common.auth.login(value.username, value.password);
                 } catch (e) {
                     toast.update(id, {
                         isLoading: false,
