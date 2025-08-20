@@ -76,13 +76,15 @@ impl Account {
     /// Set a new password for an account
     #[instrument(skip(self, exe))]
     pub async fn set_password(
-        &self,
+        &mut self,
         exe: impl Executor<'_>,
         password: MaxStr<72>,
     ) -> anyhow::Result<()> {
         #[allow(clippy::expect_used)]
         let hashed_password = MaxStr::new(Self::hash_password(&password)?)
             .expect("Resulting hash must be <255 bytes");
+
+        self.hashed_password = hashed_password.clone();
 
         rorm::update(exe, AccountModel)
             .set(AccountModel.hashed_password, hashed_password)
