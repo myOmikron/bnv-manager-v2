@@ -9,6 +9,7 @@
     "label": {
         "club-name": "Vereinsname",
         "created-at": "Angelegt am",
-        "no-clubs-created-yet": "label.no-clubs-created-yet"
+        "member-count": "Mitgliederzahl",
+        "no-clubs-created-yet": "Es wurden noch keine Vereine angelegt."
     }
 }
