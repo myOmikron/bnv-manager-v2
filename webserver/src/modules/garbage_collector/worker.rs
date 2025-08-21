@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use galvyn::core::Module;
 use galvyn::rorm::Database;
-use tracing::Span;
+use tracing::Instrument;
 use tracing::error;
 
 use crate::models::invite::Invite;
@@ -18,10 +18,9 @@ impl Worker for GarbageCollectorWorker {
 
         loop {
             let span = tracing::info_span!("GarbageCollectorWorker::run");
-            let _enter = span.enter();
 
-            if let Err(err) = self.run_once(span.clone()).await {
-                error!(?err, "GarbageCollectorWorker::run_once failed");
+            if let Err(error) = self.run_once().instrument(span.clone()).await {
+                span.in_scope(|| error!(error.display = %error, error.debug = ?error));
             }
 
             timer.tick().await;
@@ -30,7 +29,7 @@ impl Worker for GarbageCollectorWorker {
 }
 
 impl GarbageCollectorWorker {
-    async fn run_once(&self, _span: Span) -> anyhow::Result<()> {
+    async fn run_once(&self) -> anyhow::Result<()> {
         let mut tx = Database::global().start_transaction().await?;
 
         Invite::clear_expired(&mut tx).await?;

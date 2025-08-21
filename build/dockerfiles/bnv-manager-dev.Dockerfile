@@ -9,7 +9,8 @@ apt-get update
 apt-get install -y openssl libssl-dev pkg-config
 EOF
 
-RUN --mount=type=bind,source=webserver/,target=webserver/ \
+RUN --mount=type=bind,source=mailcow/,target=mailcow/ \
+    --mount=type=bind,source=webserver/,target=webserver/ \
     --mount=type=bind,source=conf_updater/,target=conf_updater/ \
     --mount=type=bind,source=conf_updater_common/,target=conf_updater_common/ \
     --mount=type=bind,source=Cargo.toml,target=Cargo.toml \

@@ -24,6 +24,8 @@ use crate::config::DB;
 use crate::models::invite::CreateInviteParams;
 use crate::models::invite::Invite;
 use crate::models::role::Role;
+use crate::modules::garbage_collector::GarbageCollector;
+use crate::modules::mailcow::Mailcow;
 use crate::tracing::opentelemetry_layer;
 use crate::utils::links::Link;
 
@@ -40,6 +42,8 @@ async fn start() -> Result<(), Box<dyn Error>> {
         .register_module::<Database>(DatabaseSetup::Custom(DatabaseConfiguration::new(
             DB.clone(),
         )))
+        .register_module::<GarbageCollector>(())
+        .register_module::<Mailcow>(())
         .init_modules()
         .await?;
 

@@ -1,0 +1,20 @@
+[package]
+edition = "2024"
+name = "mailcow"
+license = "MPL-2.0"
+description = "Mailcow client SDK"
+authors = ["Niklas Pfister <git@omikron.dev>"]
+
+[dependencies]
+# Errors
+thiserror = { version = "~2" }
+
+# HTTP client
+reqwest = { version = "~0.12", features = ["json"] }
+
+# Serialization
+serde = { version = "~1", features = ["derive"] }
+serde_json = { version = "~1" }
+
+# Tracing
+tracing = { version = "~0.1" }

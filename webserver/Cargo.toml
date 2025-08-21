@@ -2,7 +2,7 @@
 name = "webserver"
 version = "0.1.0"
 edition = "2024"
-authors = ["myOmikron <git@omikron.dev>"]
+authors = ["Niklas Pfister <git@omikron.dev>"]
 publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -38,7 +38,6 @@ opentelemetry-otlp = { version = "0.17" }
 uuid = { version = "~1", features = ["serde", "v4"] }
 url = { version = "~2", features = ["serde"] }
 time = { version = "~0.3" }
-bytes = { version = "~1" }
 
 # Database
 rorm = { version = "~0.7", default-features = false, features = ["time", "url", "cli", "uuid", "postgres-only"] }
@@ -48,7 +47,6 @@ strum = { version = "~0.27", features = ["derive"] }
 
 # Async
 tokio = { version = "~1", features = ["full"] }
-futures-core = { version = "~0.3" }
 futures-util = { version = "~0.3" }
 
 # Json
@@ -58,3 +56,6 @@ serde_json = { version = "~1" }
 
 # Password hashing
 bcrypt = { version = "~0.17" }
+
+# Mailcow API
+mailcow = { version = "*", path = "../mailcow" }
