@@ -8,7 +8,6 @@ use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
 use galvyn::core::stuff::schema::Page;
-use galvyn::core::stuff::schema::SchemaDateTime;
 use galvyn::core::stuff::schema::SingleUuid;
 use galvyn::delete;
 use galvyn::get;
@@ -35,15 +34,7 @@ pub async fn get_clubs() -> ApiResult<ApiJson<Vec<schema::Club>>> {
     let clubs = Club::find_all(&mut tx)
         .await?
         .into_iter()
-        .map(|x| schema::Club {
-            uuid: x.uuid,
-            name: x.name,
-            description: x.description,
-            modified_at: SchemaDateTime(x.modified_at),
-            created_at: SchemaDateTime(x.created_at),
-            admin_count: x.admin_count,
-            member_count: x.member_count,
-        })
+        .map(schema::Club::from)
         .collect();
 
     tx.commit().await?;
@@ -97,15 +88,7 @@ pub async fn get_club(
         .await?
         .ok_or(ApiError::bad_request("Club not found"))?;
 
-    Ok(ApiJson(schema::Club {
-        uuid: club.uuid,
-        name: club.name,
-        description: club.description,
-        modified_at: SchemaDateTime(club.modified_at),
-        created_at: SchemaDateTime(club.created_at),
-        member_count: club.member_count,
-        admin_count: club.admin_count,
-    }))
+    Ok(ApiJson(schema::Club::from(club)))
 }
 
 #[get("/{uuid}/members")]
@@ -129,15 +112,7 @@ pub async fn get_club_members(
     tx.commit().await?;
 
     Ok(ApiJson(Page {
-        items: page
-            .items
-            .into_iter()
-            .map(|x| SimpleAccount {
-                uuid: x.uuid,
-                username: x.username,
-                display_name: x.display_name,
-            })
-            .collect(),
+        items: page.items.into_iter().map(SimpleAccount::from).collect(),
         limit: page.limit,
         offset: page.offset,
         total: page.total,
@@ -165,15 +140,7 @@ pub async fn get_club_admins(
     tx.commit().await?;
 
     Ok(ApiJson(Page {
-        items: page
-            .items
-            .into_iter()
-            .map(|x| SimpleAccount {
-                uuid: x.uuid,
-                display_name: x.display_name,
-                username: x.username,
-            })
-            .collect(),
+        items: page.items.into_iter().map(SimpleAccount::from).collect(),
         limit: page.limit,
         offset: page.offset,
         total: page.total,

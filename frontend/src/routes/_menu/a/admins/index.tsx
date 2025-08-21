@@ -50,11 +50,13 @@ export default function AdminOverview(props: AdminOverviewProps) {
         >
             <Table dense={true}>
                 <TableHead>
-                    <TableHeader>{t("label.username")}</TableHeader>
-                    <TableHeader>{t("label.display-name")}</TableHeader>
-                    <TableHeader className={"w-0"}>
-                        <span className={"sr-only"}>{tg("accessibility.actions")}</span>
-                    </TableHeader>
+                    <TableRow>
+                        <TableHeader>{t("label.username")}</TableHeader>
+                        <TableHeader>{t("label.display-name")}</TableHeader>
+                        <TableHeader className={"w-0"}>
+                            <span className={"sr-only"}>{tg("accessibility.actions")}</span>
+                        </TableHeader>
+                    </TableRow>
                 </TableHead>
                 <TableBody>
                     {data.map((user) => (

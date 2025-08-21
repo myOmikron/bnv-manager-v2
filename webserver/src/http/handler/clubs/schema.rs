@@ -4,6 +4,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 
+use crate::models;
 use crate::models::club::ClubUuid;
 
 /// A single club
@@ -50,4 +51,18 @@ pub struct PageParams {
     pub limit: u64,
     /// Search for usernames
     pub search: Option<MaxStr<255>>,
+}
+
+impl From<models::club::Club> for Club {
+    fn from(value: models::club::Club) -> Self {
+        Self {
+            uuid: value.uuid,
+            name: value.name,
+            description: value.description,
+            modified_at: SchemaDateTime(value.modified_at),
+            created_at: SchemaDateTime(value.created_at),
+            member_count: value.member_count,
+            admin_count: value.admin_count,
+        }
+    }
 }

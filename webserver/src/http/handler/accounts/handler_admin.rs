@@ -18,11 +18,7 @@ pub async fn get_all_superadmins() -> ApiResult<ApiJson<Vec<schema::SimpleAccoun
     let accounts = Role::find_all_superadmins(&mut tx)
         .await?
         .into_iter()
-        .map(|account| schema::SimpleAccount {
-            uuid: account.uuid,
-            username: account.username,
-            display_name: account.display_name,
-        })
+        .map(schema::SimpleAccount::from)
         .collect();
 
     tx.commit().await?;

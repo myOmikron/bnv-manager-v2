@@ -45,7 +45,7 @@ function Menu(props: MenuProps) {
             sidebar={
                 <Sidebar>
                     <SidebarHeader>
-                        <Logo className={"w-full p-5 text-white"} />
+                        <Logo className={"w-full p-5 dark:text-white"} />
                     </SidebarHeader>
 
                     <SidebarBody>

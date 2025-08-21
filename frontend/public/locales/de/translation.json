@@ -1,7 +1,7 @@
 {
     "accessibility": {
         "actions": "Aktionen",
-        "progress": "accessibility.progress"
+        "progress": "Fortschritt"
     },
     "button": {
         "cancel": "Abbrechen",
@@ -12,22 +12,22 @@
         "danger-zone": "Gefahrenbereich"
     },
     "label": {
-        "centuries": "label.centuries",
-        "days": "label.days",
-        "english": "label.english",
-        "estimated-crack-time": "label.estimated-crack-time",
-        "german": "label.german",
-        "hours": "label.hours",
-        "minutes": "label.minutes",
-        "months": "label.months",
-        "next": "label.next",
-        "prev": "label.prev",
-        "seconds": "label.seconds",
-        "weeks": "label.weeks",
-        "years": "label.years"
+        "centuries": "Jahrzehnte",
+        "days": "Tage",
+        "english": "Englisch",
+        "estimated-crack-time": "Durchschnittliche Zeit zum Knacken",
+        "german": "Deutsch",
+        "hours": "Stunden",
+        "minutes": "Minuten",
+        "months": "Monate",
+        "next": "Weiter",
+        "prev": "Zur\u00fcck",
+        "seconds": "Sekunden",
+        "weeks": "Wochen",
+        "years": "Jahre"
     },
     "toast": {
         "copied-to-clipboard": "In die Zwischenablage kopiert",
-        "unsaved-changes": "toast.unsaved-changes"
+        "unsaved-changes": "Es gibt ungespeicherte \u00c4nderungen."
     }
 }

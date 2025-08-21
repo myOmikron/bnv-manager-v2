@@ -56,8 +56,8 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                     <TableHead>
                         <TableRow>
                             <TableHeader>{t("label.club-name")}</TableHeader>
-                            <TableHeader>{t("label.member-count")}</TableHeader>
-                            <TableHeader>{t("label.created-at")}</TableHeader>
+                            <TableHeader className={"max-lg:hidden"}>{t("label.member-count")}</TableHeader>
+                            <TableHeader className={"max-lg:hidden"}>{t("label.created-at")}</TableHeader>
                             <TableHeader className={"w-0"}>
                                 <span className={"sr-only"}>{tg("accessibility.actions")}</span>
                             </TableHeader>
@@ -71,8 +71,10 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                                 params={{ clubId: club.uuid }}
                             >
                                 <TableCell>{club.name}</TableCell>
-                                <TableCell>{club.member_count}</TableCell>
-                                <TableCell>{new Date(club.created_at).toLocaleDateString("de-de")}</TableCell>
+                                <TableCell className={"max-lg:hidden"}>{club.member_count}</TableCell>
+                                <TableCell className={"max-lg:hidden"}>
+                                    {new Date(club.created_at).toLocaleDateString("de-de")}
+                                </TableCell>
                                 <TableCell>
                                     <Dropdown>
                                         <DropdownButton plain={true}>

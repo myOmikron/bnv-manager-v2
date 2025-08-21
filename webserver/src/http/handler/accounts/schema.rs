@@ -3,6 +3,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 
+use crate::models::account::Account;
 use crate::models::account::AccountUuid;
 
 /// Simple representation of an account.
@@ -14,4 +15,14 @@ pub struct SimpleAccount {
     pub username: MaxStr<255>,
     /// The account's display name.
     pub display_name: MaxStr<255>,
+}
+
+impl From<Account> for SimpleAccount {
+    fn from(value: Account) -> Self {
+        Self {
+            uuid: value.uuid,
+            username: value.username,
+            display_name: value.display_name,
+        }
+    }
 }
