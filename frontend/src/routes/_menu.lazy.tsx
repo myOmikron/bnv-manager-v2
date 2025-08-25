@@ -20,6 +20,7 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } f
 import {
     ArrowRightStartOnRectangleIcon,
     ChevronUpIcon,
+    FingerPrintIcon,
     UserGroupIcon,
     UserIcon,
     UserPlusIcon,
@@ -68,6 +69,11 @@ function Menu(props: MenuProps) {
                                         <UserPlusIcon />
                                         <SidebarLabel>{t("button.admin-overview")}</SidebarLabel>
                                     </SidebarItem>
+
+                                    <SidebarItem href={"/a/oidc"}>
+                                        <FingerPrintIcon />
+                                        <SidebarLabel>{t("button.oidc-provider")}</SidebarLabel>
+                                    </SidebarItem>
                                 </SidebarSection>
                             </>
                         )}
@@ -95,7 +101,7 @@ function Menu(props: MenuProps) {
                                 </DropdownItem>
                                 <DropdownItem
                                     onClick={async () => {
-                                        await Api.common.auth.logout();
+                                        await Api.auth.logout();
                                         ctx.reset();
                                     }}
                                 >
@@ -123,7 +129,7 @@ function Menu(props: MenuProps) {
                             </DropdownItem>
                             <DropdownItem
                                 onClick={async () => {
-                                    await Api.common.auth.logout();
+                                    await Api.auth.logout();
                                     ctx.reset();
                                 }}
                             >

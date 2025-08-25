@@ -4,6 +4,8 @@ import {
     Configuration as AdminConfiguration,
     CreateClubRequest,
     CreateInviteRequest,
+    CreateOidcProvider,
+    CreateOidcProviderRequest,
     DefaultApi as AdminDefaultApi,
     GetClubAdminsRequest,
     GetClubMembersRequest,
@@ -11,6 +13,7 @@ import {
     ResponseError,
 } from "src/api/generated/admin";
 import { DefaultApi as CommonApi, Configuration as CommonConfiguration, AcceptInvite } from "src/api/generated/common";
+import { DefaultApi as AuthApi, Configuration as AuthConfiguration } from "src/api/generated/auth";
 
 /** Hyphen separated uuid */
 export type UUID = string;
@@ -21,6 +24,7 @@ const adminApi = new AdminDefaultApi(
     }),
 );
 const commonApi = new CommonApi(new CommonConfiguration({ basePath: window.location.origin }));
+const authApi = new AuthApi(new AuthConfiguration({ basePath: window.location.origin }));
 
 /* eslint-disable */
 export const Api = {
@@ -38,17 +42,25 @@ export const Api = {
             create: (createClub: CreateClubRequest) =>
                 handleError(adminApi.createClub({ CreateClubRequest: createClub })),
             delete: (uuid: UUID) => handleError(adminApi.deleteClub({ uuid })),
+            associatedDomains: (uuid: UUID) => handleError(adminApi.getClubDomains({ uuid })),
+        },
+        domains: {
+            unassociated: () => handleError(adminApi.getUnassociatedDomains()),
         },
         invites: {
             create: (invite: CreateInviteRequest) =>
                 handleError(adminApi.createInvite({ CreateInviteRequest: invite })),
         },
+        oidcProvider: {
+            create: (req: CreateOidcProvider) => handleError(adminApi.createOidcProvider({ CreateOidcProvider: req })),
+            all: () => handleError(adminApi.getAllOidcProviders()),
+        },
+    },
+    auth: {
+        login: (username: string, password: string) => authApi.signIn({ SignInRequest: { username, password } }),
+        logout: () => handleError(authApi.signOut()),
     },
     common: {
-        auth: {
-            login: (username: string, password: string) => commonApi.signIn({ SignInRequest: { username, password } }),
-            logout: () => handleError(commonApi.signOut()),
-        },
         invites: {
             get: (uuid: UUID) => handleError(commonApi.getInviteCommon({ uuid })),
             accept: (uuid: UUID, req: AcceptInvite) =>

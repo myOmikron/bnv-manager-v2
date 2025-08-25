@@ -97,7 +97,7 @@ impl Account {
     }
 
     /// Check whether the given password matches the stored one
-    #[instrument(skip(self))]
+    #[instrument(skip(self, password))]
     pub fn check_password(&self, password: MaxStr<72>) -> anyhow::Result<bool> {
         bcrypt::verify(&*password, &self.hashed_password).map_err(|err| anyhow!("{err}"))
     }

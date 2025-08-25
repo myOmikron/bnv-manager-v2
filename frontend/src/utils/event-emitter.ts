@@ -1,6 +1,6 @@
 import CONSOLE from "./console";
 
-/** An event handler is any function taking an event */
+/** An event handler_frontend is any function taking an event */
 export type EventHandler<Event> = (event: Event) => void;
 
 /** Handle returned by {@link EventEmitter#addEventListener `addEventListener`} to identify the added listener */
@@ -71,7 +71,7 @@ class ListenerGroup<E> {
     /** Simple counter to generate unique ids */
     nextId: number = 0;
 
-    /** Map from id to event handler */
+    /** Map from id to event handler_frontend */
     listener: Map<number, EventHandler<E>> = new Map();
 
     /**

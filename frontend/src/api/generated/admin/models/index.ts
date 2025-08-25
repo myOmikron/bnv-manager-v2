@@ -165,6 +165,44 @@ export interface CreateInviteRequest {
     valid_days: number;
 }
 /**
+ * Request to create an oidc provider
+ * @export
+ * @interface CreateOidcProvider
+ */
+export interface CreateOidcProvider {
+    /**
+     * Name of the oidc provider
+     * @type {string}
+     * @memberof CreateOidcProvider
+     */
+    name: string;
+    /**
+     * Redirect url of the oidc provider
+     * @type {string}
+     * @memberof CreateOidcProvider
+     */
+    redirect_uri: string;
+}
+/**
+ * The representation of a domain
+ * @export
+ * @interface Domain
+ */
+export interface Domain {
+    /**
+     * The domain
+     * @type {string}
+     * @memberof Domain
+     */
+    domain: string;
+    /**
+     * Internal identifier of the domain
+     * @type {string}
+     * @memberof Domain
+     */
+    uuid: string;
+}
+/**
  * @type FormResultForClubUuidAndCreateClubError
  * A `Result` with a custom serialization
  * @export
@@ -334,6 +372,37 @@ export interface GetInvite {
      * @memberof GetInvite
      */
     uuid: string;
+}
+/**
+ * A single OIDC Provider
+ * @export
+ * @interface OidcProvider
+ */
+export interface OidcProvider {
+    /**
+     * client id of the provider
+     * @type {string}
+     * @memberof OidcProvider
+     */
+    client_id: string;
+    /**
+     * Secret of the provider
+     * @type {string}
+     * @memberof OidcProvider
+     */
+    client_secret: string;
+    /**
+     * Human-readable name
+     * @type {string}
+     * @memberof OidcProvider
+     */
+    name: string;
+    /**
+     * Redirect url associated with the provider
+     * @type {string}
+     * @memberof OidcProvider
+     */
+    redirect_uri: string;
 }
 /**
  * A page of items

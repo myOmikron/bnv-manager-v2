@@ -26,6 +26,7 @@ use crate::models::invite::Invite;
 use crate::models::role::Role;
 use crate::modules::garbage_collector::GarbageCollector;
 use crate::modules::mailcow::Mailcow;
+use crate::modules::oidc::Oidc;
 use crate::tracing::opentelemetry_layer;
 use crate::utils::links::Link;
 
@@ -44,6 +45,7 @@ async fn start() -> Result<(), Box<dyn Error>> {
         )))
         .register_module::<GarbageCollector>(())
         .register_module::<Mailcow>(())
+        .register_module::<Oidc>(())
         .init_modules()
         .await?;
 
@@ -62,7 +64,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     tracing_subscriber::registry()
-        .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("INFO")))
+        .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("DEBUG")))
         .with(tracing_forest::ForestLayer::default())
         .with(opentelemetry_layer()?)
         .init();

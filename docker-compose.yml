@@ -11,7 +11,7 @@ services:
     build:
       dockerfile: ./build/dockerfiles/postgres.Dockerfile
 
-  bnv-manager:
+  webserver:
     restart: unless-stopped
     depends_on: [ postgres ]
     networks: [ net-bnv-manager ]
@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
     networks: [ net-bnv-manager ]
     env_file: [ .env ]
-    depends_on: [ bnv-manager ]
+    depends_on: [ webserver ]
     ports:
       - "127.0.0.1:8080:80"
     volumes:

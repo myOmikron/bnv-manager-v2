@@ -1,0 +1,20 @@
+{
+    "button": {
+        "sign-in": "Sign in"
+    },
+    "error": {
+        "invalid-username-or-password": "Invalid username or password"
+    },
+    "heading": {
+        "authentication": "Authentication"
+    },
+    "label": {
+        "password": "Password",
+        "username": "Username"
+    },
+    "toast": {
+        "sign-in-failed": "Sign in failed",
+        "signed-in": "Signed in",
+        "signing-in": "Signing in"
+    }
+}

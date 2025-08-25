@@ -2,7 +2,7 @@
 
 set -e
 
-OPENAPI_DEFINITIONS=("admin.json" "club-admin.json" "club-member.json" "common.json")
+OPENAPI_DEFINITIONS=("admin.json" "club-admin.json" "club-member.json" "common.json" "auth.json")
 
 PROJECT_ROOT=$(dirname "$(dirname \""$0"\")")
 

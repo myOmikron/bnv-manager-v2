@@ -1,7 +1,6 @@
 import React from "react";
 import { Api } from "../api/api";
 import CONSOLE from "../utils/console";
-import Login from "../components/login";
 import { parseError, StatusCode } from "../api/error";
 import { Navigate } from "@tanstack/react-router";
 import { Me, RequiredError, ResponseError } from "src/api/generated/common";
@@ -135,10 +134,10 @@ export class UserProvider extends React.Component<UserProviderProps, UserProvide
                 return <div></div>;
             case "unauthenticated":
                 return (
-                    <>
-                        <Navigate to="/" />
-                        <Login onLogin={() => this.fetchUser()} />
-                    </>
+                    <Navigate
+                        to="/oidc/auth"
+                        search={{ redirect_url: window.location.pathname + window.location.search }}
+                    />
                 );
             default:
                 return (

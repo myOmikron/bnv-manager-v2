@@ -57,7 +57,7 @@ class TranslationHandler:
 
     def set_existing_namespaces(self):
         """
-        Adds all existing namespaces to this translation handler.
+        Adds all existing namespaces to this translation handler_frontend.
         If the namespaces differ in the language directory, the namespace will be created.
         :return:
         """
@@ -290,7 +290,7 @@ class TranslationHandler:
 
 
 class SourceFileEventHandler(FileSystemEventHandler):
-    """Event handler for file system changes"""
+    """Event handler_frontend for file system changes"""
 
     def __init__(self, translation_handler):
         self.translation_handler = translation_handler

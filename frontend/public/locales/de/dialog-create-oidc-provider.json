@@ -1,0 +1,12 @@
+{
+    "button": {
+        "create-oidc-provider": "OIDC Provider erstellen"
+    },
+    "heading": {
+        "create-oidc-provider": "Neuen OIDC Provider erstellen"
+    },
+    "label": {
+        "name": "Provider Name",
+        "redirect-url": "Redirect URL"
+    }
+}

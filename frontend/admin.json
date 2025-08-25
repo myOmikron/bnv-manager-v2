@@ -492,6 +492,98 @@
                 }
             }
         },
+        "/api/v1/frontend/admin/clubs/{uuid}/domains": {
+            "get": {
+                "operationId": "get_club_domains",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Domain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/admin/domains": {
+            "get": {
+                "operationId": "get_unassociated_domains",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Domain"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/frontend/admin/invites": {
             "post": {
                 "operationId": "create_invite",
@@ -511,6 +603,90 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/FormResult_for_SingleLink_and_CreateInviteError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/admin/oidc-providers": {
+            "get": {
+                "operationId": "get_all_oidc_providers",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OidcProvider"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "create_oidc_provider",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateOidcProvider"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OidcProviderUuid"
                                 }
                             }
                         }
@@ -744,6 +920,60 @@
                     "valid_days"
                 ]
             },
+            "CreateOidcProvider": {
+                "description": "Request to create an oidc provider",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name of the oidc provider",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "redirect_uri": {
+                        "description": "Redirect url of the oidc provider",
+                        "type": "string",
+                        "format": "uri"
+                    }
+                },
+                "required": [
+                    "name",
+                    "redirect_uri"
+                ]
+            },
+            "Domain": {
+                "description": "The representation of a domain",
+                "type": "object",
+                "properties": {
+                    "domain": {
+                        "description": "The domain",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "uuid": {
+                        "description": "Internal identifier of the domain",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/DomainUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "domain",
+                    "uuid"
+                ]
+            },
+            "DomainUuid": {
+                "description": "Uuid of a domain",
+                "type": "string",
+                "format": "uuid"
+            },
             "FormResult_for_ClubUuid_and_CreateClubError": {
                 "description": "A `Result` with a custom serialization",
                 "oneOf": [
@@ -896,6 +1126,56 @@
             "MaxStr_255": {
                 "type": "string",
                 "maxLength": 255
+            },
+            "MaxStr_64": {
+                "type": "string",
+                "maxLength": 64
+            },
+            "OidcProvider": {
+                "description": "A single OIDC Provider",
+                "type": "object",
+                "properties": {
+                    "client_id": {
+                        "description": "client id of the provider",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/OidcProviderUuid"
+                            }
+                        ]
+                    },
+                    "client_secret": {
+                        "description": "Secret of the provider",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_64"
+                            }
+                        ]
+                    },
+                    "name": {
+                        "description": "Human-readable name",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "redirect_uri": {
+                        "description": "Redirect url associated with the provider",
+                        "type": "string",
+                        "format": "uri"
+                    }
+                },
+                "required": [
+                    "client_id",
+                    "client_secret",
+                    "name",
+                    "redirect_uri"
+                ]
+            },
+            "OidcProviderUuid": {
+                "description": "Client id of an oidc provider",
+                "type": "string",
+                "format": "uuid"
             },
             "Page_for_SimpleAccount": {
                 "description": "A page of items",

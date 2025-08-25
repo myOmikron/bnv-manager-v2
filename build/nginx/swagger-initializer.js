@@ -16,6 +16,9 @@ window.onload = function () {
             {
                 name: "Common API", url: "/api/v1/frontend/common.json"
             },
+            {
+                name: "Auth API", url: "/api/v1/frontend/auth.json"
+            },
         ],
         dom_id: "#swagger-ui",
         deepLinking: true,

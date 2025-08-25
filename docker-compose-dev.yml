@@ -56,7 +56,7 @@ services:
     restart: unless-stopped
     networks: [ net-bnv-manager ]
     ports:
-      - "127.0.0.1:8080:80"
+      - "8080:80"
     depends_on: [ webserver-dev, frontend-dev, jaeger-dev ]
     env_file: [ .env ]
     volumes:

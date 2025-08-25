@@ -16,4 +16,23 @@ impl Link {
             .join(&format!("/links/invite/{invite_uuid}"))
             .expect("UUID in urls are fine")
     }
+
+    /// Create a link for logging in
+    pub fn oidc_auth() -> Url {
+        #[allow(clippy::expect_used)]
+        let mut url = ORIGIN.join("/links/oidc/auth").expect("Static url");
+
+        url.set_query(Some(&format!(
+            "redirect_url={}",
+            Link::oidc_finish().as_str()
+        )));
+
+        url
+    }
+
+    /// Create a link to the oidc finishing step
+    pub fn oidc_finish() -> Url {
+        #[allow(clippy::expect_used)]
+        ORIGIN.join("/api/v1/auth/finish-auth").expect("Static url")
+    }
 }

@@ -19,8 +19,13 @@ galvyn = { git = "https://github.com/myOmikron/galvyn.git" }
 schemars = { version = "~0.8", features = ["uuid1", "raw_value"] } # Derive json schema description
 
 # Account authentication
-# The feature is necessary as we want to save the state to a database
-webauthn-rs = { version = "~0.5", features = ["danger-allow-state-serialisation"] }
+webauthn-rs = { version = "~0.5", features = ["danger-allow-state-serialisation"] } # The feature is necessary as we want to save the state to a database
+bcrypt = { version = "~0.17" }
+rand = { version = "~0.8" }
+jsonwebtoken = { version = "~9" }
+rsa = { version = "~0.9", features = ["pem"] }
+sha2 = { version = "0.10" }
+base64ct = { version = "~1", features = ["std"] }
 
 # Cli
 clap = { version = "~4", features = ["derive"] }
@@ -49,13 +54,11 @@ strum = { version = "~0.27", features = ["derive"] }
 tokio = { version = "~1", features = ["full"] }
 futures-util = { version = "~0.3" }
 
-# Json
+# Serialization
 serde = { version = "~1", features = ["derive"] }
 serde_repr = { version = "~0.1" }
 serde_json = { version = "~1" }
 
-# Password hashing
-bcrypt = { version = "~0.17" }
 
 # Mailcow API
 mailcow = { version = "*", path = "../mailcow" }

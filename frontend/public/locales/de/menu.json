@@ -2,6 +2,7 @@
     "button": {
         "admin-overview": "Superadministratoren",
         "club-overview": "Vereine",
+        "oidc-provider": "OIDC Provider",
         "profile": "Profil",
         "sign-out": "Ausloggen"
     },
