@@ -1,7 +1,10 @@
 //! Handler for the webserver
 
 use galvyn::core::GalvynRouter;
+use galvyn::core::re_exports::axum;
 use galvyn::openapi::OpenapiRouterExt;
+
+use crate::http::middlewares;
 
 pub mod accounts;
 pub mod clubs;
@@ -53,8 +56,14 @@ pub struct ClubAdminApi;
 /// Handler for the club admin
 pub fn router_club_admin() -> GalvynRouter {
     GalvynRouter::with_openapi_page(ClubAdminApi).nest(
-        "/clubs",
-        GalvynRouter::new().handler(clubs::handler_club_admin::get_club),
+        "/clubs/{club_uuid}",
+        GalvynRouter::new()
+            .nest(
+                "/club",
+                GalvynRouter::new().handler(clubs::handler_club_admin::get_club),
+            )
+            .nest("/domains", GalvynRouter::new())
+            .layer(axum::middleware::from_fn(middlewares::auth_club_admin)),
     )
 }
 

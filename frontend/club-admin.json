@@ -5,15 +5,16 @@
         "version": "v0.0.0"
     },
     "paths": {
-        "/api/v1/frontend/club-admin/clubs/{uuid}": {
+        "/api/v1/frontend/club-admin/clubs/{club_uuid}/club": {
             "get": {
                 "operationId": "get_club",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "uuid",
+                        "name": "club_uuid",
                         "required": true,
                         "schema": {
+                            "description": "New-type for the primary key of the club",
                             "type": "string",
                             "format": "uuid"
                         },

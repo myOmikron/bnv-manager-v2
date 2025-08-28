@@ -20,7 +20,7 @@ import type {
 } from '../models/index';
 
 export interface GetClubRequest {
-    uuid: string;
+    club_uuid: string;
 }
 
 /**
@@ -31,10 +31,10 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      */
     async getClubRaw(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Club>> {
-        if (requestParameters['uuid'] == null) {
+        if (requestParameters['club_uuid'] == null) {
             throw new runtime.RequiredError(
-                'uuid',
-                'Required parameter "uuid" was null or undefined when calling getClub().'
+                'club_uuid',
+                'Required parameter "club_uuid" was null or undefined when calling getClub().'
             );
         }
 
@@ -43,7 +43,7 @@ export class DefaultApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/frontend/club-admin/clubs/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/v1/frontend/club-admin/clubs/{club_uuid}/club`.replace(`{${"club_uuid"}}`, encodeURIComponent(String(requestParameters['club_uuid']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

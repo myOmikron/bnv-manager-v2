@@ -5,7 +5,6 @@ import {
     CreateClubRequest,
     CreateInviteRequest,
     CreateOidcProvider,
-    CreateOidcProviderRequest,
     DefaultApi as AdminDefaultApi,
     GetClubAdminsRequest,
     GetClubMembersRequest,
@@ -14,6 +13,7 @@ import {
 } from "src/api/generated/admin";
 import { DefaultApi as CommonApi, Configuration as CommonConfiguration, AcceptInvite } from "src/api/generated/common";
 import { DefaultApi as AuthApi, Configuration as AuthConfiguration } from "src/api/generated/auth";
+import { DefaultApi as ClubAdminApi, Configuration as ClubAdminConfiguration } from "src/api/generated/club-admin";
 
 /** Hyphen separated uuid */
 export type UUID = string;
@@ -25,6 +25,7 @@ const adminApi = new AdminDefaultApi(
 );
 const commonApi = new CommonApi(new CommonConfiguration({ basePath: window.location.origin }));
 const authApi = new AuthApi(new AuthConfiguration({ basePath: window.location.origin }));
+const clubAdminApi = new ClubAdminApi(new ClubAdminConfiguration({ basePath: window.location.origin }));
 
 /* eslint-disable */
 export const Api = {
@@ -57,6 +58,11 @@ export const Api = {
     auth: {
         login: (username: string, password: string) => authApi.signIn({ SignInRequest: { username, password } }),
         logout: () => handleError(authApi.signOut()),
+    },
+    clubAdmins: {
+        clubs: {
+            get: (uuid: UUID) => handleError(clubAdminApi.getClub({ club_uuid: uuid })),
+        },
     },
     common: {
         invites: {
