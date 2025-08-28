@@ -24,6 +24,8 @@ use crate::http::handler_frontend::domains;
 use crate::http::handler_frontend::invites::GetInvite;
 use crate::models::club::Club;
 use crate::models::club::ClubUuid;
+use crate::models::club::CreateClub;
+use crate::models::domain::CreateDomain;
 use crate::models::domain::Domain;
 use crate::models::invite::Invite;
 use crate::models::role::Role;
@@ -47,19 +49,40 @@ pub async fn get_clubs() -> ApiResult<ApiJson<Vec<schema::Club>>> {
 #[post("/")]
 #[instrument(name = "Api::admin::create_club")]
 pub async fn create_club(
-    ApiJson(CreateClubRequest { name, description }): ApiJson<CreateClubRequest>,
+    ApiJson(CreateClubRequest {
+        name,
+        primary_domain,
+    }): ApiJson<CreateClubRequest>,
 ) -> ApiResult<ApiJson<FormResult<ClubUuid, CreateClubError>>> {
     let mut tx = Database::global().start_transaction().await?;
 
-    let existing = Club::find_by_name(&mut tx, &name).await?;
+    let existing_club = Club::find_by_name(&mut tx, &name).await?;
 
-    if existing.is_some() {
+    if existing_club.is_some() {
         return Ok(ApiJson(FormResult::err(CreateClubError {
             name_already_exists: true,
+            ..Default::default()
         })));
     }
 
-    let uuid = Club::create(&mut tx, name, description).await?.uuid;
+    let existing_domain = Domain::find_by_domain(&mut tx, &primary_domain).await?;
+    if existing_domain.is_some() {
+        return Ok(ApiJson(FormResult::err(CreateClubError {
+            domain_already_exists: true,
+            ..Default::default()
+        })));
+    }
+
+    let uuid = Club::create(&mut tx, CreateClub { name }).await?.uuid;
+    Domain::create(
+        &mut tx,
+        CreateDomain {
+            domain: primary_domain,
+            club: uuid,
+            is_primary: true,
+        },
+    )
+    .await?;
 
     tx.commit().await?;
 

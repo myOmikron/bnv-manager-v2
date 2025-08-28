@@ -477,28 +477,4 @@ export class DefaultApi extends runtime.BaseAPI {
         return await response.value();
     }
 
-    /**
-     */
-    async getUnassociatedDomainsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Domain>>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/frontend/admin/domains`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response);
-    }
-
-    /**
-     */
-    async getUnassociatedDomains(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Domain>> {
-        const response = await this.getUnassociatedDomainsRaw(initOverrides);
-        return await response.value();
-    }
-
 }

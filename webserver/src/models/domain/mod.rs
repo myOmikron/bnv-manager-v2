@@ -6,6 +6,7 @@
 use futures_util::TryStreamExt;
 use rorm::db::Executor;
 use rorm::fields::types::MaxStr;
+use rorm::prelude::ForeignModelByField;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
@@ -24,8 +25,10 @@ pub struct Domain {
     pub uuid: DomainUuid,
     /// Domain
     pub domain: MaxStr<255>,
-    /// Optionally associated club
-    pub associated_club: Option<ClubUuid>,
+    /// Associated club
+    pub associated_club: ClubUuid,
+    /// The primary domain for a club
+    pub is_primary: bool,
 }
 
 /// Uuid of a domain
@@ -33,24 +36,11 @@ pub struct Domain {
 pub struct DomainUuid(pub Uuid);
 
 impl Domain {
-    /// Find all domains that are unassociated
-    #[instrument(name = "Domain::find_all_unassociated", skip(exe))]
-    pub async fn find_all_unassociated(exe: impl Executor<'_>) -> anyhow::Result<Vec<Self>> {
+    /// Find all domains
+    #[instrument(name = "Domain::find_all", skip(exe))]
+    pub async fn find_all(exe: impl Executor<'_>) -> anyhow::Result<Vec<Self>> {
         Ok(rorm::query(exe, DomainModel)
             .order_asc(DomainModel.domain)
-            .condition(DomainModel.club.is_none())
-            .stream()
-            .map_ok(Domain::from)
-            .try_collect()
-            .await?)
-    }
-
-    /// Find all domains that are associated with a club
-    #[instrument(name = "Domain::find_all_associated", skip(exe))]
-    pub async fn find_all_associated(exe: impl Executor<'_>) -> anyhow::Result<Vec<Self>> {
-        Ok(rorm::query(exe, DomainModel)
-            .order_asc(DomainModel.domain)
-            .condition(DomainModel.club.is_some())
             .stream()
             .map_ok(Domain::from)
             .try_collect()
@@ -72,6 +62,20 @@ impl Domain {
             .await?)
     }
 
+    /// Find a single domain
+    #[instrument(name = "Domain::find_by_domain", skip(exe))]
+    pub async fn find_by_domain(
+        exe: impl Executor<'_>,
+        domain: &MaxStr<255>,
+    ) -> anyhow::Result<Option<Self>> {
+        Ok(rorm::query(exe, DomainModel)
+            .order_asc(DomainModel.domain)
+            .condition(DomainModel.domain.equals(&**domain))
+            .optional()
+            .await?
+            .map(Domain::from))
+    }
+
     /// Delete a domain by its domain
     #[instrument(name = "Domain::delete_by_domain", skip(exe))]
     pub async fn delete_by_domain(
@@ -87,12 +91,20 @@ impl Domain {
 
     /// Create a new domain
     #[instrument(name = "Domain::create", skip(exe))]
-    pub async fn create(exe: impl Executor<'_>, domain: MaxStr<255>) -> anyhow::Result<Self> {
+    pub async fn create(
+        exe: impl Executor<'_>,
+        CreateDomain {
+            domain,
+            club,
+            is_primary,
+        }: CreateDomain,
+    ) -> anyhow::Result<Self> {
         let domain = rorm::insert(exe, DomainModel)
             .single(&DomainModel {
                 uuid: Uuid::new_v4(),
                 domain,
-                club: None,
+                club: ForeignModelByField(club.0),
+                is_primary,
             })
             .await?;
 
@@ -100,12 +112,24 @@ impl Domain {
     }
 }
 
+/// Parameters for creating a new domain
+#[derive(Debug, Clone)]
+pub struct CreateDomain {
+    /// Domain
+    pub domain: MaxStr<255>,
+    /// Associated club
+    pub club: ClubUuid,
+    /// Whether this is the primary domain for the club
+    pub is_primary: bool,
+}
+
 impl From<DomainModel> for Domain {
     fn from(value: DomainModel) -> Self {
         Self {
             uuid: DomainUuid(value.uuid),
             domain: value.domain,
-            associated_club: value.club.map(|x| ClubUuid(x.0)),
+            associated_club: ClubUuid(value.club.0),
+            is_primary: value.is_primary,
         }
     }
 }

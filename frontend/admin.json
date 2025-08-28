@@ -544,46 +544,6 @@
                 }
             }
         },
-        "/api/v1/frontend/admin/domains": {
-            "get": {
-                "operationId": "get_unassociated_domains",
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Domain"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/frontend/admin/invites": {
             "post": {
                 "operationId": "create_invite",
@@ -773,14 +733,6 @@
                             }
                         ]
                     },
-                    "description": {
-                        "description": "Description for a club",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_1024"
-                            }
-                        ]
-                    },
                     "member_count": {
                         "description": "The number of members in the club",
                         "type": "integer",
@@ -815,7 +767,6 @@
                 "required": [
                     "admin_count",
                     "created_at",
-                    "description",
                     "member_count",
                     "modified_at",
                     "name",
@@ -831,12 +782,17 @@
                 "description": "Error when creating a club",
                 "type": "object",
                 "properties": {
+                    "domain_already_exists": {
+                        "description": "Domain already exists",
+                        "type": "boolean"
+                    },
                     "name_already_exists": {
                         "description": "Whether the club name already exists",
                         "type": "boolean"
                     }
                 },
                 "required": [
+                    "domain_already_exists",
                     "name_already_exists"
                 ]
             },
@@ -844,16 +800,16 @@
                 "description": "Request to create a club",
                 "type": "object",
                 "properties": {
-                    "description": {
-                        "description": "Description for a club",
+                    "name": {
+                        "description": "Name of the club",
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MaxStr_1024"
+                                "$ref": "#/components/schemas/MaxStr_255"
                             }
                         ]
                     },
-                    "name": {
-                        "description": "Name of the club",
+                    "primary_domain": {
+                        "description": "Primary domain of the club",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/MaxStr_255"
@@ -862,8 +818,8 @@
                     }
                 },
                 "required": [
-                    "description",
-                    "name"
+                    "name",
+                    "primary_domain"
                 ]
             },
             "CreateInviteError": {
@@ -1118,10 +1074,6 @@
                 "description": "Wrapper for the primary key of the [Invite]",
                 "type": "string",
                 "format": "uuid"
-            },
-            "MaxStr_1024": {
-                "type": "string",
-                "maxLength": 1024
             },
             "MaxStr_255": {
                 "type": "string",

@@ -17,7 +17,6 @@ const ADMIN_SINGLE_CLUB = React.createContext<AdminSingleClubContext>({
     data: {
         admin_count: 0,
         created_at: "",
-        description: "",
         member_count: 0,
         modified_at: "",
         name: "",

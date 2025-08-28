@@ -58,12 +58,6 @@ export interface Club {
      */
     created_at: string;
     /**
-     * Description for a club
-     * @type {string}
-     * @memberof Club
-     */
-    description: string;
-    /**
      * The number of members in the club
      * @type {number}
      * @memberof Club
@@ -95,6 +89,12 @@ export interface Club {
  */
 export interface CreateClubError {
     /**
+     * Domain already exists
+     * @type {boolean}
+     * @memberof CreateClubError
+     */
+    domain_already_exists: boolean;
+    /**
      * Whether the club name already exists
      * @type {boolean}
      * @memberof CreateClubError
@@ -108,17 +108,17 @@ export interface CreateClubError {
  */
 export interface CreateClubRequest {
     /**
-     * Description for a club
-     * @type {string}
-     * @memberof CreateClubRequest
-     */
-    description: string;
-    /**
      * Name of the club
      * @type {string}
      * @memberof CreateClubRequest
      */
     name: string;
+    /**
+     * Primary domain of the club
+     * @type {string}
+     * @memberof CreateClubRequest
+     */
+    primary_domain: string;
 }
 /**
  * Errors that can occur while creating an invitation

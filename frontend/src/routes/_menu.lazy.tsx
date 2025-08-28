@@ -21,6 +21,7 @@ import {
     ArrowRightStartOnRectangleIcon,
     ChevronUpIcon,
     FingerPrintIcon,
+    PresentationChartBarIcon,
     UserGroupIcon,
     UserIcon,
     UserPlusIcon,
@@ -50,13 +51,23 @@ function Menu(props: MenuProps) {
                     </SidebarHeader>
 
                     <SidebarBody>
-                        <SidebarSection>
-                            <SidebarHeading>{t("heading.user-settings")}</SidebarHeading>
-                        </SidebarSection>
+                        {ctx.user.roles.admins.map((admin) => (
+                            <>
+                                <SidebarSection>
+                                    <SidebarHeading className={"whitespace-pre-line"}>
+                                        {t("heading.club-admin", { club: admin.club_name })}
+                                    </SidebarHeading>
+                                    <SidebarItem href={"/ca/$clubId"} params={{ clubId: admin.club_uuid }}>
+                                        <PresentationChartBarIcon />
+                                        <SidebarLabel>{t("button.club-dashboard")}</SidebarLabel>
+                                    </SidebarItem>
+                                </SidebarSection>
+                                <SidebarDivider />
+                            </>
+                        ))}
 
                         {ctx.user.roles.super_admin && (
                             <>
-                                <SidebarDivider />
                                 <SidebarSection>
                                     <SidebarHeading>{t("heading.admin-settings")}</SidebarHeading>
 

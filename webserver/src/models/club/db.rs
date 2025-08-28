@@ -5,6 +5,7 @@ use rorm::fields::types::MaxStr;
 use rorm::prelude::BackRef;
 use uuid::Uuid;
 
+use crate::models::domain::db::DomainModel;
 use crate::models::role::db::ClubAdminModel;
 use crate::models::role::db::ClubMemberModel;
 
@@ -14,7 +15,6 @@ pub struct ClubModel {
     #[rorm(primary_key)]
     pub uuid: Uuid,
     pub name: MaxStr<255>,
-    pub description: MaxStr<1024>,
 
     #[rorm(auto_create_time, auto_update_time)]
     pub modified_at: time::OffsetDateTime,
@@ -23,6 +23,8 @@ pub struct ClubModel {
 
     pub members: BackRef<field!(ClubMemberModel.club)>,
     pub admins: BackRef<field!(ClubAdminModel.club)>,
+
+    pub domains: BackRef<field!(DomainModel.club)>,
 }
 
 #[derive(Debug, Patch)]
@@ -30,5 +32,4 @@ pub struct ClubModel {
 pub struct ClubModelInsert {
     pub uuid: Uuid,
     pub name: MaxStr<255>,
-    pub description: MaxStr<1024>,
 }

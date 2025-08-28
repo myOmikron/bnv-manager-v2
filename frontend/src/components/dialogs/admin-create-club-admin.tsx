@@ -44,7 +44,7 @@ export default function DialogCreateClubAdmin(props: DialogCreateClubAdminProps)
                     username: value.username,
                     display_name: value.displayName,
                     valid_days: parseInt(value.validDays),
-                    roles: [{ type: "ClubAdmin", club: props.club }],
+                    roles: [{ type: "ClubAdmin", club_uuid: props.club }],
                 });
 
                 if (res.result === "Err") {

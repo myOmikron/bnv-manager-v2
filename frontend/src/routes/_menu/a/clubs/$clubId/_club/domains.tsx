@@ -14,9 +14,9 @@ export type AdminClubDomainsProps = {};
 export default function AdminClubDomains(props: AdminClubDomainsProps) {
     //const [t] = useTranslation("admin-club-view");
 
-    const { associated, unassociated } = Route.useLoaderData();
+    const { associated } = Route.useLoaderData();
 
-    return <div className={"flex flex-col gap-6"}>{JSON.stringify([associated, unassociated])}</div>;
+    return <div className={"flex flex-col gap-6"}>{JSON.stringify([associated])}</div>;
 }
 
 export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/domains")({
@@ -24,6 +24,5 @@ export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/domains")({
     // eslint-disable-next-line
     loader: async ({ params }) => ({
         associated: await Api.admin.clubs.associatedDomains(params.clubId),
-        unassociated: await Api.admin.domains.unassociated(),
     }),
 });

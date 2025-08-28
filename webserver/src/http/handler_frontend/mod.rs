@@ -34,10 +34,7 @@ pub fn router_admin() -> GalvynRouter {
                 .handler(clubs::handler_admin::get_club_admin_invites)
                 .handler(clubs::handler_admin::get_club_domains),
         )
-        .nest(
-            "/domains",
-            GalvynRouter::new().handler(domains::handler_admin::get_unassociated_domains),
-        )
+        .nest("/domains", GalvynRouter::new())
         .nest(
             "/invites",
             GalvynRouter::new().handler(invites::handler_admin::create_invite),

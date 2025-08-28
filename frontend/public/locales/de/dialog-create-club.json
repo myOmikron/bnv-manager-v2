@@ -3,13 +3,14 @@
         "create-club": "Verein anlegen"
     },
     "error": {
-        "name-already-occupied": "error.name-already-occupied"
+        "domain-already-occupied": "Domain bereits vergeben.",
+        "name-already-occupied": "Name bereits vergeben."
     },
     "heading": {
         "create-club": "Verein anlegen"
     },
     "label": {
-        "club-description": "label.club-description",
-        "club-name": "Name des Vereins"
+        "club-name": "Name des Vereins",
+        "primary-domain": "Hauptdomain"
     }
 }

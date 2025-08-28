@@ -33,8 +33,6 @@ pub struct Club {
     pub uuid: ClubUuid,
     /// Name of the club
     pub name: MaxStr<255>,
-    /// Description for a club
-    pub description: MaxStr<1024>,
     /// The last point in time the club was modified
     pub modified_at: time::OffsetDateTime,
     /// The point in time the club was created
@@ -85,7 +83,6 @@ impl Club {
             .map(|x| Club {
                 uuid: ClubUuid(x.uuid),
                 name: x.name,
-                description: x.description,
                 modified_at: x.modified_at,
                 created_at: x.created_at,
                 member_count: x.members.cached.expect("Queried beforehand").len() as u64,
@@ -146,21 +143,18 @@ impl Club {
     #[instrument(name = "Club::create", skip(exe))]
     pub async fn create(
         exe: impl Executor<'_>,
-        name: MaxStr<255>,
-        description: MaxStr<1024>,
+        CreateClub { name }: CreateClub,
     ) -> anyhow::Result<Club> {
         let club_model = rorm::insert(exe, ClubModel)
             .single(&ClubModelInsert {
                 uuid: Uuid::new_v4(),
                 name,
-                description,
             })
             .await?;
 
         Ok(Club {
             uuid: ClubUuid(club_model.uuid),
             name: club_model.name,
-            description: club_model.description,
             modified_at: club_model.modified_at,
             created_at: club_model.created_at,
             member_count: 0,
@@ -285,6 +279,13 @@ impl Club {
     }
 }
 
+/// Parameters for creating a club
+#[derive(Debug, Clone)]
+pub struct CreateClub {
+    /// Name of the club
+    pub name: MaxStr<255>,
+}
+
 impl Club {
     async fn populate(
         tx: &mut Transaction,
@@ -299,7 +300,6 @@ impl Club {
         Ok(Club {
             uuid: ClubUuid(club_model.uuid),
             name: club_model.name,
-            description: club_model.description,
             modified_at: club_model.modified_at,
             created_at: club_model.created_at,
             member_count: club_model.members.cached.unwrap().len() as u64,

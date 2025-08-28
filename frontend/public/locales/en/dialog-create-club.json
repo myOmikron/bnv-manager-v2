@@ -3,13 +3,14 @@
         "create-club": "Create club"
     },
     "error": {
-        "name-already-occupied": "error.name-already-occupied"
+        "domain-already-occupied": "Domain is already occupied.",
+        "name-already-occupied": "Name is already taken."
     },
     "heading": {
         "create-club": "Create club"
     },
     "label": {
-        "club-description": "label.club-description",
-        "club-name": "Club name"
+        "club-name": "Club name",
+        "primary-domain": "Primary domain"
     }
 }

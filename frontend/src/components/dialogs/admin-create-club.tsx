@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
-import { ErrorMessage, Field, FieldGroup, Fieldset, Label, RequiredLabel } from "src/components/base/fieldset";
+import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
 import { Input } from "src/components/base/input";
 import { Button, PrimaryButton } from "src/components/base/button";
 import { Api } from "src/api/api";
@@ -29,16 +29,19 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
     const form = useForm({
         defaultValues: {
             name: "",
-            description: "",
+            primaryDomain: "",
         },
         validators: {
             // eslint-disable-next-line
             onSubmitAsync: async ({ formApi, value }) => {
-                const res = await Api.admin.clubs.create({ name: value.name, description: value.description });
+                const res = await Api.admin.clubs.create({ name: value.name, primary_domain: value.primaryDomain });
                 if (res.result === "Err") {
                     return {
                         fields: {
-                            name: [res.error.name_already_exists ? t("error.name-already-occupied") : undefined],
+                            name: res.error.name_already_exists ? t("error.name-already-occupied") : undefined,
+                            primaryDomain: res.error.domain_already_exists
+                                ? t("error.domain-already-occupied")
+                                : undefined,
                         },
                     };
                 }
@@ -75,11 +78,12 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
                                 )}
                             </form.Field>
 
-                            <form.Field name={"description"}>
+                            <form.Field name={"primaryDomain"}>
                                 {(fieldApi) => (
                                     <Field>
-                                        <Label>{t("label.club-description")}</Label>
+                                        <RequiredLabel>{t("label.primary-domain")}</RequiredLabel>
                                         <Input
+                                            required={true}
                                             value={fieldApi.state.value}
                                             onChange={(e) => fieldApi.handleChange(e.target.value)}
                                         />

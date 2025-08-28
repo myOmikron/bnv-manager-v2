@@ -14,8 +14,6 @@ pub struct Club {
     pub uuid: ClubUuid,
     /// Name of the club
     pub name: MaxStr<255>,
-    /// Description for a club
-    pub description: MaxStr<1024>,
     /// The last point in time the club was modified
     pub modified_at: SchemaDateTime,
     /// The point in time the club was created
@@ -31,15 +29,17 @@ pub struct Club {
 pub struct CreateClubRequest {
     /// Name of the club
     pub name: MaxStr<255>,
-    /// Description for a club
-    pub description: MaxStr<1024>,
+    /// Primary domain of the club
+    pub primary_domain: MaxStr<255>,
 }
 
 /// Error when creating a club
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, Default)]
 pub struct CreateClubError {
     /// Whether the club name already exists
     pub name_already_exists: bool,
+    /// Domain already exists
+    pub domain_already_exists: bool,
 }
 
 /// Parameters for pagination
@@ -58,7 +58,6 @@ impl From<models::club::Club> for Club {
         Self {
             uuid: value.uuid,
             name: value.name,
-            description: value.description,
             modified_at: SchemaDateTime(value.modified_at),
             created_at: SchemaDateTime(value.created_at),
             member_count: value.member_count,

@@ -1,6 +1,7 @@
 {
     "button": {
         "admin-overview": "Superadmins",
+        "club-dashboard": "Club Dashboard",
         "club-overview": "Clubs",
         "oidc-provider": "OIDC Provider",
         "profile": "Profile",
@@ -8,6 +9,6 @@
     },
     "heading": {
         "admin-settings": "Admin settings",
-        "user-settings": "User settings"
+        "club-admin": "Club settings:\n {{club}}"
     }
 }
