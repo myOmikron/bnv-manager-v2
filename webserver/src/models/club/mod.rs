@@ -12,6 +12,8 @@ use rorm::db::Executor;
 use rorm::db::transaction::Transaction;
 use rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
+use serde::Deserialize;
+use serde::Serialize;
 use tracing::instrument;
 use uuid::Uuid;
 
@@ -44,7 +46,7 @@ pub struct Club {
 }
 
 /// New-type for the primary key of the club
-#[derive(Debug, Clone, Copy, Eq, PartialEq, serde::Serialize, serde::Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Serialize, Deserialize, JsonSchema)]
 pub struct ClubUuid(pub Uuid);
 
 impl Club {

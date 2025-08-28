@@ -1220,7 +1220,7 @@
                         "description": "The admin of a club. Can manage users and settings of its club",
                         "type": "object",
                         "properties": {
-                            "club": {
+                            "club_uuid": {
                                 "$ref": "#/components/schemas/ClubUuid"
                             },
                             "type": {
@@ -1231,7 +1231,7 @@
                             }
                         },
                         "required": [
-                            "club",
+                            "club_uuid",
                             "type"
                         ]
                     },
@@ -1239,7 +1239,7 @@
                         "description": "A member of a club.",
                         "type": "object",
                         "properties": {
-                            "club": {
+                            "club_uuid": {
                                 "$ref": "#/components/schemas/ClubUuid"
                             },
                             "type": {
@@ -1250,7 +1250,7 @@
                             }
                         },
                         "required": [
-                            "club",
+                            "club_uuid",
                             "type"
                         ]
                     },

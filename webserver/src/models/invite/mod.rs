@@ -88,7 +88,7 @@ impl Invite {
             .condition(InvitedClubAdminModel.invite.equals(invite.uuid))
             .stream()
             .map_ok(|x| Role::ClubAdmin {
-                club: ClubUuid(x.club.0),
+                club_uuid: ClubUuid(x.club.0),
             })
             .try_collect::<Vec<_>>()
             .await?;
@@ -99,7 +99,7 @@ impl Invite {
             .condition(InvitedClubMemberModel.invite.equals(invite.uuid))
             .stream()
             .map_ok(|x| Role::ClubMember {
-                club: ClubUuid(x.club.0),
+                club_uuid: ClubUuid(x.club.0),
             })
             .try_collect::<Vec<_>>()
             .await?;
@@ -143,7 +143,7 @@ impl Invite {
                     username: x.username,
                     display_name: x.display_name,
                     roles: vec![Role::ClubMember {
-                        club: ClubUuid(club_uuid),
+                        club_uuid: ClubUuid(club_uuid),
                     }],
                     expires_at: x.expires_at,
                     created_at: x.created_at,
@@ -167,7 +167,7 @@ impl Invite {
                 .entry(x.uuid)
                 .and_modify(|existing| {
                     existing.roles.push(Role::ClubAdmin {
-                        club: ClubUuid(club_uuid),
+                        club_uuid: ClubUuid(club_uuid),
                     })
                 })
                 .or_insert(Invite {
@@ -175,7 +175,7 @@ impl Invite {
                     username: x.username,
                     display_name: x.display_name,
                     roles: vec![Role::ClubAdmin {
-                        club: ClubUuid(club_uuid),
+                        club_uuid: ClubUuid(club_uuid),
                     }],
                     expires_at: x.expires_at,
                     created_at: x.created_at,
@@ -323,7 +323,7 @@ impl Invite {
                         .await?;
                 }
                 Role::ClubAdmin {
-                    club: ClubUuid(club_uuid),
+                    club_uuid: ClubUuid(club_uuid),
                 } => {
                     rorm::insert(guard.get_transaction(), InvitedClubAdminModel)
                         .single(&InvitedClubAdminModel {
@@ -334,7 +334,7 @@ impl Invite {
                         .await?;
                 }
                 Role::ClubMember {
-                    club: ClubUuid(club_uuid),
+                    club_uuid: ClubUuid(club_uuid),
                 } => {
                     rorm::insert(guard.get_transaction(), InvitedClubMemberModel)
                         .single(&InvitedClubMemberModel {

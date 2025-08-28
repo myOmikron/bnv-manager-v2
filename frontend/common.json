@@ -260,6 +260,58 @@
                     2000
                 ]
             },
+            "ClubAdminRole": {
+                "description": "A club membership role.",
+                "type": "object",
+                "properties": {
+                    "club_name": {
+                        "description": "The club's name.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "club_uuid": {
+                        "description": "The club's UUID.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "club_name",
+                    "club_uuid"
+                ]
+            },
+            "ClubMemberRole": {
+                "description": "A club membership role.",
+                "type": "object",
+                "properties": {
+                    "club_name": {
+                        "description": "The club's name.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "club_uuid": {
+                        "description": "The club's UUID.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "club_name",
+                    "club_uuid"
+                ]
+            },
             "ClubUuid": {
                 "description": "New-type for the primary key of the club",
                 "type": "string",
@@ -410,64 +462,6 @@
                     "uuid"
                 ]
             },
-            "Role": {
-                "description": "The available roles of the manager",
-                "oneOf": [
-                    {
-                        "description": "The admin of a club. Can manage users and settings of its club",
-                        "type": "object",
-                        "properties": {
-                            "club": {
-                                "$ref": "#/components/schemas/ClubUuid"
-                            },
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "ClubAdmin"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "club",
-                            "type"
-                        ]
-                    },
-                    {
-                        "description": "A member of a club.",
-                        "type": "object",
-                        "properties": {
-                            "club": {
-                                "$ref": "#/components/schemas/ClubUuid"
-                            },
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "ClubMember"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "club",
-                            "type"
-                        ]
-                    },
-                    {
-                        "description": "The super administrator. Has rights to manager clubs.",
-                        "type": "object",
-                        "properties": {
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "SuperAdmin"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "type"
-                        ]
-                    }
-                ]
-            },
             "Roles": {
                 "description": "The roles of a user.",
                 "type": "object",
@@ -476,14 +470,14 @@
                         "description": "The user's admin roles.",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Role"
+                            "$ref": "#/components/schemas/ClubAdminRole"
                         }
                     },
                     "member": {
                         "description": "The user's membership roles",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Role"
+                            "$ref": "#/components/schemas/ClubMemberRole"
                         }
                     },
                     "super_admin": {

@@ -452,7 +452,7 @@ export interface RoleOneOf {
      * @type {string}
      * @memberof RoleOneOf
      */
-    club: string;
+    club_uuid: string;
     /**
      * 
      * @type {string}
@@ -481,7 +481,7 @@ export interface RoleOneOf1 {
      * @type {string}
      * @memberof RoleOneOf1
      */
-    club: string;
+    club_uuid: string;
     /**
      * 
      * @type {string}

@@ -113,3 +113,34 @@ export interface SignInRequest {
      */
     username: string;
 }
+/**
+ * 
+ * @export
+ * @interface TokenResponse
+ */
+export interface TokenResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof TokenResponse
+     */
+    access_token: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof TokenResponse
+     */
+    expires_in: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof TokenResponse
+     */
+    id_token: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TokenResponse
+     */
+    token_type: string;
+}

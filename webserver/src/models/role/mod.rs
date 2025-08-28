@@ -18,9 +18,9 @@ pub(in crate::models) mod db;
 #[allow(missing_docs)]
 pub enum Role {
     /// The admin of a club. Can manage users and settings of its club
-    ClubAdmin { club: ClubUuid },
+    ClubAdmin { club_uuid: ClubUuid },
     /// A member of a club.
-    ClubMember { club: ClubUuid },
+    ClubMember { club_uuid: ClubUuid },
     /// The super administrator. Has rights to manager clubs.
     SuperAdmin,
 }

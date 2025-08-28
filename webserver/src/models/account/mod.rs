@@ -123,7 +123,7 @@ impl Account {
                     .await?;
             }
             Role::ClubAdmin {
-                club: ClubUuid(uuid),
+                club_uuid: ClubUuid(uuid),
             } => {
                 rorm::insert(guard.get_transaction(), ClubAdminModel)
                     .single(&ClubAdminModel {
@@ -134,7 +134,7 @@ impl Account {
                     .await?;
             }
             Role::ClubMember {
-                club: ClubUuid(uuid),
+                club_uuid: ClubUuid(uuid),
             } => {
                 rorm::insert(guard.get_transaction(), ClubMemberModel)
                     .single(&ClubMemberModel {
@@ -163,7 +163,7 @@ impl Account {
                     .await?;
             }
             Role::ClubAdmin {
-                club: ClubUuid(club_uuid),
+                club_uuid: ClubUuid(club_uuid),
             } => {
                 rorm::delete(guard.get_transaction(), ClubAdminModel)
                     .condition(and![
@@ -173,7 +173,7 @@ impl Account {
                     .await?;
             }
             Role::ClubMember {
-                club: ClubUuid(club_uuid),
+                club_uuid: ClubUuid(club_uuid),
             } => {
                 rorm::delete(guard.get_transaction(), ClubMemberModel)
                     .condition(and![
@@ -211,7 +211,7 @@ impl Account {
             .condition(ClubAdminModel.account.equals(self.uuid.0))
             .stream()
             .map_ok(|x| Role::ClubAdmin {
-                club: ClubUuid(x.club.0),
+                club_uuid: ClubUuid(x.club.0),
             })
             .try_collect()
             .await?;
@@ -222,7 +222,7 @@ impl Account {
             .condition(ClubMemberModel.account.equals(self.uuid.0))
             .stream()
             .map_ok(|x| Role::ClubMember {
-                club: ClubUuid(x.club.0),
+                club_uuid: ClubUuid(x.club.0),
             })
             .try_collect()
             .await?;

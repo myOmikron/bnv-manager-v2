@@ -1,5 +1,7 @@
 //! Common handler_frontend for the currently logged-in user
 
+use std::collections::HashMap;
+
 use galvyn::core::Module;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
@@ -11,7 +13,9 @@ use tracing::instrument;
 use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::me::Me;
 use crate::http::handler_frontend::me::Roles;
+use crate::http::handler_frontend::me::schema;
 use crate::models::account::Account;
+use crate::models::club::Club;
 use crate::models::role::Role;
 
 #[get("/")]
@@ -27,6 +31,12 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
 
     let roles = account.roles(&mut tx).await?;
 
+    let clubs: HashMap<_, _> = Club::find_all(&mut tx)
+        .await?
+        .into_iter()
+        .map(|x| (x.uuid, x))
+        .collect();
+
     tx.commit().await?;
 
     Ok(ApiJson(Me {
@@ -39,7 +49,13 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
                 .clone()
                 .into_iter()
                 .flat_map(|x| match x {
-                    Role::ClubMember { .. } => Some(x),
+                    Role::ClubMember { club_uuid } => Some(schema::ClubMemberRole {
+                        club_uuid,
+                        club_name: clubs
+                            .get(&club_uuid)
+                            .map(|x| x.name.clone())
+                            .unwrap_or_default(),
+                    }),
                     _ => None,
                 })
                 .collect(),
@@ -47,7 +63,13 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
                 .clone()
                 .into_iter()
                 .flat_map(|x| match x {
-                    Role::ClubAdmin { .. } => Some(x),
+                    Role::ClubAdmin { club_uuid } => Some(schema::ClubAdminRole {
+                        club_uuid,
+                        club_name: clubs
+                            .get(&club_uuid)
+                            .map(|x| x.name.clone())
+                            .unwrap_or_default(),
+                    }),
                     _ => None,
                 })
                 .collect(),

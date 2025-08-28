@@ -72,6 +72,44 @@ export const ApiStatusCode = {
 export type ApiStatusCode = typeof ApiStatusCode[keyof typeof ApiStatusCode];
 
 /**
+ * A club membership role.
+ * @export
+ * @interface ClubAdminRole
+ */
+export interface ClubAdminRole {
+    /**
+     * The club's name.
+     * @type {string}
+     * @memberof ClubAdminRole
+     */
+    club_name: string;
+    /**
+     * The club's UUID.
+     * @type {string}
+     * @memberof ClubAdminRole
+     */
+    club_uuid: string;
+}
+/**
+ * A club membership role.
+ * @export
+ * @interface ClubMemberRole
+ */
+export interface ClubMemberRole {
+    /**
+     * The club's name.
+     * @type {string}
+     * @memberof ClubMemberRole
+     */
+    club_name: string;
+    /**
+     * The club's UUID.
+     * @type {string}
+     * @memberof ClubMemberRole
+     */
+    club_uuid: string;
+}
+/**
  * @type FormResultForNullAndAcceptInviteError
  * A `Result` with a custom serialization
  * @export
@@ -210,93 +248,6 @@ export interface Me {
     uuid: string;
 }
 /**
- * @type Role
- * The available roles of the manager
- * @export
- */
-export type Role = RoleOneOf | RoleOneOf1 | RoleOneOf2;
-/**
- * The admin of a club. Can manage users and settings of its club
- * @export
- * @interface RoleOneOf
- */
-export interface RoleOneOf {
-    /**
-     * New-type for the primary key of the club
-     * @type {string}
-     * @memberof RoleOneOf
-     */
-    club: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof RoleOneOf
-     */
-    type: RoleOneOfTypeEnum;
-}
-
-
-/**
- * @export
- */
-export const RoleOneOfTypeEnum = {
-    ClubAdmin: 'ClubAdmin'
-} as const;
-export type RoleOneOfTypeEnum = typeof RoleOneOfTypeEnum[keyof typeof RoleOneOfTypeEnum];
-
-/**
- * A member of a club.
- * @export
- * @interface RoleOneOf1
- */
-export interface RoleOneOf1 {
-    /**
-     * New-type for the primary key of the club
-     * @type {string}
-     * @memberof RoleOneOf1
-     */
-    club: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof RoleOneOf1
-     */
-    type: RoleOneOf1TypeEnum;
-}
-
-
-/**
- * @export
- */
-export const RoleOneOf1TypeEnum = {
-    ClubMember: 'ClubMember'
-} as const;
-export type RoleOneOf1TypeEnum = typeof RoleOneOf1TypeEnum[keyof typeof RoleOneOf1TypeEnum];
-
-/**
- * The super administrator. Has rights to manager clubs.
- * @export
- * @interface RoleOneOf2
- */
-export interface RoleOneOf2 {
-    /**
-     * 
-     * @type {string}
-     * @memberof RoleOneOf2
-     */
-    type: RoleOneOf2TypeEnum;
-}
-
-
-/**
- * @export
- */
-export const RoleOneOf2TypeEnum = {
-    SuperAdmin: 'SuperAdmin'
-} as const;
-export type RoleOneOf2TypeEnum = typeof RoleOneOf2TypeEnum[keyof typeof RoleOneOf2TypeEnum];
-
-/**
  * The roles of a user.
  * @export
  * @interface Roles
@@ -304,16 +255,16 @@ export type RoleOneOf2TypeEnum = typeof RoleOneOf2TypeEnum[keyof typeof RoleOneO
 export interface Roles {
     /**
      * The user's admin roles.
-     * @type {Array<Role>}
+     * @type {Array<ClubAdminRole>}
      * @memberof Roles
      */
-    admins: Array<Role>;
+    admins: Array<ClubAdminRole>;
     /**
      * The user's membership roles
-     * @type {Array<Role>}
+     * @type {Array<ClubMemberRole>}
      * @memberof Roles
      */
-    member: Array<Role>;
+    member: Array<ClubMemberRole>;
     /**
      * Whether the user is a super admin.
      * @type {boolean}

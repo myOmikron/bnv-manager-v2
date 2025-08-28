@@ -162,7 +162,7 @@ pub async fn get_club_admin_invites(
         .filter_map(|x| {
             x.roles
                 .contains(&Role::ClubAdmin {
-                    club: ClubUuid(uuid),
+                    club_uuid: ClubUuid(uuid),
                 })
                 .then(|| GetInvite::from(x))
         })
@@ -186,7 +186,7 @@ pub async fn get_club_member_invites(
         .filter_map(|x| {
             x.roles
                 .contains(&Role::ClubMember {
-                    club: ClubUuid(uuid),
+                    club_uuid: ClubUuid(uuid),
                 })
                 .then(|| GetInvite::from(x))
         })

@@ -18,15 +18,23 @@ import type {
   ApiErrorResponse,
   DiscoveryResponse,
   SignInRequest,
+  TokenResponse,
 } from '../models/index';
 
 export interface AuthRequest {
     client_id?: string;
+    nonce?: string | null;
     redirect_uri?: string;
-    response_mode?: string;
+    response_mode?: string | null;
     response_type?: string;
     scope?: string;
     state?: string | null;
+}
+
+export interface GetTokenRequest {
+    code: string;
+    grant_type: string;
+    redirect_uri: string;
 }
 
 export interface SignInOperationRequest {
@@ -45,6 +53,10 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (requestParameters['client_id'] != null) {
             queryParameters['client_id'] = requestParameters['client_id'];
+        }
+
+        if (requestParameters['nonce'] != null) {
+            queryParameters['nonce'] = requestParameters['nonce'];
         }
 
         if (requestParameters['redirect_uri'] != null) {
@@ -130,6 +142,106 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async finishAuth(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.finishAuthRaw(initOverrides);
+    }
+
+    /**
+     */
+    async getTokenRaw(requestParameters: GetTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TokenResponse>> {
+        if (requestParameters['code'] == null) {
+            throw new runtime.RequiredError(
+                'code',
+                'Required parameter "code" was null or undefined when calling getToken().'
+            );
+        }
+
+        if (requestParameters['grant_type'] == null) {
+            throw new runtime.RequiredError(
+                'grant_type',
+                'Required parameter "grant_type" was null or undefined when calling getToken().'
+            );
+        }
+
+        if (requestParameters['redirect_uri'] == null) {
+            throw new runtime.RequiredError(
+                'redirect_uri',
+                'Required parameter "redirect_uri" was null or undefined when calling getToken().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const consumes: runtime.Consume[] = [
+            { contentType: 'application/x-www-form-urlencoded' },
+        ];
+        // @ts-ignore: canConsumeForm may be unused
+        const canConsumeForm = runtime.canConsumeForm(consumes);
+
+        let formParams: { append(param: string, value: any): any };
+        let useForm = false;
+        if (useForm) {
+            formParams = new FormData();
+        } else {
+            formParams = new URLSearchParams();
+        }
+
+        if (requestParameters['code'] != null) {
+            formParams.append('code', requestParameters['code'] as any);
+        }
+
+        if (requestParameters['grant_type'] != null) {
+            formParams.append('grant_type', requestParameters['grant_type'] as any);
+        }
+
+        if (requestParameters['redirect_uri'] != null) {
+            formParams.append('redirect_uri', requestParameters['redirect_uri'] as any);
+        }
+
+        const response = await this.request({
+            path: `/api/v1/auth/token`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: formParams,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getToken(requestParameters: GetTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TokenResponse> {
+        const response = await this.getTokenRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async jwksRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/auth/jwks.json`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     */
+    async jwks(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.jwksRaw(initOverrides);
+        return await response.value();
     }
 
     /**
