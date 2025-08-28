@@ -62,6 +62,9 @@ pub static STATE_DIR: EnvVar<PathBuf> = EnvVar::optional("BNV_MANAGER_STATE_DIR"
     PathBuf::from("/var/lib/bnv-manager")
 });
 
+/// Disable mailcow integration
+pub static DISABLE_MAILCOW: EnvVar<bool> = EnvVar::optional("DISABLE_MAILCOW", || false);
+
 /// Mailcow base url
 pub static MAILCOW_BASE_URL: EnvVar<Url> = EnvVar::required("MAILCOW_BASE_URL");
 

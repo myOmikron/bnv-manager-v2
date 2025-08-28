@@ -14,6 +14,7 @@ use mailcow::MailcowClient;
 use tracing::info;
 use tracing::instrument;
 
+use crate::config::DISABLE_MAILCOW;
 use crate::config::MAILCOW_API_KEY;
 use crate::config::MAILCOW_BASE_URL;
 
@@ -40,8 +41,10 @@ impl Module for Mailcow {
     ) -> Result<Self, InitError> {
         let sdk = MailcowClient::new(MAILCOW_BASE_URL.clone(), MAILCOW_API_KEY.clone())?;
 
-        let version = sdk.get_version().await?;
-        info!("Mailcow is running version: {}", version.version);
+        if !*DISABLE_MAILCOW.get() {
+            let version = sdk.get_version().await?;
+            info!("Mailcow is running version: {}", version.version);
+        }
 
         Ok(Self { sdk })
     }
