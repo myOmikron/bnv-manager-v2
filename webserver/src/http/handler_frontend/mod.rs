@@ -52,7 +52,10 @@ pub struct ClubAdminApi;
 
 /// Handler for the club admin
 pub fn router_club_admin() -> GalvynRouter {
-    GalvynRouter::with_openapi_page(ClubAdminApi)
+    GalvynRouter::with_openapi_page(ClubAdminApi).nest(
+        "/clubs",
+        GalvynRouter::new().handler(clubs::handler_club_admin::get_club),
+    )
 }
 
 /// Openapi page for the club member API

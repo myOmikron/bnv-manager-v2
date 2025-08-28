@@ -96,6 +96,25 @@ impl Account {
         Ok(())
     }
 
+    /// Checks if the account is a club admin for the given club
+    #[instrument(name = "Account::is_club_admin_for_club", skip(self, exe))]
+    pub async fn is_club_admin_for_club(
+        &self,
+        exe: impl Executor<'_>,
+        club_uuid: ClubUuid,
+    ) -> anyhow::Result<bool> {
+        let is_club_admin = rorm::query(exe, ClubAdminModel)
+            .condition(and![
+                ClubAdminModel.account.equals(self.uuid.0),
+                ClubAdminModel.club.equals(club_uuid.0)
+            ])
+            .optional()
+            .await?
+            .is_some();
+
+        Ok(is_club_admin)
+    }
+
     /// Check whether the given password matches the stored one
     #[instrument(skip(self, password))]
     pub fn check_password(&self, password: MaxStr<72>) -> anyhow::Result<bool> {

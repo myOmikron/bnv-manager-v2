@@ -4,6 +4,164 @@
         "title": "Unnamed Galvyn API",
         "version": "v0.0.0"
     },
-    "paths": {},
-    "components": {}
+    "paths": {
+        "/api/v1/frontend/club-admin/clubs/{uuid}": {
+            "get": {
+                "operationId": "get_club",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Club"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ApiErrorResponse": {
+                "description": "The response that is sent in a case of an error",
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "description": "A human-readable error message.\n\nMay be used for displaying purposes",
+                        "type": "string"
+                    },
+                    "status_code": {
+                        "description": "The Status code for the error.\n\nImportant: Does not match http status codes",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ApiStatusCode"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "message",
+                    "status_code"
+                ]
+            },
+            "ApiStatusCode": {
+                "description": "The Status code that are returned throughout the API",
+                "type": "integer",
+                "enum": [
+                    1000,
+                    1001,
+                    1002,
+                    1003,
+                    2000
+                ]
+            },
+            "Club": {
+                "description": "A single club",
+                "type": "object",
+                "properties": {
+                    "admin_count": {
+                        "description": "The number of admins in the club",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "created_at": {
+                        "description": "The point in time the club was created",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/SchemaDateTime"
+                            }
+                        ]
+                    },
+                    "member_count": {
+                        "description": "The number of members in the club",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "modified_at": {
+                        "description": "The last point in time the club was modified",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/SchemaDateTime"
+                            }
+                        ]
+                    },
+                    "name": {
+                        "description": "Name of the club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "uuid": {
+                        "description": "Primary key of a club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "admin_count",
+                    "created_at",
+                    "member_count",
+                    "modified_at",
+                    "name",
+                    "uuid"
+                ]
+            },
+            "ClubUuid": {
+                "description": "New-type for the primary key of the club",
+                "type": "string",
+                "format": "uuid"
+            },
+            "MaxStr_255": {
+                "type": "string",
+                "maxLength": 255
+            },
+            "SchemaDateTime": {
+                "example": "1970-01-01T00:00:00.0Z",
+                "type": "string",
+                "format": "date-time"
+            }
+        }
+    }
 }

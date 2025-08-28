@@ -37,4 +37,19 @@ impl Role {
                 .await?,
         )
     }
+
+    /// Checks if the role is a superadmin
+    pub fn is_superadmin(&self) -> bool {
+        matches!(self, Self::SuperAdmin)
+    }
+
+    /// Checks if the role is a club admin
+    pub fn is_club_admin(&self) -> bool {
+        matches!(self, Self::ClubAdmin { .. })
+    }
+
+    /// Checks if the role is a club member
+    pub fn is_club_member(&self) -> bool {
+        matches!(self, Self::ClubMember { .. })
+    }
 }
