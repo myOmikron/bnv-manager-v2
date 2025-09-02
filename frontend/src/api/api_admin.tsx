@@ -1,7 +1,7 @@
 import {
     Configuration,
     CreateClubRequest,
-    CreateInviteRequest,
+    CreateInviteRequestAdmin,
     CreateOidcProvider,
     DefaultApi,
     GetClubAdminsRequest,
@@ -30,7 +30,8 @@ export const AdminApi = {
     },
     domains: {},
     invites: {
-        create: (invite: CreateInviteRequest) => handleError(adminApi.createInvite({ CreateInviteRequest: invite })),
+        create: (invite: CreateInviteRequestAdmin) =>
+            handleError(adminApi.createInvite({ CreateInviteRequestAdmin: invite })),
     },
     oidcProvider: {
         create: (req: CreateOidcProvider) => handleError(adminApi.createOidcProvider({ CreateOidcProvider: req })),

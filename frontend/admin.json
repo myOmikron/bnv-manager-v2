@@ -551,7 +551,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CreateInviteRequest"
+                                "$ref": "#/components/schemas/CreateInviteRequestAdmin"
                             }
                         }
                     }
@@ -835,7 +835,7 @@
                     "username_already_occupied"
                 ]
             },
-            "CreateInviteRequest": {
+            "CreateInviteRequestAdmin": {
                 "description": "Request to create an invitation",
                 "type": "object",
                 "properties": {

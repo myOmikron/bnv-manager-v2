@@ -46,7 +46,7 @@ pub struct AcceptInviteError {
 
 /// Request to create an invitation
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct CreateInviteRequest {
+pub struct CreateInviteRequestAdmin {
     /// Reserved username
     pub username: MaxStr<255>,
     /// Display-name of the user
@@ -55,6 +55,17 @@ pub struct CreateInviteRequest {
     pub valid_days: NonZeroU8,
     /// Roles to assign to the user
     pub roles: Vec<Role>,
+}
+
+/// Request to create an invitation
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct CreateMemberInviteRequest {
+    /// Reserved username
+    pub username: MaxStr<255>,
+    /// Display-name of the user
+    pub display_name: MaxStr<255>,
+    /// The point in time the invite expires
+    pub valid_days: NonZeroU8,
 }
 
 /// Errors that can occur while creating an invitation

@@ -18,7 +18,7 @@ import type {
   ApiErrorResponse,
   Club,
   CreateClubRequest,
-  CreateInviteRequest,
+  CreateInviteRequestAdmin,
   CreateOidcProvider,
   Domain,
   FormResultForClubUuidAndCreateClubError,
@@ -33,8 +33,8 @@ export interface CreateClubOperationRequest {
     CreateClubRequest?: CreateClubRequest;
 }
 
-export interface CreateInviteOperationRequest {
-    CreateInviteRequest?: CreateInviteRequest;
+export interface CreateInviteRequest {
+    CreateInviteRequestAdmin?: CreateInviteRequestAdmin;
 }
 
 export interface CreateOidcProviderRequest {
@@ -109,7 +109,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async createInviteRaw(requestParameters: CreateInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleLinkAndCreateInviteError>> {
+    async createInviteRaw(requestParameters: CreateInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForSingleLinkAndCreateInviteError>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -121,7 +121,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters['CreateInviteRequest'],
+            body: requestParameters['CreateInviteRequestAdmin'],
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response);
@@ -129,7 +129,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async createInvite(requestParameters: CreateInviteOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleLinkAndCreateInviteError> {
+    async createInvite(requestParameters: CreateInviteRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleLinkAndCreateInviteError> {
         const response = await this.createInviteRaw(requestParameters, initOverrides);
         return await response.value();
     }

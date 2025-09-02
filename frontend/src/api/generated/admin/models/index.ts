@@ -136,31 +136,31 @@ export interface CreateInviteError {
 /**
  * Request to create an invitation
  * @export
- * @interface CreateInviteRequest
+ * @interface CreateInviteRequestAdmin
  */
-export interface CreateInviteRequest {
+export interface CreateInviteRequestAdmin {
     /**
      * Display-name of the user
      * @type {string}
-     * @memberof CreateInviteRequest
+     * @memberof CreateInviteRequestAdmin
      */
     display_name: string;
     /**
      * Roles to assign to the user
      * @type {Array<Role>}
-     * @memberof CreateInviteRequest
+     * @memberof CreateInviteRequestAdmin
      */
     roles: Array<Role>;
     /**
      * Reserved username
      * @type {string}
-     * @memberof CreateInviteRequest
+     * @memberof CreateInviteRequestAdmin
      */
     username: string;
     /**
      * The point in time the invite expires
      * @type {number}
-     * @memberof CreateInviteRequest
+     * @memberof CreateInviteRequestAdmin
      */
     valid_days: number;
 }

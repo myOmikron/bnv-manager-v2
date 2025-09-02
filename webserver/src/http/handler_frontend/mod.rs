@@ -63,9 +63,14 @@ pub fn router_club_admin() -> GalvynRouter {
                 "/club",
                 GalvynRouter::new()
                     .handler(clubs::handler_club_admin::get_club)
-                    .handler(clubs::handler_club_admin::get_club_members),
+                    .handler(clubs::handler_club_admin::get_club_members)
+                    .handler(clubs::handler_club_admin::get_club_member_invites),
             )
             .nest("/domains", GalvynRouter::new())
+            .nest(
+                "/invites",
+                GalvynRouter::new().handler(invites::handler_club_admin::create_member_invite),
+            )
             .layer(axum::middleware::from_fn(middlewares::auth_club_admin)),
     )
 }

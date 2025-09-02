@@ -1,32 +1,32 @@
 import React, { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
-import Form from "src/components/base/form";
-import { useForm } from "@tanstack/react-form";
-import { Description, ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
-import { Button, PrimaryButton } from "src/components/base/button";
 import { Api, UUID } from "src/api/api";
+import { Button, PrimaryButton } from "src/components/base/button";
+import { useForm } from "@tanstack/react-form";
+import Form from "src/components/base/form";
+import { Description, ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
 import { Input } from "src/components/base/input";
-import { ClipboardDocumentListIcon } from "@heroicons/react/20/solid";
 import { toast } from "react-toastify";
+import { ClipboardDocumentListIcon } from "@heroicons/react/20/solid";
 
 /**
- * The properties for {@link DialogCreateClubAdmin}
+ * The properties for {@link ClubAdminCreateMemberInviteDialog}
  */
-export type DialogCreateClubAdminProps = {
-    /** The club to create the admin for */
+export type ClubAdminCreateMemberInviteDialogProps = {
+    /** The club to create the invite for */
     club: UUID;
     /** Callback for close action */
     onClose: () => void;
-    /** Callback for creation of the new admin */
+    /** Callback for creation of the new invite */
     onCreate: () => void;
 };
 
 /**
- * A dialog to create an admin user
+ * Dialog for creating a member invite
  */
-export default function DialogCreateClubAdmin(props: DialogCreateClubAdminProps) {
-    const [t] = useTranslation("dialog-create-club-admin");
+export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreateMemberInviteDialogProps) {
+    const [t] = useTranslation("dialog-ca-create-member-invite");
     const [tg] = useTranslation();
 
     const [openShowInvite, setOpenShowInvite] = React.useState<UUID>();
@@ -40,11 +40,10 @@ export default function DialogCreateClubAdmin(props: DialogCreateClubAdminProps)
         validators: {
             // eslint-disable-next-line
             onSubmitAsync: async ({ value }) => {
-                const res = await Api.admin.invites.create({
+                const res = await Api.clubAdmins.invites.create(props.club, {
                     username: value.username,
                     display_name: value.displayName,
                     valid_days: parseInt(value.validDays),
-                    roles: [{ type: "ClubAdmin", club_uuid: props.club }],
                 });
 
                 if (res.result === "Err") {
@@ -62,7 +61,7 @@ export default function DialogCreateClubAdmin(props: DialogCreateClubAdminProps)
 
     return (
         <Dialog open={true} onClose={props.onClose}>
-            <DialogTitle>{t("heading.create-admin")}</DialogTitle>
+            <DialogTitle>{t("heading.invite-new-member")}</DialogTitle>
             <DialogBody>
                 <Form onSubmit={form.handleSubmit}>
                     <Fieldset>

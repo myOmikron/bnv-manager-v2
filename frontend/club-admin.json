@@ -140,6 +140,118 @@
                     }
                 }
             }
+        },
+        "/api/v1/frontend/club-admin/clubs/{club_uuid}/club/members/invites": {
+            "get": {
+                "operationId": "get_club_member_invites",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "club_uuid",
+                        "required": true,
+                        "schema": {
+                            "description": "New-type for the primary key of the club",
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/GetInvite"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/club-admin/clubs/{club_uuid}/invites": {
+            "post": {
+                "operationId": "create_member_invite",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "club_uuid",
+                        "required": true,
+                        "schema": {
+                            "description": "New-type for the primary key of the club",
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateMemberInviteRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_SingleLink_and_CreateInviteError"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -245,6 +357,156 @@
                 "type": "string",
                 "format": "uuid"
             },
+            "CreateInviteError": {
+                "description": "Errors that can occur while creating an invitation",
+                "type": "object",
+                "properties": {
+                    "username_already_occupied": {
+                        "description": "Username is already taken",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "username_already_occupied"
+                ]
+            },
+            "CreateMemberInviteRequest": {
+                "description": "Request to create an invitation",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "Display-name of the user",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "username": {
+                        "description": "Reserved username",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "valid_days": {
+                        "description": "The point in time the invite expires",
+                        "type": "integer",
+                        "minimum": 1,
+                        "format": "uint8"
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "username",
+                    "valid_days"
+                ]
+            },
+            "FormResult_for_SingleLink_and_CreateInviteError": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "$ref": "#/components/schemas/SingleLink"
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/CreateInviteError"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
+            "GetInvite": {
+                "description": "API representation of an invitation",
+                "type": "object",
+                "properties": {
+                    "created_at": {
+                        "description": "The point in time the invite was created",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/SchemaDateTime"
+                            }
+                        ]
+                    },
+                    "display_name": {
+                        "description": "Display-name of the user",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "expires_at": {
+                        "description": "The point in time the invite expires",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/SchemaDateTime"
+                            }
+                        ]
+                    },
+                    "link": {
+                        "description": "Public link for accessing the invite",
+                        "type": "string"
+                    },
+                    "username": {
+                        "description": "Reserved username",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "uuid": {
+                        "description": "Primary key of the invite",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/InviteUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "created_at",
+                    "display_name",
+                    "expires_at",
+                    "link",
+                    "username",
+                    "uuid"
+                ]
+            },
+            "InviteUuid": {
+                "description": "Wrapper for the primary key of the [Invite]",
+                "type": "string",
+                "format": "uuid"
+            },
             "MaxStr_255": {
                 "type": "string",
                 "maxLength": 255
@@ -323,6 +585,18 @@
                     "display_name",
                     "username",
                     "uuid"
+                ]
+            },
+            "SingleLink": {
+                "description": "A single string representing a link wrapped in a struct",
+                "type": "object",
+                "properties": {
+                    "link": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "link"
                 ]
             }
         }

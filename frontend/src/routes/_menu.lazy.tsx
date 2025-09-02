@@ -52,18 +52,18 @@ function Menu(props: MenuProps) {
 
                     <SidebarBody>
                         {ctx.user.roles.admins.map((admin) => (
-                            <>
+                            <React.Fragment key={`ca-${admin.club_uuid}`}>
                                 <SidebarSection>
                                     <SidebarHeading className={"whitespace-pre-line"}>
                                         {t("heading.club-admin", { club: admin.club_name })}
                                     </SidebarHeading>
-                                    <SidebarItem href={"/ca/$clubId/dashboard"} params={{ clubId: admin.club_uuid }}>
+                                    <SidebarItem href={"/ca/$clubId"} params={{ clubId: admin.club_uuid }}>
                                         <PresentationChartBarIcon />
                                         <SidebarLabel>{t("button.club-dashboard")}</SidebarLabel>
                                     </SidebarItem>
                                 </SidebarSection>
                                 <SidebarDivider />
-                            </>
+                            </React.Fragment>
                         ))}
 
                         {ctx.user.roles.super_admin && (

@@ -15,8 +15,11 @@ use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::accounts::SimpleAccount;
 use crate::http::handler_frontend::clubs::PageParams;
 use crate::http::handler_frontend::clubs::schema;
+use crate::http::handler_frontend::invites::GetInvite;
 use crate::models::club::Club;
 use crate::models::club::ClubUuid;
+use crate::models::invite::Invite;
+use crate::models::role::Role;
 
 #[get("/")]
 #[instrument(name = "Api::club_admin::get_club")]
@@ -61,4 +64,26 @@ pub async fn get_club_members(
         offset: page.offset,
         total: page.total,
     }))
+}
+
+#[get("/members/invites")]
+#[instrument(name = "Api::club_admin::get_club_member_invites")]
+pub async fn get_club_member_invites(
+    Path(club_uuid): Path<ClubUuid>,
+) -> ApiResult<ApiJson<Vec<GetInvite>>> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let invites = Invite::find_by_club(&mut tx, club_uuid)
+        .await?
+        .into_iter()
+        .filter_map(|x| {
+            x.roles
+                .contains(&Role::ClubMember { club_uuid })
+                .then(|| GetInvite::from(x))
+        })
+        .collect();
+
+    tx.commit().await?;
+
+    Ok(ApiJson(invites))
 }

@@ -1,11 +1,17 @@
 {
+    "button": {
+        "copy-invite-link": "Copy invite link",
+        "create-member": "Create member"
+    },
     "heading": {
         "club": "Club: {{club}}",
         "club-dashboard": "Dashboard",
+        "invited": "Invited members",
         "members": "Members"
     },
     "label": {
         "display-name": "Display Name",
+        "expires-at": "Expires at",
         "no-members": "There are no members yet.",
         "username": "Username"
     }

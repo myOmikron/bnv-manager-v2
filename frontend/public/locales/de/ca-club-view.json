@@ -1,11 +1,17 @@
 {
+    "button": {
+        "copy-invite-link": "Einladungslink kopieren",
+        "create-member": "Mitglied anlegen"
+    },
     "heading": {
         "club": "Verein: {{club}}",
         "club-dashboard": "Dashboard",
+        "invited": "Eingeladene Mitglieder",
         "members": "Mitglieder"
     },
     "label": {
         "display-name": "Anzeigename",
+        "expires-at": "Läuft ab am",
         "no-members": "Keine Mitglieder vorhanden.",
         "username": "Nutzername"
     }

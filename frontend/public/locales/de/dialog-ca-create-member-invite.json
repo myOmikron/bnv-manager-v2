@@ -1,0 +1,23 @@
+{
+    "accessibility": {
+        "copy": "Kopieren"
+    },
+    "button": {
+        "create-invite": "Einladung erstellen"
+    },
+    "description": {
+        "valid-days": "Anzahl an Tagen, die die Einladung aktiv sein soll"
+    },
+    "error": {
+        "username-already-occupied": "Nutzername ist bereits vergeben."
+    },
+    "heading": {
+        "invite-created": "Einladung wurde erstellt",
+        "invite-new-member": "Neues Mitglied einladen"
+    },
+    "label": {
+        "display-name": "Anzeigename",
+        "username": "Nutzername",
+        "valid-days": "Valide Tage"
+    }
+}
