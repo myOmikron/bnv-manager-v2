@@ -21,6 +21,7 @@ import { Route as MenuAOidcIndexRouteImport } from './routes/_menu/a/oidc/index'
 import { Route as MenuAClubsIndexRouteImport } from './routes/_menu/a/clubs/index'
 import { Route as MenuAAdminsIndexRouteImport } from './routes/_menu/a/admins/index'
 import { Route as MenuCaClubIdClubRouteImport } from './routes/_menu/ca/$clubId/_club'
+import { Route as MenuCaClubIdClubMembersRouteImport } from './routes/_menu/ca/$clubId/_club/members'
 import { Route as MenuCaClubIdClubDashboardRouteImport } from './routes/_menu/ca/$clubId/_club/dashboard'
 import { Route as MenuAClubsClubIdClubRouteImport } from './routes/_menu/a/clubs/$clubId/_club'
 import { Route as MenuAClubsClubIdClubMembersRouteImport } from './routes/_menu/a/clubs/$clubId/_club/members'
@@ -95,6 +96,11 @@ const MenuCaClubIdClubRoute = MenuCaClubIdClubRouteImport.update({
   id: '/_club',
   getParentRoute: () => MenuCaClubIdRoute,
 } as any)
+const MenuCaClubIdClubMembersRoute = MenuCaClubIdClubMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => MenuCaClubIdClubRoute,
+} as any)
 const MenuCaClubIdClubDashboardRoute =
   MenuCaClubIdClubDashboardRouteImport.update({
     id: '/dashboard',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/a/oidc': typeof MenuAOidcIndexRoute
   '/a/clubs/$clubId': typeof MenuAClubsClubIdClubRouteWithChildren
   '/ca/$clubId/dashboard': typeof MenuCaClubIdClubDashboardRoute
+  '/ca/$clubId/members': typeof MenuCaClubIdClubMembersRoute
   '/a/clubs/$clubId/admins': typeof MenuAClubsClubIdClubAdminsRoute
   '/a/clubs/$clubId/dashboard': typeof MenuAClubsClubIdClubDashboardRoute
   '/a/clubs/$clubId/domains': typeof MenuAClubsClubIdClubDomainsRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/a/oidc': typeof MenuAOidcIndexRoute
   '/a/clubs/$clubId': typeof MenuAClubsClubIdClubRouteWithChildren
   '/ca/$clubId/dashboard': typeof MenuCaClubIdClubDashboardRoute
+  '/ca/$clubId/members': typeof MenuCaClubIdClubMembersRoute
   '/a/clubs/$clubId/admins': typeof MenuAClubsClubIdClubAdminsRoute
   '/a/clubs/$clubId/dashboard': typeof MenuAClubsClubIdClubDashboardRoute
   '/a/clubs/$clubId/domains': typeof MenuAClubsClubIdClubDomainsRoute
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/_menu/a/clubs/$clubId': typeof MenuAClubsClubIdRouteWithChildren
   '/_menu/a/clubs/$clubId/_club': typeof MenuAClubsClubIdClubRouteWithChildren
   '/_menu/ca/$clubId/_club/dashboard': typeof MenuCaClubIdClubDashboardRoute
+  '/_menu/ca/$clubId/_club/members': typeof MenuCaClubIdClubMembersRoute
   '/_menu/a/clubs/$clubId/_club/admins': typeof MenuAClubsClubIdClubAdminsRoute
   '/_menu/a/clubs/$clubId/_club/dashboard': typeof MenuAClubsClubIdClubDashboardRoute
   '/_menu/a/clubs/$clubId/_club/domains': typeof MenuAClubsClubIdClubDomainsRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/a/oidc'
     | '/a/clubs/$clubId'
     | '/ca/$clubId/dashboard'
+    | '/ca/$clubId/members'
     | '/a/clubs/$clubId/admins'
     | '/a/clubs/$clubId/dashboard'
     | '/a/clubs/$clubId/domains'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/a/oidc'
     | '/a/clubs/$clubId'
     | '/ca/$clubId/dashboard'
+    | '/ca/$clubId/members'
     | '/a/clubs/$clubId/admins'
     | '/a/clubs/$clubId/dashboard'
     | '/a/clubs/$clubId/domains'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/_menu/a/clubs/$clubId'
     | '/_menu/a/clubs/$clubId/_club'
     | '/_menu/ca/$clubId/_club/dashboard'
+    | '/_menu/ca/$clubId/_club/members'
     | '/_menu/a/clubs/$clubId/_club/admins'
     | '/_menu/a/clubs/$clubId/_club/dashboard'
     | '/_menu/a/clubs/$clubId/_club/domains'
@@ -349,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MenuCaClubIdClubRouteImport
       parentRoute: typeof MenuCaClubIdRoute
     }
+    '/_menu/ca/$clubId/_club/members': {
+      id: '/_menu/ca/$clubId/_club/members'
+      path: '/members'
+      fullPath: '/ca/$clubId/members'
+      preLoaderRoute: typeof MenuCaClubIdClubMembersRouteImport
+      parentRoute: typeof MenuCaClubIdClubRoute
+    }
     '/_menu/ca/$clubId/_club/dashboard': {
       id: '/_menu/ca/$clubId/_club/dashboard'
       path: '/dashboard'
@@ -396,10 +415,12 @@ declare module '@tanstack/react-router' {
 
 interface MenuCaClubIdClubRouteChildren {
   MenuCaClubIdClubDashboardRoute: typeof MenuCaClubIdClubDashboardRoute
+  MenuCaClubIdClubMembersRoute: typeof MenuCaClubIdClubMembersRoute
 }
 
 const MenuCaClubIdClubRouteChildren: MenuCaClubIdClubRouteChildren = {
   MenuCaClubIdClubDashboardRoute: MenuCaClubIdClubDashboardRoute,
+  MenuCaClubIdClubMembersRoute: MenuCaClubIdClubMembersRoute,
 }
 
 const MenuCaClubIdClubRouteWithChildren =

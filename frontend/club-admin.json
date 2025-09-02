@@ -54,10 +54,101 @@
                     }
                 }
             }
+        },
+        "/api/v1/frontend/club-admin/clubs/{club_uuid}/club/members": {
+            "get": {
+                "operationId": "get_club_members",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "club_uuid",
+                        "required": true,
+                        "schema": {
+                            "description": "New-type for the primary key of the club",
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "description": "Limit for pagination",
+                            "type": "integer",
+                            "minimum": 0,
+                            "format": "uint64"
+                        },
+                        "style": "form"
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "schema": {
+                            "description": "Offset for pagination",
+                            "type": "integer",
+                            "minimum": 0,
+                            "format": "uint64"
+                        },
+                        "style": "form"
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "nullable": true,
+                            "description": "Search for usernames",
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/MaxStr_255"
+                                }
+                            ]
+                        },
+                        "style": "form"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Page_for_SimpleAccount"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
+            "AccountUuid": {
+                "description": "New-type for the account's primary key",
+                "type": "string",
+                "format": "uuid"
+            },
             "ApiErrorResponse": {
                 "description": "The response that is sent in a case of an error",
                 "type": "object",
@@ -158,10 +249,81 @@
                 "type": "string",
                 "maxLength": 255
             },
+            "Page_for_SimpleAccount": {
+                "description": "A page of items",
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "description": "The page's items",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SimpleAccount"
+                        }
+                    },
+                    "limit": {
+                        "description": "The limit this page was requested with",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "offset": {
+                        "description": "The offset this page was requested with",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "total": {
+                        "description": "The total number of items this page is a subset of",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "required": [
+                    "items",
+                    "limit",
+                    "offset",
+                    "total"
+                ]
+            },
             "SchemaDateTime": {
                 "example": "1970-01-01T00:00:00.0Z",
                 "type": "string",
                 "format": "date-time"
+            },
+            "SimpleAccount": {
+                "description": "Simple representation of an account.",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "The account's display name.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "username": {
+                        "description": "The account's username.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "uuid": {
+                        "description": "The account's UUID.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AccountUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "username",
+                    "uuid"
+                ]
             }
         }
     }

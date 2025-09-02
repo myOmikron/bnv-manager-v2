@@ -1,6 +1,12 @@
 {
     "heading": {
         "club": "Club: {{club}}",
-        "club-dashboard": "Dashboard"
+        "club-dashboard": "Dashboard",
+        "members": "Members"
+    },
+    "label": {
+        "display-name": "Display Name",
+        "no-members": "There are no members yet.",
+        "username": "Username"
     }
 }

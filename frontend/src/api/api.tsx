@@ -1,69 +1,26 @@
 import { parseError } from "src/api/error";
 import CONSOLE from "src/utils/console";
 import {
-    Configuration as AdminConfiguration,
-    CreateClubRequest,
-    CreateInviteRequest,
-    CreateOidcProvider,
-    DefaultApi as AdminDefaultApi,
-    GetClubAdminsRequest,
-    GetClubMembersRequest,
-    RequiredError,
+    DefaultApi as CommonApi,
+    Configuration as CommonConfiguration,
+    AcceptInvite,
     ResponseError,
-} from "src/api/generated/admin";
-import { DefaultApi as CommonApi, Configuration as CommonConfiguration, AcceptInvite } from "src/api/generated/common";
-import { DefaultApi as AuthApi, Configuration as AuthConfiguration } from "src/api/generated/auth";
-import { DefaultApi as ClubAdminApi, Configuration as ClubAdminConfiguration } from "src/api/generated/club-admin";
+    RequiredError,
+} from "src/api/generated/common";
+import { ClubAdminApi } from "src/api/api_club_admins";
+import { AdminApi } from "src/api/api_admin";
+import { AuthApi } from "src/api/api_auth";
 
 /** Hyphen separated uuid */
 export type UUID = string;
 
-const adminApi = new AdminDefaultApi(
-    new AdminConfiguration({
-        basePath: window.location.origin,
-    }),
-);
 const commonApi = new CommonApi(new CommonConfiguration({ basePath: window.location.origin }));
-const authApi = new AuthApi(new AuthConfiguration({ basePath: window.location.origin }));
-const clubAdminApi = new ClubAdminApi(new ClubAdminConfiguration({ basePath: window.location.origin }));
 
 /* eslint-disable */
 export const Api = {
-    admin: {
-        superadmins: {
-            getAll: () => handleError(adminApi.getAllSuperadmins()),
-        },
-        clubs: {
-            getAll: () => handleError(adminApi.getClubs()),
-            get: (uuid: UUID) => handleError(adminApi.getClub({ uuid })),
-            clubMembers: (req: GetClubMembersRequest) => handleError(adminApi.getClubMembers(req)),
-            clubAdmins: (req: GetClubAdminsRequest) => handleError(adminApi.getClubAdmins(req)),
-            invitedClubMembers: (uuid: UUID) => handleError(adminApi.getClubMemberInvites({ uuid })),
-            invitedClubAdmins: (uuid: UUID) => handleError(adminApi.getClubAdminInvites({ uuid })),
-            create: (createClub: CreateClubRequest) =>
-                handleError(adminApi.createClub({ CreateClubRequest: createClub })),
-            delete: (uuid: UUID) => handleError(adminApi.deleteClub({ uuid })),
-            associatedDomains: (uuid: UUID) => handleError(adminApi.getClubDomains({ uuid })),
-        },
-        domains: {},
-        invites: {
-            create: (invite: CreateInviteRequest) =>
-                handleError(adminApi.createInvite({ CreateInviteRequest: invite })),
-        },
-        oidcProvider: {
-            create: (req: CreateOidcProvider) => handleError(adminApi.createOidcProvider({ CreateOidcProvider: req })),
-            all: () => handleError(adminApi.getAllOidcProviders()),
-        },
-    },
-    auth: {
-        login: (username: string, password: string) => authApi.signIn({ SignInRequest: { username, password } }),
-        logout: () => handleError(authApi.signOut()),
-    },
-    clubAdmins: {
-        clubs: {
-            get: (uuid: UUID) => handleError(clubAdminApi.getClub({ club_uuid: uuid })),
-        },
-    },
+    admin: AdminApi,
+    auth: AuthApi,
+    clubAdmins: ClubAdminApi,
     common: {
         invites: {
             get: (uuid: UUID) => handleError(commonApi.getInviteCommon({ uuid })),

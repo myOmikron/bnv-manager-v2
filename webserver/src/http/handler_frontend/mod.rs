@@ -48,6 +48,7 @@ pub fn router_admin() -> GalvynRouter {
                 .handler(oidc_provider::handler_admin::get_all_oidc_providers)
                 .handler(oidc_provider::handler_admin::create_oidc_provider),
         )
+        .layer(axum::middleware::from_fn(middlewares::auth_superadmin))
 }
 
 /// Openapi page for the club admin API
@@ -60,7 +61,9 @@ pub fn router_club_admin() -> GalvynRouter {
         GalvynRouter::new()
             .nest(
                 "/club",
-                GalvynRouter::new().handler(clubs::handler_club_admin::get_club),
+                GalvynRouter::new()
+                    .handler(clubs::handler_club_admin::get_club)
+                    .handler(clubs::handler_club_admin::get_club_members),
             )
             .nest("/domains", GalvynRouter::new())
             .layer(axum::middleware::from_fn(middlewares::auth_club_admin)),

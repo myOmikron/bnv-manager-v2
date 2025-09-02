@@ -31,6 +31,9 @@ export default function ClubAdminClub(props: ClubAdminClubProps) {
                                     <Tab href={"/ca/$clubId/dashboard"} params={{ clubId: params.clubId }}>
                                         {t("heading.club-dashboard")}
                                     </Tab>
+                                    <Tab href={"/ca/$clubId/members"} params={{ clubId: params.clubId }}>
+                                        {t("heading.members")}
+                                    </Tab>
                                 </TabMenu>
                             }
                         >

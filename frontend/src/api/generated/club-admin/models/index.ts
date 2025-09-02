@@ -82,3 +82,59 @@ export interface Club {
      */
     uuid: string;
 }
+/**
+ * A page of items
+ * @export
+ * @interface PageForSimpleAccount
+ */
+export interface PageForSimpleAccount {
+    /**
+     * The page's items
+     * @type {Array<SimpleAccount>}
+     * @memberof PageForSimpleAccount
+     */
+    items: Array<SimpleAccount>;
+    /**
+     * The limit this page was requested with
+     * @type {number}
+     * @memberof PageForSimpleAccount
+     */
+    limit: number;
+    /**
+     * The offset this page was requested with
+     * @type {number}
+     * @memberof PageForSimpleAccount
+     */
+    offset: number;
+    /**
+     * The total number of items this page is a subset of
+     * @type {number}
+     * @memberof PageForSimpleAccount
+     */
+    total: number;
+}
+/**
+ * Simple representation of an account.
+ * @export
+ * @interface SimpleAccount
+ */
+export interface SimpleAccount {
+    /**
+     * The account's display name.
+     * @type {string}
+     * @memberof SimpleAccount
+     */
+    display_name: string;
+    /**
+     * The account's username.
+     * @type {string}
+     * @memberof SimpleAccount
+     */
+    username: string;
+    /**
+     * The account's UUID.
+     * @type {string}
+     * @memberof SimpleAccount
+     */
+    uuid: string;
+}

@@ -17,10 +17,18 @@ import * as runtime from '../runtime';
 import type {
   ApiErrorResponse,
   Club,
+  PageForSimpleAccount,
 } from '../models/index';
 
 export interface GetClubRequest {
     club_uuid: string;
+}
+
+export interface GetClubMembersRequest {
+    club_uuid: string;
+    limit?: number;
+    offset?: number;
+    search?: string | null;
 }
 
 /**
@@ -56,6 +64,49 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getClub(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Club> {
         const response = await this.getClubRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getClubMembersRaw(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PageForSimpleAccount>> {
+        if (requestParameters['club_uuid'] == null) {
+            throw new runtime.RequiredError(
+                'club_uuid',
+                'Required parameter "club_uuid" was null or undefined when calling getClubMembers().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['limit'] != null) {
+            queryParameters['limit'] = requestParameters['limit'];
+        }
+
+        if (requestParameters['offset'] != null) {
+            queryParameters['offset'] = requestParameters['offset'];
+        }
+
+        if (requestParameters['search'] != null) {
+            queryParameters['search'] = requestParameters['search'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/club-admin/clubs/{club_uuid}/club/members`.replace(`{${"club_uuid"}}`, encodeURIComponent(String(requestParameters['club_uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getClubMembers(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleAccount> {
+        const response = await this.getClubMembersRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

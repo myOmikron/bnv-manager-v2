@@ -1,6 +1,12 @@
 {
     "heading": {
         "club": "Verein: {{club}}",
-        "club-dashboard": "Dashboard"
+        "club-dashboard": "Dashboard",
+        "members": "Mitglieder"
+    },
+    "label": {
+        "display-name": "Anzeigename",
+        "no-members": "Keine Mitglieder vorhanden.",
+        "username": "Nutzername"
     }
 }

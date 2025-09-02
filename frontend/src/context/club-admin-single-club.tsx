@@ -54,7 +54,7 @@ export function ClubAdminSingleClubProvider(props: ClubAdminSingleClubProviderPr
         if (fetching) return;
         fetching = true;
 
-        const res = await Api.clubAdmins.clubs.get(props.uuid);
+        const res = await Api.clubAdmins.club.get(props.uuid);
         setData(res);
 
         fetching = false;
