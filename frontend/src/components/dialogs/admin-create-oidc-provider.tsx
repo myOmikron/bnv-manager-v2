@@ -1,14 +1,12 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
-import { Description, ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
+import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
 import { Button, PrimaryButton } from "src/components/base/button";
-import { Api, UUID } from "src/api/api";
+import { Api } from "src/api/api";
 import { Input } from "src/components/base/input";
-import { ClipboardDocumentListIcon } from "@heroicons/react/20/solid";
-import { toast } from "react-toastify";
 
 /**
  * The properties for {@link DialogCreateOidcProvider}

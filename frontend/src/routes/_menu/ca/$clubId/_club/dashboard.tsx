@@ -9,7 +9,7 @@ export type ClubAdminDashboardProps = {};
  * Dashboard for admins that show a single club
  */
 export default function ClubAdminDashboard(props: ClubAdminDashboardProps) {
-    const [t] = useTranslation("ca-club-view");
+    const [_t] = useTranslation("ca-club-view");
 
     return <div></div>;
 }
