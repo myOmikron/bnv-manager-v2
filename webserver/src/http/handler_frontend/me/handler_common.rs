@@ -6,15 +6,19 @@ use galvyn::core::Module;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
+use galvyn::core::stuff::schema::FormResult;
 use galvyn::get;
 use galvyn::post;
 use galvyn::put;
 use rorm::Database;
 use tracing::instrument;
+use zxcvbn::Score;
+use zxcvbn::zxcvbn;
 
 use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::me::Me;
 use crate::http::handler_frontend::me::Roles;
+use crate::http::handler_frontend::me::SetPasswordErrors;
 use crate::http::handler_frontend::me::SetPasswordRequest;
 use crate::http::handler_frontend::me::UpdateMeRequest;
 use crate::http::handler_frontend::me::schema;
@@ -103,11 +107,11 @@ pub async fn update_me(
 }
 
 #[post("/set-password")]
-#[instrument(name = "Api::common::set_password")]
+#[instrument(name = "Api::common::set_password", skip(password))]
 pub async fn set_password(
     SessionUser { uuid }: SessionUser,
     ApiJson(SetPasswordRequest { password }): ApiJson<SetPasswordRequest>,
-) -> ApiResult<()> {
+) -> ApiResult<ApiJson<FormResult<(), SetPasswordErrors>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     if password.is_empty() {
@@ -117,9 +121,16 @@ pub async fn set_password(
     let mut account = Account::find_by_uuid(&mut tx, uuid)
         .await?
         .ok_or(ApiError::server_error("Account from session not found"))?;
+
+    let entropy = zxcvbn(&password, &[&account.display_name, &account.username]);
+    if entropy.score() < Score::Four {
+        return Ok(ApiJson(FormResult::err(SetPasswordErrors {
+            low_entropy: true,
+        })));
+    }
     account.set_password(&mut tx, password).await?;
 
     tx.commit().await?;
 
-    Ok(())
+    Ok(ApiJson(FormResult::ok(())))
 }

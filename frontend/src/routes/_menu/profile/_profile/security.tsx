@@ -11,9 +11,10 @@ import { Button, PrimaryButton } from "src/components/base/button";
 import { Api } from "src/api/api";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid";
 import { zxcvbn } from "@zxcvbn-ts/core";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import PasswordStrength from "src/components/base/pw-strength";
 import { toast } from "react-toastify";
+import ACCOUNT_CONTEXT from "src/context/account";
 
 /**
  * Props for {@link ProfileSecurity}
@@ -27,19 +28,39 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
     const [t] = useTranslation("profile");
     const [tg] = useTranslation();
 
+    const account = React.useContext(ACCOUNT_CONTEXT);
+
     const form = useForm({
         defaultValues: {
             password: "",
             password2: "",
             showPassword: false,
-        }, // eslint-disable-next-line
-        onSubmit: async ({ value, formApi }) => {
-            const id = toast.loading(t("toast.setting-password"));
+        },
+        validators: {
+            // eslint-disable-next-line
+            onSubmitAsync: async ({ value, formApi }) => {
+                const id = toast.loading(t("toast.setting-password"));
 
-            await Api.common.me.setPassword({ password: value.password });
+                const res = await Api.common.me.setPassword({ password: value.password });
+                if (res.result === "Err") {
+                    toast.update(id, {
+                        autoClose: 2500,
+                        render: t("toast."),
+                        type: "error",
+                        isLoading: false,
+                    });
 
-            toast.update(id, { autoClose: 2500, render: t("toast.password-set"), type: "success", isLoading: false });
-            form.reset();
+                    return;
+                }
+
+                toast.update(id, {
+                    autoClose: 2500,
+                    render: t("toast.password-set"),
+                    type: "success",
+                    isLoading: false,
+                });
+                form.reset();
+            },
         },
     });
 
@@ -57,7 +78,11 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                             validators={{
                                 // eslint-disable-next-line
                                 onChange: ({ value }) => {
-                                    if (value !== "" && zxcvbn(value).score < 4) {
+                                    if (
+                                        value !== "" &&
+                                        zxcvbn(value, [account.account.username, account.account.display_name]).score <
+                                            4
+                                    ) {
                                         return t("text.stronger-password");
                                     }
                                     return undefined;

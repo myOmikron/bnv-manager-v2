@@ -18,6 +18,7 @@ import type {
   AcceptInvite,
   ApiErrorResponse,
   FormResultForNullAndAcceptInviteError,
+  FormResultForNullAndSetPasswordErrors,
   GetInvite,
   Me,
   SetPasswordRequest,
@@ -272,7 +273,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async setPasswordRaw(requestParameters: SetPasswordOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async setPasswordRaw(requestParameters: SetPasswordOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndSetPasswordErrors>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -287,13 +288,14 @@ export class DefaultApi extends runtime.BaseAPI {
             body: requestParameters['SetPasswordRequest'],
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
      */
-    async setPassword(requestParameters: SetPasswordOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.setPasswordRaw(requestParameters, initOverrides);
+    async setPassword(requestParameters: SetPasswordOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndSetPasswordErrors> {
+        const response = await this.setPasswordRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**

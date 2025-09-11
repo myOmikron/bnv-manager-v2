@@ -63,3 +63,10 @@ pub struct SetPasswordRequest {
     /// The display name of the user
     pub password: MaxStr<72>,
 }
+
+/// Errors that may occur while setting a new password
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct SetPasswordErrors {
+    /// Entropy is too low
+    pub low_entropy: bool,
+}

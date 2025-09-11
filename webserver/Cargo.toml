@@ -26,6 +26,7 @@ jsonwebtoken = { version = "~9" }
 rsa = { version = "~0.9", features = ["pem"] }
 sha2 = { version = "0.10" }
 base64ct = { version = "~1", features = ["std"] }
+zxcvbn = { version = "~3" }
 
 # Cli
 clap = { version = "~4", features = ["derive"] }

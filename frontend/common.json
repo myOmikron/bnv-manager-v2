@@ -240,7 +240,14 @@
                 },
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FormResult_for_Null_and_SetPasswordErrors"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "",
@@ -444,6 +451,47 @@
                     }
                 ]
             },
+            "FormResult_for_Null_and_SetPasswordErrors": {
+                "description": "A `Result` with a custom serialization",
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Ok"
+                                ]
+                            },
+                            "value": {
+                                "nullable": true
+                            }
+                        },
+                        "required": [
+                            "result",
+                            "value"
+                        ]
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "error": {
+                                "$ref": "#/components/schemas/SetPasswordErrors"
+                            },
+                            "result": {
+                                "type": "string",
+                                "enum": [
+                                    "Err"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "error",
+                            "result"
+                        ]
+                    }
+                ]
+            },
             "GetInvite": {
                 "description": "API representation of an invitation",
                 "type": "object",
@@ -584,6 +632,19 @@
                 "example": "1970-01-01T00:00:00.0Z",
                 "type": "string",
                 "format": "date-time"
+            },
+            "SetPasswordErrors": {
+                "description": "Errors that may occur while setting a new password",
+                "type": "object",
+                "properties": {
+                    "low_entropy": {
+                        "description": "Entropy is too low",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "low_entropy"
+                ]
             },
             "SetPasswordRequest": {
                 "description": "Request to update the currently logged-in user",

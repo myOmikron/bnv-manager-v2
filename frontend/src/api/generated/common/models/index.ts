@@ -180,6 +180,41 @@ export const FormResultForNullAndAcceptInviteErrorOneOf1ResultEnum = {
 export type FormResultForNullAndAcceptInviteErrorOneOf1ResultEnum = typeof FormResultForNullAndAcceptInviteErrorOneOf1ResultEnum[keyof typeof FormResultForNullAndAcceptInviteErrorOneOf1ResultEnum];
 
 /**
+ * @type FormResultForNullAndSetPasswordErrors
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForNullAndSetPasswordErrors = FormResultForNullAndAcceptInviteErrorOneOf | FormResultForNullAndSetPasswordErrorsOneOf;
+/**
+ * 
+ * @export
+ * @interface FormResultForNullAndSetPasswordErrorsOneOf
+ */
+export interface FormResultForNullAndSetPasswordErrorsOneOf {
+    /**
+     * 
+     * @type {SetPasswordErrors}
+     * @memberof FormResultForNullAndSetPasswordErrorsOneOf
+     */
+    error: SetPasswordErrors;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForNullAndSetPasswordErrorsOneOf
+     */
+    result: FormResultForNullAndSetPasswordErrorsOneOfResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForNullAndSetPasswordErrorsOneOfResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForNullAndSetPasswordErrorsOneOfResultEnum = typeof FormResultForNullAndSetPasswordErrorsOneOfResultEnum[keyof typeof FormResultForNullAndSetPasswordErrorsOneOfResultEnum];
+
+/**
  * API representation of an invitation
  * @export
  * @interface GetInvite
@@ -277,6 +312,19 @@ export interface Roles {
      * @memberof Roles
      */
     super_admin: boolean;
+}
+/**
+ * Errors that may occur while setting a new password
+ * @export
+ * @interface SetPasswordErrors
+ */
+export interface SetPasswordErrors {
+    /**
+     * Entropy is too low
+     * @type {boolean}
+     * @memberof SetPasswordErrors
+     */
+    low_entropy: boolean;
 }
 /**
  * Request to update the currently logged-in user

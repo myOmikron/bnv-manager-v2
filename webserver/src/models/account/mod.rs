@@ -76,7 +76,7 @@ impl Account {
 }
 impl Account {
     /// Set a new password for an account
-    #[instrument(skip(self, exe))]
+    #[instrument(skip(self, exe, password))]
     pub async fn set_password(
         &mut self,
         exe: impl Executor<'_>,
