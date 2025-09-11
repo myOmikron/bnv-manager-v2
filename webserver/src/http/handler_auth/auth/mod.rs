@@ -87,7 +87,12 @@ pub async fn sign_in(
     }
 
     session
-        .insert(SESSION_USER, SessionUser { uuid: account.uuid })
+        .insert(
+            SESSION_USER,
+            SessionUser {
+                uuid: account.uuid(),
+            },
+        )
         .await?;
 
     Ok(())

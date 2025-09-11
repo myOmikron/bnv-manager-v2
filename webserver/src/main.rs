@@ -7,6 +7,7 @@ use std::error::Error;
 use ::tracing::error;
 use clap::Parser;
 use galvyn::Galvyn;
+use galvyn::GalvynSetup;
 use galvyn::core::DatabaseSetup;
 use galvyn::rorm::Database;
 use rorm::DatabaseConfiguration;
@@ -39,7 +40,7 @@ pub mod tracing;
 pub mod utils;
 
 async fn start() -> Result<(), Box<dyn Error>> {
-    let router = Galvyn::new()
+    let router = Galvyn::builder(GalvynSetup::default())
         .register_module::<Database>(DatabaseSetup::Custom(DatabaseConfiguration::new(
             DB.clone(),
         )))

@@ -187,6 +187,82 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "operationId": "update_me",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateMeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/frontend/common/me/set-password": {
+            "post": {
+                "operationId": "set_password",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SetPasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
@@ -227,6 +303,11 @@
                     "expired"
                 ]
             },
+            "AccountUuid": {
+                "description": "New-type for the account's primary key",
+                "type": "string",
+                "format": "uuid"
+            },
             "ApiErrorResponse": {
                 "description": "The response that is sent in a case of an error",
                 "type": "object",
@@ -242,11 +323,16 @@
                                 "$ref": "#/components/schemas/ApiStatusCode"
                             }
                         ]
+                    },
+                    "trace_id": {
+                        "description": "ID of the opentelemetry trace this error originated in",
+                        "type": "string"
                     }
                 },
                 "required": [
                     "message",
-                    "status_code"
+                    "status_code",
+                    "trace_id"
                 ]
             },
             "ApiStatusCode": {
@@ -451,8 +537,11 @@
                     },
                     "uuid": {
                         "description": "The user's UUID.",
-                        "type": "string",
-                        "format": "uuid"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AccountUuid"
+                            }
+                        ]
                     }
                 },
                 "required": [
@@ -495,6 +584,40 @@
                 "example": "1970-01-01T00:00:00.0Z",
                 "type": "string",
                 "format": "date-time"
+            },
+            "SetPasswordRequest": {
+                "description": "Request to update the currently logged-in user",
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "description": "The display name of the user",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_72"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "password"
+                ]
+            },
+            "UpdateMeRequest": {
+                "description": "Request to update the currently logged-in user",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "The display name of the user",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "display_name"
+                ]
             }
         }
     }

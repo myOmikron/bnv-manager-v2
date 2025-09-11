@@ -22,6 +22,12 @@ export interface ApiErrorResponse {
      * @memberof ApiErrorResponse
      */
     status_code: ApiStatusCode;
+    /**
+     * ID of the opentelemetry trace this error originated in
+     * @type {string}
+     * @memberof ApiErrorResponse
+     */
+    trace_id: string;
 }
 
 

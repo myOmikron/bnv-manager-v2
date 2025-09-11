@@ -27,7 +27,7 @@ pub(in crate::models) mod db;
 /// Representation of the login data without any permission attached to it
 pub struct Account {
     /// Primary key of the account
-    pub uuid: AccountUuid,
+    uuid: AccountUuid,
     /// Name to be used for displaying purposes
     pub display_name: MaxStr<255>,
     /// The username that should be used for logging in
@@ -94,6 +94,24 @@ impl Account {
             .await?;
 
         Ok(())
+    }
+
+    /// Update the current account and save all pending changes to the database
+    #[instrument(name = "Account::update", skip(self, exe))]
+    pub async fn update(&mut self, exe: impl Executor<'_>) -> anyhow::Result<()> {
+        rorm::update(exe, AccountModel)
+            .set(AccountModel.display_name, self.display_name.clone())
+            .set(AccountModel.username, self.username.clone())
+            .condition(AccountModel.uuid.equals(self.uuid.0))
+            .await?;
+
+        Ok(())
+    }
+
+    /// Retrieve the uuid of the model
+    #[instrument(name = "Account::get_uuid", skip(self))]
+    pub fn uuid(&self) -> AccountUuid {
+        self.uuid
     }
 
     /// Checks if the account is a club admin for the given club

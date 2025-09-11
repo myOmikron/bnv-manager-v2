@@ -1,0 +1,28 @@
+{
+    "error": {
+        "password-mismatch": "Passwords do not match"
+    },
+    "heading": {
+        "general": "General",
+        "password": "Set a new Password",
+        "profile": "Profile",
+        "security": "Security"
+    },
+    "label": {
+        "display-name": "Display name",
+        "password": "Password",
+        "preferred-lang": "Preferred language",
+        "repeat-password": "Repeat password",
+        "theme": "Theme",
+        "theme-dark": "Dark theme",
+        "theme-light": "Light theme",
+        "theme-system": "System preference"
+    },
+    "text": {
+        "stronger-password": "Password is too weak."
+    },
+    "toast": {
+        "password-set": "Password has been changed",
+        "setting-password": "Setting password .."
+    }
+}

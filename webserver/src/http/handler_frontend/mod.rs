@@ -112,7 +112,10 @@ pub struct CommonApi;
 pub fn router_common() -> GalvynRouter {
     GalvynRouter::with_openapi_page(CommonApi).nest(
         "/me",
-        GalvynRouter::new().handler(me::handler_common::get_me),
+        GalvynRouter::new()
+            .handler(me::handler_common::get_me)
+            .handler(me::handler_common::update_me)
+            .handler(me::handler_common::set_password),
     )
 }
 

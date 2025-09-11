@@ -11,7 +11,7 @@
     },
     "label": {
         "display-name": "Anzeigename",
-        "expires-at": "Läuft ab am",
+        "expires-at": "L\u00e4uft ab am",
         "no-members": "Keine Mitglieder vorhanden.",
         "username": "Nutzername"
     }

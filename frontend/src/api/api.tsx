@@ -6,6 +6,8 @@ import {
     AcceptInvite,
     ResponseError,
     RequiredError,
+    UpdateMeRequest,
+    SetPasswordRequest,
 } from "src/api/generated/common";
 import { ClubAdminApi } from "src/api/api_club_admins";
 import { AdminApi } from "src/api/api_admin";
@@ -34,6 +36,8 @@ export const Api = {
         },
         me: {
             get: () => commonApi.getMe(),
+            update: (req: UpdateMeRequest) => handleError(commonApi.updateMe({ UpdateMeRequest: req })),
+            setPassword: (req: SetPasswordRequest) => handleError(commonApi.setPassword({ SetPasswordRequest: req })),
         },
     },
 };

@@ -54,6 +54,12 @@ export interface ApiErrorResponse {
      * @memberof ApiErrorResponse
      */
     status_code: ApiStatusCode;
+    /**
+     * ID of the opentelemetry trace this error originated in
+     * @type {string}
+     * @memberof ApiErrorResponse
+     */
+    trace_id: string;
 }
 
 
@@ -271,4 +277,30 @@ export interface Roles {
      * @memberof Roles
      */
     super_admin: boolean;
+}
+/**
+ * Request to update the currently logged-in user
+ * @export
+ * @interface SetPasswordRequest
+ */
+export interface SetPasswordRequest {
+    /**
+     * The display name of the user
+     * @type {string}
+     * @memberof SetPasswordRequest
+     */
+    password: string;
+}
+/**
+ * Request to update the currently logged-in user
+ * @export
+ * @interface UpdateMeRequest
+ */
+export interface UpdateMeRequest {
+    /**
+     * The display name of the user
+     * @type {string}
+     * @memberof UpdateMeRequest
+     */
+    display_name: string;
 }

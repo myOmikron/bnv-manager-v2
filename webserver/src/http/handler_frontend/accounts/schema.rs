@@ -20,7 +20,7 @@ pub struct SimpleAccount {
 impl From<Account> for SimpleAccount {
     fn from(value: Account) -> Self {
         Self {
-            uuid: value.uuid,
+            uuid: value.uuid(),
             username: value.username,
             display_name: value.display_name,
         }

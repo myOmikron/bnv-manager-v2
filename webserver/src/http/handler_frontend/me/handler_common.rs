@@ -7,12 +7,16 @@ use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::get;
+use galvyn::post;
+use galvyn::put;
 use rorm::Database;
 use tracing::instrument;
 
 use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::me::Me;
 use crate::http::handler_frontend::me::Roles;
+use crate::http::handler_frontend::me::SetPasswordRequest;
+use crate::http::handler_frontend::me::UpdateMeRequest;
 use crate::http::handler_frontend::me::schema;
 use crate::models::account::Account;
 use crate::models::club::Club;
@@ -40,7 +44,7 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
     tx.commit().await?;
 
     Ok(ApiJson(Me {
-        uuid: account.uuid.0,
+        uuid: account.uuid(),
         username: account.username.to_string(),
         display_name: account.display_name.to_string(),
         roles: Roles {
@@ -75,4 +79,47 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
                 .collect(),
         },
     }))
+}
+
+#[put("/")]
+#[instrument(name = "Api::common::update_me")]
+pub async fn update_me(
+    SessionUser { uuid }: SessionUser,
+    ApiJson(UpdateMeRequest { display_name }): ApiJson<UpdateMeRequest>,
+) -> ApiResult<()> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let mut account = Account::find_by_uuid(&mut tx, uuid)
+        .await?
+        .ok_or(ApiError::server_error("Account from session not found"))?;
+
+    account.display_name = display_name;
+
+    account.update(&mut tx).await?;
+
+    tx.commit().await?;
+
+    Ok(())
+}
+
+#[post("/set-password")]
+#[instrument(name = "Api::common::set_password")]
+pub async fn set_password(
+    SessionUser { uuid }: SessionUser,
+    ApiJson(SetPasswordRequest { password }): ApiJson<SetPasswordRequest>,
+) -> ApiResult<()> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    if password.is_empty() {
+        return Err(ApiError::bad_request("Empty password"));
+    }
+
+    let mut account = Account::find_by_uuid(&mut tx, uuid)
+        .await?
+        .ok_or(ApiError::server_error("Account from session not found"))?;
+    account.set_password(&mut tx, password).await?;
+
+    tx.commit().await?;
+
+    Ok(())
 }

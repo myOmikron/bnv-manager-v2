@@ -6,7 +6,9 @@
     "button": {
         "cancel": "Cancel",
         "close": "Close",
-        "options": "Options"
+        "options": "Options",
+        "reset": "Reset",
+        "save": "Save"
     },
     "heading": {
         "danger-zone": "Danger zone"
@@ -15,7 +17,7 @@
         "centuries": "centuries",
         "days": "days",
         "english": "English",
-        "estimated-crack-time": "Estimated time to crack",
+        "estimated-crack-time": "Estimated time for a brute force attack: {{time}}",
         "german": "German",
         "hours": "hours",
         "minutes": "minutes",

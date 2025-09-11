@@ -697,11 +697,16 @@
                                 "$ref": "#/components/schemas/ApiStatusCode"
                             }
                         ]
+                    },
+                    "trace_id": {
+                        "description": "ID of the opentelemetry trace this error originated in",
+                        "type": "string"
                     }
                 },
                 "required": [
                     "message",
-                    "status_code"
+                    "status_code",
+                    "trace_id"
                 ]
             },
             "ApiStatusCode": {

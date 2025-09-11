@@ -92,8 +92,7 @@ function Menu(props: MenuProps) {
                     <SidebarFooter className={"max-lg:hidden"}>
                         <Dropdown>
                             <DropdownButton as={SidebarItem}>
-                                <span className="grid h-10 w-full min-w-0 grid-cols-[30px_1fr_20px] items-center gap-3">
-                                    <UserIcon />
+                                <span className="grid h-10 w-full min-w-0 grid-cols-[1fr_20px] items-center gap-3">
                                     <span className="min-w-0">
                                         <span className="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">
                                             {ctx.user.display_name}
@@ -106,7 +105,7 @@ function Menu(props: MenuProps) {
                                 </span>
                             </DropdownButton>
                             <DropdownMenu anchor={"top end"}>
-                                <DropdownItem href={"/profile"}>
+                                <DropdownItem href={"/profile/general"}>
                                     <UserIcon />
                                     <DropdownLabel>{t("button.profile")}</DropdownLabel>
                                 </DropdownItem>
@@ -134,7 +133,7 @@ function Menu(props: MenuProps) {
                             <ChevronUpIcon />
                         </DropdownButton>
                         <DropdownMenu anchor={"top end"}>
-                            <DropdownItem href={"/profile"}>
+                            <DropdownItem href={"/profile/general"}>
                                 <UserIcon />
                                 <DropdownLabel>{t("button.profile")}</DropdownLabel>
                             </DropdownItem>

@@ -20,6 +20,8 @@ import type {
   FormResultForNullAndAcceptInviteError,
   GetInvite,
   Me,
+  SetPasswordRequest,
+  UpdateMeRequest,
 } from '../models/index';
 
 export interface AcceptInviteRequest {
@@ -29,6 +31,14 @@ export interface AcceptInviteRequest {
 
 export interface GetInviteCommonRequest {
     uuid: string;
+}
+
+export interface SetPasswordOperationRequest {
+    SetPasswordRequest?: SetPasswordRequest;
+}
+
+export interface UpdateMeOperationRequest {
+    UpdateMeRequest?: UpdateMeRequest;
 }
 
 /**
@@ -258,6 +268,58 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async openapiCommon(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.openapiCommonRaw(initOverrides);
+    }
+
+    /**
+     */
+    async setPasswordRaw(requestParameters: SetPasswordOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/common/me/set-password`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['SetPasswordRequest'],
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async setPassword(requestParameters: SetPasswordOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.setPasswordRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async updateMeRaw(requestParameters: UpdateMeOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/common/me`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['UpdateMeRequest'],
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async updateMe(requestParameters: UpdateMeOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.updateMeRaw(requestParameters, initOverrides);
     }
 
 }
