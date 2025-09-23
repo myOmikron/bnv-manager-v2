@@ -31,7 +31,6 @@ export default function DialogCreateOidcProvider(props: DialogCreateOidcProvider
             redirectUrl: "",
         },
         validators: {
-            // eslint-disable-next-line
             onSubmitAsync: async ({ value }) => {
                 await Api.admin.oidcProvider.create({
                     name: value.name,

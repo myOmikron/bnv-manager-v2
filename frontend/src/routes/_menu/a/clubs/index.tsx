@@ -128,6 +128,5 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
 
 export const Route = createFileRoute("/_menu/a/clubs/")({
     component: AdminClubOverview,
-    // eslint-disable-next-line
     loader: async () => await Api.admin.clubs.getAll(),
 });

@@ -34,7 +34,6 @@ export default function DialogCreateAdmin(props: DialogCreateAdminProps) {
             validDays: "7",
         },
         validators: {
-            // eslint-disable-next-line
             onSubmitAsync: async ({ value }) => {
                 const res = await Api.admin.invites.create({
                     username: value.username,

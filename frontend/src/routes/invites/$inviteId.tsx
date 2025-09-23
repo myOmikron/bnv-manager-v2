@@ -40,7 +40,6 @@ export default function Invite(props: InviteProps) {
             password2: "",
         },
         validators: {
-            // eslint-disable-next-line
             onSubmitAsync: async ({ value }) => {
                 const res = await Api.common.invites.accept(inviteId, { password: value.password });
 
@@ -66,7 +65,6 @@ export default function Invite(props: InviteProps) {
                     <form.Field
                         name={"password"}
                         validators={{
-                            // eslint-disable-next-line
                             onChangeAsync: async ({ value }) => {
                                 if (value !== "" && zxcvbn(value).score < 4) {
                                     return t("error.stronger-password");
@@ -110,7 +108,6 @@ export default function Invite(props: InviteProps) {
                         name={"password2"}
                         validators={{
                             onChangeListenTo: ["password"],
-                            // eslint-disable-next-line
                             onChangeAsync: ({ value, fieldApi }) => {
                                 if (fieldApi.getMeta().isDirty && value !== fieldApi.form.getFieldValue("password")) {
                                     return t("error.password-mismatch");
@@ -150,6 +147,5 @@ export default function Invite(props: InviteProps) {
 export const Route = createFileRoute("/invites/$inviteId")({
     component: Invite,
     errorComponent: InviteError,
-    // eslint-disable-next-line
     loader: async ({ params: { inviteId } }) => Api.common.invites.get(inviteId),
 });

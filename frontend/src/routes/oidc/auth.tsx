@@ -33,8 +33,7 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
             password: "",
         },
         validators: {
-            // eslint-disable-next-line
-            onSubmitAsync: async ({ formApi, value }) => {
+            onSubmitAsync: async ({ value }) => {
                 const id = toast.loading(t("toast.signing-in"));
                 try {
                     await Api.auth.login(value.username, value.password);
@@ -137,12 +136,10 @@ type SearchParams = {
 
 export const Route = createFileRoute("/oidc/auth")({
     component: OidcAuthentication,
-    // eslint-disable-next-line
     validateSearch: (search: Record<string, unknown>): SearchParams => {
         return {
             redirect_url: (search?.redirect_url as string) || "/",
         };
     },
-    // eslint-disable-next-line
     loaderDeps: ({ search: { redirect_url } }) => ({ redirect_url }),
 });

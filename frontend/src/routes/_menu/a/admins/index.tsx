@@ -83,6 +83,5 @@ export default function AdminOverview(props: AdminOverviewProps) {
 
 export const Route = createFileRoute("/_menu/a/admins/")({
     component: AdminOverview,
-    // eslint-disable-next-line
     loader: async () => await Api.admin.superadmins.getAll(),
 });

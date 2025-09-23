@@ -32,8 +32,7 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
             primaryDomain: "",
         },
         validators: {
-            // eslint-disable-next-line
-            onSubmitAsync: async ({ formApi, value }) => {
+            onSubmitAsync: async ({ value }) => {
                 const res = await Api.admin.clubs.create({ name: value.name, primary_domain: value.primaryDomain });
                 if (res.result === "Err") {
                     return {
@@ -47,7 +46,6 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
                 }
             },
         },
-        // eslint-disable-next-line
         onSubmit: () => {
             props.onCreate();
         },

@@ -8,8 +8,6 @@ import { handleError, UUID } from "src/api/api";
 
 const clubAdminApi = new DefaultApi(new Configuration({ basePath: window.location.origin }));
 
-/* eslint-disable */
-
 export const ClubAdminApi = {
     club: {
         get: (club_uuid: UUID) => handleError(clubAdminApi.getClub({ club_uuid })),
@@ -21,5 +19,3 @@ export const ClubAdminApi = {
             handleError(clubAdminApi.createMemberInvite({ club_uuid, CreateMemberInviteRequest: req })),
     },
 };
-
-/* eslint-enable */

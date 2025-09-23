@@ -18,7 +18,6 @@ export type UUID = string;
 
 const commonApi = new CommonApi(new CommonConfiguration({ basePath: window.location.origin }));
 
-/* eslint-disable */
 export const Api = {
     admin: AdminApi,
     auth: AuthApi,
@@ -41,8 +40,6 @@ export const Api = {
         },
     },
 };
-
-/* eslint-enable */
 
 /**
  * Wraps a promise returned by the generated SDK which handles its errors and returns a {@link Result}

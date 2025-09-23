@@ -11,8 +11,6 @@ import { handleError, UUID } from "src/api/api";
 
 const adminApi = new DefaultApi(new Configuration({ basePath: window.location.origin }));
 
-/* eslint-disable */
-
 export const AdminApi = {
     superadmins: {
         getAll: () => handleError(adminApi.getAllSuperadmins()),
@@ -38,5 +36,3 @@ export const AdminApi = {
         all: () => handleError(adminApi.getAllOidcProviders()),
     },
 };
-
-/* eslint-enable */

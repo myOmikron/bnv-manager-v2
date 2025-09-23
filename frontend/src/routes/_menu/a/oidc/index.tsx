@@ -130,6 +130,5 @@ export default function OidcProvider(props: OidcProviderProps) {
 
 export const Route = createFileRoute("/_menu/a/oidc/")({
     component: OidcProvider,
-    // eslint-disable-next-line
     loader: async () => await Api.admin.oidcProvider.all(),
 });

@@ -21,7 +21,6 @@ export default function AdminClubDomains(props: AdminClubDomainsProps) {
 
 export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/domains")({
     component: AdminClubDomains,
-    // eslint-disable-next-line
     loader: async ({ params }) => ({
         associated: await Api.admin.clubs.associatedDomains(params.clubId),
     }),

@@ -37,8 +37,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
             showPassword: false,
         },
         validators: {
-            // eslint-disable-next-line
-            onSubmitAsync: async ({ value, formApi }) => {
+            onSubmitAsync: async ({ value }) => {
                 const id = toast.loading(t("toast.setting-password"));
 
                 const res = await Api.common.me.setPassword({ password: value.password });
@@ -76,7 +75,6 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                         <form.Field
                             name={"password"}
                             validators={{
-                                // eslint-disable-next-line
                                 onChange: ({ value }) => {
                                     if (
                                         value !== "" &&
@@ -129,7 +127,6 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                             name={"password2"}
                             validators={{
                                 onChangeListenTo: ["password"],
-                                // eslint-disable-next-line
                                 onChange: ({ value, fieldApi }) => {
                                     if (
                                         fieldApi.getMeta().isDirty &&

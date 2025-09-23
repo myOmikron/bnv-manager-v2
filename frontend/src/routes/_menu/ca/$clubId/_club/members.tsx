@@ -146,7 +146,6 @@ type SearchParams = {
 
 export const Route = createFileRoute("/_menu/ca/$clubId/_club/members")({
     component: ClubMembers,
-    // eslint-disable-next-line
     validateSearch: (search: Record<string, unknown>): SearchParams => {
         const page = Number(search?.page ?? 1);
 
@@ -155,9 +154,7 @@ export const Route = createFileRoute("/_menu/ca/$clubId/_club/members")({
             search: search?.search as string | undefined,
         };
     },
-    // eslint-disable-next-line
     loaderDeps: ({ search: { page, search } }) => ({ page, search }),
-    // eslint-disable-next-line
     loader: async ({ params, deps }) => ({
         members: await Api.clubAdmins.club.getMembers({
             club_uuid: params.clubId,

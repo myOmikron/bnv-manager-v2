@@ -38,7 +38,6 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
             validDays: "7",
         },
         validators: {
-            // eslint-disable-next-line
             onSubmitAsync: async ({ value }) => {
                 const res = await Api.clubAdmins.invites.create(props.club, {
                     username: value.username,

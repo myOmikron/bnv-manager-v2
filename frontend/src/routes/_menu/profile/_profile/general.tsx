@@ -33,7 +33,6 @@ export default function Profile(props: ProfileProps) {
             preferredLanguage: (localStorage.getItem("preferredLang") ?? "DE") as Lang,
             theme: (localStorage.getItem("theme") ?? "system") as "system" | "light" | "dark",
         },
-        // eslint-disable-next-line
         onSubmit: async ({ value }) => {
             localStorage.setItem("preferredLang", value.preferredLanguage);
             await i18n.changeLanguage(value.preferredLanguage.toLowerCase());
