@@ -131,7 +131,9 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
             case "loading":
                 return <div></div>;
             case "unauthenticated":
-                return <Navigate to="/oidc/auth" search={{ redirect_url: window.location.pathname }} />;
+                return (
+                    <Navigate to="/oidc/auth" search={{ redirect_url: window.location.pathname, external: false }} />
+                );
             default:
                 return (
                     <ACCOUNT_CONTEXT.Provider
