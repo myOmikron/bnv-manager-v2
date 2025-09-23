@@ -25,6 +25,7 @@ use crate::http::handler_auth::token::schema::EmailClaim;
 use crate::http::handler_auth::token::schema::ProfileClaim;
 use crate::http::handler_auth::token::schema::TokenRequest;
 use crate::http::handler_auth::token::schema::TokenResponse;
+use crate::http::handler_frontend::invites::handler_common::accept_invite;
 use crate::models::account::Account;
 use crate::models::oidc_provider::OidcAuthenticationToken;
 use crate::modules::oidc::Oidc;
@@ -71,7 +72,7 @@ pub async fn get_token(
 
     #[allow(clippy::expect_used)]
     let mut claims = Claims {
-        iss: ORIGIN.join("/api/v1/auth").expect("Static url").to_string(),
+        iss: ORIGIN.to_string(),
         sub: token.account_id.0.to_string(),
         aud: token.provider.0.to_string(),
         iat: now,
@@ -108,15 +109,15 @@ pub async fn get_token(
     let id_token = jsonwebtoken::encode(&header, &claims, &encoding_key)
         .map_err(ApiError::map_server_error("Couldn't encode JWT"))?;
 
-    let access_token = Base64UrlUnpadded::encode_string(claims.sub.as_bytes());
+    let access_token = Base64UrlUnpadded::encode_string(id_token.as_bytes());
 
     OidcAuthenticationToken::delete_by_code(&mut tx, &token.code).await?;
 
     tx.commit().await?;
 
     Ok(ApiJson(TokenResponse {
-        access_token,
-        id_token,
+        access_token: access_token.clone(),
+        id_token: access_token,
         token_type: "Bearer".to_string(),
         expires_in: 300,
     }))
