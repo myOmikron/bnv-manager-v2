@@ -13,6 +13,7 @@ use galvyn::rorm::Database;
 use tracing::error;
 use tracing::info;
 use tracing::instrument;
+use tracing::warn;
 
 use crate::http::extractors::session_user::SESSION_USER;
 use crate::http::extractors::session_user::SessionUser;
@@ -52,6 +53,7 @@ pub async fn auth(Query(auth_query): Query<AuthQuery>, session: Session) -> ApiR
     stripped.set_fragment(None);
 
     if provider.redirect_uri != stripped {
+        warn!(expected = ?provider.redirect_uri, received = ?stripped, "Invalid redirect_uri");
         return Err(ApiError::bad_request("Invalid redirect_uri"));
     }
 
