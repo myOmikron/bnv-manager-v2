@@ -104,7 +104,7 @@ pub async fn sign_in(
 }
 
 /// Allowed scopes
-pub const ALLOWED_SCOPES: &[&str] = &["openid", "profile", "email"];
+pub const ALLOWED_SCOPES: &[&str] = &["openid", "profile", "email", "mailcow_template"];
 
 #[get("/finish-auth")]
 #[instrument(name = "Api::auth::finish-auth")]
