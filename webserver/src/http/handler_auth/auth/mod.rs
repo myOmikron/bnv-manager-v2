@@ -48,9 +48,11 @@ pub async fn auth(Query(auth_query): Query<AuthQuery>, session: Session) -> ApiR
         .await?
         .ok_or(ApiError::bad_request("Invalid client_id"))?;
 
+    /*
     if provider.redirect_uri != auth_query.redirect_uri {
         return Err(ApiError::bad_request("Invalid redirect_uri"));
     }
+     */
 
     tx.commit().await?;
 
