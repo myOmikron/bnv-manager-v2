@@ -20,6 +20,8 @@ export default function LinkAuthentication(props: LinkAuthenticationProps) {
 type SearchParams = {
     /** Uri to redirect to after successful authentication */
     redirect_url: string;
+    /** Whether to stay in this SPA */
+    external: true;
 };
 
 export const Route = createFileRoute("/links/oidc/auth")({
@@ -27,7 +29,8 @@ export const Route = createFileRoute("/links/oidc/auth")({
     validateSearch: (search: Record<string, unknown>): SearchParams => {
         return {
             redirect_url: search?.redirect_url as string | "/",
+            external: true,
         };
     },
-    loaderDeps: ({ search: { redirect_url } }) => ({ redirect_url }),
+    loaderDeps: ({ search: { redirect_url, external } }) => ({ redirect_url, external }),
 });

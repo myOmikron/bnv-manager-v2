@@ -58,7 +58,11 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
                     autoClose: 3500,
                 });
 
-                router.history.push(search.redirect_url);
+                if (search.external) {
+                    window.location.href = search.redirect_url;
+                } else {
+                    router.history.push(search.redirect_url);
+                }
             },
         },
     });
@@ -134,12 +138,15 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
 type SearchParams = {
     /** Uri to redirect to after successful authentication */
     redirect_url: string;
+    /** Whether to stay in this SPA */
+    external: boolean;
 };
 
 export const Route = createFileRoute("/oidc/auth")({
     component: OidcAuthentication,
     validateSearch: (search: Record<string, unknown>): SearchParams => ({
         redirect_url: (search?.redirect_url as string) || "/",
+        external: (search?.external as boolean) || false,
     }),
-    loaderDeps: ({ search: { redirect_url } }) => ({ redirect_url }),
+    loaderDeps: ({ search: { redirect_url, external } }) => ({ redirect_url, external }),
 });

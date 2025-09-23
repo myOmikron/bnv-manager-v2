@@ -47,12 +47,13 @@ pub async fn auth(Query(auth_query): Query<AuthQuery>, session: Session) -> ApiR
     let provider = OidcProvider::find_by_client_id(&mut tx, auth_query.client_id)
         .await?
         .ok_or(ApiError::bad_request("Invalid client_id"))?;
+    let mut stripped = auth_query.redirect_uri.clone();
+    stripped.set_query(None);
+    stripped.set_fragment(None);
 
-    /*
-    if provider.redirect_uri != auth_query.redirect_uri {
+    if provider.redirect_uri != stripped {
         return Err(ApiError::bad_request("Invalid redirect_uri"));
     }
-     */
 
     tx.commit().await?;
 
