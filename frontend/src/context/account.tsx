@@ -3,7 +3,7 @@ import { Api } from "src/api/api";
 import { Me } from "src/api/generated/common";
 import CONSOLE from "src/utils/console";
 import { Navigate } from "@tanstack/react-router";
-import { RequiredError, ResponseError } from "src/api/generated/admin";
+import { RequiredError, ResponseError } from "src/api/generated/common";
 
 /** The global {@link AccountProvider} instance */
 let ACCOUNT_PROVIDER: AccountProvider | null = null;
@@ -131,12 +131,7 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
             case "loading":
                 return <div></div>;
             case "unauthenticated":
-                return (
-                    <Navigate
-                        to="/oidc/auth"
-                        search={{ redirect_url: window.location.pathname + window.location.search }}
-                    />
-                );
+                return <Navigate to="/oidc/auth" search={{ redirect_url: window.location.pathname }} />;
             default:
                 return (
                     <ACCOUNT_CONTEXT.Provider

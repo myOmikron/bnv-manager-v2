@@ -51,6 +51,16 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -137,6 +147,16 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -182,6 +202,16 @@
                         }
                     },
                     "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -249,6 +279,16 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -262,41 +302,16 @@
                 "format": "uuid"
             },
             "ApiErrorResponse": {
-                "description": "The response that is sent in a case of an error",
+                "description": "The response that is sent in a case of an error the caller should report to an admin",
                 "type": "object",
                 "properties": {
-                    "message": {
-                        "description": "A human-readable error message.\n\nMay be used for displaying purposes",
-                        "type": "string"
-                    },
-                    "status_code": {
-                        "description": "The Status code for the error.\n\nImportant: Does not match http status codes",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ApiStatusCode"
-                            }
-                        ]
-                    },
                     "trace_id": {
                         "description": "ID of the opentelemetry trace this error originated in",
                         "type": "string"
                     }
                 },
                 "required": [
-                    "message",
-                    "status_code",
                     "trace_id"
-                ]
-            },
-            "ApiStatusCode": {
-                "description": "The Status code that are returned throughout the API",
-                "type": "integer",
-                "enum": [
-                    1000,
-                    1001,
-                    1002,
-                    1003,
-                    2000
                 ]
             },
             "Club": {

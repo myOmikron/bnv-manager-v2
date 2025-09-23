@@ -27,6 +27,8 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
     const search = Route.useSearch();
     const router = useRouter();
 
+    console.log(search);
+
     const form = useForm({
         defaultValues: {
             username: "",
@@ -136,10 +138,8 @@ type SearchParams = {
 
 export const Route = createFileRoute("/oidc/auth")({
     component: OidcAuthentication,
-    validateSearch: (search: Record<string, unknown>): SearchParams => {
-        return {
-            redirect_url: (search?.redirect_url as string) || "/",
-        };
-    },
+    validateSearch: (search: Record<string, unknown>): SearchParams => ({
+        redirect_url: (search?.redirect_url as string) || "/",
+    }),
     loaderDeps: ({ search: { redirect_url } }) => ({ redirect_url }),
 });

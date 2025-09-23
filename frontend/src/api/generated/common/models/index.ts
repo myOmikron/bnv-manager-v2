@@ -33,27 +33,11 @@ export interface AcceptInviteError {
     expired: boolean;
 }
 /**
- * The response that is sent in a case of an error
+ * The response that is sent in a case of an error the caller should report to an admin
  * @export
  * @interface ApiErrorResponse
  */
 export interface ApiErrorResponse {
-    /**
-     * A human-readable error message.
-     * 
-     * May be used for displaying purposes
-     * @type {string}
-     * @memberof ApiErrorResponse
-     */
-    message: string;
-    /**
-     * The Status code for the error.
-     * 
-     * Important: Does not match http status codes
-     * @type {ApiStatusCode}
-     * @memberof ApiErrorResponse
-     */
-    status_code: ApiStatusCode;
     /**
      * ID of the opentelemetry trace this error originated in
      * @type {string}
@@ -61,22 +45,6 @@ export interface ApiErrorResponse {
      */
     trace_id: string;
 }
-
-
-
-/**
- * The Status code that are returned throughout the API
- * @export
- */
-export const ApiStatusCode = {
-    NUMBER_1000: 1000,
-    NUMBER_1001: 1001,
-    NUMBER_1002: 1002,
-    NUMBER_1003: 1003,
-    NUMBER_2000: 2000
-} as const;
-export type ApiStatusCode = typeof ApiStatusCode[keyof typeof ApiStatusCode];
-
 /**
  * A club membership role.
  * @export
