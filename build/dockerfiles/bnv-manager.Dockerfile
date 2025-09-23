@@ -50,6 +50,8 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 
+RUN mkdir /var/lib/bnv-manager && chown -R $UID /var/lib/bnv-manager
+
 # Copy migrations
 COPY ./webserver/migrations /migrations
 
