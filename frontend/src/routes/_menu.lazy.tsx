@@ -2,7 +2,6 @@ import { createLazyFileRoute, Outlet } from "@tanstack/react-router";
 
 import React, { Suspense, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import USER_CONTEXT, { UserProvider } from "src/context/user";
 import {
     Sidebar,
     SidebarBody,
@@ -28,6 +27,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { Api } from "src/api/api";
 import Logo from "src/assets/bnv.svg?react";
+import ACCOUNT_CONTEXT, { AccountProvider } from "src/context/account";
 
 /**
  * The properties for {@link Menu}
@@ -40,7 +40,7 @@ export type MenuProps = {};
 function Menu(props: MenuProps) {
     const [t] = useTranslation("menu");
 
-    const ctx = useContext(USER_CONTEXT);
+    const ctx = useContext(ACCOUNT_CONTEXT);
 
     return (
         <SidebarLayout
@@ -159,10 +159,9 @@ function Menu(props: MenuProps) {
 }
 
 export const Route = createLazyFileRoute("/_menu")({
-    // eslint-disable-next-line
     component: () => (
-        <UserProvider>
+        <AccountProvider>
             <Menu />
-        </UserProvider>
+        </AccountProvider>
     ),
 });

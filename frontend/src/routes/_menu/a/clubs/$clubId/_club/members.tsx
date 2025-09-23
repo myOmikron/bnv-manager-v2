@@ -24,7 +24,7 @@ export default function ClubMembers(props: ClubMembersProps) {
     return (
         <>
             {data.total > 0 ? (
-                <>
+                <div className={"flex flex-col gap-6"}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -48,7 +48,7 @@ export default function ClubMembers(props: ClubMembersProps) {
                         currentPage={search.page}
                         getSearchParams={(newPage) => ({ page: newPage, search: search.search })}
                     />
-                </>
+                </div>
             ) : (
                 <Text>{t("label.no-members")}</Text>
             )}

@@ -22,7 +22,7 @@ function AdminClubLayout(props: AdminClubLayoutProps) {
         <AdminSingleClubProvider uuid={clubId}>
             <ADMIN_SINGLE_CLUB.Consumer>
                 {(ctx) => (
-                    <div className={"flex flex-col gap-6"}>
+                    <div className={"flex flex-col gap-3"}>
                         <BackButton className={"self-start"} href={"/a/clubs"}>
                             {t("button.back-to-overview")}
                         </BackButton>

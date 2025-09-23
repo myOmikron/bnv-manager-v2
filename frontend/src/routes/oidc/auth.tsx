@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 
 import { useTranslation } from "react-i18next";
 import { useForm } from "@tanstack/react-form";
@@ -25,6 +25,7 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
     const [t] = useTranslation("oidc-auth");
 
     const search = Route.useSearch();
+    const router = useRouter();
 
     const form = useForm({
         defaultValues: {
@@ -56,7 +57,7 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
                     autoClose: 3500,
                 });
 
-                window.location.href = search.redirect_url;
+                router.history.push(search.redirect_url);
             },
         },
     });

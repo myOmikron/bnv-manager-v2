@@ -4,7 +4,6 @@ use galvyn::core::re_exports::axum::extract::FromRequestParts;
 use galvyn::core::re_exports::axum::http::request::Parts;
 use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;
-use galvyn::core::stuff::schema::ApiStatusCode;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -32,10 +31,7 @@ impl<S: Sync + Send> FromRequestParts<S> for SessionUser {
             .get(SESSION_USER)
             .await
             .map_err(|_| ApiError::server_error("Session error"))?
-            .ok_or(ApiError::new(
-                ApiStatusCode::Unauthenticated,
-                "Session user not found",
-            ))?;
+            .ok_or(ApiError::unauthorized(""))?;
 
         Ok(session_user)
     }
