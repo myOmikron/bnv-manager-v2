@@ -51,7 +51,7 @@ function Menu(props: MenuProps) {
                     </SidebarHeader>
 
                     <SidebarBody>
-                        {ctx.user.roles.admins.map((admin) => (
+                        {ctx.account.roles.admins.map((admin) => (
                             <React.Fragment key={`ca-${admin.club_uuid}`}>
                                 <SidebarSection>
                                     <SidebarHeading className={"whitespace-pre-line"}>
@@ -66,7 +66,7 @@ function Menu(props: MenuProps) {
                             </React.Fragment>
                         ))}
 
-                        {ctx.user.roles.super_admin && (
+                        {ctx.account.roles.super_admin && (
                             <>
                                 <SidebarSection>
                                     <SidebarHeading>{t("heading.admin-settings")}</SidebarHeading>
@@ -95,10 +95,10 @@ function Menu(props: MenuProps) {
                                 <span className="grid h-10 w-full min-w-0 grid-cols-[1fr_20px] items-center gap-3">
                                     <span className="min-w-0">
                                         <span className="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">
-                                            {ctx.user.display_name}
+                                            {ctx.account.display_name}
                                         </span>
                                         <span className="block truncate text-xs/5 font-normal text-zinc-500 dark:text-zinc-400">
-                                            {ctx.user.username}
+                                            {ctx.account.username}
                                         </span>
                                     </span>
                                     <ChevronUpIcon />
@@ -129,7 +129,7 @@ function Menu(props: MenuProps) {
                     <Dropdown>
                         <DropdownButton as={NavbarItem}>
                             <UserIcon />
-                            <NavbarLabel className={"grow"}>{ctx.user.display_name}</NavbarLabel>
+                            <NavbarLabel className={"grow"}>{ctx.account.display_name}</NavbarLabel>
                             <ChevronUpIcon />
                         </DropdownButton>
                         <DropdownMenu anchor={"top end"}>

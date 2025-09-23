@@ -57,8 +57,7 @@ export async function handleError<T>(promise: Promise<T>): Promise<T> {
     } catch (e) {
         let msg;
         if (e instanceof ResponseError) {
-            const err = await parseError(e.response);
-            msg = err.message;
+            await parseError(e.response);
         } else if (e instanceof RequiredError) {
             CONSOLE.error(e);
             msg = "The server's response didn't match the spec";

@@ -2,7 +2,6 @@ import React from "react";
 import { Api } from "src/api/api";
 import { Me } from "src/api/generated/common";
 import CONSOLE from "src/utils/console";
-import { parseError, StatusCode } from "src/api/error";
 import { Navigate } from "@tanstack/react-router";
 import { RequiredError, ResponseError } from "src/api/generated/admin";
 
@@ -81,12 +80,10 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
         } catch (e) {
             let msg;
             if (e instanceof ResponseError) {
-                const err = await parseError(e.response);
-                if (err.status_code === StatusCode.Unauthenticated) {
+                if (e.response.status === 401) {
                     this.setState({ account: "unauthenticated" });
                     return;
                 }
-                msg = err.message;
             } else if (e instanceof RequiredError) {
                 CONSOLE.error(e);
                 msg = "The server's response didn't match the spec";
