@@ -28,7 +28,7 @@ FROM debian:bookworm-slim AS final
 
 RUN <<EOF
 apt-get update
-apt-get install -y libssl-dev nginx ca-certificates
+apt-get install -y libssl-dev ca-certificates
 EOF
 
 # Copy startup script
