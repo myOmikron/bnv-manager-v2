@@ -7,6 +7,7 @@ pub mod auth;
 pub mod discovery;
 pub mod jwks;
 pub mod token;
+mod userinfo;
 
 /// This page holds everything regarding authentication
 pub struct AuthPage;
@@ -22,4 +23,5 @@ pub fn initialize() -> GalvynRouter {
         .handler(discovery::discovery)
         .handler(jwks::jwks)
         .handler(token::get_token)
+        .handler(userinfo::get_userinfo)
 }

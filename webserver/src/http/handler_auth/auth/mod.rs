@@ -53,7 +53,11 @@ pub async fn auth(Query(auth_query): Query<AuthQuery>, session: Session) -> ApiR
     stripped.set_fragment(None);
 
     if provider.redirect_uri != stripped {
-        warn!(expected = ?provider.redirect_uri, received = ?stripped, "Invalid redirect_uri");
+        warn!(
+            expected = provider.redirect_uri.as_str(),
+            received = stripped.as_str(),
+            "Invalid redirect_uri"
+        );
         return Err(ApiError::bad_request("Invalid redirect_uri"));
     }
 

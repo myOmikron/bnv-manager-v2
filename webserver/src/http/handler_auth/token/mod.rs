@@ -29,7 +29,7 @@ use crate::models::account::Account;
 use crate::models::oidc_provider::OidcAuthenticationToken;
 use crate::modules::oidc::Oidc;
 
-mod schema;
+pub mod schema;
 
 #[post("/token")]
 #[instrument(name = "Api::auth::token")]
