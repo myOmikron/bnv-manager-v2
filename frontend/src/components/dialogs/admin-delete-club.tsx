@@ -10,11 +10,9 @@ import { Club } from "src/api/generated/admin";
  */
 export type AdminDeleteClubDialogProps = {
     /** The club to delete */
-    club: Club;
-
+    club?: Club;
     /** Callback to call when the popup is closed */
     onClose: () => void;
-
     /** Callback when deletion was executed */
     onDelete: () => void;
 };
@@ -26,25 +24,23 @@ export default function AdminDeleteClubDialog(props: AdminDeleteClubDialogProps)
     const [t] = useTranslation("dialog-delete-club");
     const [tg] = useTranslation();
 
-    /**
-     * Delete the club
-     */
-    const deleteClub = async () => {
-        await Api.admin.clubs.delete(props.club.uuid);
-
-        props.onDelete();
-    };
-
     return (
-        <Dialog open={true} onClose={props.onClose}>
-            <DialogTitle>{t("heading.delete-club", { club: props.club.name })}</DialogTitle>
+        <Dialog open={props.club !== undefined} onClose={props.onClose}>
+            <DialogTitle>{t("heading.delete-club", { club: props.club?.name })}</DialogTitle>
             <DialogBody>
                 <DialogDescription>{t("description.delete-club")}</DialogDescription>
                 <DialogActions>
                     <Button plain={true} onClick={props.onClose}>
                         {tg("button.cancel")}
                     </Button>
-                    <Button color={"red"} onClick={async () => deleteClub()}>
+                    <Button
+                        color={"red"}
+                        onClick={async () => {
+                            if (!props.club) return;
+                            await Api.admin.clubs.delete(props.club?.uuid);
+                            props.onDelete();
+                        }}
+                    >
                         {t("button.delete-club")}
                     </Button>
                 </DialogActions>

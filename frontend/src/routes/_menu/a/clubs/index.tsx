@@ -98,30 +98,24 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                 </Table>
             )}
 
-            {openCreateClub && (
-                <Suspense>
-                    <AdminCreateClubDialog
-                        onClose={() => setOpenCreateClub(false)}
-                        onCreate={async () => {
-                            setOpenCreateClub(false);
-                            await router.invalidate({ sync: true });
-                        }}
-                    />
-                </Suspense>
-            )}
-
-            {openDeleteClub && (
-                <Suspense>
-                    <AdminDeleteClubDialog
-                        club={openDeleteClub}
-                        onClose={() => setOpenDeleteClub(undefined)}
-                        onDelete={async () => {
-                            setOpenDeleteClub(undefined);
-                            await router.invalidate({ sync: false });
-                        }}
-                    />
-                </Suspense>
-            )}
+            <Suspense>
+                <AdminCreateClubDialog
+                    open={openCreateClub}
+                    onClose={() => setOpenCreateClub(false)}
+                    onCreate={async () => {
+                        setOpenCreateClub(false);
+                        await router.invalidate({ sync: true });
+                    }}
+                />
+                <AdminDeleteClubDialog
+                    club={openDeleteClub}
+                    onClose={() => setOpenDeleteClub(undefined)}
+                    onDelete={async () => {
+                        setOpenDeleteClub(undefined);
+                        await router.invalidate({ sync: false });
+                    }}
+                />
+            </Suspense>
         </HeadingLayout>
     );
 }

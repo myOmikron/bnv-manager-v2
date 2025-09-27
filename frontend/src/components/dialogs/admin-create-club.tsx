@@ -12,9 +12,10 @@ import { Api } from "src/api/api";
  * The properties for {@link AdminCreateClubDialog}
  */
 export type AdminCreateClubDialogProps = {
+    /** Whether the dialog is open */
+    open: boolean;
     /** What to do when the dialog is closed */
     onClose: () => void;
-
     /** What to do on creation of the new club */
     onCreate: () => void;
 };
@@ -48,11 +49,18 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
         },
         onSubmit: () => {
             props.onCreate();
+            form.reset();
         },
     });
 
     return (
-        <Dialog open={true} onClose={props.onClose}>
+        <Dialog
+            open={props.open}
+            onClose={() => {
+                props.onClose();
+                form.reset();
+            }}
+        >
             <DialogTitle>{t("heading.create-club")}</DialogTitle>
             <DialogBody>
                 <Form onSubmit={form.handleSubmit}>
@@ -93,7 +101,13 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
                             </form.Field>
 
                             <DialogActions>
-                                <Button plain={true} onClick={props.onClose}>
+                                <Button
+                                    plain={true}
+                                    onClick={() => {
+                                        props.onClose();
+                                        form.reset();
+                                    }}
+                                >
                                     {tg("button.cancel")}
                                 </Button>
                                 <PrimaryButton type={"submit"}>{t("button.create-club")}</PrimaryButton>
