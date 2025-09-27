@@ -45,7 +45,7 @@ pub struct AccountUuid(pub Uuid);
 
 impl Account {
     /// Find an account by its primary key
-    #[instrument(skip(exe))]
+    #[instrument(name = "Account::find_by_uuid", skip(exe))]
     pub async fn find_by_uuid(
         exe: impl Executor<'_>,
         AccountUuid(uuid): AccountUuid,
@@ -59,7 +59,7 @@ impl Account {
     }
 
     /// Find an account by its username
-    #[instrument(skip(exe))]
+    #[instrument(name = "Account::find_by_username", skip(exe))]
     pub async fn find_by_username(
         exe: impl Executor<'_>,
         username: &str,
@@ -76,7 +76,7 @@ impl Account {
 }
 impl Account {
     /// Set a new password for an account
-    #[instrument(skip(self, exe, password))]
+    #[instrument(name = "Account::set_password", skip(self, exe, password))]
     pub async fn set_password(
         &mut self,
         exe: impl Executor<'_>,
@@ -134,13 +134,13 @@ impl Account {
     }
 
     /// Check whether the given password matches the stored one
-    #[instrument(skip(self, password))]
+    #[instrument(name = "Account::check_password", skip(self, password))]
     pub fn check_password(&self, password: MaxStr<72>) -> anyhow::Result<bool> {
         bcrypt::verify(&*password, &self.hashed_password).map_err(|err| anyhow!("{err}"))
     }
 
     /// Add a new role to the account
-    #[instrument(skip(self, exe))]
+    #[instrument(name = "Account::add_role", skip(self, exe))]
     pub async fn add_role(&self, exe: impl Executor<'_>, role: Role) -> anyhow::Result<()> {
         let mut guard = exe.ensure_transaction().await?;
 
@@ -189,7 +189,7 @@ impl Account {
     }
 
     /// Remove an existing role from the account
-    #[instrument(skip(self, exe))]
+    #[instrument(name = "Account::remove_role", skip(self, exe))]
     pub async fn remove_role(&self, exe: impl Executor<'_>, role: Role) -> anyhow::Result<()> {
         let mut guard = exe.ensure_transaction().await?;
 
@@ -227,7 +227,7 @@ impl Account {
     }
 
     /// Retrieve the current roles of the user
-    #[instrument(skip(self, exe))]
+    #[instrument(name = "Account::roles", skip(self, exe))]
     pub async fn roles(&self, exe: impl Executor<'_>) -> anyhow::Result<Vec<Role>> {
         let mut roles = vec![];
 

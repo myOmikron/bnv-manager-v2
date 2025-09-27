@@ -21,6 +21,7 @@ use crate::models::account::Account;
 use crate::models::account::db::AccountModel;
 use crate::models::club::db::ClubModel;
 use crate::models::club::db::ClubModelInsert;
+use crate::models::domain::db::DomainModel;
 use crate::models::role::db::ClubAdminModel;
 use crate::models::role::db::ClubMemberModel;
 
@@ -51,9 +52,17 @@ impl Club {
     /// Delete a club
     #[instrument(name = "Club::delete", skip(self, exe))]
     pub async fn delete(self, exe: impl Executor<'_>) -> anyhow::Result<()> {
-        rorm::delete(exe, ClubModel)
+        let mut guard = exe.ensure_transaction().await?;
+
+        rorm::delete(guard.get_transaction(), DomainModel)
+            .condition(DomainModel.club.equals(self.uuid.0))
+            .await?;
+
+        rorm::delete(guard.get_transaction(), ClubModel)
             .condition(ClubModel.uuid.equals(self.uuid.0))
             .await?;
+
+        guard.commit().await?;
 
         Ok(())
     }
