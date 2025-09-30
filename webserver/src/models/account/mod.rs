@@ -272,7 +272,8 @@ impl Account {
 }
 
 impl Account {
-    pub(in crate::models) fn hash_password(password: &str) -> Result<String, bcrypt::BcryptError> {
+    /// Hash a password
+    pub fn hash_password(password: &str) -> Result<String, bcrypt::BcryptError> {
         const HASH_COST: u32 = 12;
         bcrypt::hash(password, HASH_COST)
     }

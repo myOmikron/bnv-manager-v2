@@ -28,6 +28,7 @@ use crate::models::club::CreateClub;
 use crate::models::domain::Domain;
 use crate::models::invite::Invite;
 use crate::models::role::Role;
+use crate::modules::mailcow::Mailcow;
 
 #[get("/")]
 #[instrument(name = "Api::admin::get_clubs")]
@@ -91,6 +92,23 @@ pub async fn delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResu
 
     let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid)).await?;
     if let Some(club) = club {
+        // Delete club admins for the given club in mailcow
+        let admins = club
+            .admins_page(&mut tx, i64::MAX as u64, 0, None)
+            .await?
+            .items
+            .into_iter()
+            .map(|x| x.username.into_inner())
+            .collect();
+
+        Mailcow::global()
+            .sdk
+            .delete_domain_admins(admins)
+            .await
+            .map_err(ApiError::map_server_error(
+                "Couldn't delete domain admins in mailcow",
+            ))?;
+
         club.delete(&mut tx).await?;
     }
 

@@ -20,4 +20,6 @@ pub enum MailcowError {
         error: serde_json::Error,
         original: String,
     },
+    #[error("Got invalid and unexpected data")]
+    UnknownError,
 }

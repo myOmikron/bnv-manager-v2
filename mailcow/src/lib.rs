@@ -45,6 +45,7 @@ use tracing::instrument;
 
 use crate::error::MailcowResult;
 
+pub mod domain_admins;
 pub mod domains;
 pub mod error;
 mod status;
