@@ -1,4 +1,3 @@
-use base64ct::LineEnding;
 use galvyn::core::Module;
 use galvyn::core::re_exports::axum::http::HeaderMap;
 use galvyn::core::stuff::api_error::ApiError;
@@ -6,6 +5,7 @@ use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::get;
 use jsonwebtoken::Validation;
+use rsa::pkcs1::LineEnding;
 use rsa::pkcs8::EncodePublicKey;
 use tracing::instrument;
 

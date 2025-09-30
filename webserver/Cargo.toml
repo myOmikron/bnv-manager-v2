@@ -49,7 +49,6 @@ time = { version = "~0.3" }
 rorm = { version = "~0.7", default-features = false, features = ["time", "url", "cli", "uuid", "postgres-only"] }
 # Custom DB enums
 linkme = { version = "~0.3" }
-strum = { version = "~0.27", features = ["derive"] }
 
 # Async
 tokio = { version = "~1", features = ["full"] }
@@ -57,7 +56,6 @@ futures-util = { version = "~0.3" }
 
 # Serialization
 serde = { version = "~1", features = ["derive"] }
-serde_repr = { version = "~0.1" }
 serde_json = { version = "~1" }
 
 

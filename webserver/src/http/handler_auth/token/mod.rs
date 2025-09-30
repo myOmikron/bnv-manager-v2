@@ -3,8 +3,6 @@
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 
-use base64ct::Base64UrlUnpadded;
-use base64ct::Encoding;
 use base64ct::LineEnding;
 use galvyn::core::Module;
 use galvyn::core::re_exports::axum::Form;
@@ -108,15 +106,13 @@ pub async fn get_token(
     let id_token = jsonwebtoken::encode(&header, &claims, &encoding_key)
         .map_err(ApiError::map_server_error("Couldn't encode JWT"))?;
 
-    let access_token = Base64UrlUnpadded::encode_string(id_token.as_bytes());
-
     OidcAuthenticationToken::delete_by_code(&mut tx, &token.code).await?;
 
     tx.commit().await?;
 
     Ok(ApiJson(TokenResponse {
-        access_token: access_token.clone(),
-        id_token: access_token,
+        access_token: id_token.clone(),
+        id_token,
         token_type: "Bearer".to_string(),
         expires_in: 300,
     }))
