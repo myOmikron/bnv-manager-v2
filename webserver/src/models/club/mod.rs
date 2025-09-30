@@ -11,6 +11,7 @@ use rorm::conditions::DynamicCollection;
 use rorm::db::Executor;
 use rorm::db::transaction::Transaction;
 use rorm::fields::types::MaxStr;
+use rorm::prelude::ForeignModelByField;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
@@ -21,6 +22,7 @@ use crate::models::account::Account;
 use crate::models::account::db::AccountModel;
 use crate::models::club::db::ClubModel;
 use crate::models::club::db::ClubModelInsert;
+use crate::models::domain::DomainUuid;
 use crate::models::domain::db::DomainModel;
 use crate::models::role::db::ClubAdminModel;
 use crate::models::role::db::ClubMemberModel;
@@ -171,6 +173,22 @@ impl Club {
         })
     }
 
+    /// Associate an existing domain with this club
+    #[instrument(name = "Club::associate_domain", skip(exe, self))]
+    pub async fn associate_domain(
+        &self,
+        exe: impl Executor<'_>,
+        domain: DomainUuid,
+        is_primary: bool,
+    ) -> anyhow::Result<()> {
+        rorm::update(exe, DomainModel)
+            .set(DomainModel.club, Some(ForeignModelByField(self.uuid.0)))
+            .set(DomainModel.is_primary, is_primary)
+            .condition(DomainModel.uuid.equals(domain.0))
+            .await?;
+        Ok(())
+    }
+
     /// Retrieve all members of a club
     #[instrument(name = "Club::members", skip(exe, self))]
     pub async fn members_page(
@@ -191,9 +209,9 @@ impl Club {
                     snd_arg: conditions::Value::String(Cow::Owned(format!(
                         "%{}%",
                         search
+                            .replace('\\', "\\\\")
                             .replace('_', "\\_")
-                            .replace('%', "\\%")
-                            .replace('\\', "\\\\"),
+                            .replace('%', "\\%"),
                     ))),
                 }
                 .boxed(),

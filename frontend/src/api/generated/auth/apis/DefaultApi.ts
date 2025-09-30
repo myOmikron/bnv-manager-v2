@@ -187,7 +187,8 @@ export class DefaultApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['code'] != null) {
-            formParams.append('code', requestParameters['code'] as any);
+
+            formParams.append('code', new Blob([JSON.stringify(requestParameters['code'])], { type: "application/json", }));
         }
 
         if (requestParameters['grant_type'] != null) {
@@ -214,6 +215,29 @@ export class DefaultApi extends runtime.BaseAPI {
     async getToken(requestParameters: GetTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TokenResponse> {
         const response = await this.getTokenRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     */
+    async getUserinfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/auth/userinfo`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async getUserinfo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.getUserinfoRaw(initOverrides);
     }
 
     /**

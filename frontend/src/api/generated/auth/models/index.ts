@@ -88,31 +88,31 @@ export interface SignInRequest {
     username: string;
 }
 /**
- * 
+ * Token response
  * @export
  * @interface TokenResponse
  */
 export interface TokenResponse {
     /**
-     * 
+     * Access token
      * @type {string}
      * @memberof TokenResponse
      */
     access_token: string;
     /**
-     * 
+     * Expires in
      * @type {number}
      * @memberof TokenResponse
      */
     expires_in: number;
     /**
-     * 
+     * Access token
      * @type {string}
      * @memberof TokenResponse
      */
     id_token: string;
     /**
-     * 
+     * Type of the token
      * @type {string}
      * @memberof TokenResponse
      */

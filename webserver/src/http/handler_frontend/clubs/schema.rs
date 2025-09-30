@@ -6,6 +6,7 @@ use serde::Serialize;
 
 use crate::models;
 use crate::models::club::ClubUuid;
+use crate::models::domain::DomainUuid;
 
 /// A single club
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -30,7 +31,7 @@ pub struct CreateClubRequest {
     /// Name of the club
     pub name: MaxStr<255>,
     /// Primary domain of the club
-    pub primary_domain: MaxStr<255>,
+    pub primary_domain: DomainUuid,
 }
 
 /// Error when creating a club
@@ -38,8 +39,8 @@ pub struct CreateClubRequest {
 pub struct CreateClubError {
     /// Whether the club name already exists
     pub name_already_exists: bool,
-    /// Domain already exists
-    pub domain_already_exists: bool,
+    /// The domain is already associated with another club and can't be reused
+    pub domain_already_associated: bool,
 }
 
 /// Parameters for pagination

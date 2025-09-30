@@ -47,6 +47,18 @@ impl Domain {
             .await?)
     }
 
+    /// Find all unassociated domains
+    #[instrument(name = "Domain::find_all_unassociated", skip(exe))]
+    pub async fn find_all_unassociated(exe: impl Executor<'_>) -> anyhow::Result<Vec<Self>> {
+        Ok(rorm::query(exe, DomainModel)
+            .condition(DomainModel.club.is_none())
+            .order_asc(DomainModel.domain)
+            .stream()
+            .map_ok(Domain::from)
+            .try_collect()
+            .await?)
+    }
+
     /// Find all domains that are associated with a club
     #[instrument(name = "Domain::find_all_by_club", skip(exe))]
     pub async fn find_all_by_club(
@@ -71,6 +83,19 @@ impl Domain {
         Ok(rorm::query(exe, DomainModel)
             .order_asc(DomainModel.domain)
             .condition(DomainModel.domain.equals(&**domain))
+            .optional()
+            .await?
+            .map(Domain::from))
+    }
+
+    /// Find a domain by its uuid
+    #[instrument(name = "Domain::find_by_uuid", skip(exe))]
+    pub async fn find_by_uuid(
+        exe: impl Executor<'_>,
+        domain: DomainUuid,
+    ) -> anyhow::Result<Option<Self>> {
+        Ok(rorm::query(exe, DomainModel)
+            .condition(DomainModel.uuid.equals(domain.0))
             .optional()
             .await?
             .map(Domain::from))

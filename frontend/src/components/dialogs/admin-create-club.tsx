@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
@@ -7,6 +7,8 @@ import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/co
 import { Input } from "src/components/base/input";
 import { Button, PrimaryButton } from "src/components/base/button";
 import { Api } from "src/api/api";
+import { Domain } from "src/api/generated/admin";
+import { Combobox, ComboboxLabel, ComboboxOption } from "src/components/base/combobox";
 
 /**
  * The properties for {@link AdminCreateClubDialog}
@@ -27,14 +29,23 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
     const [t] = useTranslation("dialog-create-club");
     const [tg] = useTranslation();
 
+    const [domains, setDomains] = React.useState<Array<Domain>>([]);
+
     const form = useForm({
         defaultValues: {
             name: "",
-            primaryDomain: "",
+            primaryDomain: null as Domain | null | undefined,
         },
         validators: {
             onSubmitAsync: async ({ value }) => {
-                const res = await Api.admin.clubs.create({ name: value.name, primary_domain: value.primaryDomain });
+                if (!value.primaryDomain) {
+                    return { fields: { primaryDomain: t("error.missing-value") } };
+                }
+
+                const res = await Api.admin.clubs.create({
+                    name: value.name,
+                    primary_domain: value.primaryDomain.uuid,
+                });
                 if (res.result === "Err") {
                     return {
                         fields: {
@@ -52,6 +63,15 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
             form.reset();
         },
     });
+
+    const retrieveUnassociatedDomains = async () => {
+        const domains = await Api.admin.domains.unassociated();
+        setDomains(domains);
+    };
+
+    useEffect(() => {
+        retrieveUnassociatedDomains().then();
+    }, [props.open]);
 
     return (
         <Dialog
@@ -88,11 +108,19 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
                                 {(fieldApi) => (
                                     <Field>
                                         <RequiredLabel>{t("label.primary-domain")}</RequiredLabel>
-                                        <Input
-                                            required={true}
+                                        <Combobox
+                                            options={domains}
+                                            displayValue={(d) => (d ? d.domain : "")}
+                                            invalid={fieldApi.state.meta.errors.length > 0}
                                             value={fieldApi.state.value}
-                                            onChange={(e) => fieldApi.handleChange(e.target.value)}
-                                        />
+                                            onChange={(d) => fieldApi.handleChange(d)}
+                                        >
+                                            {(domain) => (
+                                                <ComboboxOption value={domain}>
+                                                    <ComboboxLabel>{domain.domain}</ComboboxLabel>
+                                                </ComboboxOption>
+                                            )}
+                                        </Combobox>
                                         {fieldApi.state.meta.errors.map((err) => (
                                             <ErrorMessage>{err}</ErrorMessage>
                                         ))}

@@ -64,19 +64,24 @@ pub async fn create_club(
         })));
     }
 
-    let existing_domain = Domain::find_by_domain(&mut tx, &primary_domain).await?;
-    if existing_domain.is_some() {
+    let existing_domain = Domain::find_by_uuid(&mut tx, primary_domain)
+        .await?
+        .ok_or(ApiError::bad_request("Domain not found"))?;
+
+    if existing_domain.associated_club.is_some() {
         return Ok(ApiJson(FormResult::err(CreateClubError {
-            domain_already_exists: true,
+            domain_already_associated: true,
             ..Default::default()
         })));
     }
 
-    let uuid = Club::create(&mut tx, CreateClub { name }).await?.uuid;
+    let club = Club::create(&mut tx, CreateClub { name }).await?;
+    club.associate_domain(&mut tx, existing_domain.uuid, true)
+        .await?;
 
     tx.commit().await?;
 
-    Ok(ApiJson(FormResult::ok(uuid)))
+    Ok(ApiJson(FormResult::ok(club.uuid)))
 }
 
 #[delete("/{uuid}")]
