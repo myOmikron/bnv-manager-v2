@@ -103,7 +103,17 @@ pub async fn get_token(
             .as_bytes(),
     )
     .map_err(ApiError::map_server_error("Couldn't parse key"))?;
+
     let id_token = jsonwebtoken::encode(&header, &claims, &encoding_key)
+        .map_err(ApiError::map_server_error("Couldn't encode JWT"))?;
+
+    claims.aud = ORIGIN
+        .get()
+        .join("api/v1/auth/userinfo")
+        .expect("valid url")
+        .to_string();
+
+    let access_token = jsonwebtoken::encode(&header, &claims, &encoding_key)
         .map_err(ApiError::map_server_error("Couldn't encode JWT"))?;
 
     OidcAuthenticationToken::delete_by_code(&mut tx, &token.code).await?;
@@ -111,7 +121,7 @@ pub async fn get_token(
     tx.commit().await?;
 
     Ok(ApiJson(TokenResponse {
-        access_token: id_token.clone(),
+        access_token,
         id_token,
         token_type: "Bearer".to_string(),
         expires_in: 300,
