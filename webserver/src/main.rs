@@ -12,7 +12,6 @@ use galvyn::GalvynSetup;
 use galvyn::core::DatabaseSetup;
 use galvyn::rorm::Database;
 use rorm::DatabaseConfiguration;
-use rorm::cli as rorm_cli;
 use rorm::fields::types::MaxStr;
 use time::Duration;
 use time::OffsetDateTime;
@@ -84,6 +83,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         #[cfg(debug_assertions)]
         Command::MakeMigrations { migrations_dir } => {
             use std::io::Write;
+
+            use rorm::cli as rorm_cli;
 
             const MODELS: &str = "/tmp/.models.json";
 
