@@ -1,9 +1,12 @@
+use galvyn::core::Module;
+use galvyn::rorm::Database;
 use mailcow::MailcowClient;
 use tracing::Instrument;
 use tracing::error;
 use tracing::info;
 use tracing::info_span;
 
+use crate::models::domain::Domain;
 use crate::utils::worker::Worker;
 
 /// Synchronization worker
@@ -31,6 +34,8 @@ impl SyncWorker {
     pub async fn run_once(&self) -> anyhow::Result<()> {
         let domains = self.sdk.get_all_domains().await?;
         info!(domains = ?domains, "Got domains");
+
+        Domain::sync_mailcow_domains(Database::global(), domains).await?;
 
         Ok(())
     }

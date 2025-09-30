@@ -15,4 +15,6 @@ pub struct DomainModel {
     pub club: Option<ForeignModel<ClubModel>>,
     #[rorm(default = "false")]
     pub is_primary: bool,
+    /// How many mailboxes can be created on this domain
+    pub mailboxes_left: i64,
 }

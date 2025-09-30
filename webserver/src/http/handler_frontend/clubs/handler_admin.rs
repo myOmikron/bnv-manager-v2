@@ -25,7 +25,6 @@ use crate::http::handler_frontend::invites::GetInvite;
 use crate::models::club::Club;
 use crate::models::club::ClubUuid;
 use crate::models::club::CreateClub;
-use crate::models::domain::CreateDomain;
 use crate::models::domain::Domain;
 use crate::models::invite::Invite;
 use crate::models::role::Role;
@@ -74,15 +73,6 @@ pub async fn create_club(
     }
 
     let uuid = Club::create(&mut tx, CreateClub { name }).await?.uuid;
-    Domain::create(
-        &mut tx,
-        CreateDomain {
-            domain: primary_domain,
-            club: Some(uuid),
-            is_primary: true,
-        },
-    )
-    .await?;
 
     tx.commit().await?;
 

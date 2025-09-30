@@ -4,9 +4,9 @@
 //! It includes queries to find domains based on their association status with clubs.
 
 use futures_util::TryStreamExt;
+use mailcow::domains::schema::MailcowDomain;
 use rorm::db::Executor;
 use rorm::fields::types::MaxStr;
-use rorm::prelude::ForeignModelByField;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
@@ -89,26 +89,63 @@ impl Domain {
         Ok(())
     }
 
-    /// Create a new domain
-    #[instrument(name = "Domain::create", skip(exe))]
-    pub async fn create(
+    /// Sync new mailcow domains
+    ///
+    /// Existing domains are updated, if necessary.
+    /// New domains will be created
+    #[instrument(name = "Domain::sync_mailcow_domains", skip(exe))]
+    pub async fn sync_mailcow_domains(
         exe: impl Executor<'_>,
-        CreateDomain {
-            domain,
-            club,
-            is_primary,
-        }: CreateDomain,
-    ) -> anyhow::Result<Self> {
-        let domain = rorm::insert(exe, DomainModel)
-            .single(&DomainModel {
-                uuid: Uuid::new_v4(),
-                domain,
-                club: club.map(|club| ForeignModelByField(club.0)),
-                is_primary,
-            })
+        mailcow_domains: Vec<MailcowDomain>,
+    ) -> anyhow::Result<()> {
+        let mut guard = exe.ensure_transaction().await?;
+
+        let existing = rorm::query(guard.get_transaction(), DomainModel)
+            .all()
             .await?;
 
-        Ok(Self::from(domain))
+        // Remove domains that don't exist in mailcow anymore
+        for domain in &existing {
+            if !mailcow_domains
+                .iter()
+                .any(|x| x.domain_name == *domain.domain)
+            {
+                rorm::delete(guard.get_transaction(), DomainModel)
+                    .condition(DomainModel.uuid.equals(domain.uuid))
+                    .await?;
+            }
+        }
+
+        // Update existing domains
+        let mut to_add = vec![];
+        for domain in mailcow_domains {
+            if existing
+                .iter()
+                .any(|x| &*x.domain == domain.domain_name.as_str())
+            {
+                rorm::update(guard.get_transaction(), DomainModel)
+                    .set(DomainModel.mailboxes_left, domain.mboxes_left as i64)
+                    .condition(DomainModel.domain.equals(&domain.domain_name))
+                    .await?;
+            } else {
+                to_add.push(DomainModel {
+                    uuid: Uuid::new_v4(),
+                    domain: MaxStr::new(domain.domain_name)?,
+                    club: None,
+                    is_primary: false,
+                    mailboxes_left: domain.mboxes_left as i64,
+                });
+            }
+        }
+
+        // Insert new domains
+        rorm::insert(guard.get_transaction(), DomainModel)
+            .bulk(to_add)
+            .await?;
+
+        guard.commit().await?;
+
+        Ok(())
     }
 }
 

@@ -1,7 +1,9 @@
+//! Endpoints for managing domains in mailcow
+
 use tracing::instrument;
 
 use crate::MailcowClient;
-use crate::domains::schema::Domain;
+use crate::domains::schema::MailcowDomain;
 use crate::error::MailcowResult;
 
 pub mod schema;
@@ -12,7 +14,7 @@ impl MailcowClient {
     /// This function makes a GET request to the Mailcow API endpoint `/api/v1/get/domain/all`
     /// to fetch a list of all domains managed by the Mailcow server.
     #[instrument(name = "MailcowClient::get_all_domains", skip(self))]
-    pub async fn get_all_domains(&self) -> MailcowResult<Vec<Domain>> {
+    pub async fn get_all_domains(&self) -> MailcowResult<Vec<MailcowDomain>> {
         self.get("/api/v1/get/domain/all").send().await
     }
 }
