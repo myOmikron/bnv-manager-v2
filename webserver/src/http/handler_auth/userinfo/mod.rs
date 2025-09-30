@@ -3,11 +3,10 @@ use galvyn::core::Module;
 use galvyn::core::re_exports::axum::http::HeaderMap;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
+use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::get;
-use galvyn::rorm::Database;
 use jsonwebtoken::Validation;
 use rsa::pkcs8::EncodePublicKey;
-use tracing::info;
 use tracing::instrument;
 
 use crate::modules::oidc::Oidc;
@@ -16,9 +15,7 @@ mod schema;
 
 #[get("/userinfo")]
 #[instrument(name = "Api::auth::userinfo")]
-pub async fn get_userinfo(headers: HeaderMap) -> ApiResult<()> {
-    let mut tx = Database::global().start_transaction().await?;
-
+pub async fn get_userinfo(headers: HeaderMap) -> ApiResult<ApiJson<schema::Claims>> {
     let Some(header) = headers.get("Authorization") else {
         return Err(ApiError::bad_request("Missing Authorization header"));
     };
@@ -44,8 +41,9 @@ pub async fn get_userinfo(headers: HeaderMap) -> ApiResult<()> {
     )
     .map_err(ApiError::map_server_error("Invalid token"))?;
 
-    info!(token_data = ?token);
-
-    tx.commit().await?;
-    Ok(())
+    Ok(ApiJson(schema::Claims {
+        sub: token.claims.sub,
+        email_claim: token.claims.email_claim,
+        profile_claim: token.claims.profile_claim,
+    }))
 }

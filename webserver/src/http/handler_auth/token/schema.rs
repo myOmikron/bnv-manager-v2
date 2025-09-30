@@ -53,7 +53,7 @@ pub struct Claims {
 }
 
 /// Data for the email scope
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default, JsonSchema)]
 pub struct EmailClaim {
     /// The email
     pub email: String,
@@ -62,7 +62,7 @@ pub struct EmailClaim {
 }
 
 /// Data for the profile scope
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default, JsonSchema)]
 pub struct ProfileClaim {
     /// Preferred username
     pub preferred_username: String,
