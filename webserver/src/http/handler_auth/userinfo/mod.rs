@@ -4,6 +4,7 @@ use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::get;
+use jsonwebtoken::Algorithm;
 use jsonwebtoken::Validation;
 use rsa::pkcs1::LineEnding;
 use rsa::pkcs8::EncodePublicKey;
@@ -37,7 +38,7 @@ pub async fn get_userinfo(headers: HeaderMap) -> ApiResult<ApiJson<schema::Claim
                 .as_bytes(),
         )
         .map_err(ApiError::map_server_error("Couldn't parse key"))?,
-        &Validation::default(),
+        &Validation::new(Algorithm::RS256),
     )
     .map_err(ApiError::map_server_error("Invalid token"))?;
 
