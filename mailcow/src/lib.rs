@@ -54,6 +54,7 @@ mod utils;
 ///
 /// This struct provides methods to communicate with a Mailcow mail server API,
 /// handling HTTP requests and responses with proper error handling.
+#[derive(Debug, Clone)]
 pub struct MailcowClient {
     client: Client,
     base_url: Url,

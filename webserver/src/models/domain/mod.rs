@@ -26,7 +26,7 @@ pub struct Domain {
     /// Domain
     pub domain: MaxStr<255>,
     /// Associated club
-    pub associated_club: ClubUuid,
+    pub associated_club: Option<ClubUuid>,
     /// The primary domain for a club
     pub is_primary: bool,
 }
@@ -103,7 +103,7 @@ impl Domain {
             .single(&DomainModel {
                 uuid: Uuid::new_v4(),
                 domain,
-                club: ForeignModelByField(club.0),
+                club: club.map(|club| ForeignModelByField(club.0)),
                 is_primary,
             })
             .await?;
@@ -118,7 +118,7 @@ pub struct CreateDomain {
     /// Domain
     pub domain: MaxStr<255>,
     /// Associated club
-    pub club: ClubUuid,
+    pub club: Option<ClubUuid>,
     /// Whether this is the primary domain for the club
     pub is_primary: bool,
 }
@@ -128,7 +128,7 @@ impl From<DomainModel> for Domain {
         Self {
             uuid: DomainUuid(value.uuid),
             domain: value.domain,
-            associated_club: ClubUuid(value.club.0),
+            associated_club: value.club.map(|club| ClubUuid(club.0)),
             is_primary: value.is_primary,
         }
     }

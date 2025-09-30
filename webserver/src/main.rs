@@ -5,6 +5,7 @@
 use std::error::Error;
 
 use ::tracing::error;
+use ::tracing::instrument;
 use clap::Parser;
 use galvyn::Galvyn;
 use galvyn::GalvynSetup;
@@ -39,6 +40,7 @@ pub mod modules;
 pub mod tracing;
 pub mod utils;
 
+#[instrument]
 async fn start() -> Result<(), Box<dyn Error>> {
     let router = Galvyn::builder(GalvynSetup::default())
         .register_module::<Database>(DatabaseSetup::Custom(DatabaseConfiguration::new(
@@ -73,7 +75,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
     match cli.command {
-        Command::Start => start().await?,
+        Command::Start => {
+            if let Err(err) = start().await {
+                error!("{err}");
+                return Err(err);
+            }
+        }
         #[cfg(debug_assertions)]
         Command::MakeMigrations { migrations_dir } => {
             use std::io::Write;

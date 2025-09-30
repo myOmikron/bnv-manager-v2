@@ -12,7 +12,7 @@ pub struct DomainModel {
     pub uuid: Uuid,
     #[rorm(unique)]
     pub domain: MaxStr<255>,
-    pub club: ForeignModel<ClubModel>,
+    pub club: Option<ForeignModel<ClubModel>>,
     #[rorm(default = "false")]
     pub is_primary: bool,
 }

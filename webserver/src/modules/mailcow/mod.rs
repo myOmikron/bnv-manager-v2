@@ -17,11 +17,18 @@ use tracing::instrument;
 use crate::config::DISABLE_MAILCOW;
 use crate::config::MAILCOW_API_KEY;
 use crate::config::MAILCOW_BASE_URL;
+use crate::modules::mailcow::sync::SyncWorker;
+use crate::utils::worker::Worker;
+use crate::utils::worker::WorkerHandle;
+
+mod sync;
 
 /// galvyn module that serves as the main entry point for interacting with the Mailcow API.
 pub struct Mailcow {
     /// SDK client
     pub sdk: MailcowClient,
+    /// Synchronization worker
+    pub sync_worker: WorkerHandle<SyncWorker>,
 }
 
 impl Module for Mailcow {
@@ -46,6 +53,9 @@ impl Module for Mailcow {
             info!("Mailcow is running version: {}", version.version);
         }
 
-        Ok(Self { sdk })
+        Ok(Self {
+            sdk: sdk.clone(),
+            sync_worker: SyncWorker { sdk }.spawn(),
+        })
     }
 }

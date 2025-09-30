@@ -78,7 +78,7 @@ pub async fn create_club(
         &mut tx,
         CreateDomain {
             domain: primary_domain,
-            club: uuid,
+            club: Some(uuid),
             is_primary: true,
         },
     )

@@ -15,7 +15,7 @@ pub enum MailcowError {
     Reqwest(#[from] reqwest::Error),
     #[error("Access denied for this action")]
     Unauthorized,
-    #[error("Error deserializing response")]
+    #[error("Error deserializing response, {error}, {original}")]
     Deserialize {
         error: serde_json::Error,
         original: String,

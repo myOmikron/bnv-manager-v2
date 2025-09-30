@@ -25,7 +25,6 @@ use crate::http::handler_auth::token::schema::EmailClaim;
 use crate::http::handler_auth::token::schema::ProfileClaim;
 use crate::http::handler_auth::token::schema::TokenRequest;
 use crate::http::handler_auth::token::schema::TokenResponse;
-use crate::http::handler_frontend::invites::handler_common::accept_invite;
 use crate::models::account::Account;
 use crate::models::oidc_provider::OidcAuthenticationToken;
 use crate::modules::oidc::Oidc;
