@@ -27,8 +27,6 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
     const search = Route.useSearch();
     const router = useRouter();
 
-    console.log(search);
-
     const form = useForm({
         defaultValues: {
             username: "",

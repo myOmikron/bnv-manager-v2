@@ -1,4 +1,5 @@
 use rorm::Model;
+use rorm::fields::types::MaxStr;
 use rorm::prelude::ForeignModel;
 use uuid::Uuid;
 
@@ -14,6 +15,8 @@ pub struct ClubMemberModel {
     pub account: ForeignModel<AccountModel>,
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub club: ForeignModel<ClubModel>,
+    #[rorm(unique)]
+    pub email: MaxStr<255>,
 }
 
 #[derive(Debug, Model)]

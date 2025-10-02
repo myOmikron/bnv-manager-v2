@@ -423,11 +423,20 @@
                                 "$ref": "#/components/schemas/ClubUuid"
                             }
                         ]
+                    },
+                    "email": {
+                        "description": "Primary mail in the club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
                     }
                 },
                 "required": [
                     "club_name",
-                    "club_uuid"
+                    "club_uuid",
+                    "email"
                 ]
             },
             "ClubUuid": {

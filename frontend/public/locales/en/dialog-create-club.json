@@ -3,7 +3,8 @@
         "create-club": "Create club"
     },
     "error": {
-        "domain-already-occupied": "Domain is already occupied.",
+        "domain-already-associated": "The domain is already associated with another club.",
+        "missing-value": "Missing value.",
         "name-already-occupied": "Name is already taken."
     },
     "heading": {

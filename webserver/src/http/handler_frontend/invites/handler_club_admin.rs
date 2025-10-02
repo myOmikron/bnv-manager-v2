@@ -27,6 +27,7 @@ pub async fn create_member_invite(
     ApiJson(CreateMemberInviteRequest {
         username,
         display_name,
+        email,
         valid_days,
     }): ApiJson<CreateMemberInviteRequest>,
 ) -> ApiResult<ApiJson<FormResult<SingleLink, CreateInviteError>>> {
@@ -37,7 +38,7 @@ pub async fn create_member_invite(
         CreateInviteParams {
             username,
             display_name,
-            roles: vec![Role::ClubMember { club_uuid }],
+            roles: vec![Role::ClubMember { club_uuid, email }],
             expires_at: OffsetDateTime::now_utc() + Duration::days(valid_days.get() as i64),
         },
     )

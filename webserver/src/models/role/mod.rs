@@ -2,6 +2,7 @@
 
 use futures_util::TryStreamExt;
 use rorm::db::Executor;
+use rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
 use tracing::instrument;
 
@@ -20,7 +21,12 @@ pub enum Role {
     /// The admin of a club. Can manage users and settings of its club
     ClubAdmin { club_uuid: ClubUuid },
     /// A member of a club.
-    ClubMember { club_uuid: ClubUuid },
+    ClubMember {
+        /// UUID of the club
+        club_uuid: ClubUuid,
+        /// Mail of the user for that club
+        email: MaxStr<255>,
+    },
     /// The super administrator. Has rights to manager clubs.
     SuperAdmin,
 }

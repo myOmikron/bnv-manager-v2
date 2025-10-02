@@ -76,9 +76,14 @@ pub async fn create_club(
         })));
     }
 
-    let club = Club::create(&mut tx, CreateClub { name }).await?;
-    club.associate_domain(&mut tx, existing_domain.uuid, true)
-        .await?;
+    let club = Club::create(
+        &mut tx,
+        CreateClub {
+            name,
+            primary_domain: &existing_domain,
+        },
+    )
+    .await?;
 
     tx.commit().await?;
 
@@ -221,8 +226,13 @@ pub async fn get_club_member_invites(
         .into_iter()
         .filter_map(|x| {
             x.roles
-                .contains(&Role::ClubMember {
-                    club_uuid: ClubUuid(uuid),
+                .iter()
+                .any(|role| {
+                    if let Role::ClubMember { club_uuid, .. } = role {
+                        *club_uuid == ClubUuid(uuid)
+                    } else {
+                        false
+                    }
                 })
                 .then(|| GetInvite::from(x))
         })

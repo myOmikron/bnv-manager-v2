@@ -50,6 +50,12 @@ export interface Club {
      */
     name: string;
     /**
+     * Primary domain of the club
+     * @type {string}
+     * @memberof Club
+     */
+    primary_domain: string;
+    /**
      * Primary key of a club
      * @type {string}
      * @memberof Club
@@ -81,6 +87,12 @@ export interface CreateMemberInviteRequest {
      * @memberof CreateMemberInviteRequest
      */
     display_name: string;
+    /**
+     * Email of the user
+     * @type {string}
+     * @memberof CreateMemberInviteRequest
+     */
+    email: string;
     /**
      * Reserved username
      * @type {string}

@@ -100,6 +100,7 @@ impl Invite {
             .stream()
             .map_ok(|x| Role::ClubMember {
                 club_uuid: ClubUuid(x.club.0),
+                email: x.email,
             })
             .try_collect::<Vec<_>>()
             .await?;
@@ -131,22 +132,26 @@ impl Invite {
         // Query invited members
         let mut invites = rorm::query(
             guard.get_transaction(),
-            InvitedClubMemberModel.invite.query_as(InviteModel),
+            (
+                InvitedClubMemberModel.invite.query_as(InviteModel),
+                InvitedClubMemberModel.email,
+            ),
         )
         .condition(InvitedClubMemberModel.club.equals(club_uuid))
         .stream()
-        .map_ok(|x| {
+        .map_ok(|(invite, email)| {
             (
-                x.uuid,
+                invite.uuid,
                 Invite {
-                    uuid: InviteUuid(x.uuid),
-                    username: x.username,
-                    display_name: x.display_name,
+                    uuid: InviteUuid(invite.uuid),
+                    username: invite.username,
+                    display_name: invite.display_name,
                     roles: vec![Role::ClubMember {
                         club_uuid: ClubUuid(club_uuid),
+                        email,
                     }],
-                    expires_at: x.expires_at,
-                    created_at: x.created_at,
+                    expires_at: invite.expires_at,
+                    created_at: invite.created_at,
                 },
             )
         })
@@ -256,6 +261,7 @@ impl Invite {
                 uuid: Uuid::new_v4(),
                 account: ForeignModelByField(account.uuid),
                 club: ForeignModelByField(x.club.0),
+                email: x.email,
             })
             .try_collect::<Vec<_>>()
             .await?;
@@ -335,12 +341,14 @@ impl Invite {
                 }
                 Role::ClubMember {
                     club_uuid: ClubUuid(club_uuid),
+                    email,
                 } => {
                     rorm::insert(guard.get_transaction(), InvitedClubMemberModel)
                         .single(&InvitedClubMemberModel {
                             uuid: Uuid::new_v4(),
                             invite: ForeignModelByField(invite.uuid),
                             club: ForeignModelByField(*club_uuid),
+                            email: email.clone(),
                         })
                         .await?;
                 }

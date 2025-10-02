@@ -78,7 +78,14 @@ pub async fn get_club_member_invites(
         .into_iter()
         .filter_map(|x| {
             x.roles
-                .contains(&Role::ClubMember { club_uuid })
+                .iter()
+                .any(|role| {
+                    if let Role::ClubMember { club_uuid: cu, .. } = role {
+                        *cu == club_uuid
+                    } else {
+                        false
+                    }
+                })
                 .then(|| GetInvite::from(x))
         })
         .collect();

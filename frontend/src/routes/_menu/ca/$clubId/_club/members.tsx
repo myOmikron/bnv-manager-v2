@@ -12,6 +12,7 @@ import ClubAdminCreateMemberInviteDialog from "src/components/dialogs/ca-create-
 import { Subheading } from "src/components/base/heading";
 import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } from "src/components/base/dropdown";
 import { toast } from "react-toastify";
+import CLUB_ADMIN_SINGLE_CLUB from "src/context/club-admin-single-club";
 
 /**
  * The properties for {@link ClubMembers}
@@ -29,6 +30,8 @@ export default function ClubMembers(props: ClubMembersProps) {
     const router = useRouter();
     const data = Route.useLoaderData();
     const search = Route.useSearch();
+
+    const clubCtx = React.useContext(CLUB_ADMIN_SINGLE_CLUB);
 
     const [openCreateMember, setOpenCreateMember] = React.useState(false);
 
@@ -117,16 +120,15 @@ export default function ClubMembers(props: ClubMembersProps) {
             )}
 
             <Suspense>
-                {openCreateMember && (
-                    <ClubAdminCreateMemberInviteDialog
-                        club={params.clubId}
-                        onClose={() => setOpenCreateMember(false)}
-                        onCreate={async () => {
-                            setOpenCreateMember(false);
-                            await router.invalidate({ sync: true });
-                        }}
-                    />
-                )}
+                <ClubAdminCreateMemberInviteDialog
+                    open={openCreateMember}
+                    club={clubCtx.data}
+                    onClose={() => setOpenCreateMember(false)}
+                    onCreate={async () => {
+                        setOpenCreateMember(false);
+                        await router.invalidate({ sync: true });
+                    }}
+                />
             </Suspense>
         </div>
     );

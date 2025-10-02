@@ -9,13 +9,16 @@ import { Description, ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel }
 import { Input } from "src/components/base/input";
 import { toast } from "react-toastify";
 import { ClipboardDocumentListIcon } from "@heroicons/react/20/solid";
+import { Club } from "src/api/generated/club-admin";
 
 /**
  * The properties for {@link ClubAdminCreateMemberInviteDialog}
  */
 export type ClubAdminCreateMemberInviteDialogProps = {
     /** The club to create the invite for */
-    club: UUID;
+    club: Club;
+    /** Should the dialog be open */
+    open: boolean;
     /** Callback for close action */
     onClose: () => void;
     /** Callback for creation of the new invite */
@@ -36,13 +39,15 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
             username: "",
             displayName: "",
             validDays: "7",
+            email: "",
         },
         validators: {
             onSubmitAsync: async ({ value }) => {
-                const res = await Api.clubAdmins.invites.create(props.club, {
+                const res = await Api.clubAdmins.invites.create(props.club.uuid, {
                     username: value.username,
                     display_name: value.displayName,
                     valid_days: parseInt(value.validDays),
+                    email: value.email,
                 });
 
                 if (res.result === "Err") {
@@ -59,7 +64,7 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
     });
 
     return (
-        <Dialog open={true} onClose={props.onClose}>
+        <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>{t("heading.invite-new-member")}</DialogTitle>
             <DialogBody>
                 <Form onSubmit={form.handleSubmit}>
@@ -74,6 +79,35 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
                                             required={true}
                                             value={fieldApi.state.value}
                                             onChange={(e) => fieldApi.handleChange(e.target.value)}
+                                            invalid={fieldApi.state.meta.errors.length > 0}
+                                        />
+                                        {fieldApi.state.meta.errors.map((err) => (
+                                            <ErrorMessage>{err}</ErrorMessage>
+                                        ))}
+                                    </Field>
+                                )}
+                            </form.Field>
+
+                            <form.Field
+                                name={"email"}
+                                validators={{
+                                    onBlur: ({ value }) => {
+                                        if (!value.endsWith(props.club.primary_domain))
+                                            return t("error.invalid-email-domain", {
+                                                domain: props.club.primary_domain,
+                                            });
+                                    },
+                                }}
+                            >
+                                {(fieldApi) => (
+                                    <Field>
+                                        <RequiredLabel>{t("label.email")}</RequiredLabel>
+                                        <Input
+                                            type={"email"}
+                                            required={true}
+                                            value={fieldApi.state.value}
+                                            onChange={(e) => fieldApi.handleChange(e.target.value)}
+                                            onBlur={() => fieldApi.handleBlur()}
                                             invalid={fieldApi.state.meta.errors.length > 0}
                                         />
                                         {fieldApi.state.meta.errors.map((err) => (
@@ -126,31 +160,35 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
             </DialogBody>
 
             <Suspense>
-                {openShowInvite && (
-                    <Dialog open={true} onClose={props.onClose}>
-                        <DialogTitle>{t("heading.invite-created")}</DialogTitle>
-                        <DialogBody>
-                            <div className={"flex gap-3"}>
-                                <Input readOnly={true} defaultValue={openShowInvite} />
-                                <Button
-                                    outline={true}
-                                    onClick={async () => {
-                                        await navigator.clipboard.writeText(openShowInvite);
-                                        toast.success(tg("toast.copied-to-clipboard"));
-                                    }}
-                                >
-                                    <span className={"sr-only"}>{t("accessibility.copy")}</span>
-                                    <ClipboardDocumentListIcon />
-                                </Button>
-                            </div>
-                        </DialogBody>
-                        <DialogActions>
-                            <Button outline={true} onClick={props.onCreate}>
-                                {tg("button.close")}
+                <Dialog
+                    open={!!openShowInvite}
+                    onClose={() => {
+                        form.reset();
+                        props.onClose();
+                    }}
+                >
+                    <DialogTitle>{t("heading.invite-created")}</DialogTitle>
+                    <DialogBody>
+                        <div className={"flex gap-3"}>
+                            <Input readOnly={true} defaultValue={openShowInvite} />
+                            <Button
+                                outline={true}
+                                onClick={async () => {
+                                    openShowInvite && (await navigator.clipboard.writeText(openShowInvite));
+                                    toast.success(tg("toast.copied-to-clipboard"));
+                                }}
+                            >
+                                <span className={"sr-only"}>{t("accessibility.copy")}</span>
+                                <ClipboardDocumentListIcon />
                             </Button>
-                        </DialogActions>
-                    </Dialog>
-                )}
+                        </div>
+                    </DialogBody>
+                    <DialogActions>
+                        <Button outline={true} onClick={props.onCreate}>
+                            {tg("button.close")}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Suspense>
         </Dialog>
     );

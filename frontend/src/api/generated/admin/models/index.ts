@@ -50,6 +50,12 @@ export interface Club {
      */
     name: string;
     /**
+     * Primary domain of the club
+     * @type {string}
+     * @memberof Club
+     */
+    primary_domain: string;
+    /**
      * Primary key of a club
      * @type {string}
      * @memberof Club
@@ -63,11 +69,11 @@ export interface Club {
  */
 export interface CreateClubError {
     /**
-     * Domain already exists
+     * The domain is already associated with another club and can't be reused
      * @type {boolean}
      * @memberof CreateClubError
      */
-    domain_already_exists: boolean;
+    domain_already_associated: boolean;
     /**
      * Whether the club name already exists
      * @type {boolean}
@@ -451,11 +457,17 @@ export type RoleOneOfTypeEnum = typeof RoleOneOfTypeEnum[keyof typeof RoleOneOfT
  */
 export interface RoleOneOf1 {
     /**
-     * New-type for the primary key of the club
+     * UUID of the club
      * @type {string}
      * @memberof RoleOneOf1
      */
     club_uuid: string;
+    /**
+     * Mail of the user for that club
+     * @type {string}
+     * @memberof RoleOneOf1
+     */
+    email: string;
     /**
      * 
      * @type {string}

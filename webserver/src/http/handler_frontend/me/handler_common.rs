@@ -57,12 +57,13 @@ pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>>
                 .clone()
                 .into_iter()
                 .flat_map(|x| match x {
-                    Role::ClubMember { club_uuid } => Some(schema::ClubMemberRole {
+                    Role::ClubMember { club_uuid, email } => Some(schema::ClubMemberRole {
                         club_uuid,
                         club_name: clubs
                             .get(&club_uuid)
                             .map(|x| x.name.clone())
                             .unwrap_or_default(),
+                        email,
                     }),
                     _ => None,
                 })

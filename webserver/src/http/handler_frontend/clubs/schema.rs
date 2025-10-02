@@ -23,6 +23,8 @@ pub struct Club {
     pub member_count: u64,
     /// The number of admins in the club
     pub admin_count: u64,
+    /// Primary domain of the club
+    pub primary_domain: MaxStr<255>,
 }
 
 /// Request to create a club
@@ -63,6 +65,7 @@ impl From<models::club::Club> for Club {
             created_at: SchemaDateTime(value.created_at),
             member_count: value.member_count,
             admin_count: value.admin_count,
+            primary_domain: value.primary_domain,
         }
     }
 }

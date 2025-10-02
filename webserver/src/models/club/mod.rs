@@ -4,6 +4,7 @@ use std::borrow::Cow;
 
 use futures_util::TryStreamExt;
 use galvyn::core::stuff::schema::Page;
+use rorm::and;
 use rorm::conditions;
 use rorm::conditions::BinaryOperator;
 use rorm::conditions::Condition;
@@ -22,7 +23,7 @@ use crate::models::account::Account;
 use crate::models::account::db::AccountModel;
 use crate::models::club::db::ClubModel;
 use crate::models::club::db::ClubModelInsert;
-use crate::models::domain::DomainUuid;
+use crate::models::domain::Domain;
 use crate::models::domain::db::DomainModel;
 use crate::models::role::db::ClubAdminModel;
 use crate::models::role::db::ClubMemberModel;
@@ -44,6 +45,8 @@ pub struct Club {
     pub member_count: u64,
     /// The number of admins in the club
     pub admin_count: u64,
+    /// The primary domain of the club
+    pub primary_domain: MaxStr<255>,
 }
 
 /// New-type for the primary key of the club
@@ -87,6 +90,10 @@ impl Club {
             .members
             .populate_bulk(guard.get_transaction(), &mut cm)
             .await?;
+        ClubModel
+            .domains
+            .populate_bulk(guard.get_transaction(), &mut cm)
+            .await?;
 
         #[allow(clippy::expect_used)]
         Ok(cm
@@ -98,6 +105,14 @@ impl Club {
                 created_at: x.created_at,
                 member_count: x.members.cached.expect("Queried beforehand").len() as u64,
                 admin_count: x.admins.cached.expect("Queried beforehand").len() as u64,
+                primary_domain: x
+                    .domains
+                    .cached
+                    .expect("Queried beforehand")
+                    .into_iter()
+                    .find(|domain: &DomainModel| domain.is_primary)
+                    .map(|x| x.domain)
+                    .unwrap_or_default(),
             })
             .collect())
     }
@@ -154,38 +169,75 @@ impl Club {
     #[instrument(name = "Club::create", skip(exe))]
     pub async fn create(
         exe: impl Executor<'_>,
-        CreateClub { name }: CreateClub,
+        CreateClub {
+            name,
+            primary_domain,
+        }: CreateClub<'_>,
     ) -> anyhow::Result<Club> {
-        let club_model = rorm::insert(exe, ClubModel)
+        let mut guard = exe.ensure_transaction().await?;
+        let mut club_model = rorm::insert(guard.get_transaction(), ClubModel)
             .single(&ClubModelInsert {
                 uuid: Uuid::new_v4(),
                 name,
             })
             .await?;
 
-        Ok(Club {
+        ClubModel
+            .domains
+            .populate(guard.get_transaction(), &mut club_model)
+            .await?;
+
+        let mut club = Club {
             uuid: ClubUuid(club_model.uuid),
             name: club_model.name,
             modified_at: club_model.modified_at,
             created_at: club_model.created_at,
             member_count: 0,
             admin_count: 0,
-        })
+            primary_domain: MaxStr::default(),
+        };
+
+        club.associate_domain(guard.get_transaction(), primary_domain, true)
+            .await?;
+
+        guard.commit().await?;
+
+        Ok(club)
     }
 
     /// Associate an existing domain with this club
     #[instrument(name = "Club::associate_domain", skip(exe, self))]
     pub async fn associate_domain(
-        &self,
+        &mut self,
         exe: impl Executor<'_>,
-        domain: DomainUuid,
+        domain: &Domain,
         is_primary: bool,
     ) -> anyhow::Result<()> {
-        rorm::update(exe, DomainModel)
+        let mut guard = exe.ensure_transaction().await?;
+
+        if is_primary {
+            // Set primary to false on other domains for this club
+            rorm::update(guard.get_transaction(), DomainModel)
+                .set(DomainModel.is_primary, false)
+                .condition(and![
+                    DomainModel.club.equals(self.uuid.0),
+                    DomainModel.is_primary.equals(true)
+                ])
+                .await?;
+        }
+
+        rorm::update(guard.get_transaction(), DomainModel)
             .set(DomainModel.club, Some(ForeignModelByField(self.uuid.0)))
             .set(DomainModel.is_primary, is_primary)
-            .condition(DomainModel.uuid.equals(domain.0))
+            .condition(DomainModel.uuid.equals(domain.uuid.0))
             .await?;
+
+        guard.commit().await?;
+
+        if is_primary {
+            self.primary_domain = domain.domain.clone();
+        }
+
         Ok(())
     }
 
@@ -308,9 +360,11 @@ impl Club {
 
 /// Parameters for creating a club
 #[derive(Debug, Clone)]
-pub struct CreateClub {
+pub struct CreateClub<'a> {
     /// Name of the club
     pub name: MaxStr<255>,
+    /// Primary domain to associate with the club
+    pub primary_domain: &'a Domain,
 }
 
 impl Club {
@@ -324,6 +378,11 @@ impl Club {
             .populate(&mut *tx, &mut club_model)
             .await?;
 
+        ClubModel
+            .domains
+            .populate(&mut *tx, &mut club_model)
+            .await?;
+
         Ok(Club {
             uuid: ClubUuid(club_model.uuid),
             name: club_model.name,
@@ -331,6 +390,14 @@ impl Club {
             created_at: club_model.created_at,
             member_count: club_model.members.cached.unwrap().len() as u64,
             admin_count: club_model.admins.cached.unwrap().len() as u64,
+            primary_domain: club_model
+                .domains
+                .cached
+                .unwrap()
+                .into_iter()
+                .find(|domain: &DomainModel| domain.is_primary)
+                .map(|x| x.domain)
+                .unwrap_or_default(),
         })
     }
 }

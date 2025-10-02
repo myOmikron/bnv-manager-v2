@@ -9,7 +9,7 @@
         "preview": "vite preview",
         "format": "prettier --config .prettierrc.json --write src/",
         "gen-api": "bash scripts/gen-api.sh",
-        "ci": "tsc && vite build --sourcemap true && prettier --check src/ && eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0 && missing=$(grep -Er \"\\\"(\\w|-)+\\.(\\w|-)+\\\"\" public/locales/); count=$(echo -n \"$missing\" | grep -c '^'); [ \"$count\" -gt 0 ] && echo \"$missing\" && echo \"$count untranslated entries found\" && exit 1 || exit 0"
+        "ci": "bash scripts/run-ci.sh"
     },
     "dependencies": {
         "@headlessui/react": "^2.2.0",

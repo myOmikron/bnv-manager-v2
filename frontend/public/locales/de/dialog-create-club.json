@@ -3,7 +3,8 @@
         "create-club": "Verein anlegen"
     },
     "error": {
-        "domain-already-occupied": "Domain bereits vergeben.",
+        "domain-already-associated": "Domainn ist bereits zugewiesen.",
+        "missing-value": "Fehlende Eingabe.",
         "name-already-occupied": "Name bereits vergeben."
     },
     "heading": {

@@ -39,6 +39,8 @@ pub struct ClubMemberRole {
     pub club_uuid: ClubUuid,
     /// The club's name.
     pub club_name: MaxStr<255>,
+    /// Primary mail in the club
+    pub email: MaxStr<255>,
 }
 
 /// A club membership role.

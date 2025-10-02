@@ -50,8 +50,8 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
                     return {
                         fields: {
                             name: res.error.name_already_exists ? t("error.name-already-occupied") : undefined,
-                            primaryDomain: res.error.domain_already_exists
-                                ? t("error.domain-already-occupied")
+                            primaryDomain: res.error.domain_already_associated
+                                ? t("error.domain-already-associated")
                                 : undefined,
                         },
                     };

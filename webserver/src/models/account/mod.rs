@@ -172,12 +172,14 @@ impl Account {
             }
             Role::ClubMember {
                 club_uuid: ClubUuid(uuid),
+                email,
             } => {
                 rorm::insert(guard.get_transaction(), ClubMemberModel)
                     .single(&ClubMemberModel {
                         uuid: Uuid::new_v4(),
                         account: ForeignModelByField(self.uuid.0),
                         club: ForeignModelByField(uuid),
+                        email,
                     })
                     .await?;
             }
@@ -211,6 +213,7 @@ impl Account {
             }
             Role::ClubMember {
                 club_uuid: ClubUuid(club_uuid),
+                ..
             } => {
                 rorm::delete(guard.get_transaction(), ClubMemberModel)
                     .condition(and![
@@ -260,6 +263,7 @@ impl Account {
             .stream()
             .map_ok(|x| Role::ClubMember {
                 club_uuid: ClubUuid(x.club.0),
+                email: x.email,
             })
             .try_collect()
             .await?;

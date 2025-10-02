@@ -39,6 +39,8 @@ pub struct InvitedClubMemberModel {
     pub invite: ForeignModel<InviteModel>,
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub club: ForeignModel<ClubModel>,
+    #[rorm(unique)]
+    pub email: MaxStr<255>,
 }
 
 #[derive(Debug, Model)]

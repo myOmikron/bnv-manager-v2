@@ -82,6 +82,12 @@ export interface ClubMemberRole {
      * @memberof ClubMemberRole
      */
     club_uuid: string;
+    /**
+     * Primary mail in the club
+     * @type {string}
+     * @memberof ClubMemberRole
+     */
+    email: string;
 }
 /**
  * @type FormResultForNullAndAcceptInviteError

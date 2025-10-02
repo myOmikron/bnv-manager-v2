@@ -9,6 +9,7 @@
         "valid-days": "Days until the invite expires"
     },
     "error": {
+        "invalid-email-domain": "Only @{{domain}} is allowed as domain.",
         "username-already-occupied": "Username is already occupied"
     },
     "heading": {
@@ -17,6 +18,7 @@
     },
     "label": {
         "display-name": "Display name",
+        "email": "Email",
         "username": "Username",
         "valid-days": "Valid days"
     }

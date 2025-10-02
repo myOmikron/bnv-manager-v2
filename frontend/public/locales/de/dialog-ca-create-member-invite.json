@@ -9,6 +9,7 @@
         "valid-days": "Anzahl an Tagen, die die Einladung aktiv sein soll"
     },
     "error": {
+        "invalid-email-domain": "Nur @{{domain}} ist als Domain zul\u00e4ssig",
         "username-already-occupied": "Nutzername ist bereits vergeben."
     },
     "heading": {
@@ -17,6 +18,7 @@
     },
     "label": {
         "display-name": "Anzeigename",
+        "email": "E-Mail",
         "username": "Nutzername",
         "valid-days": "Valide Tage"
     }

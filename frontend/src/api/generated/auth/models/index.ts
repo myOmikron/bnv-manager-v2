@@ -14,6 +14,43 @@ export interface ApiErrorResponse {
     trace_id: string;
 }
 /**
+ * Data for all claims
+ * @export
+ * @interface Claims
+ */
+export interface Claims {
+    /**
+     * The email
+     * @type {string}
+     * @memberof Claims
+     */
+    email?: string;
+    /**
+     * Whether the mail is verified
+     * @type {boolean}
+     * @memberof Claims
+     */
+    email_verified?: boolean;
+    /**
+     * Name of the user
+     * @type {string}
+     * @memberof Claims
+     */
+    name?: string;
+    /**
+     * Preferred username
+     * @type {string}
+     * @memberof Claims
+     */
+    preferred_username?: string;
+    /**
+     * Identifier for the End-User
+     * @type {string}
+     * @memberof Claims
+     */
+    sub: string;
+}
+/**
  * Response for the discovery endpoint
  * @export
  * @interface DiscoveryResponse

@@ -917,6 +917,14 @@
                             }
                         ]
                     },
+                    "primary_domain": {
+                        "description": "Primary domain of the club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
                     "uuid": {
                         "description": "Primary key of a club",
                         "allOf": [
@@ -932,6 +940,7 @@
                     "member_count",
                     "modified_at",
                     "name",
+                    "primary_domain",
                     "uuid"
                 ]
             },
@@ -944,8 +953,8 @@
                 "description": "Error when creating a club",
                 "type": "object",
                 "properties": {
-                    "domain_already_exists": {
-                        "description": "Domain already exists",
+                    "domain_already_associated": {
+                        "description": "The domain is already associated with another club and can't be reused",
                         "type": "boolean"
                     },
                     "name_already_exists": {
@@ -954,7 +963,7 @@
                     }
                 },
                 "required": [
-                    "domain_already_exists",
+                    "domain_already_associated",
                     "name_already_exists"
                 ]
             },
@@ -974,7 +983,7 @@
                         "description": "Primary domain of the club",
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/MaxStr_255"
+                                "$ref": "#/components/schemas/DomainUuid"
                             }
                         ]
                     }
@@ -1354,7 +1363,20 @@
                         "type": "object",
                         "properties": {
                             "club_uuid": {
-                                "$ref": "#/components/schemas/ClubUuid"
+                                "description": "UUID of the club",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ClubUuid"
+                                    }
+                                ]
+                            },
+                            "email": {
+                                "description": "Mail of the user for that club",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/MaxStr_255"
+                                    }
+                                ]
                             },
                             "type": {
                                 "type": "string",
@@ -1365,6 +1387,7 @@
                         },
                         "required": [
                             "club_uuid",
+                            "email",
                             "type"
                         ]
                     },

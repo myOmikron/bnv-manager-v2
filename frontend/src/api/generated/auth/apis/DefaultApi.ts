@@ -16,6 +16,7 @@
 import * as runtime from '../runtime';
 import type {
   ApiErrorResponse,
+  Claims,
   DiscoveryResponse,
   SignInRequest,
   TokenResponse,
@@ -219,7 +220,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getUserinfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async getUserinfoRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Claims>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -231,13 +232,14 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response);
     }
 
     /**
      */
-    async getUserinfo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.getUserinfoRaw(initOverrides);
+    async getUserinfo(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Claims> {
+        const response = await this.getUserinfoRaw(initOverrides);
+        return await response.value();
     }
 
     /**

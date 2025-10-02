@@ -354,6 +354,14 @@
                             }
                         ]
                     },
+                    "primary_domain": {
+                        "description": "Primary domain of the club",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
                     "uuid": {
                         "description": "Primary key of a club",
                         "allOf": [
@@ -369,6 +377,7 @@
                     "member_count",
                     "modified_at",
                     "name",
+                    "primary_domain",
                     "uuid"
                 ]
             },
@@ -402,6 +411,14 @@
                             }
                         ]
                     },
+                    "email": {
+                        "description": "Email of the user",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
                     "username": {
                         "description": "Reserved username",
                         "allOf": [
@@ -419,6 +436,7 @@
                 },
                 "required": [
                     "display_name",
+                    "email",
                     "username",
                     "valid_days"
                 ]

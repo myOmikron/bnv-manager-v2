@@ -64,6 +64,8 @@ pub struct CreateMemberInviteRequest {
     pub username: MaxStr<255>,
     /// Display-name of the user
     pub display_name: MaxStr<255>,
+    /// Email of the user
+    pub email: MaxStr<255>,
     /// The point in time the invite expires
     pub valid_days: NonZeroU8,
 }

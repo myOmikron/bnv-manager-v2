@@ -1,11 +1,11 @@
 [Migration]
-Hash = "9640871407894581327"
+Hash = "18408565637928498197"
 Initial = true
 Replaces = []
 
 [[Migration.Operations]]
 Type = "CreateModel"
-Name = "Club"
+Name = "Account"
 
 [[Migration.Operations.Fields]]
 Name = "uuid"
@@ -15,184 +15,8 @@ Type = "uuid"
 Type = "primary_key"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/club/db.rs"
-Line = 16
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "name"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/club/db.rs"
-Line = 17
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "modified_at"
-Type = "datetime"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "auto_create_time"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "auto_update_time"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/club/db.rs"
-Line = 20
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "created_at"
-Type = "datetime"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "auto_create_time"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/club/db.rs"
-Line = 22
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "Domain"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
-Line = 12
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "domain"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "unique"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
-Line = 14
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "is_primary"
-Type = "boolean"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "default_value"
-Value = "false"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
-Line = 17
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "mailboxes_left"
-Type = "int64"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
-Line = 19
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "ClubMember"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/role/db.rs"
-Line = 12
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "ClubAdmin"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/role/db.rs"
-Line = 23
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "SuperAdmin"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/role/db.rs"
-Line = 34
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "invitemodel"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/invite/db.rs"
-Line = 12
+File = "webserver/src/models/account/db.rs"
+Line = 10
 Column = 9
 
 [[Migration.Operations.Fields]]
@@ -210,8 +34,8 @@ Type = "unique"
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/invite/db.rs"
-Line = 15
+File = "webserver/src/models/account/db.rs"
+Line = 14
 Column = 9
 
 [[Migration.Operations.Fields]]
@@ -226,20 +50,42 @@ Value = 255
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/invite/db.rs"
+File = "webserver/src/models/account/db.rs"
 Line = 16
 Column = 9
 
 [[Migration.Operations.Fields]]
-Name = "expires_at"
-Type = "datetime"
+Name = "hashed_password"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
 
 [[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/invite/db.rs"
+File = "webserver/src/models/account/db.rs"
 Line = 18
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "modified_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "auto_create_time"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "auto_update_time"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/account/db.rs"
+Line = 21
 Column = 9
 
 [[Migration.Operations.Fields]]
@@ -253,56 +99,8 @@ Type = "auto_create_time"
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/invite/db.rs"
-Line = 21
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "InvitedClubMember"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/invite/db.rs"
-Line = 37
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "InvitedClubAdmin"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/invite/db.rs"
-Line = 48
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "InvitedSuperAdmin"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/invite/db.rs"
-Line = 59
+File = "webserver/src/models/account/db.rs"
+Line = 23
 Column = 9
 
 [[Migration.Operations]]
@@ -459,7 +257,7 @@ Column = 9
 
 [[Migration.Operations]]
 Type = "CreateModel"
-Name = "Account"
+Name = "Domain"
 
 [[Migration.Operations.Fields]]
 Name = "uuid"
@@ -469,8 +267,138 @@ Type = "uuid"
 Type = "primary_key"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/account/db.rs"
-Line = 10
+File = "webserver/src/models/domain/db.rs"
+Line = 12
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "domain"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "unique"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 14
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "is_primary"
+Type = "boolean"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "default_value"
+Value = "false"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 17
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "mailboxes_left"
+Type = "int64"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 19
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "ClubMember"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 13
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "email"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "unique"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 19
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "ClubAdmin"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 26
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "SuperAdmin"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 37
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "invitemodel"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/invite/db.rs"
+Line = 12
 Column = 9
 
 [[Migration.Operations.Fields]]
@@ -488,8 +416,8 @@ Type = "unique"
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/account/db.rs"
-Line = 14
+File = "webserver/src/models/invite/db.rs"
+Line = 15
 Column = 9
 
 [[Migration.Operations.Fields]]
@@ -504,12 +432,122 @@ Value = 255
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/account/db.rs"
+File = "webserver/src/models/invite/db.rs"
 Line = 16
 Column = 9
 
 [[Migration.Operations.Fields]]
-Name = "hashed_password"
+Name = "expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/invite/db.rs"
+Line = 18
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "created_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "auto_create_time"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/invite/db.rs"
+Line = 21
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "InvitedClubMember"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/invite/db.rs"
+Line = 37
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "email"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "unique"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/invite/db.rs"
+Line = 43
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "InvitedClubAdmin"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/invite/db.rs"
+Line = 50
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "InvitedSuperAdmin"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/invite/db.rs"
+Line = 61
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "Club"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/club/db.rs"
+Line = 16
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "name"
 Type = "varchar"
 
 [[Migration.Operations.Fields.Annotations]]
@@ -520,8 +558,8 @@ Value = 255
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/account/db.rs"
-Line = 18
+File = "webserver/src/models/club/db.rs"
+Line = 17
 Column = 9
 
 [[Migration.Operations.Fields]]
@@ -538,8 +576,8 @@ Type = "auto_update_time"
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/account/db.rs"
-Line = 21
+File = "webserver/src/models/club/db.rs"
+Line = 20
 Column = 9
 
 [[Migration.Operations.Fields]]
@@ -553,8 +591,8 @@ Type = "auto_create_time"
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/account/db.rs"
-Line = 23
+File = "webserver/src/models/club/db.rs"
+Line = 22
 Column = 9
 
 [[Migration.Operations]]
@@ -600,6 +638,106 @@ Type = "not_null"
 File = "/usr/local/cargo/git/checkouts/galvyn-f52542b4eef301aa/5a18a61/galvyn-core/src/session.rs"
 Line = 42
 Column = 5
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "ClubMember"
+
+[Migration.Operations.Field]
+Name = "account"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "Account"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 15
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "ClubMember"
+
+[Migration.Operations.Field]
+Name = "club"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "Club"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 17
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "ClubAdmin"
+
+[Migration.Operations.Field]
+Name = "account"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "Account"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 28
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "ClubAdmin"
+
+[Migration.Operations.Field]
+Name = "club"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "Club"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 30
+Column = 9
 
 [[Migration.Operations]]
 Type = "CreateField"
@@ -653,6 +791,28 @@ Column = 9
 
 [[Migration.Operations]]
 Type = "CreateField"
+Model = "Domain"
+
+[Migration.Operations.Field]
+Name = "club"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "Club"
+ColumnName = "uuid"
+OnDelete = "Restrict"
+OnUpdate = "Restrict"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 15
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
 Model = "InvitedClubAdmin"
 
 [Migration.Operations.Field]
@@ -673,7 +833,7 @@ Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
 File = "webserver/src/models/invite/db.rs"
-Line = 50
+Line = 52
 Column = 9
 
 [[Migration.Operations]]
@@ -698,7 +858,32 @@ Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
 File = "webserver/src/models/invite/db.rs"
-Line = 52
+Line = 54
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "SuperAdmin"
+
+[Migration.Operations.Field]
+Name = "account"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "Account"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/role/db.rs"
+Line = 39
 Column = 9
 
 [[Migration.Operations]]
@@ -773,152 +958,5 @@ Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
 File = "webserver/src/models/invite/db.rs"
-Line = 61
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "SuperAdmin"
-
-[Migration.Operations.Field]
-Name = "account"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "Account"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/role/db.rs"
-Line = 36
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "ClubAdmin"
-
-[Migration.Operations.Field]
-Name = "account"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "Account"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/role/db.rs"
-Line = 25
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "ClubAdmin"
-
-[Migration.Operations.Field]
-Name = "club"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "Club"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/role/db.rs"
-Line = 27
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "Domain"
-
-[Migration.Operations.Field]
-Name = "club"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "Club"
-ColumnName = "uuid"
-OnDelete = "Restrict"
-OnUpdate = "Restrict"
-
-[Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
-Line = 15
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "ClubMember"
-
-[Migration.Operations.Field]
-Name = "account"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "Account"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/role/db.rs"
-Line = 14
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "ClubMember"
-
-[Migration.Operations.Field]
-Name = "club"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "Club"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/role/db.rs"
-Line = 16
+Line = 63
 Column = 9
