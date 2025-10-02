@@ -21,6 +21,7 @@ const ADMIN_SINGLE_CLUB = React.createContext<AdminSingleClubContext>({
         modified_at: "",
         name: "",
         uuid: "",
+        primary_domain: "",
     },
 
     /** Reset the context */

@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { useTranslation } from "react-i18next";
-
 /**
  * Props for {@link OidcError}
  */
@@ -11,12 +9,9 @@ export type OidcErrorProps = {};
  * Displayable errors while using oidc
  */
 export default function OidcError(props: OidcErrorProps) {
-    const [t] = useTranslation("oidc-error");
-    const [tg] = useTranslation();
-
     const search = Route.useSearch();
 
-    return <div></div>;
+    return <div>{search.error}</div>;
 }
 
 /**
