@@ -35,4 +35,14 @@ impl Link {
         #[allow(clippy::expect_used)]
         ORIGIN.join("/api/v1/auth/finish-auth").expect("Static url")
     }
+
+    /// Create a link to the oidc finishing step
+    pub fn oidc_failed(error_cause: &str) -> Url {
+        #[allow(clippy::expect_used)]
+        let mut url = ORIGIN.join("/links/oidc/error").expect("Static url");
+
+        url.set_query(Some(&format!("error={error_cause}")));
+
+        url
+    }
 }

@@ -12,8 +12,10 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MenuIndexRouteImport } from './routes/_menu/index'
+import { Route as OidcErrorRouteImport } from './routes/oidc/error'
 import { Route as OidcAuthRouteImport } from './routes/oidc/auth'
 import { Route as InvitesInviteIdRouteImport } from './routes/invites/$inviteId'
+import { Route as LinksOidcErrorRouteImport } from './routes/links/oidc/error'
 import { Route as LinksOidcAuthRouteImport } from './routes/links/oidc/auth'
 import { Route as LinksInviteInviteIdRouteImport } from './routes/links/invite/$inviteId'
 import { Route as MenuProfileProfileRouteImport } from './routes/_menu/profile/_profile'
@@ -52,6 +54,11 @@ const MenuIndexRoute = MenuIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MenuLazyRoute,
 } as any)
+const OidcErrorRoute = OidcErrorRouteImport.update({
+  id: '/oidc/error',
+  path: '/oidc/error',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OidcAuthRoute = OidcAuthRouteImport.update({
   id: '/oidc/auth',
   path: '/oidc/auth',
@@ -66,6 +73,11 @@ const MenuCaClubIdRoute = MenuCaClubIdRouteImport.update({
   id: '/ca/$clubId',
   path: '/ca/$clubId',
   getParentRoute: () => MenuLazyRoute,
+} as any)
+const LinksOidcErrorRoute = LinksOidcErrorRouteImport.update({
+  id: '/links/oidc/error',
+  path: '/links/oidc/error',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LinksOidcAuthRoute = LinksOidcAuthRouteImport.update({
   id: '/links/oidc/auth',
@@ -170,10 +182,12 @@ const MenuAClubsClubIdClubAdminsRoute =
 export interface FileRoutesByFullPath {
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/oidc/auth': typeof OidcAuthRoute
+  '/oidc/error': typeof OidcErrorRoute
   '/': typeof MenuIndexRoute
   '/profile': typeof MenuProfileProfileRouteWithChildren
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
   '/links/oidc/auth': typeof LinksOidcAuthRoute
+  '/links/oidc/error': typeof LinksOidcErrorRoute
   '/ca/$clubId': typeof MenuCaClubIdClubRouteWithChildren
   '/profile/general': typeof MenuProfileProfileGeneralRoute
   '/profile/security': typeof MenuProfileProfileSecurityRoute
@@ -193,10 +207,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/oidc/auth': typeof OidcAuthRoute
+  '/oidc/error': typeof OidcErrorRoute
   '/': typeof MenuIndexRoute
   '/profile': typeof MenuProfileProfileIndexRoute
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
   '/links/oidc/auth': typeof LinksOidcAuthRoute
+  '/links/oidc/error': typeof LinksOidcErrorRoute
   '/ca/$clubId': typeof MenuCaClubIdClubIndexRoute
   '/profile/general': typeof MenuProfileProfileGeneralRoute
   '/profile/security': typeof MenuProfileProfileSecurityRoute
@@ -216,11 +232,13 @@ export interface FileRoutesById {
   '/_menu': typeof MenuLazyRouteWithChildren
   '/invites/$inviteId': typeof InvitesInviteIdRoute
   '/oidc/auth': typeof OidcAuthRoute
+  '/oidc/error': typeof OidcErrorRoute
   '/_menu/': typeof MenuIndexRoute
   '/_menu/profile': typeof MenuProfileRouteWithChildren
   '/_menu/profile/_profile': typeof MenuProfileProfileRouteWithChildren
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
   '/links/oidc/auth': typeof LinksOidcAuthRoute
+  '/links/oidc/error': typeof LinksOidcErrorRoute
   '/_menu/ca/$clubId': typeof MenuCaClubIdRouteWithChildren
   '/_menu/ca/$clubId/_club': typeof MenuCaClubIdClubRouteWithChildren
   '/_menu/profile/_profile/general': typeof MenuProfileProfileGeneralRoute
@@ -244,10 +262,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/invites/$inviteId'
     | '/oidc/auth'
+    | '/oidc/error'
     | '/'
     | '/profile'
     | '/links/invite/$inviteId'
     | '/links/oidc/auth'
+    | '/links/oidc/error'
     | '/ca/$clubId'
     | '/profile/general'
     | '/profile/security'
@@ -267,10 +287,12 @@ export interface FileRouteTypes {
   to:
     | '/invites/$inviteId'
     | '/oidc/auth'
+    | '/oidc/error'
     | '/'
     | '/profile'
     | '/links/invite/$inviteId'
     | '/links/oidc/auth'
+    | '/links/oidc/error'
     | '/ca/$clubId'
     | '/profile/general'
     | '/profile/security'
@@ -289,11 +311,13 @@ export interface FileRouteTypes {
     | '/_menu'
     | '/invites/$inviteId'
     | '/oidc/auth'
+    | '/oidc/error'
     | '/_menu/'
     | '/_menu/profile'
     | '/_menu/profile/_profile'
     | '/links/invite/$inviteId'
     | '/links/oidc/auth'
+    | '/links/oidc/error'
     | '/_menu/ca/$clubId'
     | '/_menu/ca/$clubId/_club'
     | '/_menu/profile/_profile/general'
@@ -317,8 +341,10 @@ export interface RootRouteChildren {
   MenuLazyRoute: typeof MenuLazyRouteWithChildren
   InvitesInviteIdRoute: typeof InvitesInviteIdRoute
   OidcAuthRoute: typeof OidcAuthRoute
+  OidcErrorRoute: typeof OidcErrorRoute
   LinksInviteInviteIdRoute: typeof LinksInviteInviteIdRoute
   LinksOidcAuthRoute: typeof LinksOidcAuthRoute
+  LinksOidcErrorRoute: typeof LinksOidcErrorRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -344,6 +370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MenuIndexRouteImport
       parentRoute: typeof MenuLazyRoute
     }
+    '/oidc/error': {
+      id: '/oidc/error'
+      path: '/oidc/error'
+      fullPath: '/oidc/error'
+      preLoaderRoute: typeof OidcErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/oidc/auth': {
       id: '/oidc/auth'
       path: '/oidc/auth'
@@ -364,6 +397,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ca/$clubId'
       preLoaderRoute: typeof MenuCaClubIdRouteImport
       parentRoute: typeof MenuLazyRoute
+    }
+    '/links/oidc/error': {
+      id: '/links/oidc/error'
+      path: '/links/oidc/error'
+      fullPath: '/links/oidc/error'
+      preLoaderRoute: typeof LinksOidcErrorRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/links/oidc/auth': {
       id: '/links/oidc/auth'
@@ -611,8 +651,10 @@ const rootRouteChildren: RootRouteChildren = {
   MenuLazyRoute: MenuLazyRouteWithChildren,
   InvitesInviteIdRoute: InvitesInviteIdRoute,
   OidcAuthRoute: OidcAuthRoute,
+  OidcErrorRoute: OidcErrorRoute,
   LinksInviteInviteIdRoute: LinksInviteInviteIdRoute,
   LinksOidcAuthRoute: LinksOidcAuthRoute,
+  LinksOidcErrorRoute: LinksOidcErrorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

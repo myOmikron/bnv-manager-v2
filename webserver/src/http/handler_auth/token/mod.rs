@@ -25,6 +25,7 @@ use crate::http::handler_auth::token::schema::TokenRequest;
 use crate::http::handler_auth::token::schema::TokenResponse;
 use crate::models::account::Account;
 use crate::models::oidc_provider::OidcAuthenticationToken;
+use crate::models::role::Role;
 use crate::modules::oidc::Oidc;
 
 pub mod schema;
@@ -86,8 +87,20 @@ pub async fn get_token(
     }
 
     if token.scopes.iter().any(|x| x == "email") {
+        let mut email = "".to_string();
+
+        for role in account.roles(&mut tx).await? {
+            match role {
+                Role::ClubMember { email: e, .. } => {
+                    email = e.into_inner();
+                    break;
+                }
+                _ => {}
+            }
+        }
+
         claims.email_claim = Some(EmailClaim {
-            email: account.username.to_string(),
+            email,
             email_verified: true,
         });
     }

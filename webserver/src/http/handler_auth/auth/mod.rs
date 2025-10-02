@@ -5,6 +5,7 @@ use galvyn::core::re_exports::axum::extract::Query;
 use galvyn::core::re_exports::axum::response::Redirect;
 use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;
+use galvyn::core::stuff::api_error::ApiError::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::get;
@@ -23,6 +24,7 @@ use crate::models::account::Account;
 use crate::models::oidc_provider::CreateOidcAuthenticationToken;
 use crate::models::oidc_provider::OidcAuthenticationToken;
 use crate::models::oidc_provider::OidcProvider;
+use crate::models::role::Role;
 use crate::utils::links::Link;
 
 pub mod schema;
@@ -140,6 +142,21 @@ pub async fn finish_auth(session: Session) -> ApiResult<Redirect> {
             error!(scope = *scope, "Invalid scope requested");
             return Err(ApiError::bad_request("Invalid scope requested"));
         }
+    }
+
+    // Check if the account is a member
+    let account = Account::find_by_uuid(&mut tx, session_user.uuid)
+        .await?
+        .ok_or(ApiError::server_error("Invalid state"))?;
+    let roles = account.roles(&mut tx).await?;
+    if roles
+        .into_iter()
+        .find(|role| matches!(role, Role::ClubMember { .. }))
+        .is_none()
+    {
+        return Ok(Redirect::temporary(
+            Link::oidc_failed("Only members of a club are allowed to use OIDC").as_str(),
+        ));
     }
 
     // Create a new token
