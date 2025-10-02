@@ -5,7 +5,6 @@ use galvyn::core::re_exports::axum::extract::Query;
 use galvyn::core::re_exports::axum::response::Redirect;
 use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;
-use galvyn::core::stuff::api_error::ApiError::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::get;
