@@ -6,7 +6,7 @@
     "heading": {
         "club": "Club: {{club}}",
         "club-dashboard": "Dashboard",
-        "invited": "Invited members",
+        "invited-members": "Invited Members",
         "members": "Members"
     },
     "label": {
