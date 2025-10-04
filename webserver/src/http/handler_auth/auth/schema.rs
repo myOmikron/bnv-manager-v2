@@ -1,12 +1,12 @@
 //! Schema for the authentication endpoints
 
-use rorm::fields::types::MaxStr;
+use galvyn::rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use url::Url;
 
-use crate::models::oidc_provider::OidcProviderUuid;
+use crate::models::oidc_provider::OidcClientUuid;
 
 /// Sign in request
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -21,7 +21,7 @@ pub struct SignInRequest {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct AuthQuery {
     /// Client id
-    pub client_id: OidcProviderUuid,
+    pub client_id: OidcClientUuid,
     /// URL to redirect the user to after successful authentication
     pub redirect_uri: Url,
     /// The scopes the application requests

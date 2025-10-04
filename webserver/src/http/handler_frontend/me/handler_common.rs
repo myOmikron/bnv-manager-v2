@@ -1,7 +1,5 @@
 //! Common handler_frontend for the currently logged-in user
 
-use std::collections::HashMap;
-
 use galvyn::core::Module;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
@@ -10,79 +8,75 @@ use galvyn::core::stuff::schema::FormResult;
 use galvyn::get;
 use galvyn::post;
 use galvyn::put;
-use rorm::Database;
+use galvyn::rorm::Database;
 use tracing::instrument;
 use zxcvbn::Score;
 use zxcvbn::zxcvbn;
 
 use crate::http::extractors::session_user::SessionUser;
-use crate::http::handler_frontend::me::Me;
-use crate::http::handler_frontend::me::Roles;
+use crate::http::handler_frontend::me::MeSchema;
+use crate::http::handler_frontend::me::RoleSchema;
 use crate::http::handler_frontend::me::SetPasswordErrors;
 use crate::http::handler_frontend::me::SetPasswordRequest;
 use crate::http::handler_frontend::me::UpdateMeRequest;
-use crate::http::handler_frontend::me::schema;
 use crate::models::account::Account;
 use crate::models::club::Club;
-use crate::models::role::Role;
 
 #[get("/")]
 #[instrument(name = "Api::common::get_me")]
-pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<Me>> {
+pub async fn get_me(SessionUser { uuid }: SessionUser) -> ApiResult<ApiJson<MeSchema>> {
     let mut tx = Database::global().start_transaction().await?;
 
-    let account = Account::find_by_uuid(&mut tx, uuid)
+    let account = Account::get_by_uuid(&mut tx, uuid)
         .await?
         .ok_or(ApiError::server_error(
             "Account not found, while session user was found",
         ))?;
 
-    let roles = account.roles(&mut tx).await?;
+    if let Account::Superadmin(superadmin) = account {
+        return Ok(ApiJson(MeSchema {
+            uuid: superadmin.uuid(),
+            username: superadmin.username,
+            display_name: superadmin.display_name,
+            role: RoleSchema::SuperAdmin,
+        }));
+    }
 
-    let clubs: HashMap<_, _> = Club::find_all(&mut tx)
-        .await?
-        .into_iter()
-        .map(|x| (x.uuid, x))
-        .collect();
+    let club_name = Club::find_by_uuid(
+        &mut tx,
+        match &account {
+            Account::ClubMember(account) => account.club,
+            Account::ClubAdmin(account) => account.club,
+            _ => unreachable!(),
+        },
+    )
+    .await?
+    .ok_or(ApiError::server_error("Club should exist"))?
+    .name;
 
     tx.commit().await?;
 
-    Ok(ApiJson(Me {
-        uuid: account.uuid(),
-        username: account.username.to_string(),
-        display_name: account.display_name.to_string(),
-        roles: Roles {
-            super_admin: roles.contains(&Role::SuperAdmin),
-            member: roles
-                .clone()
-                .into_iter()
-                .flat_map(|x| match x {
-                    Role::ClubMember { club_uuid, email } => Some(schema::ClubMemberRole {
-                        club_uuid,
-                        club_name: clubs
-                            .get(&club_uuid)
-                            .map(|x| x.name.clone())
-                            .unwrap_or_default(),
-                        email,
-                    }),
-                    _ => None,
-                })
-                .collect(),
-            admins: roles
-                .clone()
-                .into_iter()
-                .flat_map(|x| match x {
-                    Role::ClubAdmin { club_uuid } => Some(schema::ClubAdminRole {
-                        club_uuid,
-                        club_name: clubs
-                            .get(&club_uuid)
-                            .map(|x| x.name.clone())
-                            .unwrap_or_default(),
-                    }),
-                    _ => None,
-                })
-                .collect(),
+    Ok(ApiJson(match account {
+        Account::ClubMember(club_member) => MeSchema {
+            uuid: club_member.uuid(),
+            username: club_member.username,
+            display_name: club_member.display_name,
+            role: RoleSchema::ClubMember {
+                club: club_member.club,
+                club_name: club_name.clone(),
+                email: club_member.email,
+            },
         },
+        Account::ClubAdmin(club_admin) => MeSchema {
+            uuid: club_admin.uuid(),
+            username: club_admin.username,
+            display_name: club_admin.display_name,
+            role: RoleSchema::ClubAdmin {
+                club: club_admin.club,
+                club_name,
+            },
+        },
+        Account::Superadmin(_) => unreachable!(),
     }))
 }
 
@@ -94,13 +88,11 @@ pub async fn update_me(
 ) -> ApiResult<()> {
     let mut tx = Database::global().start_transaction().await?;
 
-    let mut account = Account::find_by_uuid(&mut tx, uuid)
+    let mut account = Account::get_by_uuid(&mut tx, uuid)
         .await?
         .ok_or(ApiError::server_error("Account from session not found"))?;
 
-    account.display_name = display_name;
-
-    account.update(&mut tx).await?;
+    account.set_display_name(&mut tx, display_name).await?;
 
     tx.commit().await?;
 
@@ -119,17 +111,31 @@ pub async fn set_password(
         return Err(ApiError::bad_request("Empty password"));
     }
 
-    let mut account = Account::find_by_uuid(&mut tx, uuid)
+    let mut account = Account::get_by_uuid(&mut tx, uuid)
         .await?
         .ok_or(ApiError::server_error("Account from session not found"))?;
+    let [display_name, username] = match &account {
+        Account::ClubMember(account) => &[
+            account.display_name.clone().into_inner(),
+            account.username.clone().into_inner(),
+        ],
+        Account::ClubAdmin(account) => &[
+            account.display_name.clone().into_inner(),
+            account.username.clone().into_inner(),
+        ],
+        Account::Superadmin(account) => &[
+            account.display_name.clone().into_inner(),
+            account.username.clone().into_inner(),
+        ],
+    };
 
-    let entropy = zxcvbn(&password, &[&account.display_name, &account.username]);
+    let entropy = zxcvbn(&password, &[display_name, username]);
     if entropy.score() < Score::Four {
         return Ok(ApiJson(FormResult::err(SetPasswordErrors {
             low_entropy: true,
         })));
     }
-    account.set_password(&mut tx, password).await?;
+    account.set_password(&mut tx, &password).await?;
 
     tx.commit().await?;
 

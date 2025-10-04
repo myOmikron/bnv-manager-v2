@@ -22,8 +22,7 @@ use crate::http::handler_auth::auth::schema::SignInRequest;
 use crate::models::account::Account;
 use crate::models::oidc_provider::CreateOidcAuthenticationToken;
 use crate::models::oidc_provider::OidcAuthenticationToken;
-use crate::models::oidc_provider::OidcProvider;
-use crate::models::role::Role;
+use crate::models::oidc_provider::OidcClient;
 use crate::utils::links::Link;
 
 pub mod schema;
@@ -46,7 +45,7 @@ pub async fn auth(Query(auth_query): Query<AuthQuery>, session: Session) -> ApiR
         return Err(ApiError::bad_request("Invalid response mode"));
     }
 
-    let provider = OidcProvider::find_by_client_id(&mut tx, auth_query.client_id)
+    let provider = OidcClient::find_by_client_id(&mut tx, auth_query.client_id)
         .await?
         .ok_or(ApiError::bad_request("Invalid client_id"))?;
     let mut stripped = auth_query.redirect_uri.clone();
@@ -86,13 +85,13 @@ pub async fn sign_in(
 ) -> ApiResult<()> {
     let mut tx = Database::global().start_transaction().await?;
 
-    let account = Account::find_by_username(&mut tx, &username)
+    let account = Account::get_by_username(&mut tx, &username)
         .await?
         .ok_or(ApiError::bad_request("Username not found"))?;
 
     tx.commit().await?;
 
-    if !account.check_password(password)? {
+    if !account.check_password(&password)? {
         return Err(ApiError::bad_request("Invalid password"));
     }
 
@@ -100,7 +99,11 @@ pub async fn sign_in(
         .insert(
             SESSION_USER,
             SessionUser {
-                uuid: account.uuid(),
+                uuid: match &account {
+                    Account::ClubMember(club_member) => club_member.uuid(),
+                    Account::ClubAdmin(club_admin) => club_admin.uuid(),
+                    Account::Superadmin(superadmin) => superadmin.uuid(),
+                },
             },
         )
         .await?;
@@ -125,7 +128,7 @@ pub async fn finish_auth(session: Session) -> ApiResult<Redirect> {
         .await?
         .ok_or(ApiError::bad_request("Missing session user"))?;
 
-    let provider = OidcProvider::find_by_client_id(&mut tx, auth_query.client_id)
+    let provider = OidcClient::find_by_client_id(&mut tx, auth_query.client_id)
         .await?
         .ok_or(ApiError::server_error(
             "Provider deleted between start and finish auth",
@@ -144,15 +147,11 @@ pub async fn finish_auth(session: Session) -> ApiResult<Redirect> {
     }
 
     // Check if the account is a member
-    let account = Account::find_by_uuid(&mut tx, session_user.uuid)
+    let account = Account::get_by_uuid(&mut tx, session_user.uuid)
         .await?
         .ok_or(ApiError::server_error("Invalid state"))?;
-    let roles = account.roles(&mut tx).await?;
-    if roles
-        .into_iter()
-        .find(|role| matches!(role, Role::ClubMember { .. }))
-        .is_none()
-    {
+
+    if !matches!(account, Account::ClubMember(_)) {
         return Ok(Redirect::temporary(
             Link::oidc_failed("Only members of a club are allowed to use OIDC").as_str(),
         ));
@@ -162,7 +161,7 @@ pub async fn finish_auth(session: Session) -> ApiResult<Redirect> {
     let auth_token = OidcAuthenticationToken::create(
         &mut tx,
         CreateOidcAuthenticationToken {
-            provider: provider.client_id,
+            client_id: provider.client_id,
             redirect_url: provider.redirect_uri,
             account: session_user.uuid,
             nonce: auth_query.nonce,

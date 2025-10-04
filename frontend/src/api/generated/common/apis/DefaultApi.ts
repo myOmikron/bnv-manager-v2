@@ -20,7 +20,7 @@ import type {
   FormResultForNullAndAcceptInviteError,
   FormResultForNullAndSetPasswordErrors,
   GetInvite,
-  Me,
+  MeSchema,
   SetPasswordRequest,
   UpdateMeRequest,
 } from '../models/index';
@@ -114,7 +114,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getMeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Me>> {
+    async getMeRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MeSchema>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -131,7 +131,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Me> {
+    async getMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MeSchema> {
         const response = await this.getMeRaw(initOverrides);
         return await response.value();
     }

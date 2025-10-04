@@ -1,16 +1,16 @@
 use galvyn::core::stuff::schema::SchemaDateTime;
-use rorm::fields::types::MaxStr;
+use galvyn::rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::models;
+use crate::models::club::Club;
 use crate::models::club::ClubUuid;
 use crate::models::domain::DomainUuid;
 
 /// A single club
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct Club {
+pub struct ClubSchema {
     /// Primary key of a club
     pub uuid: ClubUuid,
     /// Name of the club
@@ -56,8 +56,8 @@ pub struct PageParams {
     pub search: Option<MaxStr<255>>,
 }
 
-impl From<models::club::Club> for Club {
-    fn from(value: models::club::Club) -> Self {
+impl From<Club> for ClubSchema {
+    fn from(value: Club) -> Self {
         Self {
             uuid: value.uuid,
             name: value.name,

@@ -4,9 +4,10 @@
 //! It includes queries to find domains based on their association status with clubs.
 
 use futures_util::TryStreamExt;
+use galvyn::rorm;
+use galvyn::rorm::db::Executor;
+use galvyn::rorm::fields::types::MaxStr;
 use mailcow::domains::schema::MailcowDomain;
-use rorm::db::Executor;
-use rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
@@ -67,7 +68,7 @@ impl Domain {
     ) -> anyhow::Result<Vec<Self>> {
         Ok(rorm::query(exe, DomainModel)
             .order_asc(DomainModel.domain)
-            .condition(DomainModel.club.equals(club.0))
+            .condition(DomainModel.club.equals(Some(club.0)))
             .stream()
             .map_ok(Domain::from)
             .try_collect()

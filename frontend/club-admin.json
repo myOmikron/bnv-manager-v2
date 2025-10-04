@@ -27,7 +27,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Club"
+                                    "$ref": "#/components/schemas/ClubSchema"
                                 }
                             }
                         }
@@ -123,7 +123,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Page_for_SimpleAccount"
+                                    "$ref": "#/components/schemas/Page_for_SimpleMemberAccountSchema"
                                 }
                             }
                         }
@@ -314,7 +314,7 @@
                     "trace_id"
                 ]
             },
-            "Club": {
+            "ClubSchema": {
                 "description": "A single club",
                 "type": "object",
                 "properties": {
@@ -549,7 +549,7 @@
                 "type": "string",
                 "maxLength": 255
             },
-            "Page_for_SimpleAccount": {
+            "Page_for_SimpleMemberAccountSchema": {
                 "description": "A page of items",
                 "type": "object",
                 "properties": {
@@ -557,7 +557,7 @@
                         "description": "The page's items",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/SimpleAccount"
+                            "$ref": "#/components/schemas/SimpleMemberAccountSchema"
                         }
                     },
                     "limit": {
@@ -590,12 +590,20 @@
                 "type": "string",
                 "format": "date-time"
             },
-            "SimpleAccount": {
+            "SimpleMemberAccountSchema": {
                 "description": "Simple representation of an account.",
                 "type": "object",
                 "properties": {
                     "display_name": {
                         "description": "The account's display name.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "email": {
+                        "description": "The account's email",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/MaxStr_255"
@@ -621,6 +629,7 @@
                 },
                 "required": [
                     "display_name",
+                    "email",
                     "username",
                     "uuid"
                 ]

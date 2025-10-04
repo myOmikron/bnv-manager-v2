@@ -12,10 +12,11 @@ use galvyn::core::stuff::schema::SingleUuid;
 use galvyn::delete;
 use galvyn::get;
 use galvyn::post;
-use rorm::Database;
+use galvyn::rorm::Database;
 use tracing::instrument;
 
-use crate::http::handler_frontend::accounts::SimpleAccount;
+use crate::http::handler_frontend::accounts::SimpleAccountSchema;
+use crate::http::handler_frontend::accounts::SimpleMemberAccountSchema;
 use crate::http::handler_frontend::clubs::CreateClubError;
 use crate::http::handler_frontend::clubs::CreateClubRequest;
 use crate::http::handler_frontend::clubs::PageParams;
@@ -27,18 +28,17 @@ use crate::models::club::ClubUuid;
 use crate::models::club::CreateClub;
 use crate::models::domain::Domain;
 use crate::models::invite::Invite;
-use crate::models::role::Role;
 use crate::modules::mailcow::Mailcow;
 
 #[get("/")]
 #[instrument(name = "Api::admin::get_clubs")]
-pub async fn get_clubs() -> ApiResult<ApiJson<Vec<schema::Club>>> {
+pub async fn get_clubs() -> ApiResult<ApiJson<Vec<schema::ClubSchema>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let clubs = Club::find_all(&mut tx)
         .await?
         .into_iter()
-        .map(schema::Club::from)
+        .map(schema::ClubSchema::from)
         .collect();
 
     tx.commit().await?;
@@ -126,12 +126,12 @@ pub async fn delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResu
 #[instrument(name = "Api::admin::get_club")]
 pub async fn get_club(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
-) -> ApiResult<ApiJson<schema::Club>> {
+) -> ApiResult<ApiJson<schema::ClubSchema>> {
     let club = Club::find_by_uuid(Database::global(), ClubUuid(uuid))
         .await?
         .ok_or(ApiError::bad_request("Club not found"))?;
 
-    Ok(ApiJson(schema::Club::from(club)))
+    Ok(ApiJson(schema::ClubSchema::from(club)))
 }
 
 #[get("/{uuid}/members")]
@@ -143,7 +143,7 @@ pub async fn get_club_members(
         offset,
         search,
     }): Query<PageParams>,
-) -> ApiResult<ApiJson<Page<SimpleAccount>>> {
+) -> ApiResult<ApiJson<Page<SimpleMemberAccountSchema>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid))
@@ -155,7 +155,11 @@ pub async fn get_club_members(
     tx.commit().await?;
 
     Ok(ApiJson(Page {
-        items: page.items.into_iter().map(SimpleAccount::from).collect(),
+        items: page
+            .items
+            .into_iter()
+            .map(SimpleMemberAccountSchema::from)
+            .collect(),
         limit: page.limit,
         offset: page.offset,
         total: page.total,
@@ -171,7 +175,7 @@ pub async fn get_club_admins(
         offset,
         search,
     }): Query<PageParams>,
-) -> ApiResult<ApiJson<Page<SimpleAccount>>> {
+) -> ApiResult<ApiJson<Page<SimpleAccountSchema>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid))
@@ -183,7 +187,11 @@ pub async fn get_club_admins(
     tx.commit().await?;
 
     Ok(ApiJson(Page {
-        items: page.items.into_iter().map(SimpleAccount::from).collect(),
+        items: page
+            .items
+            .into_iter()
+            .map(SimpleAccountSchema::from)
+            .collect(),
         limit: page.limit,
         offset: page.offset,
         total: page.total,
@@ -200,13 +208,7 @@ pub async fn get_club_admin_invites(
     let invites = Invite::find_by_club(&mut tx, ClubUuid(uuid))
         .await?
         .into_iter()
-        .filter_map(|x| {
-            x.roles
-                .contains(&Role::ClubAdmin {
-                    club_uuid: ClubUuid(uuid),
-                })
-                .then(|| GetInvite::from(x))
-        })
+        .filter_map(|x| x.email.is_none().then_some(GetInvite::from(x)))
         .collect();
 
     tx.commit().await?;
@@ -224,18 +226,7 @@ pub async fn get_club_member_invites(
     let invites = Invite::find_by_club(&mut tx, ClubUuid(uuid))
         .await?
         .into_iter()
-        .filter_map(|x| {
-            x.roles
-                .iter()
-                .any(|role| {
-                    if let Role::ClubMember { club_uuid, .. } = role {
-                        *club_uuid == ClubUuid(uuid)
-                    } else {
-                        false
-                    }
-                })
-                .then(|| GetInvite::from(x))
-        })
+        .filter_map(|x| x.email.is_some().then_some(GetInvite::from(x)))
         .collect();
 
     tx.commit().await?;

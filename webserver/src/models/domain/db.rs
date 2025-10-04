@@ -1,6 +1,6 @@
-use rorm::Model;
-use rorm::fields::types::MaxStr;
-use rorm::prelude::ForeignModel;
+use galvyn::rorm::Model;
+use galvyn::rorm::fields::types::MaxStr;
+use galvyn::rorm::prelude::ForeignModel;
 use uuid::Uuid;
 
 use crate::models::club::db::ClubModel;

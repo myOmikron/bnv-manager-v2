@@ -6,7 +6,7 @@ use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
 use galvyn::core::stuff::schema::SingleLink;
 use galvyn::post;
-use rorm::Database;
+use galvyn::rorm::Database;
 use time::Duration;
 use time::OffsetDateTime;
 use tracing::instrument;
@@ -24,7 +24,7 @@ pub async fn create_invite(
         username,
         display_name,
         valid_days,
-        roles,
+        invite_type,
     }): ApiJson<CreateInviteRequestAdmin>,
 ) -> ApiResult<ApiJson<FormResult<SingleLink, CreateInviteError>>> {
     let mut tx = Database::global().start_transaction().await?;
@@ -34,8 +34,8 @@ pub async fn create_invite(
         CreateInviteParams {
             username,
             display_name,
-            roles,
             expires_at: OffsetDateTime::now_utc() + Duration::days(valid_days.get() as i64),
+            invite_type,
         },
     )
     .await?;

@@ -1,32 +1,29 @@
 //! Clubs related models are in this module.
 
-use std::borrow::Cow;
-
 use futures_util::TryStreamExt;
 use galvyn::core::stuff::schema::Page;
-use rorm::and;
-use rorm::conditions;
-use rorm::conditions::BinaryOperator;
-use rorm::conditions::Condition;
-use rorm::conditions::DynamicCollection;
-use rorm::db::Executor;
-use rorm::db::transaction::Transaction;
-use rorm::fields::types::MaxStr;
-use rorm::prelude::ForeignModelByField;
+use galvyn::rorm;
+use galvyn::rorm::and;
+use galvyn::rorm::conditions::Condition;
+use galvyn::rorm::conditions::DynamicCollection;
+use galvyn::rorm::db::Executor;
+use galvyn::rorm::db::transaction::Transaction;
+use galvyn::rorm::fields::types::MaxStr;
+use galvyn::rorm::prelude::ForeignModelByField;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use tracing::instrument;
 use uuid::Uuid;
 
-use crate::models::account::Account;
-use crate::models::account::db::AccountModel;
+use crate::models::account::ClubAccount;
+use crate::models::account::ClubAdminAccount;
+use crate::models::account::db::ClubAccountModel;
+use crate::models::account::db::ClubAdminAccountModel;
 use crate::models::club::db::ClubModel;
 use crate::models::club::db::ClubModelInsert;
 use crate::models::domain::Domain;
 use crate::models::domain::db::DomainModel;
-use crate::models::role::db::ClubAdminModel;
-use crate::models::role::db::ClubMemberModel;
 
 pub(in crate::models) mod db;
 
@@ -60,7 +57,7 @@ impl Club {
         let mut guard = exe.ensure_transaction().await?;
 
         rorm::delete(guard.get_transaction(), DomainModel)
-            .condition(DomainModel.club.equals(self.uuid.0))
+            .condition(DomainModel.club.equals(Some(self.uuid.0)))
             .await?;
 
         rorm::delete(guard.get_transaction(), ClubModel)
@@ -220,7 +217,7 @@ impl Club {
             rorm::update(guard.get_transaction(), DomainModel)
                 .set(DomainModel.is_primary, false)
                 .condition(and![
-                    DomainModel.club.equals(self.uuid.0),
+                    DomainModel.club.equals(Some(self.uuid.0)),
                     DomainModel.is_primary.equals(true)
                 ])
                 .await?;
@@ -249,43 +246,33 @@ impl Club {
         limit: u64,
         offset: u64,
         search: Option<MaxStr<255>>,
-    ) -> anyhow::Result<Page<Account>> {
+    ) -> anyhow::Result<Page<ClubAccount>> {
         let mut guard = exe.ensure_transaction().await?;
 
-        let mut conditions = vec![ClubMemberModel.club.equals(self.uuid.0).boxed()];
+        let mut conditions = vec![ClubAccountModel.club.equals(self.uuid.0).boxed()];
         if let Some(search) = search {
             conditions.push(
-                conditions::Binary {
-                    operator: BinaryOperator::Like,
-                    fst_arg: conditions::Column(ClubMemberModel.account.username),
-                    snd_arg: conditions::Value::String(Cow::Owned(format!(
-                        "%{}%",
-                        search
-                            .replace('\\', "\\\\")
-                            .replace('_', "\\_")
-                            .replace('%', "\\%"),
-                    ))),
-                }
-                .boxed(),
-            );
+                ClubAccountModel
+                    .username
+                    .username
+                    .like_ignore_case(format!("%{search}%"))
+                    .boxed(),
+            )
         }
-        let cond_collection = DynamicCollection::and(conditions);
+        let cond_collection = DynamicCollection::and_unchecked(conditions);
 
-        let account_models = rorm::query(
-            guard.get_transaction(),
-            ClubMemberModel.account.query_as(AccountModel),
-        )
-        .order_asc(ClubMemberModel.account.username)
-        .condition(&cond_collection)
-        .offset(offset)
-        .limit(limit)
-        .stream()
-        .map_ok(Account::from)
-        .try_collect::<Vec<_>>()
-        .await?;
+        let account_models = rorm::query(guard.get_transaction(), ClubAccountModel)
+            .order_asc(ClubAccountModel.username)
+            .condition(&cond_collection)
+            .offset(offset)
+            .limit(limit)
+            .stream()
+            .map_ok(ClubAccount::from)
+            .try_collect::<Vec<_>>()
+            .await?;
 
-        let total = rorm::query(guard.get_transaction(), ClubMemberModel.uuid.count())
-            .condition(ClubMemberModel.club.equals(self.uuid.0))
+        let total = rorm::query(guard.get_transaction(), ClubAccountModel.uuid.count())
+            .condition(ClubAccountModel.club.equals(self.uuid.0))
             .one()
             .await?;
 
@@ -307,43 +294,33 @@ impl Club {
         limit: u64,
         offset: u64,
         search: Option<MaxStr<255>>,
-    ) -> anyhow::Result<Page<Account>> {
+    ) -> anyhow::Result<Page<ClubAdminAccount>> {
         let mut guard = exe.ensure_transaction().await?;
 
-        let mut conditions = vec![ClubAdminModel.club.equals(self.uuid.0).boxed()];
+        let mut conditions = vec![ClubAdminAccountModel.club.equals(self.uuid.0).boxed()];
         if let Some(search) = search {
             conditions.push(
-                conditions::Binary {
-                    operator: BinaryOperator::Like,
-                    fst_arg: conditions::Column(ClubAdminModel.account.username),
-                    snd_arg: conditions::Value::String(Cow::Owned(format!(
-                        "%{}%",
-                        search
-                            .replace('_', "\\_")
-                            .replace('%', "\\%")
-                            .replace('\\', "\\\\"),
-                    ))),
-                }
-                .boxed(),
+                ClubAdminAccountModel
+                    .username
+                    .username
+                    .like_ignore_case(format!("%{search}%"))
+                    .boxed(),
             );
         }
-        let cond_collection = DynamicCollection::and(conditions);
+        let cond_collection = DynamicCollection::and_unchecked(conditions);
 
-        let account_models = rorm::query(
-            guard.get_transaction(),
-            ClubAdminModel.account.query_as(AccountModel),
-        )
-        .order_asc(ClubAdminModel.account.username)
-        .condition(&cond_collection)
-        .offset(offset)
-        .limit(limit)
-        .stream()
-        .map_ok(Account::from)
-        .try_collect::<Vec<_>>()
-        .await?;
+        let account_models = rorm::query(guard.get_transaction(), ClubAdminAccountModel)
+            .order_asc(ClubAdminAccountModel.username)
+            .condition(&cond_collection)
+            .offset(offset)
+            .limit(limit)
+            .stream()
+            .map_ok(ClubAdminAccount::from)
+            .try_collect::<Vec<_>>()
+            .await?;
 
-        let total = rorm::query(guard.get_transaction(), ClubAdminModel.uuid.count())
-            .condition(ClubAdminModel.club.equals(self.uuid.0))
+        let total = rorm::query(guard.get_transaction(), ClubAdminAccountModel.uuid.count())
+            .condition(ClubAdminAccountModel.club.equals(self.uuid.0))
             .one()
             .await?;
 
@@ -383,6 +360,7 @@ impl Club {
             .populate(&mut *tx, &mut club_model)
             .await?;
 
+        #[allow(clippy::unwrap_used)]
         Ok(Club {
             uuid: ClubUuid(club_model.uuid),
             name: club_model.name,

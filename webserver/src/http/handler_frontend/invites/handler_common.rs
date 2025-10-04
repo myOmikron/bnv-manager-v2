@@ -9,8 +9,8 @@ use galvyn::core::stuff::schema::FormResult;
 use galvyn::core::stuff::schema::SingleUuid;
 use galvyn::get;
 use galvyn::post;
+use galvyn::rorm::Database;
 use mailcow::domain_admins::schema::CreateDomainAdminRequest;
-use rorm::Database;
 use tracing::error;
 use tracing::info;
 use tracing::instrument;
@@ -23,7 +23,6 @@ use crate::models::domain::Domain;
 use crate::models::invite::AcceptInviteParams;
 use crate::models::invite::Invite;
 use crate::models::invite::InviteUuid;
-use crate::models::role::Role;
 use crate::modules::mailcow::Mailcow;
 
 #[get("/{uuid}")]
@@ -64,25 +63,18 @@ pub async fn accept_invite(
         .await?;
 
     match res {
-        Ok(account) => {
-            let roles = account.roles(&mut tx).await?;
-
+        Ok(Account::ClubAdmin(club_admin)) => {
             let mut domains = vec![];
-
-            for role in roles {
-                if let Role::ClubAdmin { club_uuid } = role {
-                    domains.extend(Domain::find_all_by_club(&mut tx, club_uuid).await?);
-                }
-            }
+            domains.extend(Domain::find_all_by_club(&mut tx, club_admin.club).await?);
 
             // Associate corresponding domains
             tokio::spawn(async move {
-                let username = account.username.into_inner();
+                let username = club_admin.username.into_inner();
 
                 let u = username.clone();
                 let res: anyhow::Result<()> = async move {
                     let hashed_password =
-                        format!("{{BLF-CRYPT}}{}", Account::hash_password(&*password)?);
+                        format!("{{BLF-CRYPT}}{}", Account::hash_password(&password)?);
                     Mailcow::global()
                         .sdk
                         .create_domain_admin(CreateDomainAdminRequest {
@@ -105,6 +97,7 @@ pub async fn accept_invite(
                 }
             });
         }
+        Ok(_) => {}
         Err(err) => {
             return match err {
                 crate::models::invite::AcceptInviteError::Expired => {

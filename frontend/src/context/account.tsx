@@ -1,6 +1,6 @@
 import React from "react";
 import { Api } from "src/api/api";
-import { Me } from "src/api/generated/common";
+import { MeSchema } from "src/api/generated/common";
 import CONSOLE from "src/utils/console";
 import { Navigate } from "@tanstack/react-router";
 import { RequiredError, ResponseError } from "src/api/generated/common";
@@ -11,7 +11,7 @@ let ACCOUNT_PROVIDER: AccountProvider | null = null;
 /** Data provided by the {@link ACCOUNT_CONTEXT} */
 export type AccountContext = {
     /** The currently logged-in account */
-    account: Me;
+    account: MeSchema;
 
     /** Reload the account's information */
     reset: () => void;
@@ -22,11 +22,7 @@ const ACCOUNT_CONTEXT = React.createContext<AccountContext>({
     account: {
         display_name: "",
         uuid: "",
-        roles: {
-            admins: [],
-            member: [],
-            super_admin: false,
-        },
+        role: { type: "SuperAdmin" },
         username: "",
     },
 
@@ -51,7 +47,7 @@ type AccountProviderProps = {
  */
 type AccountProviderState = {
     /** The account */
-    account: Me | "unauthenticated" | "loading";
+    account: MeSchema | "unauthenticated" | "loading";
 };
 
 /**

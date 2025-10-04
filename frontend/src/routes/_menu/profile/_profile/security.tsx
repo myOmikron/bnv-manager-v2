@@ -11,10 +11,11 @@ import { Button, PrimaryButton } from "src/components/base/button";
 import { Api } from "src/api/api";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid";
 import { zxcvbn } from "@zxcvbn-ts/core";
-import React, { Suspense } from "react";
-import PasswordStrength from "src/components/base/pw-strength";
+import React, { lazy, Suspense } from "react";
 import { toast } from "react-toastify";
 import ACCOUNT_CONTEXT from "src/context/account";
+
+const PasswordStrength = lazy(() => import("src/components/base/pw-strength"));
 
 /**
  * Props for {@link ProfileSecurity}

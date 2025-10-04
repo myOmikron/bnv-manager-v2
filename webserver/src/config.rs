@@ -5,7 +5,7 @@ use std::net::Ipv4Addr;
 use std::path::PathBuf;
 use std::sync::LazyLock;
 
-use rorm::DatabaseDriver;
+use galvyn::rorm::DatabaseDriver;
 use webauthn_rs::prelude::Url;
 
 use crate::config::env::EnvError;

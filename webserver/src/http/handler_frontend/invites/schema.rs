@@ -1,14 +1,14 @@
 use std::num::NonZeroU8;
 
 use galvyn::core::stuff::schema::SchemaDateTime;
-use rorm::fields::types::MaxStr;
+use galvyn::rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 
 use crate::models::invite::Invite;
+use crate::models::invite::InviteType;
 use crate::models::invite::InviteUuid;
-use crate::models::role::Role;
 use crate::utils::links::Link;
 
 /// API representation of an invitation
@@ -53,8 +53,8 @@ pub struct CreateInviteRequestAdmin {
     pub display_name: MaxStr<255>,
     /// The point in time the invite expires
     pub valid_days: NonZeroU8,
-    /// Roles to assign to the user
-    pub roles: Vec<Role>,
+    /// Type of the invite
+    pub invite_type: InviteType,
 }
 
 /// Request to create an invitation

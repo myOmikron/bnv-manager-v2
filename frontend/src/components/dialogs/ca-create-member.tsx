@@ -9,14 +9,14 @@ import { Description, ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel }
 import { Input } from "src/components/base/input";
 import { toast } from "react-toastify";
 import { ClipboardDocumentListIcon } from "@heroicons/react/20/solid";
-import { Club } from "src/api/generated/club-admin";
+import { ClubSchema } from "src/api/generated/club-admin";
 
 /**
  * The properties for {@link ClubAdminCreateMemberInviteDialog}
  */
 export type ClubAdminCreateMemberInviteDialogProps = {
     /** The club to create the invite for */
-    club: Club;
+    club: ClubSchema;
     /** Should the dialog be open */
     open: boolean;
     /** Callback for close action */

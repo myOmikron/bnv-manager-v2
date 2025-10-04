@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { Api, UUID } from "src/api/api";
-import { Club } from "src/api/generated/admin";
+import { ClubSchema } from "src/api/generated/admin";
 
 /** Data provided by the {@link ADMIN_SINGLE_CLUB} */
 export type AdminSingleClubContext = {
     /** The currently active context */
-    data: Club;
+    data: ClubSchema;
 
     /** Reload the devices' information */
     reset: () => void;
@@ -45,7 +45,7 @@ export type AdminSingleClubProviderProps = {
  * The provider of a device context
  */
 export function AdminSingleClubProvider(props: AdminSingleClubProviderProps) {
-    const [data, setData] = React.useState<Club | "loading">("loading");
+    const [data, setData] = React.useState<ClubSchema | "loading">("loading");
     let fetching = false;
 
     /**

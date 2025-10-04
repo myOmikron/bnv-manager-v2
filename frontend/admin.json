@@ -16,7 +16,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/SimpleAccount"
+                                        "$ref": "#/components/schemas/SimpleAccountSchema"
                                     }
                                 }
                             }
@@ -76,7 +76,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Club"
+                                    "$ref": "#/components/schemas/ClubSchema"
                                 }
                             }
                         }
@@ -175,7 +175,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Club"
+                                        "$ref": "#/components/schemas/ClubSchema"
                                     }
                                 }
                             }
@@ -325,7 +325,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Page_for_SimpleAccount"
+                                    "$ref": "#/components/schemas/Page_for_SimpleAccountSchema"
                                 }
                             }
                         }
@@ -420,7 +420,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Page_for_SimpleAccount"
+                                    "$ref": "#/components/schemas/Page_for_SimpleMemberAccountSchema"
                                 }
                             }
                         }
@@ -818,7 +818,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/OidcProviderUuid"
+                                    "$ref": "#/components/schemas/OidcClientUuid"
                                 }
                             }
                         }
@@ -877,7 +877,7 @@
                     "trace_id"
                 ]
             },
-            "Club": {
+            "ClubSchema": {
                 "description": "A single club",
                 "type": "object",
                 "properties": {
@@ -1018,12 +1018,13 @@
                             }
                         ]
                     },
-                    "roles": {
-                        "description": "Roles to assign to the user",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Role"
-                        }
+                    "invite_type": {
+                        "description": "Type of the invite",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/InviteType"
+                            }
+                        ]
                     },
                     "username": {
                         "description": "Reserved username",
@@ -1042,7 +1043,7 @@
                 },
                 "required": [
                     "display_name",
-                    "roles",
+                    "invite_type",
                     "username",
                     "valid_days"
                 ]
@@ -1241,6 +1242,83 @@
                     "uuid"
                 ]
             },
+            "InviteType": {
+                "description": "Type of the invite",
+                "oneOf": [
+                    {
+                        "description": "Superadmin",
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "SuperAdmin"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "type"
+                        ]
+                    },
+                    {
+                        "description": "Club admin",
+                        "type": "object",
+                        "properties": {
+                            "club": {
+                                "description": "Club the invite is linked to",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ClubUuid"
+                                    }
+                                ]
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubAdmin"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "club",
+                            "type"
+                        ]
+                    },
+                    {
+                        "description": "Club member",
+                        "type": "object",
+                        "properties": {
+                            "club": {
+                                "description": "Club the invite is linked to",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ClubUuid"
+                                    }
+                                ]
+                            },
+                            "email": {
+                                "description": "Primary mail of the user",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/MaxStr_255"
+                                    }
+                                ]
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubMember"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "club",
+                            "email",
+                            "type"
+                        ]
+                    }
+                ]
+            },
             "InviteUuid": {
                 "description": "Wrapper for the primary key of the [Invite]",
                 "type": "string",
@@ -1254,6 +1332,11 @@
                 "type": "string",
                 "maxLength": 64
             },
+            "OidcClientUuid": {
+                "description": "Client id of an oidc provider",
+                "type": "string",
+                "format": "uuid"
+            },
             "OidcProvider": {
                 "description": "A single OIDC Provider",
                 "type": "object",
@@ -1262,7 +1345,7 @@
                         "description": "client id of the provider",
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/OidcProviderUuid"
+                                "$ref": "#/components/schemas/OidcClientUuid"
                             }
                         ]
                     },
@@ -1295,12 +1378,7 @@
                     "redirect_uri"
                 ]
             },
-            "OidcProviderUuid": {
-                "description": "Client id of an oidc provider",
-                "type": "string",
-                "format": "uuid"
-            },
-            "Page_for_SimpleAccount": {
+            "Page_for_SimpleAccountSchema": {
                 "description": "A page of items",
                 "type": "object",
                 "properties": {
@@ -1308,7 +1386,7 @@
                         "description": "The page's items",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/SimpleAccount"
+                            "$ref": "#/components/schemas/SimpleAccountSchema"
                         }
                     },
                     "limit": {
@@ -1336,76 +1414,40 @@
                     "total"
                 ]
             },
-            "Role": {
-                "description": "The available roles of the manager",
-                "oneOf": [
-                    {
-                        "description": "The admin of a club. Can manage users and settings of its club",
-                        "type": "object",
-                        "properties": {
-                            "club_uuid": {
-                                "$ref": "#/components/schemas/ClubUuid"
-                            },
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "ClubAdmin"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "club_uuid",
-                            "type"
-                        ]
+            "Page_for_SimpleMemberAccountSchema": {
+                "description": "A page of items",
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "description": "The page's items",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SimpleMemberAccountSchema"
+                        }
                     },
-                    {
-                        "description": "A member of a club.",
-                        "type": "object",
-                        "properties": {
-                            "club_uuid": {
-                                "description": "UUID of the club",
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/ClubUuid"
-                                    }
-                                ]
-                            },
-                            "email": {
-                                "description": "Mail of the user for that club",
-                                "allOf": [
-                                    {
-                                        "$ref": "#/components/schemas/MaxStr_255"
-                                    }
-                                ]
-                            },
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "ClubMember"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "club_uuid",
-                            "email",
-                            "type"
-                        ]
+                    "limit": {
+                        "description": "The limit this page was requested with",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
                     },
-                    {
-                        "description": "The super administrator. Has rights to manager clubs.",
-                        "type": "object",
-                        "properties": {
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "SuperAdmin"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "type"
-                        ]
+                    "offset": {
+                        "description": "The offset this page was requested with",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "total": {
+                        "description": "The total number of items this page is a subset of",
+                        "type": "integer",
+                        "format": "int64"
                     }
+                },
+                "required": [
+                    "items",
+                    "limit",
+                    "offset",
+                    "total"
                 ]
             },
             "SchemaDateTime": {
@@ -1413,7 +1455,7 @@
                 "type": "string",
                 "format": "date-time"
             },
-            "SimpleAccount": {
+            "SimpleAccountSchema": {
                 "description": "Simple representation of an account.",
                 "type": "object",
                 "properties": {
@@ -1444,6 +1486,50 @@
                 },
                 "required": [
                     "display_name",
+                    "username",
+                    "uuid"
+                ]
+            },
+            "SimpleMemberAccountSchema": {
+                "description": "Simple representation of an account.",
+                "type": "object",
+                "properties": {
+                    "display_name": {
+                        "description": "The account's display name.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "email": {
+                        "description": "The account's email",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "username": {
+                        "description": "The account's username.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
+                    },
+                    "uuid": {
+                        "description": "The account's UUID.",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AccountUuid"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "display_name",
+                    "email",
                     "username",
                     "uuid"
                 ]

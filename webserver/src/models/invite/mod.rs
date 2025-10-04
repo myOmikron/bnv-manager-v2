@@ -1,12 +1,11 @@
 //! Invite related code lives in this module
 
-use std::collections::HashMap;
-
 use anyhow::Context;
 use futures_util::TryStreamExt;
-use rorm::db::Executor;
-use rorm::fields::types::MaxStr;
-use rorm::prelude::ForeignModelByField;
+use galvyn::rorm;
+use galvyn::rorm::db::Executor;
+use galvyn::rorm::fields::types::MaxStr;
+use galvyn::rorm::prelude::ForeignModelByField;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
@@ -15,18 +14,19 @@ use tracing::instrument;
 use uuid::Uuid;
 
 use crate::models::account::Account;
-use crate::models::account::db::AccountModel;
-use crate::models::account::db::AccountModelInsert;
+use crate::models::account::AdministrativeAccount;
+use crate::models::account::ClubAccount;
+use crate::models::account::ClubAdminAccount;
+use crate::models::account::db::AdministrativeAccountModel;
+use crate::models::account::db::AdministrativeAccountModelInsert;
+use crate::models::account::db::ClubAccountModel;
+use crate::models::account::db::ClubAccountModelInsert;
+use crate::models::account::db::ClubAdminAccountModel;
+use crate::models::account::db::ClubAdminAccountModelInsert;
+use crate::models::account::db::UsernameModel;
 use crate::models::club::ClubUuid;
 use crate::models::invite::db::InviteModel;
 use crate::models::invite::db::InviteModelInsert;
-use crate::models::invite::db::InvitedClubAdminModel;
-use crate::models::invite::db::InvitedClubMemberModel;
-use crate::models::invite::db::InvitedSuperAdminModel;
-use crate::models::role::Role;
-use crate::models::role::db::ClubAdminModel;
-use crate::models::role::db::ClubMemberModel;
-use crate::models::role::db::SuperAdminModel;
 
 pub(in crate::models) mod db;
 
@@ -42,8 +42,10 @@ pub struct Invite {
     pub username: MaxStr<255>,
     /// Display-name of the user
     pub display_name: MaxStr<255>,
-    /// A list of roles the user possesses
-    pub roles: Vec<Role>,
+    /// When the club is set, the invite is either a ClubMember or a ClubAdmin
+    pub club: Option<ClubUuid>,
+    /// When the mail is set, the invite is a ClubMember
+    pub email: Option<MaxStr<255>>,
     /// The point in time the invite expires
     expires_at: time::OffsetDateTime,
     /// The point in time the invite was created
@@ -61,61 +63,11 @@ impl Invite {
         exe: impl Executor<'_>,
         InviteUuid(invite_uuid): InviteUuid,
     ) -> anyhow::Result<Option<Invite>> {
-        let mut guard = exe.ensure_transaction().await?;
-
-        let Some(invite) = rorm::query(guard.get_transaction(), InviteModel)
+        Ok(rorm::query(exe, InviteModel)
             .condition(InviteModel.uuid.equals(invite_uuid))
             .optional()
             .await?
-        else {
-            return Ok(None);
-        };
-
-        let mut roles = vec![];
-
-        // Superadmin
-        let super_admin = rorm::query(guard.get_transaction(), InvitedSuperAdminModel)
-            .condition(InvitedSuperAdminModel.invite.equals(invite.uuid))
-            .optional()
-            .await?;
-
-        if super_admin.is_some() {
-            roles.push(Role::SuperAdmin);
-        }
-
-        // ClubAdmin
-        let club_admins = rorm::query(guard.get_transaction(), InvitedClubAdminModel)
-            .condition(InvitedClubAdminModel.invite.equals(invite.uuid))
-            .stream()
-            .map_ok(|x| Role::ClubAdmin {
-                club_uuid: ClubUuid(x.club.0),
-            })
-            .try_collect::<Vec<_>>()
-            .await?;
-        roles.extend(club_admins);
-
-        // ClubMember
-        let club_members = rorm::query(guard.get_transaction(), InvitedClubMemberModel)
-            .condition(InvitedClubMemberModel.invite.equals(invite.uuid))
-            .stream()
-            .map_ok(|x| Role::ClubMember {
-                club_uuid: ClubUuid(x.club.0),
-                email: x.email,
-            })
-            .try_collect::<Vec<_>>()
-            .await?;
-        roles.extend(club_members);
-
-        guard.commit().await?;
-
-        Ok(Some(Invite {
-            uuid: InviteUuid(invite.uuid),
-            username: invite.username,
-            display_name: invite.display_name,
-            roles,
-            expires_at: invite.expires_at,
-            created_at: invite.created_at,
-        }))
+            .map(Invite::from))
     }
 
     /// Find all invites for a given club
@@ -127,69 +79,12 @@ impl Invite {
         exe: impl Executor<'_>,
         ClubUuid(club_uuid): ClubUuid,
     ) -> anyhow::Result<Vec<Self>> {
-        let mut guard = exe.ensure_transaction().await?;
-
-        // Query invited members
-        let mut invites = rorm::query(
-            guard.get_transaction(),
-            (
-                InvitedClubMemberModel.invite.query_as(InviteModel),
-                InvitedClubMemberModel.email,
-            ),
-        )
-        .condition(InvitedClubMemberModel.club.equals(club_uuid))
-        .stream()
-        .map_ok(|(invite, email)| {
-            (
-                invite.uuid,
-                Invite {
-                    uuid: InviteUuid(invite.uuid),
-                    username: invite.username,
-                    display_name: invite.display_name,
-                    roles: vec![Role::ClubMember {
-                        club_uuid: ClubUuid(club_uuid),
-                        email,
-                    }],
-                    expires_at: invite.expires_at,
-                    created_at: invite.created_at,
-                },
-            )
-        })
-        .try_collect::<HashMap<_, _>>()
-        .await?;
-
-        // Query invited admins
-        rorm::query(
-            guard.get_transaction(),
-            InvitedClubAdminModel.invite.query_as(InviteModel),
-        )
-        .condition(InvitedClubAdminModel.club.equals(club_uuid))
-        .all()
-        .await?
-        .into_iter()
-        .for_each(|x| {
-            invites
-                .entry(x.uuid)
-                .and_modify(|existing| {
-                    existing.roles.push(Role::ClubAdmin {
-                        club_uuid: ClubUuid(club_uuid),
-                    })
-                })
-                .or_insert(Invite {
-                    uuid: InviteUuid(x.uuid),
-                    username: x.username,
-                    display_name: x.display_name,
-                    roles: vec![Role::ClubAdmin {
-                        club_uuid: ClubUuid(club_uuid),
-                    }],
-                    expires_at: x.expires_at,
-                    created_at: x.created_at,
-                });
-        });
-
-        guard.commit().await?;
-
-        Ok(invites.into_values().collect())
+        Ok(rorm::query(exe, InviteModel)
+            .condition(InviteModel.club.equals(Some(club_uuid)))
+            .stream()
+            .map_ok(Invite::from)
+            .try_collect()
+            .await?)
     }
 
     /// Get the point in time the invite expires
@@ -215,59 +110,50 @@ impl Invite {
             MaxStr::new(Account::hash_password(&password).context("Hashing password failed")?)
                 .expect("Resulting hash must be <255 bytes");
 
-        let account = rorm::insert(guard.get_transaction(), AccountModel)
-            .single(&AccountModelInsert {
-                uuid: Uuid::new_v4(),
-                username: self.username,
-                display_name: self.display_name,
-                hashed_password,
-            })
-            .await?;
-
-        // Superadmin role
-        let super_admin = rorm::query(guard.get_transaction(), InvitedSuperAdminModel)
-            .condition(InvitedSuperAdminModel.invite.equals(self.uuid.0))
-            .optional()
-            .await?;
-        if super_admin.is_some() {
-            rorm::insert(guard.get_transaction(), SuperAdminModel)
-                .single(&SuperAdminModel {
-                    uuid: Uuid::new_v4(),
-                    account: ForeignModelByField(account.uuid),
-                })
-                .await?;
+        // Club Member
+        let account = if let Some(email) = self.email
+            && let Some(club) = self.club
+        {
+            Account::ClubMember(ClubAccount::from(
+                rorm::insert(guard.get_transaction(), ClubAccountModel)
+                    .single(&ClubAccountModelInsert {
+                        uuid: Uuid::new_v4(),
+                        username: ForeignModelByField(self.username),
+                        display_name: self.display_name,
+                        hashed_password,
+                        email,
+                        club: ForeignModelByField(club.0),
+                    })
+                    .await?,
+            ))
         }
-
-        // Club admins
-        let club_admins = rorm::query(guard.get_transaction(), InvitedClubAdminModel)
-            .condition(InvitedClubAdminModel.invite.equals(self.uuid.0))
-            .stream()
-            .map_ok(|x| ClubAdminModel {
-                uuid: Uuid::new_v4(),
-                account: ForeignModelByField(account.uuid),
-                club: ForeignModelByField(x.club.0),
-            })
-            .try_collect::<Vec<_>>()
-            .await?;
-        rorm::insert(guard.get_transaction(), ClubAdminModel)
-            .bulk(club_admins)
-            .await?;
-
-        // Club members
-        let club_members = rorm::query(guard.get_transaction(), InvitedClubMemberModel)
-            .condition(InvitedClubMemberModel.invite.equals(self.uuid.0))
-            .stream()
-            .map_ok(|x| ClubMemberModel {
-                uuid: Uuid::new_v4(),
-                account: ForeignModelByField(account.uuid),
-                club: ForeignModelByField(x.club.0),
-                email: x.email,
-            })
-            .try_collect::<Vec<_>>()
-            .await?;
-        rorm::insert(guard.get_transaction(), ClubMemberModel)
-            .bulk(club_members)
-            .await?;
+        // Club admin
+        else if let Some(club) = self.club {
+            Account::ClubAdmin(ClubAdminAccount::from(
+                rorm::insert(guard.get_transaction(), ClubAdminAccountModel)
+                    .single(&ClubAdminAccountModelInsert {
+                        uuid: Uuid::new_v4(),
+                        username: ForeignModelByField(self.username),
+                        display_name: self.display_name,
+                        hashed_password,
+                        club: ForeignModelByField(club.0),
+                    })
+                    .await?,
+            ))
+        }
+        // Superadmin
+        else {
+            Account::Superadmin(AdministrativeAccount::from(
+                rorm::insert(guard.get_transaction(), AdministrativeAccountModel)
+                    .single(&AdministrativeAccountModelInsert {
+                        uuid: Uuid::new_v4(),
+                        username: ForeignModelByField(self.username),
+                        display_name: self.display_name,
+                        hashed_password,
+                    })
+                    .await?,
+            ))
+        };
 
         // Delete invite, the related invited roles will be deleted by cascade
         rorm::delete(guard.get_transaction(), InviteModel)
@@ -276,7 +162,7 @@ impl Invite {
 
         guard.commit().await?;
 
-        Ok(Ok(Account::from(account)))
+        Ok(Ok(account))
     }
 
     /// Create a new invite.
@@ -288,83 +174,46 @@ impl Invite {
         CreateInviteParams {
             username,
             display_name,
-            roles,
             expires_at,
+            invite_type,
         }: CreateInviteParams,
     ) -> anyhow::Result<Result<Invite, CreateInviteError>> {
         let mut guard = exe.ensure_transaction().await?;
         let username = MaxStr::new(username.to_lowercase())?;
 
-        let account = Account::find_by_username(guard.get_transaction(), &username).await?;
-        if account.is_some() {
-            return Ok(Err(CreateInviteError::UsernameTaken));
-        }
-
-        let invite = rorm::query(guard.get_transaction(), InviteModel)
-            .condition(InviteModel.username.equals(&*username))
+        let existing = rorm::query(guard.get_transaction(), UsernameModel)
+            .condition(UsernameModel.username.equals(&username))
             .optional()
             .await?;
-
-        if invite.is_some() {
+        if existing.is_some() {
             return Ok(Err(CreateInviteError::UsernameTaken));
         }
+
+        let username = rorm::insert(guard.get_transaction(), UsernameModel)
+            .single(&UsernameModel { username })
+            .await?;
 
         let invite = rorm::insert(guard.get_transaction(), InviteModel)
             .single(&InviteModelInsert {
                 uuid: Uuid::new_v4(),
-                username,
+                username: ForeignModelByField(username.username),
                 display_name,
+                club: match &invite_type {
+                    InviteType::SuperAdmin => None,
+                    InviteType::ClubAdmin { club } => Some(ForeignModelByField(club.0)),
+                    InviteType::ClubMember { club, .. } => Some(ForeignModelByField(club.0)),
+                },
+                email: match invite_type {
+                    InviteType::ClubMember { email, .. } => Some(email),
+                    _ => None,
+                },
                 expires_at,
             })
             .await?;
 
-        for role in &roles {
-            match role {
-                Role::SuperAdmin => {
-                    rorm::insert(guard.get_transaction(), InvitedSuperAdminModel)
-                        .single(&InvitedSuperAdminModel {
-                            uuid: Uuid::new_v4(),
-                            invite: ForeignModelByField(invite.uuid),
-                        })
-                        .await?;
-                }
-                Role::ClubAdmin {
-                    club_uuid: ClubUuid(club_uuid),
-                } => {
-                    rorm::insert(guard.get_transaction(), InvitedClubAdminModel)
-                        .single(&InvitedClubAdminModel {
-                            uuid: Uuid::new_v4(),
-                            invite: ForeignModelByField(invite.uuid),
-                            club: ForeignModelByField(*club_uuid),
-                        })
-                        .await?;
-                }
-                Role::ClubMember {
-                    club_uuid: ClubUuid(club_uuid),
-                    email,
-                } => {
-                    rorm::insert(guard.get_transaction(), InvitedClubMemberModel)
-                        .single(&InvitedClubMemberModel {
-                            uuid: Uuid::new_v4(),
-                            invite: ForeignModelByField(invite.uuid),
-                            club: ForeignModelByField(*club_uuid),
-                            email: email.clone(),
-                        })
-                        .await?;
-                }
-            }
-        }
-
         guard.commit().await?;
 
-        Ok(Ok(Invite {
-            uuid: InviteUuid(invite.uuid),
-            username: invite.username,
-            display_name: invite.display_name,
-            roles,
-            expires_at: invite.expires_at,
-            created_at: invite.created_at,
-        }))
+        Ok(Ok(Invite::from(invite)))
     }
 
     /// Clear expired invites
@@ -382,6 +231,26 @@ impl Invite {
     }
 }
 
+/// Type of the invite
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "type")]
+pub enum InviteType {
+    /// Superadmin
+    SuperAdmin,
+    /// Club admin
+    ClubAdmin {
+        /// Club the invite is linked to
+        club: ClubUuid,
+    },
+    /// Club member
+    ClubMember {
+        /// Club the invite is linked to
+        club: ClubUuid,
+        /// Primary mail of the user
+        email: MaxStr<255>,
+    },
+}
+
 /// Parameters to create a new invite
 #[derive(Debug, Clone)]
 pub struct CreateInviteParams {
@@ -389,10 +258,10 @@ pub struct CreateInviteParams {
     pub username: MaxStr<255>,
     /// Name to be displayed, should be a legal name
     pub display_name: MaxStr<255>,
-    /// Roles the new account should start with
-    pub roles: Vec<Role>,
     /// The point in time the invite expires
     pub expires_at: time::OffsetDateTime,
+    /// Type of the invitation
+    pub invite_type: InviteType,
 }
 
 /// Parameters to accept an invitation
@@ -415,4 +284,18 @@ pub enum CreateInviteError {
 pub enum AcceptInviteError {
     #[error("Invite expired")]
     Expired,
+}
+
+impl From<InviteModel> for Invite {
+    fn from(value: InviteModel) -> Self {
+        Self {
+            uuid: InviteUuid(value.uuid),
+            username: value.username.0,
+            display_name: value.display_name,
+            club: value.club.map(|x| ClubUuid(x.0)),
+            email: value.email,
+            expires_at: value.expires_at,
+            created_at: value.created_at,
+        }
+    }
 }

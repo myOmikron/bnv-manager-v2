@@ -4,7 +4,7 @@ use galvyn::core::Module;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::get;
-use rorm::Database;
+use galvyn::rorm::Database;
 use tracing::instrument;
 
 use crate::http::handler_frontend::domains::schema;

@@ -5,12 +5,12 @@ use galvyn::core::re_exports::axum::middleware::Next;
 use galvyn::core::re_exports::axum::response::Response;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
-use rorm::Database;
+use galvyn::rorm::Database;
 use serde::Deserialize;
 use serde::Serialize;
 
 use crate::http::extractors::session_user::SessionUser;
-use crate::models::account::Account;
+use crate::models::account::ClubAdminAccount;
 use crate::models::club::ClubUuid;
 
 /// Represents the path or identifier for a specific club.
@@ -32,12 +32,12 @@ pub async fn auth_club_admin(
 ) -> ApiResult<Response> {
     let mut tx = Database::global().start_transaction().await?;
 
-    let account = Account::find_by_uuid(&mut tx, account_uuid)
+    let account = ClubAdminAccount::get_by_uuid(&mut tx, account_uuid)
         .await?
         .ok_or(ApiError::server_error("Account not found"))?;
-    if !account.is_club_admin_for_club(&mut tx, club_uuid).await? {
-        return Err(ApiError::bad_request(
-            "Account is not a club admin of this club",
+    if account.club != club_uuid {
+        return Err(ApiError::server_error(
+            "Account is not an admin for the club",
         ));
     }
 

@@ -15,7 +15,7 @@ anyhow = { version = "~1" }
 # Webframework
 tower = { version = "~0.5", features = ["limit"] }
 tower-http = { version = "~0.6", features = ["trace", "limit"] }
-galvyn = { git = "https://github.com/myOmikron/galvyn.git" }
+galvyn = { git = "https://github.com/myOmikron/galvyn.git", rev = "4ad3aad494e3c3c75dd8cb5eb873122d4b6a6499", features = ["rorm-postgres-only", "rorm-cli", "rorm-time", "rorm-url", "rorm-uuid"] }
 schemars = { version = "~0.8", features = ["uuid1", "raw_value"] } # Derive json schema description
 
 # Account authentication
@@ -44,11 +44,6 @@ opentelemetry-otlp = { version = "0.17" }
 uuid = { version = "~1", features = ["serde", "v4"] }
 url = { version = "~2", features = ["serde"] }
 time = { version = "~0.3" }
-
-# Database
-rorm = { version = "~0.7", default-features = false, features = ["time", "url", "cli", "uuid", "postgres-only"] }
-# Custom DB enums
-linkme = { version = "~0.3" }
 
 # Async
 tokio = { version = "~1", features = ["full"] }

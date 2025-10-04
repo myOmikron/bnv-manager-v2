@@ -39,7 +39,7 @@ export default function DialogCreateAdmin(props: DialogCreateAdminProps) {
                     username: value.username,
                     display_name: value.displayName,
                     valid_days: parseInt(value.validDays),
-                    roles: [{ type: "SuperAdmin" }],
+                    invite_type: { type: "SuperAdmin" },
                 });
 
                 if (res.result === "Err") {

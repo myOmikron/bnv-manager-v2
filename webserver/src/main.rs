@@ -10,9 +10,10 @@ use clap::Parser;
 use galvyn::Galvyn;
 use galvyn::GalvynSetup;
 use galvyn::core::DatabaseSetup;
+use galvyn::rorm;
 use galvyn::rorm::Database;
-use rorm::DatabaseConfiguration;
-use rorm::fields::types::MaxStr;
+use galvyn::rorm::DatabaseConfiguration;
+use galvyn::rorm::fields::types::MaxStr;
 use time::Duration;
 use time::OffsetDateTime;
 use tracing_subscriber::EnvFilter;
@@ -24,7 +25,7 @@ use crate::cli::Command;
 use crate::config::DB;
 use crate::models::invite::CreateInviteParams;
 use crate::models::invite::Invite;
-use crate::models::role::Role;
+use crate::models::invite::InviteType;
 use crate::modules::garbage_collector::GarbageCollector;
 use crate::modules::mailcow::Mailcow;
 use crate::modules::oidc::Oidc;
@@ -84,7 +85,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         Command::MakeMigrations { migrations_dir } => {
             use std::io::Write;
 
-            use rorm::cli as rorm_cli;
+            use galvyn::rorm::cli as rorm_cli;
 
             const MODELS: &str = "/tmp/.models.json";
 
@@ -129,8 +130,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 CreateInviteParams {
                     username,
                     display_name,
-                    roles: vec![Role::SuperAdmin],
                     expires_at: OffsetDateTime::now_utc() + Duration::minutes(15),
+                    invite_type: InviteType::SuperAdmin,
                 },
             )
             .await?;

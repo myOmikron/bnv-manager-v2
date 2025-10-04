@@ -10,10 +10,10 @@ use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::post;
+use galvyn::rorm::Database;
 use jsonwebtoken::Algorithm;
 use jsonwebtoken::EncodingKey;
 use jsonwebtoken::Header;
-use rorm::Database;
 use rsa::pkcs1::EncodeRsaPrivateKey;
 use tracing::instrument;
 
@@ -23,9 +23,7 @@ use crate::http::handler_auth::token::schema::EmailClaim;
 use crate::http::handler_auth::token::schema::ProfileClaim;
 use crate::http::handler_auth::token::schema::TokenRequest;
 use crate::http::handler_auth::token::schema::TokenResponse;
-use crate::models::account::Account;
 use crate::models::oidc_provider::OidcAuthenticationToken;
-use crate::models::role::Role;
 use crate::modules::oidc::Oidc;
 
 pub mod schema;
@@ -50,10 +48,6 @@ pub async fn get_token(
         return Err(ApiError::bad_request("Invalid authorization token"));
     };
 
-    let Some(account) = Account::find_by_uuid(&mut tx, token.account_id).await? else {
-        return Err(ApiError::server_error("Linked account could not be loaded"));
-    };
-
     if token.redirect_url
         != redirect_uri
             .parse()
@@ -71,8 +65,8 @@ pub async fn get_token(
     #[allow(clippy::expect_used)]
     let mut claims = Claims {
         iss: ORIGIN.to_string(),
-        sub: token.account_id.0.to_string(),
-        aud: token.provider.0.to_string(),
+        sub: token.account.uuid().0.to_string(),
+        aud: token.client_id.0.to_string(),
         iat: now,
         exp,
         nonce: token.nonce.map(|x| x.to_string()),
@@ -81,26 +75,14 @@ pub async fn get_token(
 
     if token.scopes.iter().any(|x| x == "profile") {
         claims.profile_claim = Some(ProfileClaim {
-            preferred_username: account.username.to_string(),
-            name: account.display_name.to_string(),
+            preferred_username: token.account.username.to_string(),
+            name: token.account.display_name.to_string(),
         });
     }
 
     if token.scopes.iter().any(|x| x == "email") {
-        let mut email = "".to_string();
-
-        for role in account.roles(&mut tx).await? {
-            match role {
-                Role::ClubMember { email: e, .. } => {
-                    email = e.into_inner();
-                    break;
-                }
-                _ => {}
-            }
-        }
-
         claims.email_claim = Some(EmailClaim {
-            email,
+            email: token.account.email.to_string(),
             email_verified: true,
         });
     }
@@ -120,11 +102,14 @@ pub async fn get_token(
     let id_token = jsonwebtoken::encode(&header, &claims, &encoding_key)
         .map_err(ApiError::map_server_error("Couldn't encode JWT"))?;
 
-    claims.aud = ORIGIN
-        .get()
-        .join("api/v1/auth/userinfo")
-        .expect("valid url")
-        .to_string();
+    #[allow(clippy::expect_used)]
+    {
+        claims.aud = ORIGIN
+            .get()
+            .join("api/v1/auth/userinfo")
+            .expect("valid url")
+            .to_string();
+    }
 
     let access_token = jsonwebtoken::encode(&header, &claims, &encoding_key)
         .map_err(ApiError::map_server_error("Couldn't encode JWT"))?;

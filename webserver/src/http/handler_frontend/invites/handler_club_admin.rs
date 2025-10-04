@@ -17,7 +17,7 @@ use crate::http::handler_frontend::invites::CreateMemberInviteRequest;
 use crate::models::club::ClubUuid;
 use crate::models::invite::CreateInviteParams;
 use crate::models::invite::Invite;
-use crate::models::role::Role;
+use crate::models::invite::InviteType;
 use crate::utils::links::Link;
 
 #[post("/")]
@@ -38,7 +38,10 @@ pub async fn create_member_invite(
         CreateInviteParams {
             username,
             display_name,
-            roles: vec![Role::ClubMember { club_uuid, email }],
+            invite_type: InviteType::ClubMember {
+                club: club_uuid,
+                email,
+            },
             expires_at: OffsetDateTime::now_utc() + Duration::days(valid_days.get() as i64),
         },
     )

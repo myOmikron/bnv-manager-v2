@@ -46,50 +46,6 @@ export interface ApiErrorResponse {
     trace_id: string;
 }
 /**
- * A club membership role.
- * @export
- * @interface ClubAdminRole
- */
-export interface ClubAdminRole {
-    /**
-     * The club's name.
-     * @type {string}
-     * @memberof ClubAdminRole
-     */
-    club_name: string;
-    /**
-     * The club's UUID.
-     * @type {string}
-     * @memberof ClubAdminRole
-     */
-    club_uuid: string;
-}
-/**
- * A club membership role.
- * @export
- * @interface ClubMemberRole
- */
-export interface ClubMemberRole {
-    /**
-     * The club's name.
-     * @type {string}
-     * @memberof ClubMemberRole
-     */
-    club_name: string;
-    /**
-     * The club's UUID.
-     * @type {string}
-     * @memberof ClubMemberRole
-     */
-    club_uuid: string;
-    /**
-     * Primary mail in the club
-     * @type {string}
-     * @memberof ClubMemberRole
-     */
-    email: string;
-}
-/**
  * @type FormResultForNullAndAcceptInviteError
  * A `Result` with a custom serialization
  * @export
@@ -234,59 +190,139 @@ export interface GetInvite {
 /**
  * Representation of the currently logged-in user.
  * @export
- * @interface Me
+ * @interface MeSchema
  */
-export interface Me {
+export interface MeSchema {
     /**
      * The user's display name.
      * @type {string}
-     * @memberof Me
+     * @memberof MeSchema
      */
     display_name: string;
     /**
      * The user's roles.
-     * @type {Roles}
-     * @memberof Me
+     * @type {RoleSchema}
+     * @memberof MeSchema
      */
-    roles: Roles;
+    role: RoleSchema;
     /**
      * The user's username.
      * @type {string}
-     * @memberof Me
+     * @memberof MeSchema
      */
     username: string;
     /**
      * The user's UUID.
      * @type {string}
-     * @memberof Me
+     * @memberof MeSchema
      */
     uuid: string;
 }
 /**
+ * @type RoleSchema
  * The roles of a user.
  * @export
- * @interface Roles
  */
-export interface Roles {
+export type RoleSchema = RoleSchemaOneOf | RoleSchemaOneOf1 | RoleSchemaOneOf2;
+/**
+ * 
+ * @export
+ * @interface RoleSchemaOneOf
+ */
+export interface RoleSchemaOneOf {
     /**
-     * The user's admin roles.
-     * @type {Array<ClubAdminRole>}
-     * @memberof Roles
+     * 
+     * @type {string}
+     * @memberof RoleSchemaOneOf
      */
-    admins: Array<ClubAdminRole>;
-    /**
-     * The user's membership roles
-     * @type {Array<ClubMemberRole>}
-     * @memberof Roles
-     */
-    member: Array<ClubMemberRole>;
-    /**
-     * Whether the user is a super admin.
-     * @type {boolean}
-     * @memberof Roles
-     */
-    super_admin: boolean;
+    type: RoleSchemaOneOfTypeEnum;
 }
+
+
+/**
+ * @export
+ */
+export const RoleSchemaOneOfTypeEnum = {
+    SuperAdmin: 'SuperAdmin'
+} as const;
+export type RoleSchemaOneOfTypeEnum = typeof RoleSchemaOneOfTypeEnum[keyof typeof RoleSchemaOneOfTypeEnum];
+
+/**
+ * 
+ * @export
+ * @interface RoleSchemaOneOf1
+ */
+export interface RoleSchemaOneOf1 {
+    /**
+     * New-type for the primary key of the club
+     * @type {string}
+     * @memberof RoleSchemaOneOf1
+     */
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleSchemaOneOf1
+     */
+    club_name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleSchemaOneOf1
+     */
+    type: RoleSchemaOneOf1TypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const RoleSchemaOneOf1TypeEnum = {
+    ClubAdmin: 'ClubAdmin'
+} as const;
+export type RoleSchemaOneOf1TypeEnum = typeof RoleSchemaOneOf1TypeEnum[keyof typeof RoleSchemaOneOf1TypeEnum];
+
+/**
+ * 
+ * @export
+ * @interface RoleSchemaOneOf2
+ */
+export interface RoleSchemaOneOf2 {
+    /**
+     * New-type for the primary key of the club
+     * @type {string}
+     * @memberof RoleSchemaOneOf2
+     */
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleSchemaOneOf2
+     */
+    club_name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleSchemaOneOf2
+     */
+    email: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RoleSchemaOneOf2
+     */
+    type: RoleSchemaOneOf2TypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const RoleSchemaOneOf2TypeEnum = {
+    ClubMember: 'ClubMember'
+} as const;
+export type RoleSchemaOneOf2TypeEnum = typeof RoleSchemaOneOf2TypeEnum[keyof typeof RoleSchemaOneOf2TypeEnum];
+
 /**
  * Errors that may occur while setting a new password
  * @export

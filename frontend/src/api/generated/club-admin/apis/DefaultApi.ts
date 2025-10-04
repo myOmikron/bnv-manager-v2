@@ -16,11 +16,11 @@
 import * as runtime from '../runtime';
 import type {
   ApiErrorResponse,
-  Club,
+  ClubSchema,
   CreateMemberInviteRequest,
   FormResultForSingleLinkAndCreateInviteError,
   GetInvite,
-  PageForSimpleAccount,
+  PageForSimpleMemberAccountSchema,
 } from '../models/index';
 
 export interface CreateMemberInviteOperationRequest {
@@ -84,7 +84,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubRaw(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Club>> {
+    async getClubRaw(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ClubSchema>> {
         if (requestParameters['club_uuid'] == null) {
             throw new runtime.RequiredError(
                 'club_uuid',
@@ -108,7 +108,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClub(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Club> {
+    async getClub(requestParameters: GetClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ClubSchema> {
         const response = await this.getClubRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -146,7 +146,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubMembersRaw(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PageForSimpleAccount>> {
+    async getClubMembersRaw(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PageForSimpleMemberAccountSchema>> {
         if (requestParameters['club_uuid'] == null) {
             throw new runtime.RequiredError(
                 'club_uuid',
@@ -182,7 +182,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubMembers(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleAccount> {
+    async getClubMembers(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleMemberAccountSchema> {
         const response = await this.getClubMembersRaw(requestParameters, initOverrides);
         return await response.value();
     }

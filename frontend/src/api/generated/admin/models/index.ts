@@ -16,49 +16,49 @@ export interface ApiErrorResponse {
 /**
  * A single club
  * @export
- * @interface Club
+ * @interface ClubSchema
  */
-export interface Club {
+export interface ClubSchema {
     /**
      * The number of admins in the club
      * @type {number}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     admin_count: number;
     /**
      * The point in time the club was created
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     created_at: string;
     /**
      * The number of members in the club
      * @type {number}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     member_count: number;
     /**
      * The last point in time the club was modified
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     modified_at: string;
     /**
      * Name of the club
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     name: string;
     /**
      * Primary domain of the club
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     primary_domain: string;
     /**
      * Primary key of a club
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     uuid: string;
 }
@@ -126,11 +126,11 @@ export interface CreateInviteRequestAdmin {
      */
     display_name: string;
     /**
-     * Roles to assign to the user
-     * @type {Array<Role>}
+     * Type of the invite
+     * @type {InviteType}
      * @memberof CreateInviteRequestAdmin
      */
-    roles: Array<Role>;
+    invite_type: InviteType;
     /**
      * Reserved username
      * @type {string}
@@ -354,6 +354,99 @@ export interface GetInvite {
     uuid: string;
 }
 /**
+ * @type InviteType
+ * Type of the invite
+ * @export
+ */
+export type InviteType = InviteTypeOneOf | InviteTypeOneOf1 | InviteTypeOneOf2;
+/**
+ * Superadmin
+ * @export
+ * @interface InviteTypeOneOf
+ */
+export interface InviteTypeOneOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof InviteTypeOneOf
+     */
+    type: InviteTypeOneOfTypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const InviteTypeOneOfTypeEnum = {
+    SuperAdmin: 'SuperAdmin'
+} as const;
+export type InviteTypeOneOfTypeEnum = typeof InviteTypeOneOfTypeEnum[keyof typeof InviteTypeOneOfTypeEnum];
+
+/**
+ * Club admin
+ * @export
+ * @interface InviteTypeOneOf1
+ */
+export interface InviteTypeOneOf1 {
+    /**
+     * Club the invite is linked to
+     * @type {string}
+     * @memberof InviteTypeOneOf1
+     */
+    club: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InviteTypeOneOf1
+     */
+    type: InviteTypeOneOf1TypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const InviteTypeOneOf1TypeEnum = {
+    ClubAdmin: 'ClubAdmin'
+} as const;
+export type InviteTypeOneOf1TypeEnum = typeof InviteTypeOneOf1TypeEnum[keyof typeof InviteTypeOneOf1TypeEnum];
+
+/**
+ * Club member
+ * @export
+ * @interface InviteTypeOneOf2
+ */
+export interface InviteTypeOneOf2 {
+    /**
+     * Club the invite is linked to
+     * @type {string}
+     * @memberof InviteTypeOneOf2
+     */
+    club: string;
+    /**
+     * Primary mail of the user
+     * @type {string}
+     * @memberof InviteTypeOneOf2
+     */
+    email: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InviteTypeOneOf2
+     */
+    type: InviteTypeOneOf2TypeEnum;
+}
+
+
+/**
+ * @export
+ */
+export const InviteTypeOneOf2TypeEnum = {
+    ClubMember: 'ClubMember'
+} as const;
+export type InviteTypeOneOf2TypeEnum = typeof InviteTypeOneOf2TypeEnum[keyof typeof InviteTypeOneOf2TypeEnum];
+
+/**
  * A single OIDC Provider
  * @export
  * @interface OidcProvider
@@ -387,149 +480,118 @@ export interface OidcProvider {
 /**
  * A page of items
  * @export
- * @interface PageForSimpleAccount
+ * @interface PageForSimpleAccountSchema
  */
-export interface PageForSimpleAccount {
+export interface PageForSimpleAccountSchema {
     /**
      * The page's items
-     * @type {Array<SimpleAccount>}
-     * @memberof PageForSimpleAccount
+     * @type {Array<SimpleAccountSchema>}
+     * @memberof PageForSimpleAccountSchema
      */
-    items: Array<SimpleAccount>;
+    items: Array<SimpleAccountSchema>;
     /**
      * The limit this page was requested with
      * @type {number}
-     * @memberof PageForSimpleAccount
+     * @memberof PageForSimpleAccountSchema
      */
     limit: number;
     /**
      * The offset this page was requested with
      * @type {number}
-     * @memberof PageForSimpleAccount
+     * @memberof PageForSimpleAccountSchema
      */
     offset: number;
     /**
      * The total number of items this page is a subset of
      * @type {number}
-     * @memberof PageForSimpleAccount
+     * @memberof PageForSimpleAccountSchema
      */
     total: number;
 }
 /**
- * @type Role
- * The available roles of the manager
+ * A page of items
  * @export
+ * @interface PageForSimpleMemberAccountSchema
  */
-export type Role = RoleOneOf | RoleOneOf1 | RoleOneOf2;
-/**
- * The admin of a club. Can manage users and settings of its club
- * @export
- * @interface RoleOneOf
- */
-export interface RoleOneOf {
+export interface PageForSimpleMemberAccountSchema {
     /**
-     * New-type for the primary key of the club
-     * @type {string}
-     * @memberof RoleOneOf
+     * The page's items
+     * @type {Array<SimpleMemberAccountSchema>}
+     * @memberof PageForSimpleMemberAccountSchema
      */
-    club_uuid: string;
+    items: Array<SimpleMemberAccountSchema>;
     /**
-     * 
-     * @type {string}
-     * @memberof RoleOneOf
+     * The limit this page was requested with
+     * @type {number}
+     * @memberof PageForSimpleMemberAccountSchema
      */
-    type: RoleOneOfTypeEnum;
+    limit: number;
+    /**
+     * The offset this page was requested with
+     * @type {number}
+     * @memberof PageForSimpleMemberAccountSchema
+     */
+    offset: number;
+    /**
+     * The total number of items this page is a subset of
+     * @type {number}
+     * @memberof PageForSimpleMemberAccountSchema
+     */
+    total: number;
 }
-
-
-/**
- * @export
- */
-export const RoleOneOfTypeEnum = {
-    ClubAdmin: 'ClubAdmin'
-} as const;
-export type RoleOneOfTypeEnum = typeof RoleOneOfTypeEnum[keyof typeof RoleOneOfTypeEnum];
-
-/**
- * A member of a club.
- * @export
- * @interface RoleOneOf1
- */
-export interface RoleOneOf1 {
-    /**
-     * UUID of the club
-     * @type {string}
-     * @memberof RoleOneOf1
-     */
-    club_uuid: string;
-    /**
-     * Mail of the user for that club
-     * @type {string}
-     * @memberof RoleOneOf1
-     */
-    email: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof RoleOneOf1
-     */
-    type: RoleOneOf1TypeEnum;
-}
-
-
-/**
- * @export
- */
-export const RoleOneOf1TypeEnum = {
-    ClubMember: 'ClubMember'
-} as const;
-export type RoleOneOf1TypeEnum = typeof RoleOneOf1TypeEnum[keyof typeof RoleOneOf1TypeEnum];
-
-/**
- * The super administrator. Has rights to manager clubs.
- * @export
- * @interface RoleOneOf2
- */
-export interface RoleOneOf2 {
-    /**
-     * 
-     * @type {string}
-     * @memberof RoleOneOf2
-     */
-    type: RoleOneOf2TypeEnum;
-}
-
-
-/**
- * @export
- */
-export const RoleOneOf2TypeEnum = {
-    SuperAdmin: 'SuperAdmin'
-} as const;
-export type RoleOneOf2TypeEnum = typeof RoleOneOf2TypeEnum[keyof typeof RoleOneOf2TypeEnum];
-
 /**
  * Simple representation of an account.
  * @export
- * @interface SimpleAccount
+ * @interface SimpleAccountSchema
  */
-export interface SimpleAccount {
+export interface SimpleAccountSchema {
     /**
      * The account's display name.
      * @type {string}
-     * @memberof SimpleAccount
+     * @memberof SimpleAccountSchema
      */
     display_name: string;
     /**
      * The account's username.
      * @type {string}
-     * @memberof SimpleAccount
+     * @memberof SimpleAccountSchema
      */
     username: string;
     /**
      * The account's UUID.
      * @type {string}
-     * @memberof SimpleAccount
+     * @memberof SimpleAccountSchema
+     */
+    uuid: string;
+}
+/**
+ * Simple representation of an account.
+ * @export
+ * @interface SimpleMemberAccountSchema
+ */
+export interface SimpleMemberAccountSchema {
+    /**
+     * The account's display name.
+     * @type {string}
+     * @memberof SimpleMemberAccountSchema
+     */
+    display_name: string;
+    /**
+     * The account's email
+     * @type {string}
+     * @memberof SimpleMemberAccountSchema
+     */
+    email: string;
+    /**
+     * The account's username.
+     * @type {string}
+     * @memberof SimpleMemberAccountSchema
+     */
+    username: string;
+    /**
+     * The account's UUID.
+     * @type {string}
+     * @memberof SimpleMemberAccountSchema
      */
     uuid: string;
 }

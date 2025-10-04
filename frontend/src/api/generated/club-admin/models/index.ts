@@ -16,49 +16,49 @@ export interface ApiErrorResponse {
 /**
  * A single club
  * @export
- * @interface Club
+ * @interface ClubSchema
  */
-export interface Club {
+export interface ClubSchema {
     /**
      * The number of admins in the club
      * @type {number}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     admin_count: number;
     /**
      * The point in time the club was created
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     created_at: string;
     /**
      * The number of members in the club
      * @type {number}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     member_count: number;
     /**
      * The last point in time the club was modified
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     modified_at: string;
     /**
      * Name of the club
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     name: string;
     /**
      * Primary domain of the club
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     primary_domain: string;
     /**
      * Primary key of a club
      * @type {string}
-     * @memberof Club
+     * @memberof ClubSchema
      */
     uuid: string;
 }
@@ -216,56 +216,62 @@ export interface GetInvite {
 /**
  * A page of items
  * @export
- * @interface PageForSimpleAccount
+ * @interface PageForSimpleMemberAccountSchema
  */
-export interface PageForSimpleAccount {
+export interface PageForSimpleMemberAccountSchema {
     /**
      * The page's items
-     * @type {Array<SimpleAccount>}
-     * @memberof PageForSimpleAccount
+     * @type {Array<SimpleMemberAccountSchema>}
+     * @memberof PageForSimpleMemberAccountSchema
      */
-    items: Array<SimpleAccount>;
+    items: Array<SimpleMemberAccountSchema>;
     /**
      * The limit this page was requested with
      * @type {number}
-     * @memberof PageForSimpleAccount
+     * @memberof PageForSimpleMemberAccountSchema
      */
     limit: number;
     /**
      * The offset this page was requested with
      * @type {number}
-     * @memberof PageForSimpleAccount
+     * @memberof PageForSimpleMemberAccountSchema
      */
     offset: number;
     /**
      * The total number of items this page is a subset of
      * @type {number}
-     * @memberof PageForSimpleAccount
+     * @memberof PageForSimpleMemberAccountSchema
      */
     total: number;
 }
 /**
  * Simple representation of an account.
  * @export
- * @interface SimpleAccount
+ * @interface SimpleMemberAccountSchema
  */
-export interface SimpleAccount {
+export interface SimpleMemberAccountSchema {
     /**
      * The account's display name.
      * @type {string}
-     * @memberof SimpleAccount
+     * @memberof SimpleMemberAccountSchema
      */
     display_name: string;
     /**
+     * The account's email
+     * @type {string}
+     * @memberof SimpleMemberAccountSchema
+     */
+    email: string;
+    /**
      * The account's username.
      * @type {string}
-     * @memberof SimpleAccount
+     * @memberof SimpleMemberAccountSchema
      */
     username: string;
     /**
      * The account's UUID.
      * @type {string}
-     * @memberof SimpleAccount
+     * @memberof SimpleMemberAccountSchema
      */
     uuid: string;
 }

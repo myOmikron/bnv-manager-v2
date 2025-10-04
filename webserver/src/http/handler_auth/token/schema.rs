@@ -1,6 +1,6 @@
 //! Schema for token requests
 
-use rorm::fields::types::MaxStr;
+use galvyn::rorm::fields::types::MaxStr;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;

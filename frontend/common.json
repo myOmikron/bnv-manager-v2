@@ -181,7 +181,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Me"
+                                    "$ref": "#/components/schemas/MeSchema"
                                 }
                             }
                         }
@@ -378,67 +378,6 @@
                     "trace_id"
                 ]
             },
-            "ClubAdminRole": {
-                "description": "A club membership role.",
-                "type": "object",
-                "properties": {
-                    "club_name": {
-                        "description": "The club's name.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_255"
-                            }
-                        ]
-                    },
-                    "club_uuid": {
-                        "description": "The club's UUID.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ClubUuid"
-                            }
-                        ]
-                    }
-                },
-                "required": [
-                    "club_name",
-                    "club_uuid"
-                ]
-            },
-            "ClubMemberRole": {
-                "description": "A club membership role.",
-                "type": "object",
-                "properties": {
-                    "club_name": {
-                        "description": "The club's name.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_255"
-                            }
-                        ]
-                    },
-                    "club_uuid": {
-                        "description": "The club's UUID.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/ClubUuid"
-                            }
-                        ]
-                    },
-                    "email": {
-                        "description": "Primary mail in the club",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/MaxStr_255"
-                            }
-                        ]
-                    }
-                },
-                "required": [
-                    "club_name",
-                    "club_uuid",
-                    "email"
-                ]
-            },
             "ClubUuid": {
                 "description": "New-type for the primary key of the club",
                 "type": "string",
@@ -597,25 +536,33 @@
                 "type": "string",
                 "maxLength": 72
             },
-            "Me": {
+            "MeSchema": {
                 "description": "Representation of the currently logged-in user.",
                 "type": "object",
                 "properties": {
                     "display_name": {
                         "description": "The user's display name.",
-                        "type": "string"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
                     },
-                    "roles": {
+                    "role": {
                         "description": "The user's roles.",
                         "allOf": [
                             {
-                                "$ref": "#/components/schemas/Roles"
+                                "$ref": "#/components/schemas/RoleSchema"
                             }
                         ]
                     },
                     "username": {
                         "description": "The user's username.",
-                        "type": "string"
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            }
+                        ]
                     },
                     "uuid": {
                         "description": "The user's UUID.",
@@ -628,38 +575,76 @@
                 },
                 "required": [
                     "display_name",
-                    "roles",
+                    "role",
                     "username",
                     "uuid"
                 ]
             },
-            "Roles": {
+            "RoleSchema": {
                 "description": "The roles of a user.",
-                "type": "object",
-                "properties": {
-                    "admins": {
-                        "description": "The user's admin roles.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ClubAdminRole"
-                        }
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "SuperAdmin"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "type"
+                        ]
                     },
-                    "member": {
-                        "description": "The user's membership roles",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ClubMemberRole"
-                        }
+                    {
+                        "type": "object",
+                        "properties": {
+                            "club": {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            },
+                            "club_name": {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubAdmin"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "club",
+                            "club_name",
+                            "type"
+                        ]
                     },
-                    "super_admin": {
-                        "description": "Whether the user is a super admin.",
-                        "type": "boolean"
+                    {
+                        "type": "object",
+                        "properties": {
+                            "club": {
+                                "$ref": "#/components/schemas/ClubUuid"
+                            },
+                            "club_name": {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            },
+                            "email": {
+                                "$ref": "#/components/schemas/MaxStr_255"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "ClubMember"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "club",
+                            "club_name",
+                            "email",
+                            "type"
+                        ]
                     }
-                },
-                "required": [
-                    "admins",
-                    "member",
-                    "super_admin"
                 ]
             },
             "SchemaDateTime": {

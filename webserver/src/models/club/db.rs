@@ -1,13 +1,13 @@
-use rorm::Model;
-use rorm::Patch;
-use rorm::field;
-use rorm::fields::types::MaxStr;
-use rorm::prelude::BackRef;
+use galvyn::rorm::Model;
+use galvyn::rorm::Patch;
+use galvyn::rorm::field;
+use galvyn::rorm::fields::types::MaxStr;
+use galvyn::rorm::prelude::BackRef;
 use uuid::Uuid;
 
+use crate::models::account::db::ClubAccountModel;
+use crate::models::account::db::ClubAdminAccountModel;
 use crate::models::domain::db::DomainModel;
-use crate::models::role::db::ClubAdminModel;
-use crate::models::role::db::ClubMemberModel;
 
 #[derive(Debug, Model)]
 #[rorm(rename = "Club")]
@@ -21,8 +21,8 @@ pub struct ClubModel {
     #[rorm(auto_create_time)]
     pub created_at: time::OffsetDateTime,
 
-    pub members: BackRef<field!(ClubMemberModel.club)>,
-    pub admins: BackRef<field!(ClubAdminModel.club)>,
+    pub members: BackRef<field!(ClubAccountModel.club)>,
+    pub admins: BackRef<field!(ClubAdminAccountModel.club)>,
 
     pub domains: BackRef<field!(DomainModel.club)>,
 }

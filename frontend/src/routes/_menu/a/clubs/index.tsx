@@ -19,7 +19,7 @@ import {
 } from "src/components/base/dropdown";
 import AdminDeleteClubDialog from "src/components/dialogs/admin-delete-club";
 import { Text } from "src/components/base/text";
-import { Club } from "src/api/generated/admin";
+import { ClubSchema } from "src/api/generated/admin";
 
 /**
  * The properties for {@link AdminClubOverview}
@@ -37,7 +37,7 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
     const clubs = Route.useLoaderData();
 
     const [openCreateClub, setOpenCreateClub] = React.useState(false);
-    const [openDeleteClub, setOpenDeleteClub] = React.useState<Club>();
+    const [openDeleteClub, setOpenDeleteClub] = React.useState<ClubSchema>();
 
     return (
         <HeadingLayout

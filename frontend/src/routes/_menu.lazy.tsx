@@ -51,22 +51,22 @@ function Menu(props: MenuProps) {
                     </SidebarHeader>
 
                     <SidebarBody>
-                        {ctx.account.roles.admins.map((admin) => (
-                            <React.Fragment key={`ca-${admin.club_uuid}`}>
+                        {ctx.account.role.type === "ClubAdmin" && (
+                            <React.Fragment key={`ca-${ctx.account.role.club}`}>
                                 <SidebarSection>
                                     <SidebarHeading className={"whitespace-pre-line"}>
-                                        {t("heading.club-admin", { club: admin.club_name })}
+                                        {t("heading.club-admin", { club: ctx.account.role.club_name })}
                                     </SidebarHeading>
-                                    <SidebarItem href={"/ca/$clubId"} params={{ clubId: admin.club_uuid }}>
+                                    <SidebarItem href={"/ca/$clubId"} params={{ clubId: ctx.account.role.club }}>
                                         <PresentationChartBarIcon />
                                         <SidebarLabel>{t("button.club-dashboard")}</SidebarLabel>
                                     </SidebarItem>
                                 </SidebarSection>
                                 <SidebarDivider />
                             </React.Fragment>
-                        ))}
+                        )}
 
-                        {ctx.account.roles.super_admin && (
+                        {ctx.account.role.type === "SuperAdmin" && (
                             <>
                                 <SidebarSection>
                                     <SidebarHeading>{t("heading.admin-settings")}</SidebarHeading>
