@@ -26,7 +26,7 @@ export default function OidcError(props: OidcErrorProps) {
                 <Logo className={"h-8 w-fit dark:text-white"} />
                 <Heading className={"mt-12"}>{t("heading.error")}</Heading>
                 <span>{search.error}</span>
-                <PrimaryButton onClick={() => router.history.back()}>{t("button.back")}</PrimaryButton>
+                <PrimaryButton onClick={() => router.navigate({ to: "/" })}>{t("button.back-to-home")}</PrimaryButton>
             </div>
         </AuthLayout>
     );

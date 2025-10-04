@@ -1,6 +1,6 @@
 {
     "button": {
-        "back": "Zur\u00fcck"
+        "back-to-home": "Zur\u00fcck zur Startseite"
     },
     "heading": {
         "error": "Fehler"
