@@ -1,1 +1,8 @@
-{}
+{
+    "button": {
+        "back": "Back"
+    },
+    "heading": {
+        "error": "Error"
+    }
+}
