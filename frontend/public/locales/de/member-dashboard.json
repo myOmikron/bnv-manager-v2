@@ -1,0 +1,6 @@
+{
+    "heading": {
+        "hello": "Hallo {{name}}!",
+        "quick-access": "Schnellzugriff"
+    }
+}

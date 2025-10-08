@@ -20,6 +20,7 @@ import {
     ArrowRightStartOnRectangleIcon,
     ChevronUpIcon,
     FingerPrintIcon,
+    HomeIcon,
     PresentationChartBarIcon,
     UserGroupIcon,
     UserIcon,
@@ -51,6 +52,17 @@ function Menu(props: MenuProps) {
                     </SidebarHeader>
 
                     <SidebarBody>
+                        {ctx.account.role.type === "ClubMember" && (
+                            <React.Fragment key={`cm-${ctx.account.role.club}`}>
+                                <SidebarSection>
+                                    <SidebarItem href={"/m/dashboard"}>
+                                        <HomeIcon />
+                                        <SidebarLabel>{t("button.dashboard")}</SidebarLabel>
+                                    </SidebarItem>
+                                </SidebarSection>
+                            </React.Fragment>
+                        )}
+
                         {ctx.account.role.type === "ClubAdmin" && (
                             <React.Fragment key={`ca-${ctx.account.role.club}`}>
                                 <SidebarSection>

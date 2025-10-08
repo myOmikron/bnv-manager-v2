@@ -19,6 +19,7 @@ import { Route as LinksOidcErrorRouteImport } from './routes/links/oidc/error'
 import { Route as LinksOidcAuthRouteImport } from './routes/links/oidc/auth'
 import { Route as LinksInviteInviteIdRouteImport } from './routes/links/invite/$inviteId'
 import { Route as MenuProfileProfileRouteImport } from './routes/_menu/profile/_profile'
+import { Route as MenuMDashboardRouteImport } from './routes/_menu/m/dashboard'
 import { Route as MenuProfileProfileIndexRouteImport } from './routes/_menu/profile/_profile/index'
 import { Route as MenuAOidcIndexRouteImport } from './routes/_menu/a/oidc/index'
 import { Route as MenuAClubsIndexRouteImport } from './routes/_menu/a/clubs/index'
@@ -93,6 +94,11 @@ const LinksInviteInviteIdRoute = LinksInviteInviteIdRouteImport.update({
 const MenuProfileProfileRoute = MenuProfileProfileRouteImport.update({
   id: '/_profile',
   getParentRoute: () => MenuProfileRoute,
+} as any)
+const MenuMDashboardRoute = MenuMDashboardRouteImport.update({
+  id: '/m/dashboard',
+  path: '/m/dashboard',
+  getParentRoute: () => MenuLazyRoute,
 } as any)
 const MenuAClubsClubIdRoute = MenuAClubsClubIdRouteImport.update({
   id: '/a/clubs/$clubId',
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/oidc/auth': typeof OidcAuthRoute
   '/oidc/error': typeof OidcErrorRoute
   '/': typeof MenuIndexRoute
+  '/m/dashboard': typeof MenuMDashboardRoute
   '/profile': typeof MenuProfileProfileRouteWithChildren
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
   '/links/oidc/auth': typeof LinksOidcAuthRoute
@@ -216,6 +223,7 @@ export interface FileRoutesByTo {
   '/oidc/auth': typeof OidcAuthRoute
   '/oidc/error': typeof OidcErrorRoute
   '/': typeof MenuIndexRoute
+  '/m/dashboard': typeof MenuMDashboardRoute
   '/profile': typeof MenuProfileProfileIndexRoute
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
   '/links/oidc/auth': typeof LinksOidcAuthRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/oidc/auth': typeof OidcAuthRoute
   '/oidc/error': typeof OidcErrorRoute
   '/_menu/': typeof MenuIndexRoute
+  '/_menu/m/dashboard': typeof MenuMDashboardRoute
   '/_menu/profile': typeof MenuProfileRouteWithChildren
   '/_menu/profile/_profile': typeof MenuProfileProfileRouteWithChildren
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/oidc/auth'
     | '/oidc/error'
     | '/'
+    | '/m/dashboard'
     | '/profile'
     | '/links/invite/$inviteId'
     | '/links/oidc/auth'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/oidc/auth'
     | '/oidc/error'
     | '/'
+    | '/m/dashboard'
     | '/profile'
     | '/links/invite/$inviteId'
     | '/links/oidc/auth'
@@ -324,6 +335,7 @@ export interface FileRouteTypes {
     | '/oidc/auth'
     | '/oidc/error'
     | '/_menu/'
+    | '/_menu/m/dashboard'
     | '/_menu/profile'
     | '/_menu/profile/_profile'
     | '/links/invite/$inviteId'
@@ -437,6 +449,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/profile'
       preLoaderRoute: typeof MenuProfileProfileRouteImport
       parentRoute: typeof MenuProfileRoute
+    }
+    '/_menu/m/dashboard': {
+      id: '/_menu/m/dashboard'
+      path: '/m/dashboard'
+      fullPath: '/m/dashboard'
+      preLoaderRoute: typeof MenuMDashboardRouteImport
+      parentRoute: typeof MenuLazyRoute
     }
     '/_menu/a/clubs/$clubId': {
       id: '/_menu/a/clubs/$clubId'
@@ -646,6 +665,7 @@ const MenuAClubsClubIdRouteWithChildren =
 
 interface MenuLazyRouteChildren {
   MenuIndexRoute: typeof MenuIndexRoute
+  MenuMDashboardRoute: typeof MenuMDashboardRoute
   MenuProfileRoute: typeof MenuProfileRouteWithChildren
   MenuCaClubIdRoute: typeof MenuCaClubIdRouteWithChildren
   MenuAAdminsIndexRoute: typeof MenuAAdminsIndexRoute
@@ -656,6 +676,7 @@ interface MenuLazyRouteChildren {
 
 const MenuLazyRouteChildren: MenuLazyRouteChildren = {
   MenuIndexRoute: MenuIndexRoute,
+  MenuMDashboardRoute: MenuMDashboardRoute,
   MenuProfileRoute: MenuProfileRouteWithChildren,
   MenuCaClubIdRoute: MenuCaClubIdRouteWithChildren,
   MenuAAdminsIndexRoute: MenuAAdminsIndexRoute,

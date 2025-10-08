@@ -3,6 +3,7 @@
         "admin-overview": "Superadmins",
         "club-dashboard": "Club Dashboard",
         "club-overview": "Clubs",
+        "dashboard": "Dashboard",
         "oidc-provider": "OIDC Provider",
         "profile": "Profile",
         "sign-out": "Sign out"
