@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import HeadingLayout from "src/components/base/heading-layout";
 import ACCOUNT_CONTEXT from "src/context/account";
 import MailcowLogo from "src/assets/mailcow.svg?react";
-import { Heading, Subheading } from "src/components/base/heading";
+import { Subheading } from "src/components/base/heading";
 
 /**
  * The properties for {@link MemberDashboard}
