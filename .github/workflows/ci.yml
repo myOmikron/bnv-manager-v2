@@ -79,4 +79,4 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build docker images
-        run: python3 tools.py prod build
+        run: python3 tools.py prod build --push
