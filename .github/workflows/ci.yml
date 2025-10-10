@@ -82,5 +82,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
       - name: Build docker images
         run: python3 tools.py prod build --push
