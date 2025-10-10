@@ -124,7 +124,7 @@ function Menu(props: MenuProps) {
                                 <DropdownItem
                                     onClick={async () => {
                                         await Api.auth.logout();
-                                        ctx.reset();
+                                        ctx.reset(false);
                                     }}
                                 >
                                     <ArrowRightStartOnRectangleIcon />
@@ -152,7 +152,7 @@ function Menu(props: MenuProps) {
                             <DropdownItem
                                 onClick={async () => {
                                     await Api.auth.logout();
-                                    ctx.reset();
+                                    ctx.reset(false);
                                 }}
                             >
                                 <ArrowRightStartOnRectangleIcon />

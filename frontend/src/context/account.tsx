@@ -14,7 +14,7 @@ export type AccountContext = {
     account: MeSchema;
 
     /** Reload the account's information */
-    reset: () => void;
+    reset: (redirect_to_last_page: boolean) => void;
 };
 
 /** {@link React.Context} to access {@link SimpleAccount account information} */
@@ -59,14 +59,18 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
     state: AccountProviderState = { account: "loading" };
 
     fetching: boolean = false;
+    redirect_to_last_page: boolean = true;
 
     /**
      * Fetch the account
+     *
+     * @param redirect_to_last_page Whether to redirect to the last page or not
      */
-    fetchAccount = async () => {
+    fetchAccount = async (redirect_to_last_page: boolean) => {
         // Guard against a lot of calls
         if (this.fetching) return;
         this.fetching = true;
+        this.redirect_to_last_page = redirect_to_last_page;
 
         this.setState({ account: "loading" });
 
@@ -98,7 +102,7 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
      * Hook when the component mounts
      */
     componentDidMount() {
-        this.fetchAccount().then();
+        this.fetchAccount(true).then();
 
         // Register as global singleton
         // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -128,7 +132,13 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
                 return <div></div>;
             case "unauthenticated":
                 return (
-                    <Navigate to="/oidc/auth" search={{ redirect_url: window.location.pathname, external: false }} />
+                    <Navigate
+                        to="/oidc/auth"
+                        search={{
+                            redirect_url: this.redirect_to_last_page ? window.location.pathname : "/",
+                            external: false,
+                        }}
+                    />
                 );
             default:
                 return (
