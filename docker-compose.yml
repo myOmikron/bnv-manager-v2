@@ -7,7 +7,7 @@ services:
     volumes:
       - postgres-vol:/var/lib/postgresql/data/
     env_file: [ .env ]
-    image: ghcr.io/myOmikron/bnv-manager-v2/postgres:${PROD_TAG:-latest}
+    image: ghcr.io/myomikron/bnv-manager-v2/postgres:${PROD_TAG:-latest}
     build:
       dockerfile: ./build/dockerfiles/postgres.Dockerfile
 
@@ -21,7 +21,7 @@ services:
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4173
       - RUST_LOG=${RUST_LOG-info,webserver=debug,galvyn=debug}
-    image: ghcr.io/myOmikron/bnv-manager-v2/bnv-manager:${PROD_TAG:-latest}
+    image: ghcr.io/myomikron/bnv-manager-v2/bnv-manager:${PROD_TAG:-latest}
     build:
       dockerfile: ./build/dockerfiles/bnv-manager.Dockerfile
 
@@ -34,7 +34,7 @@ services:
       - "127.0.0.1:8080:80"
     volumes:
       - ./data/conf/nginx/bnv-manager.conf:/etc/nginx/conf.d/default.conf
-    image: ghcr.io/myOmikron/bnv-manager-v2/nginx:${PROD_TAG:-latest}
+    image: ghcr.io/myomikron/bnv-manager-v2/nginx:${PROD_TAG:-latest}
     build:
       dockerfile: ./build/dockerfiles/nginx.Dockerfile
 
