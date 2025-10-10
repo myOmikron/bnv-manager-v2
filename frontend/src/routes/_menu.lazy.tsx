@@ -95,7 +95,7 @@ function Menu(props: MenuProps) {
 
                                     <SidebarItem href={"/a/oidc"}>
                                         <FingerPrintIcon />
-                                        <SidebarLabel>{t("button.oidc-provider")}</SidebarLabel>
+                                        <SidebarLabel>{t("button.oidc-clients")}</SidebarLabel>
                                     </SidebarItem>
                                 </SidebarSection>
                             </>

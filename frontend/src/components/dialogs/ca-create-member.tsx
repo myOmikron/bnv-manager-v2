@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
+import { Dialog, DialogActions, DialogBody, DialogProps, DialogTitle } from "src/components/base/dialog";
 import { Api, UUID } from "src/api/api";
 import { Button, PrimaryButton } from "src/components/base/button";
 import { useForm } from "@tanstack/react-form";
@@ -14,13 +14,9 @@ import { ClubSchema } from "src/api/generated/club-admin";
 /**
  * The properties for {@link ClubAdminCreateMemberInviteDialog}
  */
-export type ClubAdminCreateMemberInviteDialogProps = {
+export type ClubAdminCreateMemberInviteDialogProps = DialogProps & {
     /** The club to create the invite for */
     club: ClubSchema;
-    /** Should the dialog be open */
-    open: boolean;
-    /** Callback for close action */
-    onClose: () => void;
     /** Callback for creation of the new invite */
     onCreate: () => void;
 };
@@ -62,6 +58,13 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
             },
         },
     });
+
+    React.useEffect(() => {
+        if (props.open) {
+            form.reset();
+            setOpenShowInvite(undefined);
+        }
+    }, [props.open]);
 
     return (
         <Dialog open={props.open} onClose={props.onClose}>

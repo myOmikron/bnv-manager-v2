@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
+import { Dialog, DialogActions, DialogBody, DialogProps, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
 import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
@@ -9,11 +9,9 @@ import { Api } from "src/api/api";
 import { Input } from "src/components/base/input";
 
 /**
- * The properties for {@link DialogCreateOidcProvider}
+ * The properties for {@link DialogCreateOidcClient}
  */
-export type DialogCreateOidcProviderProps = {
-    /** Callback for close action */
-    onClose: () => void;
+export type DialogCreateOidcClientProps = DialogProps & {
     /** Callback for creation of the new oidc provider */
     onCreate: () => void;
 };
@@ -21,8 +19,8 @@ export type DialogCreateOidcProviderProps = {
 /**
  * A dialog to create a new oidc provider
  */
-export default function DialogCreateOidcProvider(props: DialogCreateOidcProviderProps) {
-    const [t] = useTranslation("dialog-create-oidc-provider");
+export default function DialogCreateOidcClient(props: DialogCreateOidcClientProps) {
+    const [t] = useTranslation("dialog-create-oidc-client");
     const [tg] = useTranslation();
 
     const form = useForm({
@@ -42,9 +40,13 @@ export default function DialogCreateOidcProvider(props: DialogCreateOidcProvider
         },
     });
 
+    React.useEffect(() => {
+        if (props.open) form.reset();
+    }, [props.open]);
+
     return (
-        <Dialog open={true} onClose={props.onClose}>
-            <DialogTitle>{t("heading.create-oidc-provider")}</DialogTitle>
+        <Dialog open={props.open} onClose={props.onClose}>
+            <DialogTitle>{t("heading.create-oidc-client")}</DialogTitle>
             <DialogBody>
                 <Form onSubmit={form.handleSubmit}>
                     <Fieldset>
@@ -85,7 +87,7 @@ export default function DialogCreateOidcProvider(props: DialogCreateOidcProvider
                                 <Button onClick={props.onClose} plain={true}>
                                     {tg("button.cancel")}
                                 </Button>
-                                <PrimaryButton type={"submit"}>{t("button.create-oidc-provider")}</PrimaryButton>
+                                <PrimaryButton type={"submit"}>{t("button.create-oidc-client")}</PrimaryButton>
                             </DialogActions>
                         </FieldGroup>
                     </Fieldset>

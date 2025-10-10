@@ -38,6 +38,9 @@ export const Api = {
             update: (req: UpdateMeRequest) => handleError(commonApi.updateMe({ UpdateMeRequest: req })),
             setPassword: (req: SetPasswordRequest) => handleError(commonApi.setPassword({ SetPasswordRequest: req })),
         },
+        settings: {
+            get: () => handleError(commonApi.getSettings()),
+        },
     },
 };
 

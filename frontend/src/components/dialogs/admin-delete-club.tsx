@@ -1,6 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from "src/components/base/dialog";
+import {
+    Dialog,
+    DialogActions,
+    DialogBody,
+    DialogDescription,
+    DialogProps,
+    DialogTitle,
+} from "src/components/base/dialog";
 import { Button } from "src/components/base/button";
 import { Api } from "src/api/api";
 import { ClubSchema } from "src/api/generated/admin";
@@ -8,11 +15,9 @@ import { ClubSchema } from "src/api/generated/admin";
 /**
  * The properties for {@link AdminDeleteClubDialog}
  */
-export type AdminDeleteClubDialogProps = {
+export type AdminDeleteClubDialogProps = DialogProps & {
     /** The club to delete */
     club?: ClubSchema;
-    /** Callback to call when the popup is closed */
-    onClose: () => void;
     /** Callback when deletion was executed */
     onDelete: () => void;
 };
@@ -25,7 +30,7 @@ export default function AdminDeleteClubDialog(props: AdminDeleteClubDialogProps)
     const [tg] = useTranslation();
 
     return (
-        <Dialog open={props.club !== undefined} onClose={props.onClose}>
+        <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>{t("heading.delete-club", { club: props.club?.name })}</DialogTitle>
             <DialogBody>
                 <DialogDescription>{t("description.delete-club")}</DialogDescription>

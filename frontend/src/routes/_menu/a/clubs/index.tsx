@@ -108,6 +108,7 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                     }}
                 />
                 <AdminDeleteClubDialog
+                    open={!!openDeleteClub}
                     club={openDeleteClub}
                     onClose={() => setOpenDeleteClub(undefined)}
                     onDelete={async () => {

@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
+import { Dialog, DialogActions, DialogBody, DialogProps, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
 import { Description, ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
@@ -13,10 +13,7 @@ import { toast } from "react-toastify";
 /**
  * The properties for {@link DialogCreateAdmin}
  */
-export type DialogCreateAdminProps = {
-    /** Callback for close action */
-    onClose: () => void;
-};
+export type DialogCreateAdminProps = DialogProps;
 
 /**
  * A dialog to create an admin user
@@ -55,8 +52,12 @@ export default function DialogCreateAdmin(props: DialogCreateAdminProps) {
         },
     });
 
+    React.useEffect(() => {
+        if (props.open) form.reset();
+    }, [props.open]);
+
     return (
-        <Dialog open={true} onClose={props.onClose}>
+        <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>{t("heading.create-admin")}</DialogTitle>
             <DialogBody>
                 <Form onSubmit={form.handleSubmit}>

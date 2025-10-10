@@ -350,6 +350,19 @@ export interface SetPasswordRequest {
     password: string;
 }
 /**
+ * Schema for the common available settings
+ * @export
+ * @interface SettingsSchema
+ */
+export interface SettingsSchema {
+    /**
+     * Mailcow URL
+     * @type {string}
+     * @memberof SettingsSchema
+     */
+    mailcow_url: string;
+}
+/**
  * Request to update the currently logged-in user
  * @export
  * @interface UpdateMeRequest

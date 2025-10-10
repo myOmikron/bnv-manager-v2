@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
+import { Dialog, DialogActions, DialogBody, DialogProps, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
 import { Description, ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
@@ -13,11 +13,9 @@ import { toast } from "react-toastify";
 /**
  * The properties for {@link DialogCreateClubAdmin}
  */
-export type DialogCreateClubAdminProps = {
+export type DialogCreateClubAdminProps = DialogProps & {
     /** The club to create the admin for */
     club: UUID;
-    /** Callback for close action */
-    onClose: () => void;
     /** Callback for creation of the new admin */
     onCreate: () => void;
 };
@@ -59,8 +57,15 @@ export default function DialogCreateClubAdmin(props: DialogCreateClubAdminProps)
         },
     });
 
+    React.useEffect(() => {
+        if (props.open) {
+            form.reset();
+            setOpenShowInvite(undefined);
+        }
+    }, [props.open]);
+
     return (
-        <Dialog open={true} onClose={props.onClose}>
+        <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>{t("heading.create-admin")}</DialogTitle>
             <DialogBody>
                 <Form onSubmit={form.handleSubmit}>
@@ -127,31 +132,29 @@ export default function DialogCreateClubAdmin(props: DialogCreateClubAdminProps)
             </DialogBody>
 
             <Suspense>
-                {openShowInvite && (
-                    <Dialog open={true} onClose={props.onClose}>
-                        <DialogTitle>{t("heading.invite-created")}</DialogTitle>
-                        <DialogBody>
-                            <div className={"flex gap-3"}>
-                                <Input readOnly={true} defaultValue={openShowInvite} />
-                                <Button
-                                    outline={true}
-                                    onClick={async () => {
-                                        await navigator.clipboard.writeText(openShowInvite);
-                                        toast.success(tg("toast.copied-to-clipboard"));
-                                    }}
-                                >
-                                    <span className={"sr-only"}>{t("accessibility.copy")}</span>
-                                    <ClipboardDocumentListIcon />
-                                </Button>
-                            </div>
-                        </DialogBody>
-                        <DialogActions>
-                            <Button outline={true} onClick={props.onCreate}>
-                                {tg("button.close")}
+                <Dialog open={!!openShowInvite} onClose={props.onClose}>
+                    <DialogTitle>{t("heading.invite-created")}</DialogTitle>
+                    <DialogBody>
+                        <div className={"flex gap-3"}>
+                            <Input readOnly={true} defaultValue={openShowInvite} />
+                            <Button
+                                outline={true}
+                                onClick={async () => {
+                                    openShowInvite && (await navigator.clipboard.writeText(openShowInvite));
+                                    toast.success(tg("toast.copied-to-clipboard"));
+                                }}
+                            >
+                                <span className={"sr-only"}>{t("accessibility.copy")}</span>
+                                <ClipboardDocumentListIcon />
                             </Button>
-                        </DialogActions>
-                    </Dialog>
-                )}
+                        </div>
+                    </DialogBody>
+                    <DialogActions>
+                        <Button outline={true} onClick={props.onCreate}>
+                            {tg("button.close")}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Suspense>
         </Dialog>
     );

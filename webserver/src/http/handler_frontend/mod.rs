@@ -13,6 +13,7 @@ pub mod invites;
 pub mod me;
 pub mod oidc_provider;
 pub mod openapi;
+pub mod settings;
 
 /// Openapi page for the admin API
 pub struct AdminAPI;
@@ -113,13 +114,18 @@ pub struct CommonApi;
 
 /// Common handler_frontend
 pub fn router_common() -> GalvynRouter {
-    GalvynRouter::with_openapi_page(CommonApi).nest(
-        "/me",
-        GalvynRouter::new()
-            .handler(me::handler_common::get_me)
-            .handler(me::handler_common::update_me)
-            .handler(me::handler_common::set_password),
-    )
+    GalvynRouter::with_openapi_page(CommonApi)
+        .nest(
+            "/me",
+            GalvynRouter::new()
+                .handler(me::handler_common::get_me)
+                .handler(me::handler_common::update_me)
+                .handler(me::handler_common::set_password),
+        )
+        .nest(
+            "/settings",
+            GalvynRouter::new().handler(settings::handler_common::get_settings),
+        )
 }
 
 /// Initialize the router

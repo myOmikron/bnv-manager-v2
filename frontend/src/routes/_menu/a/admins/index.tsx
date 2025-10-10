@@ -76,7 +76,9 @@ export default function AdminOverview(props: AdminOverviewProps) {
                 </TableBody>
             </Table>
 
-            <Suspense>{openCreateAdmin && <DialogCreateAdmin onClose={() => setOpenCreateAdmin(false)} />}</Suspense>
+            <Suspense>
+                <DialogCreateAdmin open={openCreateAdmin} onClose={() => setOpenCreateAdmin(false)} />
+            </Suspense>
         </HeadingLayout>
     );
 }

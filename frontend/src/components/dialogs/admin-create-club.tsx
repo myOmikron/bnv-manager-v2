@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogActions, DialogBody, DialogTitle } from "src/components/base/dialog";
+import { Dialog, DialogActions, DialogBody, DialogProps, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
 import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
@@ -13,11 +13,7 @@ import { Combobox, ComboboxLabel, ComboboxOption } from "src/components/base/com
 /**
  * The properties for {@link AdminCreateClubDialog}
  */
-export type AdminCreateClubDialogProps = {
-    /** Whether the dialog is open */
-    open: boolean;
-    /** What to do when the dialog is closed */
-    onClose: () => void;
+export type AdminCreateClubDialogProps = DialogProps & {
     /** What to do on creation of the new club */
     onCreate: () => void;
 };
@@ -60,7 +56,6 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
         },
         onSubmit: () => {
             props.onCreate();
-            form.reset();
         },
     });
 
@@ -71,6 +66,7 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
 
     useEffect(() => {
         retrieveUnassociatedDomains().then();
+        if (props.open) form.reset();
     }, [props.open]);
 
     return (

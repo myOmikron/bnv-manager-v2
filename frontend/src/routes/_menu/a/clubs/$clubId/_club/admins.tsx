@@ -116,16 +116,15 @@ export function ClubAdmins(props: ClubAdminProps) {
             )}
 
             <Suspense>
-                {openCreateClubAdmin && (
-                    <DialogCreateClubAdmin
-                        club={params.clubId}
-                        onClose={() => setOpenCreateClubAdmin(false)}
-                        onCreate={async () => {
-                            setOpenCreateClubAdmin(false);
-                            await router.invalidate({ sync: true });
-                        }}
-                    />
-                )}
+                <DialogCreateClubAdmin
+                    open={openCreateClubAdmin}
+                    club={params.clubId}
+                    onClose={() => setOpenCreateClubAdmin(false)}
+                    onCreate={async () => {
+                        setOpenCreateClubAdmin(false);
+                        await router.invalidate({ sync: true });
+                    }}
+                />
             </Suspense>
         </div>
     );

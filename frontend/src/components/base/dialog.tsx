@@ -15,6 +15,16 @@ const sizes = {
     "5xl": "sm:max-w-5xl",
 };
 
+/**
+ * Props of the dialog component.
+ */
+export type DialogProps = {
+    /** Callback when the dialog is closed. */
+    onClose: () => void;
+    /** Whether the dialog is open. */
+    open: boolean;
+};
+
 export function Dialog({
     size = "lg",
     className,

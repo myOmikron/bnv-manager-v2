@@ -17,7 +17,7 @@ import {
     DropdownSection,
 } from "src/components/base/dropdown";
 import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/react/20/solid";
-import DialogCreateOidcProvider from "src/components/dialogs/admin-create-oidc-provider";
+import DialogCreateOidcClient from "src/components/dialogs/admin-create-oidc-client";
 import { toast } from "react-toastify";
 import { ClipboardIcon } from "@heroicons/react/16/solid";
 
@@ -30,7 +30,7 @@ export type OidcProviderProps = {};
  * View to manager oidc provider
  */
 export default function OidcProvider(props: OidcProviderProps) {
-    const [t] = useTranslation("oidc-provider");
+    const [t] = useTranslation("oidc-client");
     const [tg] = useTranslation();
 
     const data = Route.useLoaderData();
@@ -40,13 +40,13 @@ export default function OidcProvider(props: OidcProviderProps) {
 
     return (
         <HeadingLayout
-            heading={t("heading.oidc-provider")}
+            heading={t("heading.oidc-clients")}
             headingChildren={
-                <PrimaryButton onClick={() => setOpenCreateProvider(true)}>{t("button.create-provider")}</PrimaryButton>
+                <PrimaryButton onClick={() => setOpenCreateProvider(true)}>{t("button.create-client")}</PrimaryButton>
             }
         >
             {data.length === 0 ? (
-                <Text>{t("label.no-providers-found")}</Text>
+                <Text>{t("label.no-clients-found")}</Text>
             ) : (
                 <Table>
                     <TableHead>
@@ -101,7 +101,7 @@ export default function OidcProvider(props: OidcProviderProps) {
                                                 <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
                                                 <DropdownItem>
                                                     <TrashIcon />
-                                                    <DropdownLabel>{t("button.delete-oidc-provider")}</DropdownLabel>
+                                                    <DropdownLabel>{t("button.delete-oidc-client")}</DropdownLabel>
                                                 </DropdownItem>
                                             </DropdownSection>
                                         </DropdownMenu>
@@ -112,17 +112,15 @@ export default function OidcProvider(props: OidcProviderProps) {
                     </TableBody>
                 </Table>
             )}
-
             <Suspense>
-                {openCreateProvider && (
-                    <DialogCreateOidcProvider
-                        onClose={() => setOpenCreateProvider(false)}
-                        onCreate={async () => {
-                            setOpenCreateProvider(false);
-                            await router.invalidate({ sync: true });
-                        }}
-                    />
-                )}
+                <DialogCreateOidcClient
+                    open={openCreateProvider}
+                    onClose={() => setOpenCreateProvider(false)}
+                    onCreate={async () => {
+                        setOpenCreateProvider(false);
+                        await router.invalidate({ sync: true });
+                    }}
+                />
             </Suspense>
         </HeadingLayout>
     );

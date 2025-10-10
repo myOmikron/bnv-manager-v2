@@ -22,6 +22,7 @@ import type {
   GetInvite,
   MeSchema,
   SetPasswordRequest,
+  SettingsSchema,
   UpdateMeRequest,
 } from '../models/index';
 
@@ -133,6 +134,30 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getMe(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MeSchema> {
         const response = await this.getMeRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getSettingsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SettingsSchema>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/common/settings`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getSettings(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SettingsSchema> {
+        const response = await this.getSettingsRaw(initOverrides);
         return await response.value();
     }
 

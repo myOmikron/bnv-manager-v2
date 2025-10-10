@@ -321,6 +321,23 @@
                     }
                 }
             }
+        },
+        "/api/v1/frontend/common/settings": {
+            "get": {
+                "operationId": "get_settings",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SettingsSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -680,6 +697,20 @@
                 },
                 "required": [
                     "password"
+                ]
+            },
+            "SettingsSchema": {
+                "description": "Schema for the common available settings",
+                "type": "object",
+                "properties": {
+                    "mailcow_url": {
+                        "description": "Mailcow URL",
+                        "type": "string",
+                        "format": "uri"
+                    }
+                },
+                "required": [
+                    "mailcow_url"
                 ]
             },
             "UpdateMeRequest": {
