@@ -70,6 +70,8 @@ jobs:
       - backend-test
       - frontend-test
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' ||  startsWith(github.ref, 'refs/tags/') )
     concurrency:
       cancel-in-progress: true
