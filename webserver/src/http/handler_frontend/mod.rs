@@ -23,7 +23,9 @@ pub fn router_admin() -> GalvynRouter {
     GalvynRouter::with_openapi_page(AdminAPI)
         .nest(
             "/accounts",
-            GalvynRouter::new().handler(accounts::handler_admin::get_all_superadmins),
+            GalvynRouter::new()
+                .handler(accounts::handler_admin::get_all_superadmins)
+                .handler(accounts::handler_admin::delete_club_admin),
         )
         .nest(
             "/clubs",

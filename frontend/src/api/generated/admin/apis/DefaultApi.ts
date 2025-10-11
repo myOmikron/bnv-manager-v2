@@ -46,6 +46,10 @@ export interface DeleteClubRequest {
     uuid: string;
 }
 
+export interface DeleteClubAdminRequest {
+    uuid: string;
+}
+
 export interface GetClubRequest {
     uuid: string;
 }
@@ -198,6 +202,36 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async deleteClub(requestParameters: DeleteClubRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.deleteClubRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async deleteClubAdminRaw(requestParameters: DeleteClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling deleteClubAdmin().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/accounts/club-admins/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async deleteClubAdmin(requestParameters: DeleteClubAdminRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteClubAdminRaw(requestParameters, initOverrides);
     }
 
     /**

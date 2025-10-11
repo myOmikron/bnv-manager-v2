@@ -18,6 +18,9 @@ export const AdminApi = {
     superadmins: {
         getAll: () => handleError(adminApi.getAllSuperadmins()),
     },
+    clubAdmins: {
+        delete: (uuid: UUID) => handleError(adminApi.deleteClubAdmin({ uuid })),
+    },
     clubs: {
         getAll: () => handleError(adminApi.getClubs()),
         get: (uuid: UUID) => handleError(adminApi.getClub({ uuid })),

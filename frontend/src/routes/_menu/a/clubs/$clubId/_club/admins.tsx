@@ -20,6 +20,7 @@ import {
 } from "src/components/base/dropdown";
 import { toast } from "react-toastify";
 import AdminRetractInviteDialog from "src/components/dialogs/admin-retract-invite";
+import AdminDeleteClubAdmin from "src/components/dialogs/admin-delete-club-admin";
 
 /**
  * Props for {@link ClubAdmins}
@@ -40,6 +41,7 @@ export function ClubAdmins(props: ClubAdminProps) {
 
     const [openCreateClubAdmin, setOpenCreateClubAdmin] = React.useState(false);
     const [openRetractInvite, setOpenRetractInvite] = React.useState<string>();
+    const [openDeleteClubAdmin, setOpenDeleteClubAdmin] = React.useState<string>();
 
     return (
         <div className={"flex flex-col gap-6"}>
@@ -111,6 +113,9 @@ export function ClubAdmins(props: ClubAdminProps) {
                             <TableRow>
                                 <TableHeader>{t("label.username")}</TableHeader>
                                 <TableHeader>{t("label.display-name")}</TableHeader>
+                                <TableHeader className={"w-0"}>
+                                    <span className={"sr-only"}>{tg("accessibility.actions")}</span>
+                                </TableHeader>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -118,6 +123,22 @@ export function ClubAdmins(props: ClubAdminProps) {
                                 <TableRow key={item.uuid}>
                                     <TableCell>{item.username}</TableCell>
                                     <TableCell>{item.display_name}</TableCell>
+                                    <TableCell>
+                                        <Dropdown>
+                                            <DropdownButton plain={true}>
+                                                <EllipsisVerticalIcon />
+                                            </DropdownButton>
+                                            <DropdownMenu anchor={"bottom end"}>
+                                                <DropdownSection>
+                                                    <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
+                                                    <DropdownItem onClick={() => setOpenDeleteClubAdmin(item.uuid)}>
+                                                        <TrashIcon />
+                                                        <DropdownLabel>{t("button.delete-admin")}</DropdownLabel>
+                                                    </DropdownItem>
+                                                </DropdownSection>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -151,6 +172,16 @@ export function ClubAdmins(props: ClubAdminProps) {
                     invite={openRetractInvite ?? ""}
                     onRetract={async () => {
                         setOpenRetractInvite(undefined);
+                        await router.invalidate({ sync: true });
+                    }}
+                />
+
+                <AdminDeleteClubAdmin
+                    onClose={() => setOpenDeleteClubAdmin(undefined)}
+                    open={!!openDeleteClubAdmin}
+                    clubAdmin={openDeleteClubAdmin ?? ""}
+                    onDelete={async () => {
+                        setOpenDeleteClubAdmin(undefined);
                         await router.invalidate({ sync: true });
                     }}
                 />

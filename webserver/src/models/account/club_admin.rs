@@ -41,6 +41,16 @@ impl ClubAdminAccount {
     pub fn uuid(&self) -> AccountUuid {
         self.uuid
     }
+
+    /// Delete the club admin
+    #[instrument(skip(self, exe), name = "ClubAdminAccount::delete")]
+    pub async fn delete(self, exe: impl Executor<'_>) -> anyhow::Result<()> {
+        rorm::delete(exe, ClubAdminAccountModel)
+            .condition(ClubAdminAccountModel.uuid.equals(self.uuid.0))
+            .await?;
+
+        Ok(())
+    }
 }
 
 impl From<ClubAdminAccountModel> for ClubAdminAccount {
