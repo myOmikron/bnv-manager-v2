@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 import { Api } from "src/api/api";
 import HeadingLayout from "src/components/base/heading-layout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "src/components/base/table";
-import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } from "src/components/base/dropdown";
-import { AtSymbolIcon, ChevronDownIcon, EllipsisVerticalIcon, UserPlusIcon } from "@heroicons/react/20/solid";
+import { Dropdown, DropdownButton, DropdownMenu } from "src/components/base/dropdown";
+import { EllipsisVerticalIcon, UserPlusIcon } from "@heroicons/react/20/solid";
 import DialogCreateAdmin from "src/components/dialogs/admin-create-admin";
+import { Button } from "src/components/base/button";
 
 /**
  * The properties for {@link AdminOverview}
@@ -24,28 +25,15 @@ export default function AdminOverview(props: AdminOverviewProps) {
     const data = Route.useLoaderData();
 
     const [openCreateAdmin, setOpenCreateAdmin] = React.useState(false);
-    const [_openAssignAdmin, setOpenAssignAdmin] = React.useState(false);
 
     return (
         <HeadingLayout
             heading={t("heading.admin-overview")}
             headingChildren={
-                <Dropdown>
-                    <DropdownButton outline={true}>
-                        <span>{tg("button.options")}</span>
-                        <ChevronDownIcon />
-                    </DropdownButton>
-                    <DropdownMenu anchor={"bottom end"}>
-                        <DropdownItem onClick={() => setOpenCreateAdmin(true)}>
-                            <UserPlusIcon />
-                            <DropdownLabel>{t("button.create-admin")}</DropdownLabel>
-                        </DropdownItem>
-                        <DropdownItem onClick={() => setOpenAssignAdmin(true)}>
-                            <AtSymbolIcon />
-                            <DropdownLabel>{t("button.assign-admin")}</DropdownLabel>
-                        </DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
+                <Button outline={true} onClick={() => setOpenCreateAdmin(true)}>
+                    <UserPlusIcon />
+                    <span>{t("button.create-admin")}</span>
+                </Button>
             }
         >
             <Table dense={true}>
