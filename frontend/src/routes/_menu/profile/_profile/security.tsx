@@ -45,7 +45,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                 if (res.result === "Err") {
                     toast.update(id, {
                         autoClose: 2500,
-                        render: t("toast."),
+                        render: t("text.stronger-password"),
                         type: "error",
                         isLoading: false,
                     });
@@ -92,7 +92,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                                 <>
                                     <Field>
                                         <Label>{t("label.password")}</Label>
-                                        <div className={"flex gap-3"}>
+                                        <div className={"mt-3 flex gap-3"}>
                                             <Input
                                                 autoComplete={"new-password"}
                                                 type={showPassword ? "text" : "password"}
