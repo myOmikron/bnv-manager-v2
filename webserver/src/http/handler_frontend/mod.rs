@@ -105,12 +105,14 @@ pub fn router_unauthenticated() -> GalvynRouter {
             .handler(openapi::handler_common::openapi_auth);
     }
 
-    router.nest(
+    router = router.nest(
         "/invite",
         GalvynRouter::new()
             .handler(invites::handler_common::get_invite_common)
             .handler(invites::handler_common::accept_invite),
-    )
+    );
+
+    router
 }
 
 /// Openapi page for the common API
