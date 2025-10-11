@@ -1,4 +1,3 @@
-LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
 FROM node:23-bookworm-slim AS buildfrontend
 
 WORKDIR /app
@@ -34,6 +33,7 @@ EOF
 
 
 FROM nginx:alpine AS final
+LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
 
 COPY --from=buildfrontend /frontend /usr/share/nginx/html/frontend
 COPY --from=buildswagger /app/swagger-ui /usr/share/nginx/html/swagger-ui

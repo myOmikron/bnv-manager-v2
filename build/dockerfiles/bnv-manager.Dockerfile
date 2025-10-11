@@ -1,5 +1,4 @@
 ARG RUST_VERSION=1.89.0
-LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
 
 FROM rust:${RUST_VERSION}-slim-bookworm AS buildrust
 
@@ -26,6 +25,7 @@ EOF
 
 
 FROM debian:bookworm-slim AS final
+LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
 
 RUN <<EOF
 apt-get update
