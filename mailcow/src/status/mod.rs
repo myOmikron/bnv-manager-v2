@@ -1,3 +1,5 @@
+//! Handler for mailcows' status
+
 use tracing::instrument;
 
 use crate::MailcowClient;

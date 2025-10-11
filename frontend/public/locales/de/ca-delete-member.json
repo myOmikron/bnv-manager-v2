@@ -1,0 +1,11 @@
+{
+    "button": {
+        "delete-member": "Vereinsmitglied l\u00f6schen"
+    },
+    "description": {
+        "delete-club-member": "Das Löschen eines Vereinsmitglieds löscht alle Daten des Mitglieds eingeschlossen des Postfaches."
+    },
+    "heading": {
+        "delete-club-member": "Vereinsmitglied l\u00f6schen"
+    }
+}

@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import React from "react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import React, { Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import { Api } from "src/api/api";
+import { Api, UUID } from "src/api/api";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "src/components/base/table";
 import TablePagination from "src/components/table-pagination";
 import { Text } from "src/components/base/text";
@@ -21,6 +21,7 @@ import { Input } from "src/components/base/input";
 import { downloadFile } from "src/utils/downloader";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
+import DeleteMemberDialog from "src/components/dialogs/ca-delete-member";
 
 /**
  * The properties for {@link ClubMembers}
@@ -38,6 +39,9 @@ export default function ClubMembers(props: ClubMembersProps) {
     const data = Route.useLoaderData();
     const search = Route.useSearch();
     const navigate = Route.useNavigate();
+    const router = useRouter();
+
+    const [openDeleteMemberDialog, setOpenDeleteMemberDialog] = React.useState<UUID>();
 
     const form = useForm({
         defaultValues: {
@@ -151,7 +155,7 @@ export default function ClubMembers(props: ClubMembersProps) {
                                             <DropdownMenu anchor={"bottom end"}>
                                                 <DropdownSection>
                                                     <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
-                                                    <DropdownItem>
+                                                    <DropdownItem onClick={() => setOpenDeleteMemberDialog(item.uuid)}>
                                                         <TrashIcon />
                                                         <DropdownLabel>{t("label.delete-member")}</DropdownLabel>
                                                     </DropdownItem>
@@ -174,6 +178,19 @@ export default function ClubMembers(props: ClubMembersProps) {
             ) : (
                 <Text>{t("label.no-members")}</Text>
             )}
+
+            <Suspense>
+                <DeleteMemberDialog
+                    onClose={() => setOpenDeleteMemberDialog(undefined)}
+                    onDelete={async () => {
+                        setOpenDeleteMemberDialog(undefined);
+                        await router.invalidate({ sync: true });
+                    }}
+                    open={!!openDeleteMemberDialog}
+                    club_uuid={params.clubId}
+                    member_uuid={openDeleteMemberDialog ?? ""}
+                />
+            </Suspense>
         </div>
     );
 }

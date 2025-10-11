@@ -28,6 +28,11 @@ export interface CreateMemberInviteOperationRequest {
     CreateMemberInviteRequest?: CreateMemberInviteRequest;
 }
 
+export interface DeleteMemberRequest {
+    club_uuid: string;
+    member_uuid: string;
+}
+
 export interface GetClubRequest {
     club_uuid: string;
 }
@@ -80,6 +85,43 @@ export class DefaultApi extends runtime.BaseAPI {
     async createMemberInvite(requestParameters: CreateMemberInviteOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForSingleLinkAndCreateInviteError> {
         const response = await this.createMemberInviteRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     */
+    async deleteMemberRaw(requestParameters: DeleteMemberRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['club_uuid'] == null) {
+            throw new runtime.RequiredError(
+                'club_uuid',
+                'Required parameter "club_uuid" was null or undefined when calling deleteMember().'
+            );
+        }
+
+        if (requestParameters['member_uuid'] == null) {
+            throw new runtime.RequiredError(
+                'member_uuid',
+                'Required parameter "member_uuid" was null or undefined when calling deleteMember().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/club-admin/clubs/{club_uuid}/members/{member_uuid}`.replace(`{${"club_uuid"}}`, encodeURIComponent(String(requestParameters['club_uuid']))).replace(`{${"member_uuid"}}`, encodeURIComponent(String(requestParameters['member_uuid']))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async deleteMember(requestParameters: DeleteMemberRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteMemberRaw(requestParameters, initOverrides);
     }
 
     /**

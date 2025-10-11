@@ -16,6 +16,8 @@ export const ClubAdminApi = {
         get: (club_uuid: UUID) => handleError(clubAdminApi.getClub({ club_uuid })),
         getMembers: (req: GetClubMembersRequest) => handleError(clubAdminApi.getClubMembers(req)),
         getInvitedMembers: (club_uuid: UUID) => handleError(clubAdminApi.getClubMemberInvites({ club_uuid })),
+        deleteMember: (club_uuid: UUID, member_uuid: UUID) =>
+            handleError(clubAdminApi.deleteMember({ member_uuid, club_uuid })),
     },
     invites: {
         create: (club_uuid: UUID, req: CreateMemberInviteRequest) =>

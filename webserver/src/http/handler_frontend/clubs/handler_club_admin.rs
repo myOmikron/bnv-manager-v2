@@ -7,6 +7,7 @@ use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::Page;
+use galvyn::delete;
 use galvyn::get;
 use galvyn::rorm::Database;
 use tracing::instrument;
@@ -16,9 +17,12 @@ use crate::http::handler_frontend::accounts::SimpleMemberAccountSchema;
 use crate::http::handler_frontend::clubs::PageParams;
 use crate::http::handler_frontend::clubs::schema;
 use crate::http::handler_frontend::invites::GetInvite;
+use crate::models::account::AccountUuid;
+use crate::models::account::ClubAccount;
 use crate::models::club::Club;
 use crate::models::club::ClubUuid;
 use crate::models::invite::Invite;
+use crate::modules::mailcow::Mailcow;
 
 #[get("/")]
 #[instrument(name = "Api::club_admin::get_club")]
@@ -85,4 +89,30 @@ pub async fn get_club_member_invites(
     tx.commit().await?;
 
     Ok(ApiJson(invites))
+}
+
+#[delete("/{member_uuid}")]
+#[instrument(name = "Api::club_admin::delete_member")]
+pub async fn delete_member(
+    Path((club_uuid, account_uuid)): Path<(ClubUuid, AccountUuid)>,
+) -> ApiResult<()> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let account = ClubAccount::get_by_uuid(&mut tx, account_uuid)
+        .await?
+        .ok_or(ApiError::bad_request("Account not found"))?;
+
+    Mailcow::global()
+        .sdk
+        .delete_mailbox(vec![account.email.clone().into_inner()])
+        .await
+        .map_err(ApiError::map_server_error(
+            "Could not delete mailbox in mailcow",
+        ))?;
+
+    account.delete(&mut tx).await?;
+
+    tx.commit().await?;
+
+    Ok(())
 }

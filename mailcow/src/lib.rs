@@ -48,7 +48,8 @@ use crate::error::MailcowResult;
 pub mod domain_admins;
 pub mod domains;
 pub mod error;
-mod status;
+pub mod mailboxes;
+pub mod status;
 mod utils;
 
 /// A client for interacting with the Mailcow API
