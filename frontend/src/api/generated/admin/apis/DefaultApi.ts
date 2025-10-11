@@ -76,6 +76,10 @@ export interface GetClubMembersRequest {
     search?: string | null;
 }
 
+export interface RetractInviteRequest {
+    uuid: string;
+}
+
 /**
  * 
  */
@@ -504,6 +508,36 @@ export class DefaultApi extends runtime.BaseAPI {
     async getUnassociatedDomains(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Domain>> {
         const response = await this.getUnassociatedDomainsRaw(initOverrides);
         return await response.value();
+    }
+
+    /**
+     */
+    async retractInviteRaw(requestParameters: RetractInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling retractInvite().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/invites/{uuid}/retract`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async retractInvite(requestParameters: RetractInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.retractInviteRaw(requestParameters, initOverrides);
     }
 
 }

@@ -1,6 +1,8 @@
 //! Administrative endpoints for invites.
 
 use galvyn::core::Module;
+use galvyn::core::re_exports::axum::extract::Path;
+use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
@@ -15,6 +17,7 @@ use crate::http::handler_frontend::invites::CreateInviteError;
 use crate::http::handler_frontend::invites::CreateInviteRequestAdmin;
 use crate::models::invite::CreateInviteParams;
 use crate::models::invite::Invite;
+use crate::models::invite::InviteUuid;
 use crate::utils::links::Link;
 
 #[post("/")]
@@ -58,4 +61,20 @@ pub async fn create_invite(
     Ok(ApiJson(FormResult::ok(SingleLink {
         link: Link::invite(invite.uuid).to_string(),
     })))
+}
+
+#[post("/{uuid}/retract")]
+#[instrument(name = "Api::admin::retract_invite")]
+pub async fn retract_invite(Path(invite_uuid): Path<InviteUuid>) -> ApiResult<()> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let invite = Invite::find_by_uuid(&mut tx, invite_uuid)
+        .await?
+        .ok_or(ApiError::bad_request("Invite not found."))?;
+
+    invite.delete(&mut tx).await?;
+
+    tx.commit().await?;
+
+    Ok(())
 }

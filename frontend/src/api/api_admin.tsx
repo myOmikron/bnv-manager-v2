@@ -35,6 +35,7 @@ export const AdminApi = {
     invites: {
         create: (invite: CreateInviteRequestAdmin) =>
             handleError(adminApi.createInvite({ CreateInviteRequestAdmin: invite })),
+        retract: (invite_uuid: UUID) => handleError(adminApi.retractInvite({ uuid: invite_uuid })),
     },
     oidcProvider: {
         create: (req: CreateOidcProvider) => handleError(adminApi.createOidcProvider({ CreateOidcProvider: req })),

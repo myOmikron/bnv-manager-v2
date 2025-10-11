@@ -2,7 +2,8 @@
     "button": {
         "back-to-overview": "Back to overview",
         "copy-invite-link": "Copy invite link",
-        "create-club-admin": "Create new club admin"
+        "create-club-admin": "Create new club admin",
+        "retract-invite": "Retract invite"
     },
     "heading": {
         "admins": "Admins",

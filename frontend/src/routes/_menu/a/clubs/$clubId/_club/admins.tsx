@@ -5,12 +5,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "s
 import TablePagination from "src/components/table-pagination";
 import { Text } from "src/components/base/text";
 import { Button } from "src/components/base/button";
-import { EllipsisVerticalIcon, LinkIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { EllipsisVerticalIcon, LinkIcon, PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
 import React, { Suspense } from "react";
 import DialogCreateClubAdmin from "src/components/dialogs/admin-create-club-admin";
 import { Subheading } from "src/components/base/heading";
-import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } from "src/components/base/dropdown";
+import {
+    Dropdown,
+    DropdownButton,
+    DropdownHeading,
+    DropdownItem,
+    DropdownLabel,
+    DropdownMenu,
+    DropdownSection,
+} from "src/components/base/dropdown";
 import { toast } from "react-toastify";
+import AdminRetractInviteDialog from "src/components/dialogs/admin-retract-invite";
 
 /**
  * Props for {@link ClubAdmins}
@@ -30,6 +39,7 @@ export function ClubAdmins(props: ClubAdminProps) {
     const router = useRouter();
 
     const [openCreateClubAdmin, setOpenCreateClubAdmin] = React.useState(false);
+    const [openRetractInvite, setOpenRetractInvite] = React.useState<string>();
 
     return (
         <div className={"flex flex-col gap-6"}>
@@ -65,15 +75,24 @@ export function ClubAdmins(props: ClubAdminProps) {
                                                 <EllipsisVerticalIcon />
                                             </DropdownButton>
                                             <DropdownMenu anchor={"bottom end"}>
-                                                <DropdownItem
-                                                    onClick={async () => {
-                                                        await navigator.clipboard.writeText(item.link);
-                                                        toast.success(tg("toast.copied-to-clipboard"));
-                                                    }}
-                                                >
-                                                    <LinkIcon />
-                                                    <DropdownLabel>{t("button.copy-invite-link")}</DropdownLabel>
-                                                </DropdownItem>
+                                                <DropdownSection>
+                                                    <DropdownItem
+                                                        onClick={async () => {
+                                                            await navigator.clipboard.writeText(item.link);
+                                                            toast.success(tg("toast.copied-to-clipboard"));
+                                                        }}
+                                                    >
+                                                        <LinkIcon />
+                                                        <DropdownLabel>{t("button.copy-invite-link")}</DropdownLabel>
+                                                    </DropdownItem>
+                                                </DropdownSection>
+                                                <DropdownSection>
+                                                    <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
+                                                    <DropdownItem onClick={() => setOpenRetractInvite(item.uuid)}>
+                                                        <TrashIcon />
+                                                        <DropdownLabel>{t("button.retract-invite")}</DropdownLabel>
+                                                    </DropdownItem>
+                                                </DropdownSection>
                                             </DropdownMenu>
                                         </Dropdown>
                                     </TableCell>
@@ -122,6 +141,16 @@ export function ClubAdmins(props: ClubAdminProps) {
                     onClose={() => setOpenCreateClubAdmin(false)}
                     onCreate={async () => {
                         setOpenCreateClubAdmin(false);
+                        await router.invalidate({ sync: true });
+                    }}
+                />
+
+                <AdminRetractInviteDialog
+                    onClose={() => setOpenRetractInvite(undefined)}
+                    open={!!openRetractInvite}
+                    invite={openRetractInvite ?? ""}
+                    onRetract={async () => {
+                        setOpenRetractInvite(undefined);
                         await router.invalidate({ sync: true });
                     }}
                 />

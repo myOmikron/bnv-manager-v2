@@ -44,7 +44,9 @@ pub fn router_admin() -> GalvynRouter {
         )
         .nest(
             "/invites",
-            GalvynRouter::new().handler(invites::handler_admin::create_invite),
+            GalvynRouter::new()
+                .handler(invites::handler_admin::create_invite)
+                .handler(invites::handler_admin::retract_invite),
         )
         .nest(
             "/oidc-providers",

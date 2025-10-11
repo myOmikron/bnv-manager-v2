@@ -92,6 +92,16 @@ impl Invite {
         self.expires_at
     }
 
+    /// Delete the invitation
+    #[instrument(skip(self, exe))]
+    pub async fn delete(self, exe: impl Executor<'_>) -> anyhow::Result<()> {
+        rorm::delete(exe, InviteModel)
+            .condition(InviteModel.uuid.equals(self.uuid.0))
+            .await?;
+
+        Ok(())
+    }
+
     /// Migrate an [Invite] instance to an actual account.
     #[instrument(skip(exe))]
     pub async fn accept_invite(
