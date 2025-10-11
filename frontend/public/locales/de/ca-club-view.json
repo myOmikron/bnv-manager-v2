@@ -10,9 +10,13 @@
         "members": "Mitglieder"
     },
     "label": {
+        "delete-member": "Mitglied l\u00f6schen",
         "display-name": "Anzeigename",
+        "download-as-csv": "CSV herunterladen",
+        "download-as-json": "JSON herunterladen",
         "expires-at": "L\u00e4uft ab am",
         "no-members": "Keine Mitglieder vorhanden.",
+        "search": "Suche",
         "username": "Nutzername"
     }
 }

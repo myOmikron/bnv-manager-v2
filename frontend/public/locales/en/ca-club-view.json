@@ -10,9 +10,13 @@
         "members": "Members"
     },
     "label": {
+        "delete-member": "Delete member",
         "display-name": "Display Name",
+        "download-as-csv": "Export CSV",
+        "download-as-json": "Export JSON",
         "expires-at": "Expires at",
         "no-members": "There are no members yet.",
+        "search": "Search",
         "username": "Username"
     }
 }
