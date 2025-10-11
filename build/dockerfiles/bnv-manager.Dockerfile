@@ -1,4 +1,5 @@
 ARG RUST_VERSION=1.89.0
+LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
 
 FROM rust:${RUST_VERSION}-slim-bookworm AS buildrust
 
