@@ -114,6 +114,20 @@ pub async fn delete_club(Path(SingleUuid { uuid }): Path<SingleUuid>) -> ApiResu
                 "Couldn't delete domain admins in mailcow",
             ))?;
 
+        let members = club
+            .members_page(&mut tx, i64::MAX as u64, 0, None)
+            .await?
+            .items
+            .into_iter()
+            .map(|x| x.email.into_inner())
+            .collect();
+
+        Mailcow::global()
+            .sdk
+            .delete_mailbox(members)
+            .await
+            .map_err(ApiError::map_server_error("Couldn't delete mailboxes"))?;
+
         club.delete(&mut tx).await?;
     }
 
