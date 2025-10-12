@@ -1,7 +1,8 @@
 {
     "button": {
         "copy-invite-link": "Copy invite link",
-        "create-member": "Create member"
+        "create-member": "Create member",
+        "retract-invite": "Retract invite"
     },
     "heading": {
         "club": "Club: {{club}}",

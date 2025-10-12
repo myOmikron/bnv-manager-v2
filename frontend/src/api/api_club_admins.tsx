@@ -22,6 +22,8 @@ export const ClubAdminApi = {
     invites: {
         create: (club_uuid: UUID, req: CreateMemberInviteRequest) =>
             handleError(clubAdminApi.createMemberInvite({ club_uuid, CreateMemberInviteRequest: req })),
+        retract: (uuid: UUID, club_uuid: UUID) =>
+            handleError(clubAdminApi.retractInvite({ uuid, club_uuid: club_uuid })),
     },
 };
 

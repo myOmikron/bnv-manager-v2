@@ -1,7 +1,8 @@
 {
     "button": {
         "copy-invite-link": "Einladungslink kopieren",
-        "create-member": "Mitglied anlegen"
+        "create-member": "Mitglied anlegen",
+        "retract-invite": "Einladung widerrufen"
     },
     "heading": {
         "club": "Verein: {{club}}",

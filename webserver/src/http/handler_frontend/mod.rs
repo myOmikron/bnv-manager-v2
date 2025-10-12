@@ -77,7 +77,9 @@ pub fn router_club_admin() -> GalvynRouter {
             .nest("/domains", GalvynRouter::new())
             .nest(
                 "/invites",
-                GalvynRouter::new().handler(invites::handler_club_admin::create_member_invite),
+                GalvynRouter::new()
+                    .handler(invites::handler_club_admin::create_member_invite)
+                    .handler(invites::handler_club_admin::retract_invite),
             )
             .nest(
                 "/members",

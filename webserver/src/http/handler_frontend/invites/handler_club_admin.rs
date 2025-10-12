@@ -2,6 +2,7 @@
 
 use galvyn::core::Module;
 use galvyn::core::re_exports::axum::extract::Path;
+use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
@@ -12,12 +13,14 @@ use time::Duration;
 use time::OffsetDateTime;
 use tracing::instrument;
 
+use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::invites::CreateInviteError;
 use crate::http::handler_frontend::invites::CreateMemberInviteRequest;
 use crate::models::club::ClubUuid;
 use crate::models::invite::CreateInviteParams;
 use crate::models::invite::Invite;
 use crate::models::invite::InviteType;
+use crate::models::invite::InviteUuid;
 use crate::utils::links::Link;
 
 #[post("/")]
@@ -65,4 +68,37 @@ pub async fn create_member_invite(
     Ok(ApiJson(FormResult::ok(SingleLink {
         link: Link::invite(invite.uuid).to_string(),
     })))
+}
+
+#[post("/{uuid}/retract")]
+#[instrument(name = "Api::club_admin::retract_invite")]
+pub async fn retract_invite(
+    Path((club_uuid, invite_uuid)): Path<(ClubUuid, InviteUuid)>,
+    SessionUser { uuid: session_user }: SessionUser,
+) -> ApiResult<()> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let invite = Invite::find_by_uuid(&mut tx, invite_uuid)
+        .await?
+        .ok_or(ApiError::bad_request("Invite not found."))?;
+
+    let Some(club) = invite.club else {
+        return Err(ApiError::bad_request("Invite doesn't reference a club"));
+    };
+
+    if club != club_uuid {
+        return Err(ApiError::bad_request(
+            "Invite references other invite than request",
+        ));
+    }
+
+    if invite.email.is_none() {
+        return Err(ApiError::bad_request("Invite doesn't references a member"));
+    }
+
+    invite.delete(&mut tx).await?;
+
+    tx.commit().await?;
+
+    Ok(())
 }

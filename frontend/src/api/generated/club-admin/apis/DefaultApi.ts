@@ -48,6 +48,11 @@ export interface GetClubMembersRequest {
     search?: string | null;
 }
 
+export interface RetractInviteRequest {
+    club_uuid: string;
+    uuid: any;
+}
+
 /**
  * 
  */
@@ -227,6 +232,43 @@ export class DefaultApi extends runtime.BaseAPI {
     async getClubMembers(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleMemberAccountSchema> {
         const response = await this.getClubMembersRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     */
+    async retractInviteRaw(requestParameters: RetractInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['club_uuid'] == null) {
+            throw new runtime.RequiredError(
+                'club_uuid',
+                'Required parameter "club_uuid" was null or undefined when calling retractInvite().'
+            );
+        }
+
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling retractInvite().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/club-admin/clubs/{club_uuid}/invites/{uuid}/retract`.replace(`{${"club_uuid"}}`, encodeURIComponent(String(requestParameters['club_uuid']))).replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async retractInvite(requestParameters: RetractInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.retractInviteRaw(requestParameters, initOverrides);
     }
 
 }
