@@ -63,6 +63,13 @@ pub struct AssociateDomainRequest {
     pub domain: DomainUuid,
 }
 
+/// Request to unassociate a domain with a club
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct UnassociateDomainRequest {
+    /// The domain to unassociate with the club
+    pub domain: DomainUuid,
+}
+
 impl From<Club> for ClubSchema {
     fn from(value: Club) -> Self {
         Self {

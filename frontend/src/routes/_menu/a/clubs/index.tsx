@@ -111,7 +111,7 @@ function AdminClubOverview(props: AdminClubOverviewProps) {
                     open={!!openDeleteClub}
                     club={openDeleteClub}
                     onClose={() => setOpenDeleteClub(undefined)}
-                    onDelete={async () => {
+                    onUnlink={async () => {
                         setOpenDeleteClub(undefined);
                         await router.invalidate({ sync: false });
                     }}

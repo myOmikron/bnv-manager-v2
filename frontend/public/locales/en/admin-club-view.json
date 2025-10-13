@@ -5,7 +5,8 @@
         "copy-invite-link": "Copy invite link",
         "create-club-admin": "Create new club admin",
         "delete-admin": "Delete club admin",
-        "retract-invite": "Retract invite"
+        "retract-invite": "Retract invite",
+        "unlink-domain": "Unlink domain"
     },
     "heading": {
         "admins": "Admins",

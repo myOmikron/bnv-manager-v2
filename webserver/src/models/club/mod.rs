@@ -1,5 +1,6 @@
 //! Clubs related models are in this module.
 
+use anyhow::anyhow;
 use futures_util::TryStreamExt;
 use galvyn::core::stuff::schema::Page;
 use galvyn::rorm;
@@ -234,6 +235,32 @@ impl Club {
         if is_primary {
             self.primary_domain = domain.domain.clone();
         }
+
+        Ok(())
+    }
+
+    /// Unassociate an existing domain from this club
+    ///
+    /// Can't unassociate the primary domain of the club
+    #[instrument(name = "Club::unassociate_domain", skip(exe, self))]
+    pub async fn unassociate_domain(
+        &self,
+        exe: impl Executor<'_>,
+        domain: &Domain,
+    ) -> anyhow::Result<()> {
+        let mut guard = exe.ensure_transaction().await?;
+
+        if self.primary_domain == domain.domain {
+            return Err(anyhow!("Can't unassociate primary domain"));
+        }
+
+        rorm::update(guard.get_transaction(), DomainModel)
+            .set(DomainModel.club, None)
+            .set(DomainModel.is_primary, false)
+            .condition(DomainModel.uuid.equals(domain.uuid.0))
+            .await?;
+
+        guard.commit().await?;
 
         Ok(())
     }

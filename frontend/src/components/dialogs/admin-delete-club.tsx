@@ -43,7 +43,7 @@ export default function AdminDeleteClubDialog(props: AdminDeleteClubDialogProps)
                         onClick={async () => {
                             if (!props.club) return;
                             await Api.admin.clubs.delete(props.club?.uuid);
-                            props.onDelete();
+                            props.onUnlink();
                         }}
                     >
                         {t("button.delete-club")}

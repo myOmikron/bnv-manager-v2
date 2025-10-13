@@ -627,3 +627,16 @@ export interface SingleLink {
      */
     link: string;
 }
+/**
+ * Request to unassociate a domain with a club
+ * @export
+ * @interface UnassociateDomainRequest
+ */
+export interface UnassociateDomainRequest {
+    /**
+     * The domain to unassociate with the club
+     * @type {string}
+     * @memberof UnassociateDomainRequest
+     */
+    domain: string;
+}

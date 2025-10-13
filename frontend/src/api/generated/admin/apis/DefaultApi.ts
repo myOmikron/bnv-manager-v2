@@ -29,6 +29,7 @@ import type {
   PageForSimpleAccountSchema,
   PageForSimpleMemberAccountSchema,
   SimpleAccountSchema,
+  UnassociateDomainRequest,
 } from '../models/index';
 
 export interface AssociateDomainOperationRequest {
@@ -88,6 +89,11 @@ export interface GetClubMembersRequest {
 
 export interface RetractInviteRequest {
     uuid: string;
+}
+
+export interface UnassociateDomainOperationRequest {
+    uuid: string;
+    UnassociateDomainRequest?: UnassociateDomainRequest;
 }
 
 /**
@@ -611,6 +617,39 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async retractInvite(requestParameters: RetractInviteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.retractInviteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async unassociateDomainRaw(requestParameters: UnassociateDomainOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling unassociateDomain().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs/{uuid}/domains/unassociate`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['UnassociateDomainRequest'],
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async unassociateDomain(requestParameters: UnassociateDomainOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.unassociateDomainRaw(requestParameters, initOverrides);
     }
 
 }

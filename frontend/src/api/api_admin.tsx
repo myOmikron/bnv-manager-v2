@@ -33,6 +33,8 @@ export const AdminApi = {
         associatedDomains: (uuid: UUID) => handleError(adminApi.getClubDomains({ uuid })),
         associateDomain: (club: UUID, domain: UUID) =>
             handleError(adminApi.associateDomain({ uuid: club, AssociateDomainRequest: { domain } })),
+        unassociateDomain: (club: UUID, domain: UUID) =>
+            handleError(adminApi.unassociateDomain({ uuid: club, UnassociateDomainRequest: { domain } })),
     },
     domains: {
         unassociated: () => handleError(adminApi.getUnassociatedDomains()),
