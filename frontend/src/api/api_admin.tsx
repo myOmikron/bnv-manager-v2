@@ -31,6 +31,8 @@ export const AdminApi = {
         create: (createClub: CreateClubRequest) => handleError(adminApi.createClub({ CreateClubRequest: createClub })),
         delete: (uuid: UUID) => handleError(adminApi.deleteClub({ uuid })),
         associatedDomains: (uuid: UUID) => handleError(adminApi.getClubDomains({ uuid })),
+        associateDomain: (club: UUID, domain: UUID) =>
+            handleError(adminApi.associateDomain({ uuid: club, AssociateDomainRequest: { domain } })),
     },
     domains: {
         unassociated: () => handleError(adminApi.getUnassociatedDomains()),

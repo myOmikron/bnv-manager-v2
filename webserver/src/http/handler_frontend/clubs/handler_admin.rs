@@ -13,10 +13,13 @@ use galvyn::delete;
 use galvyn::get;
 use galvyn::post;
 use galvyn::rorm::Database;
+use mailcow::domain_admins::schema::EditDomainAdminsChanges;
+use mailcow::domain_admins::schema::EditDomainAdminsRequest;
 use tracing::instrument;
 
 use crate::http::handler_frontend::accounts::SimpleAccountSchema;
 use crate::http::handler_frontend::accounts::SimpleMemberAccountSchema;
+use crate::http::handler_frontend::clubs::AssociateDomainRequest;
 use crate::http::handler_frontend::clubs::CreateClubError;
 use crate::http::handler_frontend::clubs::CreateClubRequest;
 use crate::http::handler_frontend::clubs::PageParams;
@@ -264,4 +267,50 @@ pub async fn get_club_domains(
     tx.commit().await?;
 
     Ok(ApiJson(domains))
+}
+
+#[post("/{uuid}/domains/associate")]
+#[instrument(name = "Api::admin::associate_domain")]
+pub async fn associate_domain(
+    Path(club_uuid): Path<ClubUuid>,
+    ApiJson(AssociateDomainRequest { domain }): ApiJson<AssociateDomainRequest>,
+) -> ApiResult<()> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let domain = Domain::find_by_uuid(&mut tx, domain)
+        .await?
+        .ok_or(ApiError::bad_request("Domain not found"))?;
+
+    let mut club = Club::find_by_uuid(&mut tx, club_uuid)
+        .await?
+        .ok_or(ApiError::bad_request("Club not found"))?;
+
+    club.associate_domain(&mut tx, &domain, false).await?;
+
+    let admins = club.admins_page(&mut tx, i64::MAX as u64, 0, None).await?;
+
+    let domains = Domain::find_all_by_club(&mut tx, club_uuid)
+        .await?
+        .into_iter()
+        .map(|x| x.domain.into_inner())
+        .collect();
+
+    Mailcow::global()
+        .sdk
+        .edit_domain_admins(EditDomainAdminsRequest {
+            attr: EditDomainAdminsChanges { domains },
+            items: admins
+                .items
+                .into_iter()
+                .map(|x| x.username.into_inner())
+                .collect(),
+        })
+        .await
+        .map_err(ApiError::map_server_error(
+            "Couldn't edit domain admins in mailcow",
+        ))?;
+
+    tx.commit().await?;
+
+    Ok(())
 }

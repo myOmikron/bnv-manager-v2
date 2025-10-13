@@ -1,10 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { Api } from "src/api/api";
 import { useTranslation } from "react-i18next";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "src/components/base/table";
 import { Badge } from "src/components/base/badge";
+import { Button } from "src/components/base/button";
+import { AtSymbolIcon } from "@heroicons/react/20/solid";
+import AssociateDomainDialog from "src/components/dialogs/admin-associate-domain";
 
 /**
  * The properties for {@link AdminClubDomains}
@@ -17,10 +20,19 @@ export type AdminClubDomainsProps = {};
 export default function AdminClubDomains(props: AdminClubDomainsProps) {
     const [t] = useTranslation("admin-club-view");
 
-    const { associated } = Route.useLoaderData();
+    const params = Route.useParams();
+    const { associated, unassociated } = Route.useLoaderData();
+    const router = useRouter();
+
+    const [openAssociateDomain, setOpenAssociateDomain] = React.useState(false);
 
     return (
-        <div className={"flex flex-col gap-6"}>
+        <div className={"flex flex-col gap-3"}>
+            <Button outline={true} className={"self-end"} onClick={() => setOpenAssociateDomain(true)}>
+                <AtSymbolIcon />
+                <span>{t("button.associate-domain")}</span>
+            </Button>
+
             <Table>
                 <TableHead>
                     <TableRow>
@@ -42,6 +54,19 @@ export default function AdminClubDomains(props: AdminClubDomainsProps) {
                         ))}
                 </TableBody>
             </Table>
+
+            <Suspense>
+                <AssociateDomainDialog
+                    club_uuid={params.clubId}
+                    onClose={() => setOpenAssociateDomain(false)}
+                    open={openAssociateDomain}
+                    unassociatedDomains={unassociated}
+                    onAssociate={async () => {
+                        setOpenAssociateDomain(false);
+                        await router.invalidate({ sync: true });
+                    }}
+                />
+            </Suspense>
         </div>
     );
 }
@@ -50,5 +75,6 @@ export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/domains")({
     component: AdminClubDomains,
     loader: async ({ params }) => ({
         associated: await Api.admin.clubs.associatedDomains(params.clubId),
+        unassociated: await Api.admin.domains.unassociated(),
     }),
 });

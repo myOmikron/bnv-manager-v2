@@ -1,5 +1,6 @@
 {
     "button": {
+        "associate-domain": "Associate domain",
         "back-to-overview": "Back to overview",
         "copy-invite-link": "Copy invite link",
         "create-club-admin": "Create new club admin",

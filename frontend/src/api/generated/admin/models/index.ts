@@ -14,6 +14,19 @@ export interface ApiErrorResponse {
     trace_id: string;
 }
 /**
+ * Request to associate a domain with a club
+ * @export
+ * @interface AssociateDomainRequest
+ */
+export interface AssociateDomainRequest {
+    /**
+     * The domain to associate with the club
+     * @type {string}
+     * @memberof AssociateDomainRequest
+     */
+    domain: string;
+}
+/**
  * A single club
  * @export
  * @interface ClubSchema

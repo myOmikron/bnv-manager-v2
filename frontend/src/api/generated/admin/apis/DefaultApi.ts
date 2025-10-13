@@ -16,6 +16,7 @@
 import * as runtime from '../runtime';
 import type {
   ApiErrorResponse,
+  AssociateDomainRequest,
   ClubSchema,
   CreateClubRequest,
   CreateInviteRequestAdmin,
@@ -29,6 +30,11 @@ import type {
   PageForSimpleMemberAccountSchema,
   SimpleAccountSchema,
 } from '../models/index';
+
+export interface AssociateDomainOperationRequest {
+    uuid: string;
+    AssociateDomainRequest?: AssociateDomainRequest;
+}
 
 export interface CreateClubOperationRequest {
     CreateClubRequest?: CreateClubRequest;
@@ -88,6 +94,39 @@ export interface RetractInviteRequest {
  * 
  */
 export class DefaultApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async associateDomainRaw(requestParameters: AssociateDomainOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling associateDomain().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs/{uuid}/domains/associate`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['AssociateDomainRequest'],
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     */
+    async associateDomain(requestParameters: AssociateDomainOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.associateDomainRaw(requestParameters, initOverrides);
+    }
 
     /**
      */

@@ -56,6 +56,13 @@ pub struct PageParams {
     pub search: Option<MaxStr<255>>,
 }
 
+/// Request to associate a domain with a club
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct AssociateDomainRequest {
+    /// The domain to associate with the club
+    pub domain: DomainUuid,
+}
+
 impl From<Club> for ClubSchema {
     fn from(value: Club) -> Self {
         Self {

@@ -12,3 +12,16 @@ pub struct CreateDomainAdminRequest {
     pub password2: String,
     pub username: String,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[allow(missing_docs)]
+pub struct EditDomainAdminsChanges {
+    pub domains: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[allow(missing_docs)]
+pub struct EditDomainAdminsRequest {
+    pub attr: EditDomainAdminsChanges,
+    pub items: Vec<String>,
+}
