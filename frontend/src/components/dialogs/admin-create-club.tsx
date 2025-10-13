@@ -7,7 +7,7 @@ import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/co
 import { Input } from "src/components/base/input";
 import { Button, PrimaryButton } from "src/components/base/button";
 import { Api } from "src/api/api";
-import { Domain } from "src/api/generated/admin";
+import { DomainSchema } from "src/api/generated/admin";
 import { Combobox, ComboboxLabel, ComboboxOption } from "src/components/base/combobox";
 
 /**
@@ -25,12 +25,12 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
     const [t] = useTranslation("dialog-create-club");
     const [tg] = useTranslation();
 
-    const [domains, setDomains] = React.useState<Array<Domain>>([]);
+    const [domains, setDomains] = React.useState<Array<DomainSchema>>([]);
 
     const form = useForm({
         defaultValues: {
             name: "",
-            primaryDomain: null as Domain | null | undefined,
+            primaryDomain: null as DomainSchema | null | undefined,
         },
         validators: {
             onSubmitAsync: async ({ value }) => {
