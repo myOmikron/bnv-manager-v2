@@ -20,7 +20,7 @@ import type {
   CreateClubRequest,
   CreateInviteRequestAdmin,
   CreateOidcProvider,
-  Domain,
+  DomainSchema,
   FormResultForClubUuidAndCreateClubError,
   FormResultForSingleLinkAndCreateInviteError,
   GetInvite,
@@ -389,7 +389,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubDomainsRaw(requestParameters: GetClubDomainsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Domain>>> {
+    async getClubDomainsRaw(requestParameters: GetClubDomainsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<DomainSchema>>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
@@ -413,7 +413,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getClubDomains(requestParameters: GetClubDomainsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Domain>> {
+    async getClubDomains(requestParameters: GetClubDomainsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<DomainSchema>> {
         const response = await this.getClubDomainsRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -520,7 +520,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Retrieve all domains that aren\'t associated with a club
      * Retrieve all domains that aren\'t associated with a club
      */
-    async getUnassociatedDomainsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Domain>>> {
+    async getUnassociatedDomainsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<DomainSchema>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -539,7 +539,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Retrieve all domains that aren\'t associated with a club
      * Retrieve all domains that aren\'t associated with a club
      */
-    async getUnassociatedDomains(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Domain>> {
+    async getUnassociatedDomains(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<DomainSchema>> {
         const response = await this.getUnassociatedDomainsRaw(initOverrides);
         return await response.value();
     }

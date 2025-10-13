@@ -50,7 +50,7 @@ export interface GetClubMembersRequest {
 
 export interface RetractInviteRequest {
     club_uuid: string;
-    uuid: any;
+    uuid: string;
 }
 
 /**

@@ -16,8 +16,10 @@
     },
     "label": {
         "display-name": "Anzeigename",
+        "domain": "Domain",
         "expires-at": "L\u00e4uft ab am",
         "no-members": "Keine Mitglieder vorhanden.",
+        "primary-domain": "Prim\u00e4re Domain",
         "username": "Nutzername"
     }
 }

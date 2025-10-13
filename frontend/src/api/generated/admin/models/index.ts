@@ -166,19 +166,25 @@ export interface CreateOidcProvider {
 /**
  * The representation of a domain
  * @export
- * @interface Domain
+ * @interface DomainSchema
  */
-export interface Domain {
+export interface DomainSchema {
     /**
      * The domain
      * @type {string}
-     * @memberof Domain
+     * @memberof DomainSchema
      */
     domain: string;
     /**
+     * Is the domain used to create mailboxes
+     * @type {boolean}
+     * @memberof DomainSchema
+     */
+    is_primary: boolean;
+    /**
      * Internal identifier of the domain
      * @type {string}
-     * @memberof Domain
+     * @memberof DomainSchema
      */
     uuid: string;
 }

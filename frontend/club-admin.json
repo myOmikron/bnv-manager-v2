@@ -302,9 +302,7 @@
                         "name": "club_uuid",
                         "required": true,
                         "schema": {
-                            "description": "Wrapper for the primary key of the [Invite]",
-                            "type": "string",
-                            "format": "uuid"
+                            "$ref": "#/components/schemas/ClubUuid"
                         },
                         "style": "simple"
                     },
@@ -312,7 +310,9 @@
                         "in": "path",
                         "name": "uuid",
                         "required": true,
-                        "schema": {},
+                        "schema": {
+                            "$ref": "#/components/schemas/InviteUuid"
+                        },
                         "style": "simple"
                     }
                 ],

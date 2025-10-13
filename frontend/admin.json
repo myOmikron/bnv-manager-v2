@@ -658,7 +658,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Domain"
+                                        "$ref": "#/components/schemas/DomainSchema"
                                     }
                                 }
                             }
@@ -710,7 +710,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/Domain"
+                                        "$ref": "#/components/schemas/DomainSchema"
                                     }
                                 }
                             }
@@ -1177,7 +1177,7 @@
                     "redirect_uri"
                 ]
             },
-            "Domain": {
+            "DomainSchema": {
                 "description": "The representation of a domain",
                 "type": "object",
                 "properties": {
@@ -1188,6 +1188,10 @@
                                 "$ref": "#/components/schemas/MaxStr_255"
                             }
                         ]
+                    },
+                    "is_primary": {
+                        "description": "Is the domain used to create mailboxes",
+                        "type": "boolean"
                     },
                     "uuid": {
                         "description": "Internal identifier of the domain",
@@ -1200,6 +1204,7 @@
                 },
                 "required": [
                     "domain",
+                    "is_primary",
                     "uuid"
                 ]
             },

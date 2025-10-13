@@ -16,8 +16,10 @@
     },
     "label": {
         "display-name": "Display name",
+        "domain": "Domain",
         "expires-at": "Expires at",
         "no-members": "No members found.",
+        "primary-domain": "Primary Domain",
         "username": "Username"
     }
 }

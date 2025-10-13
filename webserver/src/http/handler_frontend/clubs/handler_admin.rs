@@ -21,7 +21,7 @@ use crate::http::handler_frontend::clubs::CreateClubError;
 use crate::http::handler_frontend::clubs::CreateClubRequest;
 use crate::http::handler_frontend::clubs::PageParams;
 use crate::http::handler_frontend::clubs::schema;
-use crate::http::handler_frontend::domains;
+use crate::http::handler_frontend::domains::DomainSchema;
 use crate::http::handler_frontend::invites::GetInvite;
 use crate::models::club::Club;
 use crate::models::club::ClubUuid;
@@ -252,13 +252,13 @@ pub async fn get_club_member_invites(
 #[instrument(name = "Api::admin::get_club_domains")]
 pub async fn get_club_domains(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
-) -> ApiResult<ApiJson<Vec<domains::Domain>>> {
+) -> ApiResult<ApiJson<Vec<DomainSchema>>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let domains = Domain::find_all_by_club(&mut tx, ClubUuid(uuid))
         .await?
         .into_iter()
-        .map(domains::Domain::from)
+        .map(DomainSchema::from)
         .collect();
 
     tx.commit().await?;
