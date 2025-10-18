@@ -21,6 +21,7 @@ import type {
   CreateClubRequest,
   CreateInviteRequestAdmin,
   CreateOidcProvider,
+  CredentialResetSchema,
   DomainSchema,
   FormResultForClubUuidAndCreateClubError,
   FormResultForSingleLinkAndCreateInviteError,
@@ -85,6 +86,10 @@ export interface GetClubMembersRequest {
     limit?: number;
     offset?: number;
     search?: string | null;
+}
+
+export interface ResetCredentialsRequest {
+    uuid: string;
 }
 
 export interface RetractInviteRequest {
@@ -586,6 +591,37 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getUnassociatedDomains(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<DomainSchema>> {
         const response = await this.getUnassociatedDomainsRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async resetCredentialsRaw(requestParameters: ResetCredentialsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CredentialResetSchema>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling resetCredentials().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/accounts/{uuid}/reset-credentials`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async resetCredentials(requestParameters: ResetCredentialsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CredentialResetSchema> {
+        const response = await this.resetCredentialsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -6,9 +6,12 @@
 use galvyn::rorm;
 use galvyn::rorm::db::Executor;
 use galvyn::rorm::fields::types::MaxStr;
+use galvyn::rorm::prelude::ForeignModelByField;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
+use time::Duration;
+use time::OffsetDateTime;
 use tracing::instrument;
 use uuid::Uuid;
 
@@ -16,6 +19,11 @@ use crate::models::account::db::AdministrativeAccountModel;
 use crate::models::account::db::ClubAccountModel;
 use crate::models::account::db::ClubAdminAccountModel;
 use crate::models::club::ClubUuid;
+use crate::models::credential_reset::CredentialReset;
+use crate::models::credential_reset::CredentialResetUuid;
+use crate::models::credential_reset::db::CredentialResetClubAccountModel;
+use crate::models::credential_reset::db::CredentialResetClubAdminModel;
+use crate::models::credential_reset::db::CredentialResetSuperadminModel;
 
 mod club_admin;
 mod club_member;
@@ -270,5 +278,68 @@ impl Account {
         }
 
         Ok(())
+    }
+
+    /// Create a new request for resetting credentials
+    ///
+    /// The resulting instance can construct a link
+    #[instrument(name = "Account::create_credential_reset", skip(self, exe))]
+    pub async fn create_credential_reset(
+        &self,
+        exe: impl Executor<'_>,
+    ) -> anyhow::Result<CredentialReset> {
+        let mut guard = exe.ensure_transaction().await?;
+
+        let now = OffsetDateTime::now_utc();
+        let expires_at = now + Duration::days(14);
+
+        let reset = match self {
+            Account::ClubMember(club_member) => {
+                let reset = rorm::insert(guard.get_transaction(), CredentialResetClubAccountModel)
+                    .single(&CredentialResetClubAccountModel {
+                        uuid: Uuid::new_v4(),
+                        account: ForeignModelByField(club_member.uuid().0),
+                        expires_at,
+                    })
+                    .await?;
+
+                CredentialReset {
+                    uuid: CredentialResetUuid(reset.uuid),
+                    expires_at: reset.expires_at,
+                }
+            }
+            Account::ClubAdmin(club_admin) => {
+                let reset = rorm::insert(guard.get_transaction(), CredentialResetClubAdminModel)
+                    .single(&CredentialResetClubAdminModel {
+                        uuid: Uuid::new_v4(),
+                        account: ForeignModelByField(club_admin.uuid().0),
+                        expires_at,
+                    })
+                    .await?;
+
+                CredentialReset {
+                    uuid: CredentialResetUuid(reset.uuid),
+                    expires_at: reset.expires_at,
+                }
+            }
+            Account::Superadmin(superadmin) => {
+                let reset = rorm::insert(guard.get_transaction(), CredentialResetSuperadminModel)
+                    .single(&CredentialResetSuperadminModel {
+                        uuid: Uuid::new_v4(),
+                        account: ForeignModelByField(superadmin.uuid().0),
+                        expires_at,
+                    })
+                    .await?;
+
+                CredentialReset {
+                    uuid: CredentialResetUuid(reset.uuid),
+                    expires_at: reset.expires_at,
+                }
+            }
+        };
+
+        guard.commit().await?;
+
+        Ok(reset)
     }
 }

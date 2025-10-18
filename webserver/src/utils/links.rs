@@ -3,6 +3,7 @@
 use url::Url;
 
 use crate::config::ORIGIN;
+use crate::models::credential_reset::CredentialResetUuid;
 use crate::models::invite::InviteUuid;
 
 /// Create links using this struct
@@ -44,5 +45,13 @@ impl Link {
         url.set_query(Some(&format!("error={error_cause}")));
 
         url
+    }
+
+    /// Create a link to the credential reset form
+    pub fn reset_credentials(CredentialResetUuid(uuid): CredentialResetUuid) -> Url {
+        #[allow(clippy::expect_used)]
+        ORIGIN
+            .join(&format!("/links/reset/{uuid}"))
+            .expect("UUIDs are fine in urls")
     }
 }

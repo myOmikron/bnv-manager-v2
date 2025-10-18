@@ -21,6 +21,9 @@ export const AdminApi = {
     clubAdmins: {
         delete: (uuid: UUID) => handleError(adminApi.deleteClubAdmin({ uuid })),
     },
+    accounts: {
+        resetCredentials: (uuid: UUID) => handleError(adminApi.resetCredentials({ uuid })),
+    },
     clubs: {
         getAll: () => handleError(adminApi.getClubs()),
         get: (uuid: UUID) => handleError(adminApi.getClub({ uuid })),

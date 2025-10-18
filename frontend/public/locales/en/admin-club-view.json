@@ -5,6 +5,7 @@
         "copy-invite-link": "Copy invite link",
         "create-club-admin": "Create new club admin",
         "delete-admin": "Delete club admin",
+        "reset-credentials": "Reset credentials",
         "retract-invite": "Retract invite",
         "unlink-domain": "Unlink domain"
     },

@@ -1,6 +1,7 @@
 {
     "button": {
-        "create-admin": "Administrator anlegen"
+        "create-admin": "Administrator anlegen",
+        "reset-credentials": "Reset-Link erstellen"
     },
     "heading": {
         "admin-overview": "Admin \u00dcbersicht"

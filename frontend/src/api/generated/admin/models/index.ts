@@ -177,6 +177,31 @@ export interface CreateOidcProvider {
     redirect_uri: string;
 }
 /**
+ * Instance of the credential reset
+ * @export
+ * @interface CredentialResetSchema
+ */
+export interface CredentialResetSchema {
+    /**
+     * Point in time the reset expires
+     * @type {string}
+     * @memberof CredentialResetSchema
+     */
+    expires_at: string;
+    /**
+     * The link to give to the user
+     * @type {string}
+     * @memberof CredentialResetSchema
+     */
+    link: string;
+    /**
+     * Identifier
+     * @type {string}
+     * @memberof CredentialResetSchema
+     */
+    uuid: string;
+}
+/**
  * The representation of a domain
  * @export
  * @interface DomainSchema

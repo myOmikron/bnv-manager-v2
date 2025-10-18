@@ -5,6 +5,7 @@
         "copy-invite-link": "Einladungslink kopieren",
         "create-club-admin": "Neuen Vereinsadministrator anlegen",
         "delete-admin": "Clubadministrator l\u00f6schen",
+        "reset-credentials": "Zugangsdaten zur\u00fccksetzen",
         "retract-invite": "Einladung widerrufen",
         "unlink-domain": "Domain trennen"
     },

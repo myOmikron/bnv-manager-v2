@@ -25,7 +25,8 @@ pub fn router_admin() -> GalvynRouter {
             "/accounts",
             GalvynRouter::new()
                 .handler(accounts::handler_admin::get_all_superadmins)
-                .handler(accounts::handler_admin::delete_club_admin),
+                .handler(accounts::handler_admin::delete_club_admin)
+                .handler(accounts::handler_admin::reset_credentials),
         )
         .nest(
             "/clubs",

@@ -7,10 +7,13 @@ use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::delete;
 use galvyn::get;
+use galvyn::post;
 use galvyn::rorm::Database;
 use tracing::instrument;
 
+use crate::http::handler_frontend::accounts::CredentialResetSchema;
 use crate::http::handler_frontend::accounts::SimpleAccountSchema;
+use crate::models::account::Account;
 use crate::models::account::AccountUuid;
 use crate::models::account::AdministrativeAccount;
 use crate::models::account::ClubAdminAccount;
@@ -54,4 +57,22 @@ pub async fn delete_club_admin(Path(account_uuid): Path<AccountUuid>) -> ApiResu
     tx.commit().await?;
 
     Ok(())
+}
+
+#[post("/{uuid}/reset-credentials")]
+#[instrument(name = "Api::admin::reset_credentials")]
+pub async fn reset_credentials(
+    Path(account_uuid): Path<AccountUuid>,
+) -> ApiResult<ApiJson<CredentialResetSchema>> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let account = Account::get_by_uuid(&mut tx, account_uuid)
+        .await?
+        .ok_or(ApiError::bad_request("Target account doesn't exist"))?;
+
+    let reset = account.create_credential_reset(&mut tx).await?;
+
+    tx.commit().await?;
+
+    Ok(ApiJson(CredentialResetSchema::from(reset)))
 }

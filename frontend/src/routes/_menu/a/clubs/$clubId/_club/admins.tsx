@@ -21,6 +21,9 @@ import {
 import { toast } from "react-toastify";
 import AdminRetractInviteDialog from "src/components/dialogs/admin-retract-invite";
 import AdminDeleteClubAdmin from "src/components/dialogs/admin-delete-club-admin";
+import { KeyIcon } from "@heroicons/react/24/outline";
+import { SimpleAccountSchema } from "src/api/generated/admin";
+import AdminResetCredentialsDialog from "src/components/dialogs/admin-reset-credentials";
 
 /**
  * Props for {@link ClubAdmins}
@@ -42,6 +45,7 @@ export function ClubAdmins(props: ClubAdminProps) {
     const [openCreateClubAdmin, setOpenCreateClubAdmin] = React.useState(false);
     const [openRetractInvite, setOpenRetractInvite] = React.useState<string>();
     const [openDeleteClubAdmin, setOpenDeleteClubAdmin] = React.useState<string>();
+    const [openResetCredentials, setOpenResetCredentials] = React.useState<SimpleAccountSchema>();
 
     return (
         <div className={"flex flex-col gap-6"}>
@@ -130,6 +134,12 @@ export function ClubAdmins(props: ClubAdminProps) {
                                             </DropdownButton>
                                             <DropdownMenu anchor={"bottom end"}>
                                                 <DropdownSection>
+                                                    <DropdownItem onClick={() => setOpenResetCredentials(item)}>
+                                                        <KeyIcon />
+                                                        <DropdownLabel>{t("button.reset-credentials")}</DropdownLabel>
+                                                    </DropdownItem>
+                                                </DropdownSection>
+                                                <DropdownSection>
                                                     <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
                                                     <DropdownItem onClick={() => setOpenDeleteClubAdmin(item.uuid)}>
                                                         <TrashIcon />
@@ -184,6 +194,12 @@ export function ClubAdmins(props: ClubAdminProps) {
                         setOpenDeleteClubAdmin(undefined);
                         await router.invalidate({ sync: true });
                     }}
+                />
+
+                <AdminResetCredentialsDialog
+                    open={!!openResetCredentials}
+                    onClose={() => setOpenResetCredentials(undefined)}
+                    account={openResetCredentials ?? { uuid: "", display_name: "", username: "" }}
                 />
             </Suspense>
         </div>

@@ -5,10 +5,20 @@ import { useTranslation } from "react-i18next";
 import { Api } from "src/api/api";
 import HeadingLayout from "src/components/base/heading-layout";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "src/components/base/table";
-import { Dropdown, DropdownButton, DropdownMenu } from "src/components/base/dropdown";
+import {
+    Dropdown,
+    DropdownButton,
+    DropdownItem,
+    DropdownLabel,
+    DropdownMenu,
+    DropdownSection,
+} from "src/components/base/dropdown";
 import { EllipsisVerticalIcon, UserPlusIcon } from "@heroicons/react/20/solid";
 import DialogCreateAdmin from "src/components/dialogs/admin-create-admin";
 import { Button } from "src/components/base/button";
+import { KeyIcon } from "@heroicons/react/24/outline";
+import AdminResetCredentialsDialog from "src/components/dialogs/admin-reset-credentials";
+import { SimpleAccountSchema } from "src/api/generated/admin";
 
 /**
  * The properties for {@link AdminOverview}
@@ -25,6 +35,7 @@ export default function AdminOverview(props: AdminOverviewProps) {
     const data = Route.useLoaderData();
 
     const [openCreateAdmin, setOpenCreateAdmin] = React.useState(false);
+    const [openResetLink, setOpenResetLink] = React.useState<SimpleAccountSchema>();
 
     return (
         <HeadingLayout
@@ -56,7 +67,14 @@ export default function AdminOverview(props: AdminOverviewProps) {
                                     <DropdownButton plain={true}>
                                         <EllipsisVerticalIcon />
                                     </DropdownButton>
-                                    <DropdownMenu anchor={"bottom end"}></DropdownMenu>
+                                    <DropdownMenu anchor={"bottom end"}>
+                                        <DropdownSection>
+                                            <DropdownItem onClick={() => setOpenResetLink(user)}>
+                                                <KeyIcon />
+                                                <DropdownLabel>{t("button.reset-credentials")}</DropdownLabel>
+                                            </DropdownItem>
+                                        </DropdownSection>
+                                    </DropdownMenu>
                                 </Dropdown>
                             </TableCell>
                         </TableRow>
@@ -66,6 +84,11 @@ export default function AdminOverview(props: AdminOverviewProps) {
 
             <Suspense>
                 <DialogCreateAdmin open={openCreateAdmin} onClose={() => setOpenCreateAdmin(false)} />
+                <AdminResetCredentialsDialog
+                    onClose={() => setOpenResetLink(undefined)}
+                    open={!!openResetLink}
+                    account={openResetLink ?? { uuid: "", username: "", display_name: "" }}
+                />
             </Suspense>
         </HeadingLayout>
     );
