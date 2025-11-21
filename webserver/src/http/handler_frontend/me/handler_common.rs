@@ -21,6 +21,7 @@ use crate::http::handler_frontend::me::SetPasswordRequest;
 use crate::http::handler_frontend::me::UpdateMeRequest;
 use crate::models::account::Account;
 use crate::models::club::Club;
+use crate::modules::mailcow::Mailcow;
 
 #[get("/")]
 #[instrument(name = "Api::common::get_me")]
@@ -138,6 +139,10 @@ pub async fn set_password(
     account.set_password(&mut tx, &password).await?;
 
     tx.commit().await?;
+
+    if let Account::ClubMember(account) = account {
+        Mailcow::global().create_app_password(account.email.clone());
+    }
 
     Ok(ApiJson(FormResult::ok(())))
 }
