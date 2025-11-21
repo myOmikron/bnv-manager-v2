@@ -5,9 +5,7 @@ import React from "react";
 import { CredentialResetSchema, SimpleAccountSchema } from "src/api/generated/admin";
 import { Api } from "src/api/api";
 import { toast } from "react-toastify";
-import { Field, FieldGroup, Fieldset, Label } from "src/components/base/fieldset";
 import { Text } from "src/components/base/text";
-import { Subheading } from "src/components/base/heading";
 
 /**
  * Props for {@link AdminResetCredentialsDialog}
