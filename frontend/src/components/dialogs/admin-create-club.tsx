@@ -3,12 +3,21 @@ import { useTranslation } from "react-i18next";
 import { Dialog, DialogActions, DialogBody, DialogProps, DialogTitle } from "src/components/base/dialog";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
-import { ErrorMessage, Field, FieldGroup, Fieldset, RequiredLabel } from "src/components/base/fieldset";
+import {
+    Description,
+    ErrorMessage,
+    Field,
+    FieldGroup,
+    Fieldset,
+    Label,
+    RequiredLabel,
+} from "src/components/base/fieldset";
 import { Input } from "src/components/base/input";
 import { Button, PrimaryButton } from "src/components/base/button";
 import { Api } from "src/api/api";
 import { DomainSchema } from "src/api/generated/admin";
 import { Combobox, ComboboxLabel, ComboboxOption } from "src/components/base/combobox";
+import { Switch, SwitchField } from "src/components/base/switch";
 
 /**
  * The properties for {@link AdminCreateClubDialog}
@@ -31,6 +40,7 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
         defaultValues: {
             name: "",
             primaryDomain: null as DomainSchema | null | undefined,
+            useXauth: true,
         },
         validators: {
             onSubmitAsync: async ({ value }) => {
@@ -41,6 +51,7 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
                 const res = await Api.admin.clubs.create({
                     name: value.name,
                     primary_domain: value.primaryDomain.uuid,
+                    use_xauth: value.useXauth,
                 });
                 if (res.result === "Err") {
                     return {
@@ -121,6 +132,20 @@ export default function AdminCreateClubDialog(props: AdminCreateClubDialogProps)
                                             <ErrorMessage>{err}</ErrorMessage>
                                         ))}
                                     </Field>
+                                )}
+                            </form.Field>
+
+                            <form.Field name={"useXauth"}>
+                                {(fieldApi) => (
+                                    <SwitchField>
+                                        <Label>{t("label.use-xauth")}</Label>
+                                        <Description>{t("description.use-xauth")}</Description>
+                                        <Switch
+                                            color={"orange"}
+                                            checked={fieldApi.state.value}
+                                            onChange={(e) => fieldApi.handleChange(e)}
+                                        />
+                                    </SwitchField>
                                 )}
                             </form.Field>
 

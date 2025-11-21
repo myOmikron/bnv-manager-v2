@@ -2,6 +2,9 @@
     "button": {
         "create-club": "Verein anlegen"
     },
+    "description": {
+        "use-xauth": "Wenn diese Option angeschalten ist, wird XAuth genommen. Anderenfalls versucht der BNV-Manager ein App-Passwort f\u00fcr die Mitglieder zu setzen."
+    },
     "error": {
         "domain-already-associated": "Domainn ist bereits zugewiesen.",
         "missing-value": "Fehlende Eingabe.",
@@ -12,6 +15,7 @@
     },
     "label": {
         "club-name": "Name des Vereins",
-        "primary-domain": "Hauptdomain"
+        "primary-domain": "Hauptdomain",
+        "use-xauth": "Nutze XAuth"
     }
 }

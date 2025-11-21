@@ -85,9 +85,11 @@ pub struct ClubAccount {
     /// The club this account is part of
     pub club: ClubUuid,
     /// The last point in time the account was modified
-    pub modified_at: time::OffsetDateTime,
+    pub modified_at: OffsetDateTime,
     /// The point in time the account was created
-    pub created_at: time::OffsetDateTime,
+    pub created_at: OffsetDateTime,
+    /// Whether the account already has an app password set.
+    pub has_app_password: bool,
     hashed_password: MaxStr<255>,
 }
 

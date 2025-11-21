@@ -45,6 +45,10 @@ pub struct Club {
     pub admin_count: u64,
     /// The primary domain of the club
     pub primary_domain: MaxStr<255>,
+    /// Whether to use X-Auth for authentication
+    /// If set to false, bnv-manager is attempting to create an app password for
+    /// all users and to keep them in sync
+    pub use_xauth: bool,
 }
 
 /// New-type for the primary key of the club
@@ -111,6 +115,7 @@ impl Club {
                     .find(|domain: &DomainModel| domain.is_primary)
                     .map(|x| x.domain)
                     .unwrap_or_default(),
+                use_xauth: x.use_xauth,
             })
             .collect())
     }
@@ -170,6 +175,7 @@ impl Club {
         CreateClub {
             name,
             primary_domain,
+            use_xauth,
         }: CreateClub<'_>,
     ) -> anyhow::Result<Club> {
         let mut guard = exe.ensure_transaction().await?;
@@ -177,6 +183,7 @@ impl Club {
             .single(&ClubModelInsert {
                 uuid: Uuid::new_v4(),
                 name,
+                use_xauth,
             })
             .await?;
 
@@ -193,6 +200,7 @@ impl Club {
             member_count: 0,
             admin_count: 0,
             primary_domain: MaxStr::default(),
+            use_xauth,
         };
 
         club.associate_domain(guard.get_transaction(), primary_domain, true)
@@ -369,6 +377,10 @@ pub struct CreateClub<'a> {
     pub name: MaxStr<255>,
     /// Primary domain to associate with the club
     pub primary_domain: &'a Domain,
+    /// Whether to use X-Auth for authentication
+    /// If set to false, bnv-manager is attempting to create an app password for
+    /// all users and to keep them in sync
+    pub use_xauth: bool,
 }
 
 impl Club {
@@ -403,6 +415,7 @@ impl Club {
                 .find(|domain: &DomainModel| domain.is_primary)
                 .map(|x| x.domain)
                 .unwrap_or_default(),
+            use_xauth: club_model.use_xauth,
         })
     }
 }

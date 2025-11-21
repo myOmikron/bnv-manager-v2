@@ -1293,11 +1293,16 @@
                                 "$ref": "#/components/schemas/DomainUuid"
                             }
                         ]
+                    },
+                    "use_xauth": {
+                        "description": "Whether to use X-Auth for authentication If set to false, bnv-manager is attempting to create an app password for all users and to keep them in sync",
+                        "type": "boolean"
                     }
                 },
                 "required": [
                     "name",
-                    "primary_domain"
+                    "primary_domain",
+                    "use_xauth"
                 ]
             },
             "CreateInviteError": {

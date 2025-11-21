@@ -56,6 +56,7 @@ pub async fn create_club(
     ApiJson(CreateClubRequest {
         name,
         primary_domain,
+        use_xauth,
     }): ApiJson<CreateClubRequest>,
 ) -> ApiResult<ApiJson<FormResult<ClubUuid, CreateClubError>>> {
     let mut tx = Database::global().start_transaction().await?;
@@ -85,6 +86,7 @@ pub async fn create_club(
         CreateClub {
             name,
             primary_domain: &existing_domain,
+            use_xauth,
         },
     )
     .await?;

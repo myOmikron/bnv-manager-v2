@@ -34,6 +34,10 @@ pub struct CreateClubRequest {
     pub name: MaxStr<255>,
     /// Primary domain of the club
     pub primary_domain: DomainUuid,
+    /// Whether to use X-Auth for authentication
+    /// If set to false, bnv-manager is attempting to create an app password for
+    /// all users and to keep them in sync
+    pub use_xauth: bool,
 }
 
 /// Error when creating a club

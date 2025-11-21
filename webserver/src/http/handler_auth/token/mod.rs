@@ -17,13 +17,16 @@ use jsonwebtoken::Header;
 use rsa::pkcs1::EncodeRsaPrivateKey;
 use tracing::instrument;
 
+use crate::config::MAILCOW_BASE_URL;
 use crate::config::ORIGIN;
 use crate::http::handler_auth::token::schema::Claims;
 use crate::http::handler_auth::token::schema::EmailClaim;
 use crate::http::handler_auth::token::schema::ProfileClaim;
 use crate::http::handler_auth::token::schema::TokenRequest;
 use crate::http::handler_auth::token::schema::TokenResponse;
+use crate::models::club::Club;
 use crate::models::oidc_provider::OidcAuthenticationToken;
+use crate::modules::mailcow::Mailcow;
 use crate::modules::oidc::Oidc;
 
 pub mod schema;
@@ -115,6 +118,19 @@ pub async fn get_token(
         .map_err(ApiError::map_server_error("Couldn't encode JWT"))?;
 
     OidcAuthenticationToken::delete_by_code(&mut tx, &token.code).await?;
+
+    // -------------
+    // APP Password Hook follows
+    // -------------
+    if token.redirect_url.domain() == MAILCOW_BASE_URL.domain() && !token.account.has_app_password {
+        let club = Club::find_by_uuid(&mut tx, token.account.club)
+            .await?
+            .ok_or(ApiError::bad_request("Club not found"))?;
+
+        if !club.use_xauth {
+            Mailcow::global().create_app_password(token.account.email.clone());
+        }
+    }
 
     tx.commit().await?;
 

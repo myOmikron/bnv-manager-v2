@@ -10,6 +10,7 @@
 use galvyn::core::InitError;
 use galvyn::core::Module;
 use galvyn::core::PreInitError;
+use galvyn::rorm::fields::types::MaxStr;
 use mailcow::MailcowClient;
 use tracing::info;
 use tracing::instrument;
@@ -17,10 +18,12 @@ use tracing::instrument;
 use crate::config::DISABLE_MAILCOW;
 use crate::config::MAILCOW_API_KEY;
 use crate::config::MAILCOW_BASE_URL;
+use crate::modules::mailcow::app_passwords::AppPasswordInitializer;
 use crate::modules::mailcow::sync::SyncWorker;
 use crate::utils::worker::Worker;
 use crate::utils::worker::WorkerHandle;
 
+mod app_passwords;
 mod sync;
 
 /// galvyn module that serves as the main entry point for interacting with the Mailcow API.
@@ -29,6 +32,20 @@ pub struct Mailcow {
     pub sdk: MailcowClient,
     /// Synchronization worker
     pub sync_worker: WorkerHandle<SyncWorker>,
+}
+
+impl Mailcow {
+    /// Initializes the Mailcow app passwords worker.
+    pub fn create_app_password(
+        &self,
+        mailbox: MaxStr<255>,
+    ) -> WorkerHandle<AppPasswordInitializer> {
+        AppPasswordInitializer {
+            sdk: Mailcow::global().sdk.clone(),
+            mailbox,
+        }
+        .spawn()
+    }
 }
 
 impl Module for Mailcow {

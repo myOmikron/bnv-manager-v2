@@ -57,6 +57,10 @@ pub struct ClubAccountModel {
 
     pub hashed_password: MaxStr<255>,
 
+    /// Whether the account already has an app password set.
+    #[rorm(default = "false")]
+    pub has_app_password: bool,
+
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub club: ForeignModel<ClubModel>,
 

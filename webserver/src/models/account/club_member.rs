@@ -50,6 +50,28 @@ impl ClubAccount {
             .await?;
         Ok(())
     }
+
+    /// Retrieve the hashed password of the account
+    pub fn hashed_password(&self) -> MaxStr<255> {
+        self.hashed_password.clone()
+    }
+
+    /// Update the has_app_password flag of the account
+    #[instrument(name = "ClubAccount::update_has_app_password_set", skip(self, exe))]
+    pub async fn update_has_app_password_set(
+        &mut self,
+        exe: impl Executor<'_>,
+        has_password: bool,
+    ) -> anyhow::Result<()> {
+        rorm::update(exe, ClubAccountModel)
+            .set(ClubAccountModel.has_app_password, has_password)
+            .condition(ClubAccountModel.uuid.equals(self.uuid.0))
+            .await?;
+
+        self.has_app_password = has_password;
+
+        Ok(())
+    }
 }
 
 impl From<ClubAccountModel> for ClubAccount {
@@ -62,6 +84,7 @@ impl From<ClubAccountModel> for ClubAccount {
             club: ClubUuid(value.club.0),
             modified_at: value.modified_at,
             created_at: value.created_at,
+            has_app_password: value.has_app_password,
             hashed_password: value.hashed_password,
         }
     }

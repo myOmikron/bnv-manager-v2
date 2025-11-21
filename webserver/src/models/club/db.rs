@@ -16,6 +16,12 @@ pub struct ClubModel {
     pub uuid: Uuid,
     pub name: MaxStr<255>,
 
+    /// Whether to use X-Auth for authentication
+    /// If set to false, bnv-manager is attempting to create an app password for
+    /// all users and to keep them in sync
+    #[rorm(default = "false")]
+    pub use_xauth: bool,
+
     #[rorm(auto_create_time, auto_update_time)]
     pub modified_at: time::OffsetDateTime,
     #[rorm(auto_create_time)]
@@ -32,4 +38,5 @@ pub struct ClubModel {
 pub struct ClubModelInsert {
     pub uuid: Uuid,
     pub name: MaxStr<255>,
+    pub use_xauth: bool,
 }

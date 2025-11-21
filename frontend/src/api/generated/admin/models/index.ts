@@ -112,6 +112,12 @@ export interface CreateClubRequest {
      * @memberof CreateClubRequest
      */
     primary_domain: string;
+    /**
+     * Whether to use X-Auth for authentication If set to false, bnv-manager is attempting to create an app password for all users and to keep them in sync
+     * @type {boolean}
+     * @memberof CreateClubRequest
+     */
+    use_xauth: boolean;
 }
 /**
  * Errors that can occur while creating an invitation
