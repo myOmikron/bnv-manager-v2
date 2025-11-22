@@ -34,6 +34,19 @@ impl ClubAccount {
             .await?
             .map(Self::from))
     }
+
+    /// Get the account by its email
+    #[instrument(name = "ClubAccount::get_by_email", skip(exe))]
+    pub async fn get_by_email(
+        exe: impl Executor<'_>,
+        email: &MaxStr<255>,
+    ) -> anyhow::Result<Option<Self>> {
+        Ok(rorm::query(exe, ClubAccountModel)
+            .condition(ClubAccountModel.email.equals(email))
+            .optional()
+            .await?
+            .map(Self::from))
+    }
 }
 
 impl ClubAccount {

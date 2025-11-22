@@ -32,7 +32,7 @@ impl Worker for AppPasswordInitializer {
 
 impl AppPasswordInitializer {
     pub async fn run_once(&self) -> anyhow::Result<()> {
-        let mut account = ClubAccount::get_by_username(Database::global(), &self.mailbox)
+        let mut account = ClubAccount::get_by_email(Database::global(), &self.mailbox)
             .await?
             .ok_or(anyhow!("Account not found"))?;
 
