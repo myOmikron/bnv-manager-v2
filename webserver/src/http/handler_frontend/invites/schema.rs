@@ -1,8 +1,9 @@
 use std::num::NonZeroU8;
 
+use galvyn::core::re_exports::schemars;
+use galvyn::core::re_exports::schemars::JsonSchema;
 use galvyn::core::stuff::schema::SchemaDateTime;
 use galvyn::rorm::fields::types::MaxStr;
-use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 

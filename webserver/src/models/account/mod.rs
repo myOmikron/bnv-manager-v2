@@ -3,11 +3,12 @@
 //! They are attached to the related models that grant access to clubs or the super administrative
 //! users.
 
+use galvyn::core::re_exports::schemars;
+use galvyn::core::re_exports::schemars::JsonSchema;
 use galvyn::rorm;
 use galvyn::rorm::db::Executor;
 use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::prelude::ForeignModelByField;
-use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use time::Duration;

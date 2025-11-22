@@ -1,4 +1,5 @@
-use schemars::JsonSchema;
+use galvyn::core::re_exports::schemars;
+use galvyn::core::re_exports::schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use url::Url;

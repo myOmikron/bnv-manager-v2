@@ -7,9 +7,13 @@
 //! The module serves as the primary entry point for all Mailcow API operations within the application,
 //! providing access to the underlying MailcowClient SDK through a standardized interface.
 
+use std::sync::Mutex;
+
 use galvyn::core::InitError;
 use galvyn::core::Module;
+use galvyn::core::PostInitError;
 use galvyn::core::PreInitError;
+use galvyn::rorm::Database;
 use galvyn::rorm::fields::types::MaxStr;
 use mailcow::MailcowClient;
 use tracing::info;
@@ -31,7 +35,7 @@ pub struct Mailcow {
     /// SDK client
     pub sdk: MailcowClient,
     /// Synchronization worker
-    pub sync_worker: WorkerHandle<SyncWorker>,
+    pub sync_worker: Mutex<Option<WorkerHandle<SyncWorker>>>,
 }
 
 impl Mailcow {
@@ -56,7 +60,7 @@ impl Module for Mailcow {
         Ok(())
     }
 
-    type Dependencies = ();
+    type Dependencies = (Database,);
 
     #[instrument(name = "Mailcow::initialize", skip_all)]
     async fn init(
@@ -72,7 +76,21 @@ impl Module for Mailcow {
 
         Ok(Self {
             sdk: sdk.clone(),
-            sync_worker: SyncWorker { sdk }.spawn(),
+            sync_worker: Mutex::new(None),
         })
+    }
+
+    async fn post_init(&'static self) -> Result<(), PostInitError> {
+        #[allow(clippy::expect_used)]
+        {
+            *self.sync_worker.lock().expect("Poison error") = Some(
+                SyncWorker {
+                    sdk: self.sdk.clone(),
+                }
+                .spawn(),
+            );
+        }
+
+        Ok(())
     }
 }

@@ -4,11 +4,12 @@
 //! It includes queries to find domains based on their association status with clubs.
 
 use futures_util::TryStreamExt;
+use galvyn::core::re_exports::schemars;
+use galvyn::core::re_exports::schemars::JsonSchema;
 use galvyn::rorm;
 use galvyn::rorm::db::Executor;
 use galvyn::rorm::fields::types::MaxStr;
 use mailcow::domains::schema::MailcowDomain;
-use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use tracing::instrument;

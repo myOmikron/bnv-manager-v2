@@ -1012,8 +1012,9 @@ dependencies = [
 
 [[package]]
 name = "galvyn"
-version = "0.1.0"
-source = "git+https://github.com/myOmikron/galvyn.git?rev=4ad3aad494e3c3c75dd8cb5eb873122d4b6a6499#4ad3aad494e3c3c75dd8cb5eb873122d4b6a6499"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8a867abd01cf5213a17788ea78df141655747439b56b6208bfe5935945e7fc6e"
 dependencies = [
  "axum 0.8.7",
  "futures-lite",
@@ -1035,8 +1036,9 @@ dependencies = [
 
 [[package]]
 name = "galvyn-core"
-version = "0.1.0"
-source = "git+https://github.com/myOmikron/galvyn.git?rev=4ad3aad494e3c3c75dd8cb5eb873122d4b6a6499#4ad3aad494e3c3c75dd8cb5eb873122d4b6a6499"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f8e4ecdf55a6da8f886010d3e57c1b5ce03750346b55574ae1b2d33cc9cace4e"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1068,7 +1070,8 @@ dependencies = [
 [[package]]
 name = "galvyn-macros"
 version = "0.2.0"
-source = "git+https://github.com/myOmikron/galvyn.git?rev=4ad3aad494e3c3c75dd8cb5eb873122d4b6a6499#4ad3aad494e3c3c75dd8cb5eb873122d4b6a6499"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5db0ecad6a9b75e61e8fb86111aaaf8867be1ad1c3ab5c4b013a14ca932693ac"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4075,7 +4078,6 @@ dependencies = [
  "opentelemetry_sdk",
  "rand 0.8.5",
  "rsa",
- "schemars",
  "serde",
  "serde_json",
  "sha2",

@@ -2,6 +2,8 @@
 
 use anyhow::anyhow;
 use futures_util::TryStreamExt;
+use galvyn::core::re_exports::schemars;
+use galvyn::core::re_exports::schemars::JsonSchema;
 use galvyn::core::stuff::schema::Page;
 use galvyn::rorm;
 use galvyn::rorm::and;
@@ -11,7 +13,6 @@ use galvyn::rorm::db::Executor;
 use galvyn::rorm::db::transaction::Transaction;
 use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::prelude::ForeignModelByField;
-use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use tracing::instrument;

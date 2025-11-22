@@ -1,6 +1,8 @@
 //! OIDC related models
 
 use futures_util::TryStreamExt;
+use galvyn::core::re_exports::schemars;
+use galvyn::core::re_exports::schemars::JsonSchema;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::rorm;
 use galvyn::rorm::and;
@@ -10,7 +12,6 @@ use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::prelude::ForeignModelByField;
 use rand::distributions::Alphanumeric;
 use rand::distributions::DistString;
-use schemars::JsonSchema;
 use serde::Deserialize;
 use serde::Serialize;
 use time::Duration;
