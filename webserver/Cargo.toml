@@ -19,9 +19,9 @@ galvyn = { version = "~0.2", features = ["rorm-postgres-only", "rorm-cli", "rorm
 
 # Account authentication
 webauthn-rs = { version = "~0.5", features = ["danger-allow-state-serialisation"] } # The feature is necessary as we want to save the state to a database
-bcrypt = { version = "~0.17" }
+bcrypt = { version = "~0.19" }
 rand = { version = "~0.8" }
-jsonwebtoken = { version = "~9" }
+jsonwebtoken = { version = "~10" }
 rsa = { version = "~0.9", features = ["pem"] }
 sha2 = { version = "0.10" }
 base64ct = { version = "~1", features = ["std"] }
@@ -32,12 +32,12 @@ clap = { version = "~4", features = ["derive"] }
 
 # Logging
 tracing = { version = "~0.1" } # Base API
-tracing-forest = { version = "~0.2", features = ["smallvec", "ansi", "chrono"] }
+tracing-forest = { version = "~0.3", features = ["smallvec", "ansi", "chrono"] }
 tracing-subscriber = { version = "~0.3", features = ["tracing-log", "env-filter"] }
-tracing-opentelemetry = { version = "0.25" }
-opentelemetry = { version = "0.24" }
-opentelemetry_sdk = { version = "0.24", features = ["rt-tokio"] }
-opentelemetry-otlp = { version = "0.17" }
+tracing-opentelemetry = { version = "0.32" }
+opentelemetry = { version = "0.31" }
+opentelemetry_sdk = { version = "0.31", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.31", features = ["grpc-tonic"] }
 
 # Datatypes
 uuid = { version = "~1", features = ["serde", "v4"] }

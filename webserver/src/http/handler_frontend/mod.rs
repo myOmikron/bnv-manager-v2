@@ -86,7 +86,9 @@ pub fn router_club_admin() -> GalvynRouter {
             )
             .nest(
                 "/members",
-                GalvynRouter::new().handler(clubs::handler_club_admin::delete_member),
+                GalvynRouter::new()
+                    .handler(clubs::handler_club_admin::delete_member)
+                    .handler(accounts::handler_club_admin::reset_credentials),
             )
             .layer(axum::middleware::from_fn(middlewares::auth_club_admin)),
     )

@@ -1,14 +1,11 @@
 //! Utilities for configuring tracing
 
-use opentelemetry::Key;
-use opentelemetry::KeyValue;
-use opentelemetry::Value;
-use opentelemetry::trace::TraceError;
 use opentelemetry::trace::TracerProvider;
+use opentelemetry_otlp::SpanExporter;
 use opentelemetry_otlp::WithExportConfig;
 use opentelemetry_sdk::Resource;
-use opentelemetry_sdk::runtime;
-use opentelemetry_sdk::trace;
+use opentelemetry_sdk::trace::SdkTracerProvider;
+use opentelemetry_sdk::trace::TraceError;
 use tracing::Subscriber;
 use tracing_subscriber::Layer;
 use tracing_subscriber::registry::LookupSpan;
@@ -21,20 +18,20 @@ use crate::config::OTEL_EXPORTER_OTLP_ENDPOINT;
 /// It should simply work out of the box with a local jaeger instance.
 pub fn opentelemetry_layer<S: Subscriber + for<'span> LookupSpan<'span>>()
 -> Result<impl Layer<S>, TraceError> {
-    let provider = opentelemetry_otlp::new_pipeline()
-        .tracing()
-        .with_exporter(
-            opentelemetry_otlp::new_exporter()
-                .tonic()
-                .with_endpoint(OTEL_EXPORTER_OTLP_ENDPOINT.clone()),
-        )
-        .with_trace_config(
-            trace::Config::default().with_resource(Resource::new([KeyValue {
-                key: Key::from_static_str("service.name"),
-                value: Value::from("bnv-manager"),
-            }])),
-        )
-        .install_batch(runtime::Tokio)?;
+    let exporter = SpanExporter::builder()
+        .with_tonic()
+        .with_endpoint(OTEL_EXPORTER_OTLP_ENDPOINT.clone())
+        .build()
+        .map_err(|e| TraceError::Other(e.into()))?;
+
+    let resource = Resource::builder()
+        .with_service_name("bnv-manager")
+        .build();
+
+    let provider = SdkTracerProvider::builder()
+        .with_batch_exporter(exporter)
+        .with_resource(resource)
+        .build();
 
     let tracer = provider.tracer("bnv-manager");
 
