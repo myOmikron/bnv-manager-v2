@@ -1,5 +1,6 @@
 {
     "error": {
+        "invalid-old-password": "Das aktuelle Passwort ist falsch.",
         "password-mismatch": "Passw\u00f6rter stimmen nicht \u00fcberein."
     },
     "heading": {
@@ -10,7 +11,8 @@
     },
     "label": {
         "display-name": "Anzeigename",
-        "password": "Passwort",
+        "old-password": "Aktuelles Passwort",
+        "password": "Neues Passwort",
         "preferred-lang": "Bevorzugte Sprache",
         "repeat-password": "Passwort wiederholen",
         "theme": "Thema",

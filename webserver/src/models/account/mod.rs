@@ -158,7 +158,7 @@ impl Account {
     /// Hash a password
     #[instrument(name = "Account::hash_password", skip_all)]
     pub fn hash_password(password: &MaxStr<72>) -> anyhow::Result<String> {
-        Ok(bcrypt::hash(password.as_bytes(), bcrypt::DEFAULT_COST)?)
+        Ok(bcrypt::hash(password.as_bytes(), 12)?)
     }
 
     /// Update the display name of an account

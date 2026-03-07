@@ -33,6 +33,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
 
     const form = useForm({
         defaultValues: {
+            oldPassword: "",
             password: "",
             password2: "",
             showPassword: false,
@@ -41,11 +42,18 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
             onSubmitAsync: async ({ value }) => {
                 const id = toast.loading(t("toast.setting-password"));
 
-                const res = await Api.common.me.setPassword({ password: value.password });
+                const res = await Api.common.me.setPassword({
+                    old_password: value.oldPassword,
+                    password: value.password,
+                });
                 if (res.result === "Err") {
+                    const errMsg = res.value.invalid_old_password
+                        ? t("error.invalid-old-password")
+                        : t("text.stronger-password");
+
                     toast.update(id, {
                         autoClose: 2500,
-                        render: t("text.stronger-password"),
+                        render: errMsg,
                         type: "error",
                         isLoading: false,
                     });
@@ -73,6 +81,22 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
             <Form onSubmit={form.handleSubmit} className={"mt-4 max-w-lg"}>
                 <Fieldset>
                     <FieldGroup>
+                        <form.Field name={"oldPassword"}>
+                            {(fieldApi) => (
+                                <Field>
+                                    <Label>{t("label.old-password")}</Label>
+                                    <Input
+                                        autoComplete={"current-password"}
+                                        type={"password"}
+                                        required={true}
+                                        value={fieldApi.state.value}
+                                        onBlur={fieldApi.handleBlur}
+                                        onChange={(e) => fieldApi.handleChange(e.target.value)}
+                                    />
+                                </Field>
+                            )}
+                        </form.Field>
+
                         <form.Field
                             name={"password"}
                             validators={{

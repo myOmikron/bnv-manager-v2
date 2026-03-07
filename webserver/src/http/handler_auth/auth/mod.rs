@@ -45,6 +45,20 @@ pub async fn auth(Query(auth_query): Query<AuthQuery>, session: Session) -> ApiR
         return Err(ApiError::bad_request("Invalid response mode"));
     }
 
+    // PKCE: only S256 is supported (RFC 7636 Section 4.2)
+    if let Some(method) = &auth_query.code_challenge_method {
+        if method != "S256" {
+            return Err(ApiError::bad_request(
+                "Unsupported code_challenge_method, only S256 is supported",
+            ));
+        }
+        if auth_query.code_challenge.is_none() {
+            return Err(ApiError::bad_request(
+                "code_challenge is required when code_challenge_method is set",
+            ));
+        }
+    }
+
     let provider = OidcClient::find_by_client_id(&mut tx, auth_query.client_id)
         .await?
         .ok_or(ApiError::bad_request("Invalid client_id"))?;
@@ -85,9 +99,15 @@ pub async fn sign_in(
 ) -> ApiResult<()> {
     let mut tx = Database::global().start_transaction().await?;
 
-    let account = Account::get_by_username(&mut tx, &username)
-        .await?
-        .ok_or(ApiError::bad_request("Username not found"))?;
+    let Some(account) = Account::get_by_username(&mut tx, &username).await? else {
+        // dummy bcrypt to not allow timing attacks for username enumeration
+        bcrypt::verify(
+            "foo",
+            "$2b$12$YtivXzIrL86Uhnk5pXF5oOwNemHmre4qFeTGNPmFUFZlJE8kcv3a2",
+        )
+        .map_err(ApiError::map_server_error("Bcrypt error in dummy check"))?;
+        return Err(ApiError::bad_request("Username not found"));
+    };
 
     tx.commit().await?;
 
@@ -169,6 +189,7 @@ pub async fn finish_auth(session: Session) -> ApiResult<Redirect> {
                 .into_iter()
                 .map(|x| x.to_string())
                 .collect(),
+            code_challenge: auth_query.code_challenge,
         },
     )
     .await?;

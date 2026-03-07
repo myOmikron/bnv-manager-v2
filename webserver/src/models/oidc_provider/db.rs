@@ -34,4 +34,6 @@ pub struct OidcAuthenticationTokenModel {
     pub account: ForeignModel<ClubAccountModel>,
     pub nonce: Option<MaxStr<255>>,
     pub scopes: Json<Vec<String>>,
+    /// PKCE code challenge (RFC 7636)
+    pub code_challenge: Option<MaxStr<128>>,
 }

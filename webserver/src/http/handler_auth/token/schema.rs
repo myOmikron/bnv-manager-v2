@@ -5,6 +5,7 @@ use galvyn::core::re_exports::schemars::JsonSchema;
 use galvyn::rorm::fields::types::MaxStr;
 use serde::Deserialize;
 use serde::Serialize;
+use uuid::Uuid;
 
 /// Request for a token
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -15,6 +16,12 @@ pub struct TokenRequest {
     pub code: MaxStr<64>,
     /// Redirect url of the initial request
     pub redirect_uri: String,
+    /// Client ID
+    pub client_id: Uuid,
+    /// Client secret for authenticating the client
+    pub client_secret: MaxStr<64>,
+    /// PKCE code verifier (RFC 7636)
+    pub code_verifier: Option<MaxStr<128>>,
 }
 
 /// Token response

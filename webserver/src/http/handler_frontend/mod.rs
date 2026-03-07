@@ -5,6 +5,7 @@ use galvyn::core::re_exports::axum;
 use galvyn::openapi::OpenapiRouterExt;
 
 use crate::http::middlewares;
+use crate::http::middlewares::AuthRateLimit;
 
 pub mod accounts;
 pub mod clubs;
@@ -120,7 +121,11 @@ pub fn router_unauthenticated() -> GalvynRouter {
         "/invite",
         GalvynRouter::new()
             .handler(invites::handler_common::get_invite_common)
-            .handler(invites::handler_common::accept_invite),
+            .merge(
+                GalvynRouter::new()
+                    .handler(invites::handler_common::accept_invite)
+                    .wrap(AuthRateLimit::new(25)),
+            ),
     );
 
     router

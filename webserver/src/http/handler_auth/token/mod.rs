@@ -15,6 +15,7 @@ use jsonwebtoken::Algorithm;
 use jsonwebtoken::EncodingKey;
 use jsonwebtoken::Header;
 use rsa::pkcs1::EncodeRsaPrivateKey;
+use subtle::ConstantTimeEq;
 use tracing::instrument;
 
 use crate::config::MAILCOW_BASE_URL;
@@ -26,6 +27,8 @@ use crate::http::handler_auth::token::schema::TokenRequest;
 use crate::http::handler_auth::token::schema::TokenResponse;
 use crate::models::club::Club;
 use crate::models::oidc_provider::OidcAuthenticationToken;
+use crate::models::oidc_provider::OidcClient;
+use crate::models::oidc_provider::OidcClientUuid;
 use crate::modules::mailcow::Mailcow;
 use crate::modules::oidc::Oidc;
 
@@ -38,6 +41,9 @@ pub async fn get_token(
         grant_type,
         code,
         redirect_uri,
+        client_id,
+        client_secret,
+        code_verifier,
     }): Form<TokenRequest>,
 ) -> ApiResult<ApiJson<TokenResponse>> {
     let mut tx = Database::global().start_transaction().await?;
@@ -46,10 +52,29 @@ pub async fn get_token(
         return Err(ApiError::bad_request("Unsupported grant_type"));
     }
 
+    let provider = OidcClient::find_by_client_id(&mut tx, OidcClientUuid(client_id))
+        .await?
+        .ok_or(ApiError::bad_request("Invalid client_id"))?;
+
+    // Security:
+    // Use constant time equals to not leak correct secret bytes
+    if bool::from(
+        provider
+            .client_secret
+            .as_bytes()
+            .ct_ne(client_secret.as_bytes()),
+    ) {
+        return Err(ApiError::bad_request("Invalid client_secret"));
+    }
+
     let token = OidcAuthenticationToken::get_by_code(&mut tx, code).await?;
     let Some(token) = token else {
         return Err(ApiError::bad_request("Invalid authorization token"));
     };
+
+    if token.client_id != OidcClientUuid(client_id) {
+        return Err(ApiError::bad_request("Code was not issued to this client"));
+    }
 
     if token.redirect_url
         != redirect_uri
@@ -57,6 +82,33 @@ pub async fn get_token(
             .map_err(|_| ApiError::bad_request("Bad redirect_url"))?
     {
         return Err(ApiError::bad_request("Invalid redirect_uri"));
+    }
+
+    // PKCE validation (RFC 7636 Section 4.6)
+    match (&token.code_challenge, &code_verifier) {
+        (Some(challenge), Some(verifier)) => {
+            use base64ct::Base64UrlUnpadded;
+            use base64ct::Encoding;
+            use sha2::Digest;
+
+            let hash = sha2::Sha256::digest(verifier.as_bytes());
+            let computed_challenge = Base64UrlUnpadded::encode_string(&hash);
+
+            if computed_challenge != **challenge {
+                return Err(ApiError::bad_request("Invalid code_verifier"));
+            }
+        }
+        (Some(_), None) => {
+            return Err(ApiError::bad_request(
+                "code_verifier is required for this authorization code",
+            ));
+        }
+        (None, Some(_)) => {
+            return Err(ApiError::bad_request(
+                "code_verifier provided but no code_challenge was set",
+            ));
+        }
+        (None, None) => {}
     }
 
     let now = SystemTime::now()

@@ -1,6 +1,7 @@
 //! Common handler_frontend for the currently logged-in user
 
 use galvyn::core::Module;
+use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
@@ -13,6 +14,7 @@ use tracing::instrument;
 use zxcvbn::Score;
 use zxcvbn::zxcvbn;
 
+use crate::http::extractors::session_user::SESSION_USER;
 use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_frontend::me::MeSchema;
 use crate::http::handler_frontend::me::RoleSchema;
@@ -101,10 +103,14 @@ pub async fn update_me(
 }
 
 #[post("/set-password")]
-#[instrument(name = "Api::common::set_password", skip(password))]
+#[instrument(name = "Api::common::set_password", skip(password, old_password))]
 pub async fn set_password(
+    session: Session,
     SessionUser { uuid }: SessionUser,
-    ApiJson(SetPasswordRequest { password }): ApiJson<SetPasswordRequest>,
+    ApiJson(SetPasswordRequest {
+        old_password,
+        password,
+    }): ApiJson<SetPasswordRequest>,
 ) -> ApiResult<ApiJson<FormResult<(), SetPasswordErrors>>> {
     let mut tx = Database::global().start_transaction().await?;
 
@@ -115,6 +121,14 @@ pub async fn set_password(
     let mut account = Account::get_by_uuid(&mut tx, uuid)
         .await?
         .ok_or(ApiError::server_error("Account from session not found"))?;
+
+    if !account.check_password(&old_password)? {
+        return Ok(ApiJson(FormResult::err(SetPasswordErrors {
+            low_entropy: false,
+            invalid_old_password: true,
+        })));
+    }
+
     let [display_name, username] = match &account {
         Account::ClubMember(account) => &[
             account.display_name.clone().into_inner(),
@@ -134,11 +148,15 @@ pub async fn set_password(
     if entropy.score() < Score::Four {
         return Ok(ApiJson(FormResult::err(SetPasswordErrors {
             low_entropy: true,
+            invalid_old_password: false,
         })));
     }
     account.set_password(&mut tx, &password).await?;
 
     tx.commit().await?;
+
+    // Invalidate the current session after a password change
+    session.remove::<SessionUser>(SESSION_USER).await?;
 
     if let Account::ClubMember(account) = account {
         Mailcow::global().create_app_password(account.email.clone());

@@ -35,4 +35,8 @@ pub struct AuthQuery {
     pub response_mode: Option<String>,
     /// Optional nonce for protection against replay attacks
     pub nonce: Option<MaxStr<255>>,
+    /// PKCE code challenge (RFC 7636)
+    pub code_challenge: Option<MaxStr<128>>,
+    /// PKCE code challenge method, only "S256" is supported
+    pub code_challenge_method: Option<String>,
 }

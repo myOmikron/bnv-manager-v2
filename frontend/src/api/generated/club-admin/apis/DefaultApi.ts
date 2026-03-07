@@ -18,6 +18,7 @@ import type {
   ApiErrorResponse,
   ClubSchema,
   CreateMemberInviteRequest,
+  CredentialResetSchema,
   FormResultForSingleLinkAndCreateInviteError,
   GetInvite,
   PageForSimpleMemberAccountSchema,
@@ -46,6 +47,11 @@ export interface GetClubMembersRequest {
     limit?: number;
     offset?: number;
     search?: string | null;
+}
+
+export interface ResetCredentialsRequest {
+    club_uuid: string;
+    uuid: string;
 }
 
 export interface RetractInviteRequest {
@@ -231,6 +237,44 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getClubMembers(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleMemberAccountSchema> {
         const response = await this.getClubMembersRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async resetCredentialsRaw(requestParameters: ResetCredentialsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CredentialResetSchema>> {
+        if (requestParameters['club_uuid'] == null) {
+            throw new runtime.RequiredError(
+                'club_uuid',
+                'Required parameter "club_uuid" was null or undefined when calling resetCredentials().'
+            );
+        }
+
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling resetCredentials().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/club-admin/clubs/{club_uuid}/members/{uuid}/reset-credentials`.replace(`{${"club_uuid"}}`, encodeURIComponent(String(requestParameters['club_uuid']))).replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async resetCredentials(requestParameters: ResetCredentialsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CredentialResetSchema> {
+        const response = await this.resetCredentialsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

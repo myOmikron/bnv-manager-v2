@@ -108,6 +108,8 @@ pub struct OidcAuthenticationToken {
     pub nonce: Option<MaxStr<255>>,
     /// Scopes the client has requested
     pub scopes: Vec<String>,
+    /// PKCE code challenge (RFC 7636)
+    pub code_challenge: Option<MaxStr<128>>,
 }
 
 impl OidcAuthenticationToken {
@@ -121,6 +123,7 @@ impl OidcAuthenticationToken {
             account,
             nonce,
             scopes,
+            code_challenge,
         }: CreateOidcAuthenticationToken,
     ) -> anyhow::Result<Self> {
         let mut guard = exe.ensure_transaction().await?;
@@ -137,6 +140,7 @@ impl OidcAuthenticationToken {
                 account: ForeignModelByField(account.0),
                 nonce,
                 scopes: Json(scopes),
+                code_challenge,
             })
             .await?;
 
@@ -154,6 +158,7 @@ impl OidcAuthenticationToken {
             account,
             nonce: token.nonce,
             scopes: token.scopes.0,
+            code_challenge: token.code_challenge,
         })
     }
 
@@ -187,6 +192,7 @@ impl OidcAuthenticationToken {
             account: ClubAccount::from(account),
             nonce: oidc_auth_token.nonce,
             scopes: oidc_auth_token.scopes.0,
+            code_challenge: oidc_auth_token.code_challenge,
         }))
     }
 
@@ -214,6 +220,8 @@ pub struct CreateOidcAuthenticationToken {
     pub nonce: Option<MaxStr<255>>,
     /// Scopes the client has requested
     pub scopes: Vec<String>,
+    /// PKCE code challenge (RFC 7636)
+    pub code_challenge: Option<MaxStr<128>>,
 }
 
 impl From<OidcClientModel> for OidcClient {

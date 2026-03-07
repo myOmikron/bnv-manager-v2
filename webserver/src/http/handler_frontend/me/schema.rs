@@ -69,7 +69,9 @@ pub struct UpdateMeRequest {
 /// Request to update the currently logged-in user
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SetPasswordRequest {
-    /// The display name of the user
+    /// The current password of the user
+    pub old_password: MaxStr<72>,
+    /// The new password
     pub password: MaxStr<72>,
 }
 
@@ -78,4 +80,6 @@ pub struct SetPasswordRequest {
 pub struct SetPasswordErrors {
     /// Entropy is too low
     pub low_entropy: bool,
+    /// The old password was invalid
+    pub invalid_old_password: bool,
 }
