@@ -2,8 +2,8 @@
 
 use tracing::instrument;
 
-use crate::MailcowClient;
 use crate::error::MailcowResult;
+use crate::MailcowClient;
 
 pub mod schema;
 
@@ -15,6 +15,32 @@ impl MailcowClient {
     pub async fn delete_mailbox(&self, mailboxes: Vec<String>) -> MailcowResult<()> {
         self.post("/api/v1/delete/mailbox")
             .body(mailboxes)
+            .send::<serde::de::IgnoredAny>()
+            .await?;
+
+        Ok(())
+    }
+
+    /// Get all app passwords for a mailbox
+    #[instrument(skip(self), name = "MailcowClient::get_app_passwords")]
+    pub async fn get_app_passwords(
+        &self,
+        email: String,
+    ) -> MailcowResult<Vec<schema::GetAppPaswordSingleResponse>> {
+        let app_passwords = self
+            .post(&format!("/api/v1/get/app-passwd/all/{email}"))
+            .send::<Vec<schema::GetAppPaswordSingleResponse>>()
+            .await?;
+
+        Ok(app_passwords)
+    }
+
+    /// Deletes app passwords
+    #[instrument(skip(self), name = "MailcowClient::delete_app_passwords")]
+    pub async fn delete_app_passwords(&self, ids: Vec<u64>) -> MailcowResult<()> {
+        let ids = ids.iter().map(|id| id.to_string()).collect::<Vec<String>>();
+        self.post("/api/v1/delete/app-passwd")
+            .body(&ids)
             .send::<serde::de::IgnoredAny>()
             .await?;
 

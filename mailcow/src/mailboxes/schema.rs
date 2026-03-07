@@ -15,6 +15,15 @@ pub struct CreateAppPasswordRequest {
     pub app_passwd2: String,
 }
 
+/// Response for a single app password
+#[derive(Serialize, Deserialize)]
+pub struct GetAppPaswordSingleResponse {
+    /// ID of the app password
+    pub id: u64,
+    /// Name of the app password
+    pub name: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct InnerCreateAppPasswordRequest {
     pub active: String,
