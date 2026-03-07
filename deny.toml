@@ -27,7 +27,4 @@ ignore = true
 
 [sources]
 unknown-git = "deny"
-
-allow-git = [
-    "https://github.com/myOmikron/galvyn.git",
-]
+allow-git = []
