@@ -12,8 +12,7 @@
 //! use mailcow::MailcowClient;
 //! use reqwest::Url;
 //!
-//! #[tokio::main]
-//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     let base_url = Url::parse("https://mailcow.example.com")?;
 //!     let client = MailcowClient::new(base_url, "your-api-key".to_string())?;
 //!     // Use client to make API calls
