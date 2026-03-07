@@ -47,7 +47,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                     password: value.password,
                 });
                 if (res.result === "Err") {
-                    const errMsg = res.value.invalid_old_password
+                    const errMsg = res.error.invalid_old_password
                         ? t("error.invalid-old-password")
                         : t("text.stronger-password");
 

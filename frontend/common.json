@@ -673,12 +673,17 @@
                 "description": "Errors that may occur while setting a new password",
                 "type": "object",
                 "properties": {
+                    "invalid_old_password": {
+                        "description": "The old password was invalid",
+                        "type": "boolean"
+                    },
                     "low_entropy": {
                         "description": "Entropy is too low",
                         "type": "boolean"
                     }
                 },
                 "required": [
+                    "invalid_old_password",
                     "low_entropy"
                 ]
             },
@@ -686,8 +691,16 @@
                 "description": "Request to update the currently logged-in user",
                 "type": "object",
                 "properties": {
+                    "old_password": {
+                        "description": "The current password of the user",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MaxStr_72"
+                            }
+                        ]
+                    },
                     "password": {
-                        "description": "The display name of the user",
+                        "description": "The new password",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/MaxStr_72"
@@ -696,6 +709,7 @@
                     }
                 },
                 "required": [
+                    "old_password",
                     "password"
                 ]
             },

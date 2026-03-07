@@ -24,6 +24,8 @@ import type {
 
 export interface AuthRequest {
     client_id?: string;
+    code_challenge?: string | null;
+    code_challenge_method?: string | null;
     nonce?: string | null;
     redirect_uri?: string;
     response_mode?: string | null;
@@ -33,9 +35,12 @@ export interface AuthRequest {
 }
 
 export interface GetTokenRequest {
+    client_id: string;
+    client_secret: string;
     code: string;
     grant_type: string;
     redirect_uri: string;
+    code_verifier?: string | null;
 }
 
 export interface SignInOperationRequest {
@@ -54,6 +59,14 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (requestParameters['client_id'] != null) {
             queryParameters['client_id'] = requestParameters['client_id'];
+        }
+
+        if (requestParameters['code_challenge'] != null) {
+            queryParameters['code_challenge'] = requestParameters['code_challenge'];
+        }
+
+        if (requestParameters['code_challenge_method'] != null) {
+            queryParameters['code_challenge_method'] = requestParameters['code_challenge_method'];
         }
 
         if (requestParameters['nonce'] != null) {
@@ -148,6 +161,20 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      */
     async getTokenRaw(requestParameters: GetTokenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TokenResponse>> {
+        if (requestParameters['client_id'] == null) {
+            throw new runtime.RequiredError(
+                'client_id',
+                'Required parameter "client_id" was null or undefined when calling getToken().'
+            );
+        }
+
+        if (requestParameters['client_secret'] == null) {
+            throw new runtime.RequiredError(
+                'client_secret',
+                'Required parameter "client_secret" was null or undefined when calling getToken().'
+            );
+        }
+
         if (requestParameters['code'] == null) {
             throw new runtime.RequiredError(
                 'code',
@@ -187,9 +214,23 @@ export class DefaultApi extends runtime.BaseAPI {
             formParams = new URLSearchParams();
         }
 
+        if (requestParameters['client_id'] != null) {
+            formParams.append('client_id', requestParameters['client_id'] as any);
+        }
+
+        if (requestParameters['client_secret'] != null) {
+
+            formParams.append('client_secret', new Blob([JSON.stringify(requestParameters['client_secret'])], { type: "application/json", }));
+        }
+
         if (requestParameters['code'] != null) {
 
             formParams.append('code', new Blob([JSON.stringify(requestParameters['code'])], { type: "application/json", }));
+        }
+
+        if (requestParameters['code_verifier'] != null) {
+
+            formParams.append('code_verifier', new Blob([JSON.stringify(requestParameters['code_verifier'])], { type: "application/json", }));
         }
 
         if (requestParameters['grant_type'] != null) {

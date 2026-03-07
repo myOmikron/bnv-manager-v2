@@ -330,6 +330,12 @@ export type RoleSchemaOneOf2TypeEnum = typeof RoleSchemaOneOf2TypeEnum[keyof typ
  */
 export interface SetPasswordErrors {
     /**
+     * The old password was invalid
+     * @type {boolean}
+     * @memberof SetPasswordErrors
+     */
+    invalid_old_password: boolean;
+    /**
      * Entropy is too low
      * @type {boolean}
      * @memberof SetPasswordErrors
@@ -343,7 +349,13 @@ export interface SetPasswordErrors {
  */
 export interface SetPasswordRequest {
     /**
-     * The display name of the user
+     * The current password of the user
+     * @type {string}
+     * @memberof SetPasswordRequest
+     */
+    old_password: string;
+    /**
+     * The new password
      * @type {string}
      * @memberof SetPasswordRequest
      */
