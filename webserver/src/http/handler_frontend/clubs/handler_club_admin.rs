@@ -102,6 +102,12 @@ pub async fn delete_member(
         .await?
         .ok_or(ApiError::bad_request("Account not found"))?;
 
+    if account.club != club_uuid {
+        return Err(ApiError::bad_request(
+            "Cannot delete account of a different club",
+        ));
+    }
+
     Mailcow::global()
         .sdk
         .delete_mailbox(vec![account.email.clone().into_inner()])
