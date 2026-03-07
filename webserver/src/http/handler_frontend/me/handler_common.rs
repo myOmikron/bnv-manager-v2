@@ -1,21 +1,21 @@
 //! Common handler_frontend for the currently logged-in user
 
-use galvyn::core::Module;
 use galvyn::core::session::Session;
 use galvyn::core::stuff::api_error::ApiError;
 use galvyn::core::stuff::api_error::ApiResult;
 use galvyn::core::stuff::api_json::ApiJson;
 use galvyn::core::stuff::schema::FormResult;
+use galvyn::core::Module;
 use galvyn::get;
 use galvyn::post;
 use galvyn::put;
 use galvyn::rorm::Database;
 use tracing::instrument;
-use zxcvbn::Score;
 use zxcvbn::zxcvbn;
+use zxcvbn::Score;
 
-use crate::http::extractors::session_user::SESSION_USER;
 use crate::http::extractors::session_user::SessionUser;
+use crate::http::extractors::session_user::SESSION_USER;
 use crate::http::handler_frontend::me::MeSchema;
 use crate::http::handler_frontend::me::RoleSchema;
 use crate::http::handler_frontend::me::SetPasswordErrors;
@@ -145,7 +145,7 @@ pub async fn set_password(
     };
 
     let entropy = zxcvbn(&password, &[display_name, username]);
-    if entropy.score() < Score::Four {
+    if entropy.score() < Score::Three {
         return Ok(ApiJson(FormResult::err(SetPasswordErrors {
             low_entropy: true,
             invalid_old_password: false,

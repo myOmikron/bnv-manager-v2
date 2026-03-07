@@ -66,7 +66,7 @@ export default function Invite(props: InviteProps) {
                         name={"password"}
                         validators={{
                             onChangeAsync: async ({ value }) => {
-                                if (value !== "" && zxcvbn(value).score < 4) {
+                                if (value !== "" && zxcvbn(value).score < 3) {
                                     return t("error.stronger-password");
                                 }
                                 return undefined;

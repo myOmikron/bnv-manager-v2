@@ -104,7 +104,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                                     if (
                                         value !== "" &&
                                         zxcvbn(value, [account.account.username, account.account.display_name]).score <
-                                            4
+                                            3
                                     ) {
                                         return t("text.stronger-password");
                                     }
