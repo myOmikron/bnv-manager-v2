@@ -24,9 +24,7 @@ pub fn opentelemetry_layer<S: Subscriber + for<'span> LookupSpan<'span>>()
         .build()
         .map_err(|e| TraceError::Other(e.into()))?;
 
-    let resource = Resource::builder()
-        .with_service_name("bnv-manager")
-        .build();
+    let resource = Resource::builder().with_service_name("bnv-manager").build();
 
     let provider = SdkTracerProvider::builder()
         .with_batch_exporter(exporter)
