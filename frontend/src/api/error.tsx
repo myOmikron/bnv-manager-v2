@@ -1,5 +1,3 @@
-import CONSOLE from "../utils/console";
-
 /**
  * The outer error the api returns. This is most likely not deal-able by the frontend
  */
@@ -19,7 +17,7 @@ export async function parseError(response: Response): Promise<ApiError> {
     try {
         return await response.json();
     } catch {
-        CONSOLE.error("Got invalid json", response.body);
+        console.error("Got invalid json", response.body);
         return {
             trace_id: "-",
         };

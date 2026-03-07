@@ -1,7 +1,6 @@
 import React from "react";
 import { Api } from "src/api/api";
 import { MeSchema } from "src/api/generated/common";
-import CONSOLE from "src/utils/console";
 import { Navigate } from "@tanstack/react-router";
 import { RequiredError, ResponseError } from "src/api/generated/common";
 
@@ -85,10 +84,10 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
                     return;
                 }
             } else if (e instanceof RequiredError) {
-                CONSOLE.error(e);
+                console.error(e);
                 msg = "The server's response didn't match the spec";
             } else {
-                CONSOLE.error("Unknown error occurred:", e);
+                console.error("Unknown error occurred:", e);
                 msg = "Unknown error occurred";
             }
             throw msg;
@@ -107,8 +106,8 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
         // Register as global singleton
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         if (ACCOUNT_PROVIDER === null) ACCOUNT_PROVIDER = this;
-        else if (ACCOUNT_PROVIDER === this) CONSOLE.error("AccountProvider did mount twice");
-        else CONSOLE.error("Two instances of AccountProvider are used");
+        else if (ACCOUNT_PROVIDER === this) console.error("AccountProvider did mount twice");
+        else console.error("Two instances of AccountProvider are used");
     }
 
     /**
@@ -117,8 +116,8 @@ export class AccountProvider extends React.Component<AccountProviderProps, Accou
     componentWillUnmount() {
         // Deregister as global singleton
         if (ACCOUNT_PROVIDER === this) ACCOUNT_PROVIDER = null;
-        else if (ACCOUNT_PROVIDER === null) CONSOLE.error("AccountProvider instance did unmount twice");
-        else CONSOLE.error("Two instances of AccountProvider are used");
+        else if (ACCOUNT_PROVIDER === null) console.error("AccountProvider instance did unmount twice");
+        else console.error("Two instances of AccountProvider are used");
     }
 
     /**

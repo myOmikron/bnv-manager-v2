@@ -1,7 +1,6 @@
 import { Configuration, DefaultApi } from "src/api/generated/auth";
 import { RequiredError, ResponseError } from "src/api/generated/auth";
 import { parseError } from "src/api/error";
-import CONSOLE from "src/utils/console";
 
 const authApi = new DefaultApi(new Configuration({ basePath: window.location.origin }));
 
@@ -25,10 +24,10 @@ export async function handleError<T>(promise: Promise<T>): Promise<T> {
         if (e instanceof ResponseError) {
             await parseError(e.response);
         } else if (e instanceof RequiredError) {
-            CONSOLE.error(e);
+            console.error(e);
             msg = "The server's response didn't match the spec";
         } else {
-            CONSOLE.error("Unknown error occurred:", e);
+            console.error("Unknown error occurred:", e);
             msg = "Unknown error occurred";
         }
         throw msg;

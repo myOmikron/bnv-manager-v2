@@ -1,5 +1,3 @@
-import CONSOLE from "./console";
-
 /** An event handler_frontend is any function taking an event */
 export type EventHandler<Event> = (event: Event) => void;
 
@@ -84,7 +82,7 @@ class ListenerGroup<E> {
             try {
                 perm(event);
             } catch (error) {
-                CONSOLE.error("Error inside event listener:", error);
+                console.error("Error inside event listener:", error);
             }
         }
     }

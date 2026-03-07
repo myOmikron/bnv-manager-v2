@@ -1,5 +1,4 @@
 import { parseError } from "src/api/error";
-import CONSOLE from "src/utils/console";
 import {
     DefaultApi as CommonApi,
     Configuration as CommonConfiguration,
@@ -59,10 +58,10 @@ export async function handleError<T>(promise: Promise<T>): Promise<T> {
         if (e instanceof ResponseError) {
             await parseError(e.response);
         } else if (e instanceof RequiredError) {
-            CONSOLE.error(e);
+            console.error(e);
             msg = "The server's response didn't match the spec";
         } else {
-            CONSOLE.error("Unknown error occurred:", e);
+            console.error("Unknown error occurred:", e);
             msg = "Unknown error occurred";
         }
         throw msg;

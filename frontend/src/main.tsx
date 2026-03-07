@@ -1,6 +1,5 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { LoggingSwitch } from "./utils/console";
 import { ToastContainer } from "react-toastify";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,7 +24,6 @@ declare module "@tanstack/react-router" {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <>
-        <LoggingSwitch />
         <ToastContainer toastClassName={"toast-message"} closeOnClick={true} />
         <RouterProvider router={router} />
     </>,

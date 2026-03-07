@@ -18,7 +18,6 @@ const config = tsEslint.config(
             parserOptions: { project: ["./tsconfig.json"] },
         },
         rules: {
-            "no-console": "warn",
             "no-alert": "warn",
 
             "no-case-declarations": "off", // potential errors are already caught by typescript

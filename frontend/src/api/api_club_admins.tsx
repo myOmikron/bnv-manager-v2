@@ -7,7 +7,6 @@ import {
 import { UUID } from "src/api/api";
 import { RequiredError, ResponseError } from "src/api/generated/club-admin";
 import { parseError } from "src/api/error";
-import CONSOLE from "src/utils/console";
 
 const clubAdminApi = new DefaultApi(new Configuration({ basePath: window.location.origin }));
 
@@ -42,10 +41,10 @@ export async function handleError<T>(promise: Promise<T>): Promise<T> {
         if (e instanceof ResponseError) {
             await parseError(e.response);
         } else if (e instanceof RequiredError) {
-            CONSOLE.error(e);
+            console.error(e);
             msg = "The server's response didn't match the spec";
         } else {
-            CONSOLE.error("Unknown error occurred:", e);
+            console.error("Unknown error occurred:", e);
             msg = "Unknown error occurred";
         }
         throw msg;

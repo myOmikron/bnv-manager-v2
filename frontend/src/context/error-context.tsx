@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { Navigate } from "@tanstack/react-router";
-import CONSOLE from "src/utils/console";
 
 /**
  * Function which should trigger in case of error
@@ -53,7 +52,7 @@ export function ErrorContext(props: ErrorContextProps) {
         ERROR_STORE.subscribe(setError);
     }, []);
 
-    CONSOLE.log(error);
+    console.log(error);
 
     if (error === "Unauthenticated") {
         return (
