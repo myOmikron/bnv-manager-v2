@@ -24,7 +24,7 @@ declare module "@tanstack/react-router" {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <>
-        <ToastContainer toastClassName={"toast-message"} closeOnClick={true} />
+        <ToastContainer toastClassName={"toast-message"} closeOnClick={"dismiss"} />
         <RouterProvider router={router} />
     </>,
 );

@@ -68,6 +68,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                     isLoading: false,
                 });
                 form.reset();
+                account.reset(false);
             },
         },
     });
