@@ -4,6 +4,7 @@ use tracing::instrument;
 
 use crate::MailcowClient;
 use crate::error::MailcowResult;
+use crate::mailboxes::schema::GetAppPasswordsResponse;
 
 pub mod schema;
 
@@ -26,13 +27,16 @@ impl MailcowClient {
     pub async fn get_app_passwords(
         &self,
         email: String,
-    ) -> MailcowResult<Vec<schema::GetAppPaswordSingleResponse>> {
+    ) -> MailcowResult<Vec<schema::GetAppPasswordSingleResponse>> {
         let app_passwords = self
             .get(&format!("/api/v1/get/app-passwd/all/{email}"))
-            .send::<Vec<schema::GetAppPaswordSingleResponse>>()
+            .send::<GetAppPasswordsResponse>()
             .await?;
 
-        Ok(app_passwords)
+        match app_passwords {
+            GetAppPasswordsResponse::List(app_passwords) => Ok(app_passwords),
+            GetAppPasswordsResponse::Empty(_) => Ok(Vec::new()),
+        }
     }
 
     /// Deletes app passwords

@@ -1,5 +1,7 @@
 //! Schema for interacting with mailboxes
 
+use std::collections::HashMap;
+
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -15,9 +17,15 @@ pub struct CreateAppPasswordRequest {
     pub app_passwd2: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum GetAppPasswordsResponse {
+    List(Vec<GetAppPasswordSingleResponse>),
+    Empty(HashMap<String, String>),
+}
+
 /// Response for a single app password
-#[derive(Serialize, Deserialize)]
-pub struct GetAppPaswordSingleResponse {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GetAppPasswordSingleResponse {
     /// ID of the app password
     pub id: u64,
     /// Name of the app password
