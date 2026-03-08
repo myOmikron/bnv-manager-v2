@@ -28,7 +28,7 @@ impl MailcowClient {
         email: String,
     ) -> MailcowResult<Vec<schema::GetAppPaswordSingleResponse>> {
         let app_passwords = self
-            .post(&format!("/api/v1/get/app-passwd/all/{email}"))
+            .get(&format!("/api/v1/get/app-passwd/all/{email}"))
             .send::<Vec<schema::GetAppPaswordSingleResponse>>()
             .await?;
 
