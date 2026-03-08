@@ -56,7 +56,9 @@ impl AppPasswordInitializer {
                 }
             }
 
-            self.sdk.delete_app_passwords(to_delete).await?;
+            if !to_delete.is_empty() {
+                self.sdk.delete_app_passwords(to_delete).await?;
+            }
 
             let res = self
                 .sdk
