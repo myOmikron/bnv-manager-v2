@@ -1391,8 +1391,8 @@
                         "description": "The 6-digit code for the reset",
                         "type": "string"
                     },
-                    "expires_at": {
-                        "description": "Point in time the reset expires",
+                    "code_expires_at": {
+                        "description": "Point in time the code expires",
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/SchemaDateTime"
@@ -1403,6 +1403,14 @@
                         "description": "The link to give to the user",
                         "type": "string",
                         "format": "uri"
+                    },
+                    "link_expires_at": {
+                        "description": "Point in time the link expires",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/SchemaDateTime"
+                            }
+                        ]
                     },
                     "uuid": {
                         "description": "Identifier",
@@ -1415,8 +1423,9 @@
                 },
                 "required": [
                     "code",
-                    "expires_at",
+                    "code_expires_at",
                     "link",
+                    "link_expires_at",
                     "uuid"
                 ]
             },

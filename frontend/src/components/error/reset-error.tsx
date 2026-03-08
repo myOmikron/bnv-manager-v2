@@ -20,7 +20,9 @@ export default function ResetError(props: ResetErrorProps) {
             <div className={"flex flex-col gap-8"}>
                 <Heading>{t("heading.invalid-link")}</Heading>
                 <Text className={"max-w-[60ch]"}>{t("heading.explanation")}</Text>
-                <TextLink className={"text-sm"} href={"/oidc/auth"}>{t("button.back-to-login")}</TextLink>
+                <TextLink className={"text-sm"} href={"/oidc/auth"}>
+                    {t("button.back-to-login")}
+                </TextLink>
             </div>
         </AuthLayout>
     );

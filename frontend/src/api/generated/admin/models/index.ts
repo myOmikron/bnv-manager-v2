@@ -195,17 +195,23 @@ export interface CredentialResetSchema {
      */
     code: string;
     /**
-     * Point in time the reset expires
+     * Point in time the code expires
      * @type {string}
      * @memberof CredentialResetSchema
      */
-    expires_at: string;
+    code_expires_at: string;
     /**
      * The link to give to the user
      * @type {string}
      * @memberof CredentialResetSchema
      */
     link: string;
+    /**
+     * Point in time the link expires
+     * @type {string}
+     * @memberof CredentialResetSchema
+     */
+    link_expires_at: string;
     /**
      * Identifier
      * @type {string}
