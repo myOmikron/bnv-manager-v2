@@ -43,6 +43,7 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
                         render: t("toast.sign-in-failed"),
                         type: "error",
                         autoClose: 3500,
+                        closeOnClick: true,
                     });
                     return {
                         form: t("error.invalid-username-or-password"),
@@ -54,6 +55,7 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
                     render: t("toast.signed-in"),
                     type: "success",
                     autoClose: 3500,
+                    closeOnClick: true,
                 });
 
                 if (search.external) {

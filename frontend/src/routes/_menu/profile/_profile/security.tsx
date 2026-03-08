@@ -56,6 +56,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                         render: errMsg,
                         type: "error",
                         isLoading: false,
+                        closeOnClick: true,
                     });
 
                     return;
@@ -66,6 +67,7 @@ export default function ProfileSecurity(props: ProfileSecurityProps) {
                     render: t("toast.password-set"),
                     type: "success",
                     isLoading: false,
+                    closeOnClick: true,
                 });
                 form.reset();
                 account.reset(false);
