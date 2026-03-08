@@ -153,14 +153,20 @@ pub async fn set_password(
     }
     account.set_password(&mut tx, &password).await?;
 
+    if let Account::ClubMember(ref account) = account {
+        let club = Club::find_by_uuid(&mut tx, account.club)
+            .await?
+            .ok_or(ApiError::server_error("Club should exist"))?;
+
+        if !club.use_xauth {
+            Mailcow::global().create_app_password(account.email.clone());
+        }
+    }
+
     tx.commit().await?;
 
     // Invalidate the current session after a password change
     session.remove::<SessionUser>(SESSION_USER).await?;
-
-    if let Account::ClubMember(account) = account {
-        Mailcow::global().create_app_password(account.email.clone());
-    }
 
     Ok(ApiJson(FormResult::ok(())))
 }

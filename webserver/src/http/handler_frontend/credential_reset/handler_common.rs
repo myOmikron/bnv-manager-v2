@@ -19,6 +19,7 @@ use crate::http::handler_frontend::credential_reset::ResetPasswordError;
 use crate::http::handler_frontend::credential_reset::ResetPasswordRequest;
 use crate::http::handler_frontend::credential_reset::VerifyResetCodeResponse;
 use crate::models::account::Account;
+use crate::models::club::Club;
 use crate::models::credential_reset::CredentialReset;
 use crate::models::credential_reset::CredentialResetUuid;
 use crate::modules::mailcow::Mailcow;
@@ -107,11 +108,17 @@ pub async fn reset_password(
     account.set_password(&mut tx, &password).await?;
     CredentialReset::delete_by_uuid(&mut tx, reset.uuid).await?;
 
-    tx.commit().await?;
-
     if let Account::ClubMember(ref member) = account {
-        Mailcow::global().create_app_password(member.email.clone());
+        let club = Club::find_by_uuid(&mut tx, member.club)
+            .await?
+            .ok_or(ApiError::server_error("Club should exist"))?;
+
+        if !club.use_xauth {
+            Mailcow::global().create_app_password(member.email.clone());
+        }
     }
+
+    tx.commit().await?;
 
     Ok(ApiJson(FormResult::ok(())))
 }
@@ -164,11 +171,17 @@ pub async fn reset_password_by_uuid(
     account.set_password(&mut tx, &password).await?;
     CredentialReset::delete_by_uuid(&mut tx, reset.uuid).await?;
 
-    tx.commit().await?;
-
     if let Account::ClubMember(ref member) = account {
-        Mailcow::global().create_app_password(member.email.clone());
+        let club = Club::find_by_uuid(&mut tx, member.club)
+            .await?
+            .ok_or(ApiError::server_error("Club should exist"))?;
+
+        if !club.use_xauth {
+            Mailcow::global().create_app_password(member.email.clone());
+        }
     }
+
+    tx.commit().await?;
 
     Ok(ApiJson(FormResult::ok(())))
 }
