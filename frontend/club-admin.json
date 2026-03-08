@@ -632,6 +632,10 @@
                 "description": "Instance of the credential reset",
                 "type": "object",
                 "properties": {
+                    "code": {
+                        "description": "The 6-digit code for the reset",
+                        "type": "string"
+                    },
                     "expires_at": {
                         "description": "Point in time the reset expires",
                         "allOf": [
@@ -655,6 +659,7 @@
                     }
                 },
                 "required": [
+                    "code",
                     "expires_at",
                     "link",
                     "uuid"

@@ -2,8 +2,8 @@
 
 use tracing::instrument;
 
-use crate::error::MailcowResult;
 use crate::MailcowClient;
+use crate::error::MailcowResult;
 
 pub mod schema;
 

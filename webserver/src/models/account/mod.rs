@@ -25,6 +25,7 @@ use crate::models::credential_reset::CredentialResetUuid;
 use crate::models::credential_reset::db::CredentialResetClubAccountModel;
 use crate::models::credential_reset::db::CredentialResetClubAdminModel;
 use crate::models::credential_reset::db::CredentialResetSuperadminModel;
+use crate::models::credential_reset::generate_code;
 
 mod club_admin;
 mod club_member;
@@ -294,7 +295,12 @@ impl Account {
         let mut guard = exe.ensure_transaction().await?;
 
         let now = OffsetDateTime::now_utc();
-        let expires_at = now + Duration::days(14);
+        let code_expires_at = now + Duration::minutes(10);
+        let link_expires_at = now + Duration::days(7);
+        let code = generate_code();
+
+        #[allow(clippy::expect_used)]
+        let code_field = MaxStr::new(code.clone()).expect("6-digit code is always <= 6 characters");
 
         let reset = match self {
             Account::ClubMember(club_member) => {
@@ -302,13 +308,17 @@ impl Account {
                     .single(&CredentialResetClubAccountModel {
                         uuid: Uuid::new_v4(),
                         account: ForeignModelByField(club_member.uuid().0),
-                        expires_at,
+                        code: code_field,
+                        code_expires_at,
+                        link_expires_at,
                     })
                     .await?;
 
                 CredentialReset {
                     uuid: CredentialResetUuid(reset.uuid),
-                    expires_at: reset.expires_at,
+                    code,
+                    code_expires_at: reset.code_expires_at,
+                    link_expires_at: reset.link_expires_at,
                 }
             }
             Account::ClubAdmin(club_admin) => {
@@ -316,13 +326,17 @@ impl Account {
                     .single(&CredentialResetClubAdminModel {
                         uuid: Uuid::new_v4(),
                         account: ForeignModelByField(club_admin.uuid().0),
-                        expires_at,
+                        code: code_field,
+                        code_expires_at,
+                        link_expires_at,
                     })
                     .await?;
 
                 CredentialReset {
                     uuid: CredentialResetUuid(reset.uuid),
-                    expires_at: reset.expires_at,
+                    code,
+                    code_expires_at: reset.code_expires_at,
+                    link_expires_at: reset.link_expires_at,
                 }
             }
             Account::Superadmin(superadmin) => {
@@ -330,13 +344,17 @@ impl Account {
                     .single(&CredentialResetSuperadminModel {
                         uuid: Uuid::new_v4(),
                         account: ForeignModelByField(superadmin.uuid().0),
-                        expires_at,
+                        code: code_field,
+                        code_expires_at,
+                        link_expires_at,
                     })
                     .await?;
 
                 CredentialReset {
                     uuid: CredentialResetUuid(reset.uuid),
-                    expires_at: reset.expires_at,
+                    code,
+                    code_expires_at: reset.code_expires_at,
+                    link_expires_at: reset.link_expires_at,
                 }
             }
         };

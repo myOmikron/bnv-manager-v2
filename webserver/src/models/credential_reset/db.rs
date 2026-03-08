@@ -1,4 +1,5 @@
 use galvyn::rorm::Model;
+use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::prelude::ForeignModel;
 use uuid::Uuid;
 
@@ -14,7 +15,9 @@ pub struct CredentialResetSuperadminModel {
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub account: ForeignModel<AdministrativeAccountModel>,
 
-    pub expires_at: time::OffsetDateTime,
+    pub code: MaxStr<6>,
+    pub code_expires_at: time::OffsetDateTime,
+    pub link_expires_at: time::OffsetDateTime,
 }
 
 #[derive(Model)]
@@ -25,7 +28,9 @@ pub struct CredentialResetClubAdminModel {
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub account: ForeignModel<ClubAdminAccountModel>,
 
-    pub expires_at: time::OffsetDateTime,
+    pub code: MaxStr<6>,
+    pub code_expires_at: time::OffsetDateTime,
+    pub link_expires_at: time::OffsetDateTime,
 }
 
 #[derive(Model)]
@@ -36,5 +41,7 @@ pub struct CredentialResetClubAccountModel {
     #[rorm(on_update = "Cascade", on_delete = "Cascade")]
     pub account: ForeignModel<ClubAccountModel>,
 
-    pub expires_at: time::OffsetDateTime,
+    pub code: MaxStr<6>,
+    pub code_expires_at: time::OffsetDateTime,
+    pub link_expires_at: time::OffsetDateTime,
 }

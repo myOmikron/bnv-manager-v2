@@ -12,6 +12,9 @@
         "password": "Passwort",
         "username": "Nutzername"
     },
+    "link": {
+        "forgot-password": "Passwort vergessen?"
+    },
     "toast": {
         "sign-in-failed": "Einloggen fehlgeschlagen",
         "signed-in": "Eingeloggt",

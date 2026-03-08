@@ -15,6 +15,8 @@ import { Route as MenuIndexRouteImport } from './routes/_menu/index'
 import { Route as OidcErrorRouteImport } from './routes/oidc/error'
 import { Route as OidcAuthRouteImport } from './routes/oidc/auth'
 import { Route as InvitesInviteIdRouteImport } from './routes/invites/$inviteId'
+import { Route as LinksResetIndexRouteImport } from './routes/links/reset/index'
+import { Route as LinksResetUuidRouteImport } from './routes/links/reset/$uuid'
 import { Route as LinksOidcErrorRouteImport } from './routes/links/oidc/error'
 import { Route as LinksOidcAuthRouteImport } from './routes/links/oidc/auth'
 import { Route as LinksInviteInviteIdRouteImport } from './routes/links/invite/$inviteId'
@@ -61,6 +63,16 @@ const OidcAuthRoute = OidcAuthRouteImport.update({
 const InvitesInviteIdRoute = InvitesInviteIdRouteImport.update({
   id: '/invites/$inviteId',
   path: '/invites/$inviteId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LinksResetIndexRoute = LinksResetIndexRouteImport.update({
+  id: '/links/reset/',
+  path: '/links/reset/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LinksResetUuidRoute = LinksResetUuidRouteImport.update({
+  id: '/links/reset/$uuid',
+  path: '/links/reset/$uuid',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LinksOidcErrorRoute = LinksOidcErrorRouteImport.update({
@@ -186,6 +198,8 @@ export interface FileRoutesByFullPath {
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
   '/links/oidc/auth': typeof LinksOidcAuthRoute
   '/links/oidc/error': typeof LinksOidcErrorRoute
+  '/links/reset/$uuid': typeof LinksResetUuidRoute
+  '/links/reset/': typeof LinksResetIndexRoute
   '/ca/$clubId': typeof MenuCaClubIdClubRouteWithChildren
   '/profile/general': typeof MenuProfileProfileGeneralRoute
   '/profile/security': typeof MenuProfileProfileSecurityRoute
@@ -212,6 +226,8 @@ export interface FileRoutesByTo {
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
   '/links/oidc/auth': typeof LinksOidcAuthRoute
   '/links/oidc/error': typeof LinksOidcErrorRoute
+  '/links/reset/$uuid': typeof LinksResetUuidRoute
+  '/links/reset': typeof LinksResetIndexRoute
   '/profile/general': typeof MenuProfileProfileGeneralRoute
   '/profile/security': typeof MenuProfileProfileSecurityRoute
   '/a/admins': typeof MenuAAdminsIndexRoute
@@ -240,6 +256,8 @@ export interface FileRoutesById {
   '/links/invite/$inviteId': typeof LinksInviteInviteIdRoute
   '/links/oidc/auth': typeof LinksOidcAuthRoute
   '/links/oidc/error': typeof LinksOidcErrorRoute
+  '/links/reset/$uuid': typeof LinksResetUuidRoute
+  '/links/reset/': typeof LinksResetIndexRoute
   '/_menu/ca/$clubId/_club': typeof MenuCaClubIdClubRouteWithChildren
   '/_menu/profile/_profile/general': typeof MenuProfileProfileGeneralRoute
   '/_menu/profile/_profile/security': typeof MenuProfileProfileSecurityRoute
@@ -269,6 +287,8 @@ export interface FileRouteTypes {
     | '/links/invite/$inviteId'
     | '/links/oidc/auth'
     | '/links/oidc/error'
+    | '/links/reset/$uuid'
+    | '/links/reset/'
     | '/ca/$clubId'
     | '/profile/general'
     | '/profile/security'
@@ -295,6 +315,8 @@ export interface FileRouteTypes {
     | '/links/invite/$inviteId'
     | '/links/oidc/auth'
     | '/links/oidc/error'
+    | '/links/reset/$uuid'
+    | '/links/reset'
     | '/profile/general'
     | '/profile/security'
     | '/a/admins'
@@ -322,6 +344,8 @@ export interface FileRouteTypes {
     | '/links/invite/$inviteId'
     | '/links/oidc/auth'
     | '/links/oidc/error'
+    | '/links/reset/$uuid'
+    | '/links/reset/'
     | '/_menu/ca/$clubId/_club'
     | '/_menu/profile/_profile/general'
     | '/_menu/profile/_profile/security'
@@ -348,6 +372,8 @@ export interface RootRouteChildren {
   LinksInviteInviteIdRoute: typeof LinksInviteInviteIdRoute
   LinksOidcAuthRoute: typeof LinksOidcAuthRoute
   LinksOidcErrorRoute: typeof LinksOidcErrorRoute
+  LinksResetUuidRoute: typeof LinksResetUuidRoute
+  LinksResetIndexRoute: typeof LinksResetIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -385,6 +411,20 @@ declare module '@tanstack/react-router' {
       path: '/invites/$inviteId'
       fullPath: '/invites/$inviteId'
       preLoaderRoute: typeof InvitesInviteIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/links/reset/': {
+      id: '/links/reset/'
+      path: '/links/reset'
+      fullPath: '/links/reset/'
+      preLoaderRoute: typeof LinksResetIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/links/reset/$uuid': {
+      id: '/links/reset/$uuid'
+      path: '/links/reset/$uuid'
+      fullPath: '/links/reset/$uuid'
+      preLoaderRoute: typeof LinksResetUuidRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/links/oidc/error': {
@@ -620,6 +660,8 @@ const rootRouteChildren: RootRouteChildren = {
   LinksInviteInviteIdRoute: LinksInviteInviteIdRoute,
   LinksOidcAuthRoute: LinksOidcAuthRoute,
   LinksOidcErrorRoute: LinksOidcErrorRoute,
+  LinksResetUuidRoute: LinksResetUuidRoute,
+  LinksResetIndexRoute: LinksResetIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

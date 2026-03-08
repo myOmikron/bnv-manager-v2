@@ -9,6 +9,7 @@ use crate::http::middlewares::AuthRateLimit;
 
 pub mod accounts;
 pub mod clubs;
+pub mod credential_reset;
 pub mod domains;
 pub mod invites;
 pub mod me;
@@ -126,6 +127,16 @@ pub fn router_unauthenticated() -> GalvynRouter {
                     .handler(invites::handler_common::accept_invite)
                     .wrap(AuthRateLimit::new(25)),
             ),
+    );
+
+    router = router.nest(
+        "/credential-reset",
+        GalvynRouter::new()
+            .handler(credential_reset::handler_common::verify_code)
+            .handler(credential_reset::handler_common::verify_uuid)
+            .handler(credential_reset::handler_common::reset_password)
+            .handler(credential_reset::handler_common::reset_password_by_uuid)
+            .wrap(AuthRateLimit::new(5)),
     );
 
     router

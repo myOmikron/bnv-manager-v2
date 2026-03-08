@@ -110,6 +110,41 @@ export const FormResultForNullAndAcceptInviteErrorOneOf1ResultEnum = {
 export type FormResultForNullAndAcceptInviteErrorOneOf1ResultEnum = typeof FormResultForNullAndAcceptInviteErrorOneOf1ResultEnum[keyof typeof FormResultForNullAndAcceptInviteErrorOneOf1ResultEnum];
 
 /**
+ * @type FormResultForNullAndResetPasswordError
+ * A `Result` with a custom serialization
+ * @export
+ */
+export type FormResultForNullAndResetPasswordError = FormResultForNullAndAcceptInviteErrorOneOf | FormResultForNullAndResetPasswordErrorOneOf;
+/**
+ * 
+ * @export
+ * @interface FormResultForNullAndResetPasswordErrorOneOf
+ */
+export interface FormResultForNullAndResetPasswordErrorOneOf {
+    /**
+     * 
+     * @type {ResetPasswordError}
+     * @memberof FormResultForNullAndResetPasswordErrorOneOf
+     */
+    error: ResetPasswordError;
+    /**
+     * 
+     * @type {string}
+     * @memberof FormResultForNullAndResetPasswordErrorOneOf
+     */
+    result: FormResultForNullAndResetPasswordErrorOneOfResultEnum;
+}
+
+
+/**
+ * @export
+ */
+export const FormResultForNullAndResetPasswordErrorOneOfResultEnum = {
+    Err: 'Err'
+} as const;
+export type FormResultForNullAndResetPasswordErrorOneOfResultEnum = typeof FormResultForNullAndResetPasswordErrorOneOfResultEnum[keyof typeof FormResultForNullAndResetPasswordErrorOneOfResultEnum];
+
+/**
  * @type FormResultForNullAndSetPasswordErrors
  * A `Result` with a custom serialization
  * @export
@@ -217,6 +252,44 @@ export interface MeSchema {
      * @memberof MeSchema
      */
     uuid: string;
+}
+/**
+ * Errors that can occur while resetting a password
+ * @export
+ * @interface ResetPasswordError
+ */
+export interface ResetPasswordError {
+    /**
+     * The code has expired
+     * @type {boolean}
+     * @memberof ResetPasswordError
+     */
+    expired: boolean;
+    /**
+     * The code is invalid or not found
+     * @type {boolean}
+     * @memberof ResetPasswordError
+     */
+    invalid_code: boolean;
+    /**
+     * The password entropy is too low
+     * @type {boolean}
+     * @memberof ResetPasswordError
+     */
+    low_entropy: boolean;
+}
+/**
+ * Request to reset a password using a code
+ * @export
+ * @interface ResetPasswordRequest
+ */
+export interface ResetPasswordRequest {
+    /**
+     * The new password
+     * @type {string}
+     * @memberof ResetPasswordRequest
+     */
+    password: string;
 }
 /**
  * @type RoleSchema
@@ -384,6 +457,19 @@ export interface UpdateMeRequest {
      * The display name of the user
      * @type {string}
      * @memberof UpdateMeRequest
+     */
+    display_name: string;
+}
+/**
+ * Response for verifying a reset code
+ * @export
+ * @interface VerifyResetCodeResponse
+ */
+export interface VerifyResetCodeResponse {
+    /**
+     * Display name of the account
+     * @type {string}
+     * @memberof VerifyResetCodeResponse
      */
     display_name: string;
 }

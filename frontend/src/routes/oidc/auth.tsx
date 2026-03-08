@@ -123,6 +123,12 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
                         <PrimaryButton type={"submit"} className={"w-full"}>
                             {t("button.sign-in")}
                         </PrimaryButton>
+
+                        <Text className={"text-center"}>
+                            <a href={"/links/reset"} className={"text-sm underline"}>
+                                {t("link.forgot-password")}
+                            </a>
+                        </Text>
                     </FieldGroup>
                 </Fieldset>
             </Form>

@@ -18,12 +18,15 @@ import type {
   AcceptInvite,
   ApiErrorResponse,
   FormResultForNullAndAcceptInviteError,
+  FormResultForNullAndResetPasswordError,
   FormResultForNullAndSetPasswordErrors,
   GetInvite,
   MeSchema,
+  ResetPasswordRequest,
   SetPasswordRequest,
   SettingsSchema,
   UpdateMeRequest,
+  VerifyResetCodeResponse,
 } from '../models/index';
 
 export interface AcceptInviteRequest {
@@ -35,12 +38,30 @@ export interface GetInviteCommonRequest {
     uuid: string;
 }
 
+export interface ResetPasswordOperationRequest {
+    code: string;
+    ResetPasswordRequest?: ResetPasswordRequest;
+}
+
+export interface ResetPasswordByUuidRequest {
+    uuid: string;
+    ResetPasswordRequest?: ResetPasswordRequest;
+}
+
 export interface SetPasswordOperationRequest {
     SetPasswordRequest?: SetPasswordRequest;
 }
 
 export interface UpdateMeOperationRequest {
     UpdateMeRequest?: UpdateMeRequest;
+}
+
+export interface VerifyCodeRequest {
+    code: string;
+}
+
+export interface VerifyUuidRequest {
+    uuid: string;
 }
 
 /**
@@ -298,6 +319,74 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
+    async resetPasswordRaw(requestParameters: ResetPasswordOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndResetPasswordError>> {
+        if (requestParameters['code'] == null) {
+            throw new runtime.RequiredError(
+                'code',
+                'Required parameter "code" was null or undefined when calling resetPassword().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/credential-reset/{code}/reset`.replace(`{${"code"}}`, encodeURIComponent(String(requestParameters['code']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['ResetPasswordRequest'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async resetPassword(requestParameters: ResetPasswordOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndResetPasswordError> {
+        const response = await this.resetPasswordRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async resetPasswordByUuidRaw(requestParameters: ResetPasswordByUuidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndResetPasswordError>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling resetPasswordByUuid().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/frontend/credential-reset/by-uuid/{uuid}/reset`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters['ResetPasswordRequest'],
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async resetPasswordByUuid(requestParameters: ResetPasswordByUuidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<FormResultForNullAndResetPasswordError> {
+        const response = await this.resetPasswordByUuidRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
     async setPasswordRaw(requestParameters: SetPasswordOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<FormResultForNullAndSetPasswordErrors>> {
         const queryParameters: any = {};
 
@@ -347,6 +436,68 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async updateMe(requestParameters: UpdateMeOperationRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.updateMeRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     */
+    async verifyCodeRaw(requestParameters: VerifyCodeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<VerifyResetCodeResponse>> {
+        if (requestParameters['code'] == null) {
+            throw new runtime.RequiredError(
+                'code',
+                'Required parameter "code" was null or undefined when calling verifyCode().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/credential-reset/{code}`.replace(`{${"code"}}`, encodeURIComponent(String(requestParameters['code']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async verifyCode(requestParameters: VerifyCodeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<VerifyResetCodeResponse> {
+        const response = await this.verifyCodeRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async verifyUuidRaw(requestParameters: VerifyUuidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<VerifyResetCodeResponse>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling verifyUuid().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/credential-reset/by-uuid/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async verifyUuid(requestParameters: VerifyUuidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<VerifyResetCodeResponse> {
+        const response = await this.verifyUuidRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
 }

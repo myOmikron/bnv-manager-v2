@@ -16,7 +16,7 @@ export type AdminResetCredentialsDialogProps = DialogProps & {
 };
 
 /**
- * Dialog to associate a domain
+ * Dialog to reset credentials for an account
  */
 export default function AdminResetCredentialsDialog(props: AdminResetCredentialsDialogProps) {
     const [t] = useTranslation("dialog-reset-credentials");
@@ -39,23 +39,53 @@ export default function AdminResetCredentialsDialog(props: AdminResetCredentials
         <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>{t("heading.reset-credentials-for", { name: props.account.display_name })}</DialogTitle>
             <DialogBody>
-                <div className={"grid grid-cols-[auto_1fr] gap-12"}>
-                    <Text className={"!text-black dark:!text-white"}>{t("label.expires-at")}</Text>
-                    <Text>{new Date(reset?.expires_at ?? "").toLocaleDateString("de")}</Text>
+                <div className={"grid grid-cols-[auto_1fr] gap-x-12 gap-y-4"}>
+                    <Text className={"!text-black dark:!text-white"}>{t("label.code")}</Text>
+                    <Text className={"font-mono text-2xl tracking-widest !text-black dark:!text-white"}>
+                        {reset?.code ?? "------"}
+                    </Text>
+                    <Text className={"!text-black dark:!text-white"}>{t("label.code-expires-at")}</Text>
+                    <Text>
+                        {reset?.code_expires_at
+                            ? new Date(reset.code_expires_at).toLocaleTimeString("de", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                              })
+                            : "-"}
+                    </Text>
+                    <Text className={"!text-black dark:!text-white"}>{t("label.link-expires-at")}</Text>
+                    <Text>
+                        {reset?.link_expires_at
+                            ? new Date(reset.link_expires_at).toLocaleDateString("de", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                              })
+                            : "-"}
+                    </Text>
                 </div>
             </DialogBody>
             <DialogActions>
                 <Button plain={true} onClick={props.onClose}>
                     {tg("button.cancel")}
                 </Button>
-                <PrimaryButton
+                <Button
                     onClick={async () => {
                         reset && (await navigator.clipboard.writeText(reset.link));
                         toast.success(tg("toast.copied-to-clipboard"));
-                        props.onClose();
                     }}
                 >
                     {t("button.copy-link")}
+                </Button>
+                <PrimaryButton
+                    onClick={async () => {
+                        reset && (await navigator.clipboard.writeText(reset.code));
+                        toast.success(tg("toast.copied-to-clipboard"));
+                    }}
+                >
+                    {t("button.copy-code")}
                 </PrimaryButton>
             </DialogActions>
         </Dialog>

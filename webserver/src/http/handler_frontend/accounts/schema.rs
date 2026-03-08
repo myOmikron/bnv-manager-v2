@@ -42,18 +42,25 @@ pub struct SimpleMemberAccountSchema {
 pub struct CredentialResetSchema {
     /// Identifier
     pub uuid: CredentialResetUuid,
-    /// Point in time the reset expires
-    pub expires_at: SchemaDateTime,
+    /// The 6-digit code for the reset
+    pub code: String,
+    /// Point in time the code expires
+    pub code_expires_at: SchemaDateTime,
+    /// Point in time the link expires
+    pub link_expires_at: SchemaDateTime,
     /// The link to give to the user
     pub link: Url,
 }
 
 impl From<CredentialReset> for CredentialResetSchema {
     fn from(value: CredentialReset) -> Self {
+        let link = value.link();
         Self {
             uuid: value.uuid,
-            expires_at: SchemaDateTime(value.expires_at),
-            link: value.link(),
+            code: value.code,
+            code_expires_at: SchemaDateTime(value.code_expires_at),
+            link_expires_at: SchemaDateTime(value.link_expires_at),
+            link,
         }
     }
 }

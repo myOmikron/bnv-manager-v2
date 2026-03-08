@@ -1,11 +1,11 @@
 [Migration]
-Hash = "14558339572588934403"
+Hash = "13940550818073691838"
 Initial = true
 Replaces = []
 
 [[Migration.Operations]]
 Type = "CreateModel"
-Name = "Domain"
+Name = "CredentialResetSuperadmin"
 
 [[Migration.Operations.Fields]]
 Name = "uuid"
@@ -15,55 +15,160 @@ Type = "uuid"
 Type = "primary_key"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
-Line = 12
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "domain"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "unique"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
+File = "webserver/src/models/credential_reset/db.rs"
 Line = 14
 Column = 9
 
 [[Migration.Operations.Fields]]
-Name = "is_primary"
-Type = "boolean"
+Name = "code"
+Type = "varchar"
 
 [[Migration.Operations.Fields.Annotations]]
-Type = "default_value"
-Value = "false"
+Type = "max_length"
+Value = 6
 
 [[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
-Line = 17
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 18
 Column = 9
 
 [[Migration.Operations.Fields]]
-Name = "mailboxes_left"
-Type = "int64"
+Name = "code_expires_at"
+Type = "datetime"
 
 [[Migration.Operations.Fields.Annotations]]
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
+File = "webserver/src/models/credential_reset/db.rs"
 Line = 19
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "link_expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 20
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "CredentialResetClubAdmin"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 27
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "code"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 6
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 31
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "code_expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 32
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "link_expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 33
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "CredentialResetClubAccount"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 40
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "code"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 6
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 44
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "code_expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 45
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "link_expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 46
 Column = 9
 
 [[Migration.Operations]]
@@ -136,6 +241,315 @@ Type = "not_null"
 [Migration.Operations.Fields.SourceDefinedAt]
 File = "webserver/src/models/invite/db.rs"
 Line = 25
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "OidcClient"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 14
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "name"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 15
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "client_secret"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 64
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 16
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "redirect_url"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 1024
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 18
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "OidcAuthenticationToken"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 25
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "redirect_url"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 1024
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 29
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "code"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 64
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "unique"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 31
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "expires_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 32
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "nonce"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 35
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "scopes"
+Type = "binary"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 36
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "code_challenge"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 128
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 38
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "Club"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/club/db.rs"
+Line = 16
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "name"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/club/db.rs"
+Line = 17
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "use_xauth"
+Type = "boolean"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "default_value"
+Value = "false"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/club/db.rs"
+Line = 23
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "modified_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "auto_create_time"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "auto_update_time"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/club/db.rs"
+Line = 26
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "created_at"
+Type = "datetime"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "auto_create_time"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/club/db.rs"
+Line = 28
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateModel"
+Name = "Domain"
+
+[[Migration.Operations.Fields]]
+Name = "uuid"
+Type = "uuid"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "primary_key"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 12
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "domain"
+Type = "varchar"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "max_length"
+Value = 255
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "unique"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 14
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "is_primary"
+Type = "boolean"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "default_value"
+Value = "false"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 17
+Column = 9
+
+[[Migration.Operations.Fields]]
+Name = "mailboxes_left"
+Type = "int64"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 19
 Column = 9
 
 [[Migration.Operations]]
@@ -368,6 +782,22 @@ Line = 58
 Column = 9
 
 [[Migration.Operations.Fields]]
+Name = "has_app_password"
+Type = "boolean"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "default_value"
+Value = "false"
+
+[[Migration.Operations.Fields.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Fields.SourceDefinedAt]
+File = "webserver/src/models/account/db.rs"
+Line = 62
+Column = 9
+
+[[Migration.Operations.Fields]]
 Name = "modified_at"
 Type = "datetime"
 
@@ -382,7 +812,7 @@ Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
 File = "webserver/src/models/account/db.rs"
-Line = 64
+Line = 68
 Column = 9
 
 [[Migration.Operations.Fields]]
@@ -397,7 +827,7 @@ Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
 File = "webserver/src/models/account/db.rs"
-Line = 66
+Line = 70
 Column = 9
 
 [[Migration.Operations]]
@@ -417,224 +847,7 @@ Type = "primary_key"
 
 [Migration.Operations.Fields.SourceDefinedAt]
 File = "webserver/src/models/account/db.rs"
-Line = 73
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "OidcClient"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 14
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "name"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 15
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "client_secret"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 64
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 16
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "redirect_url"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 1024
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 18
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "OidcAuthenticationToken"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 25
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "redirect_url"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 1024
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 29
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "code"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 64
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "unique"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 31
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "expires_at"
-Type = "datetime"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 32
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "nonce"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 35
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "scopes"
-Type = "binary"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 36
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateModel"
-Name = "Club"
-
-[[Migration.Operations.Fields]]
-Name = "uuid"
-Type = "uuid"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "primary_key"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/club/db.rs"
-Line = 16
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "name"
-Type = "varchar"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "max_length"
-Value = 255
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/club/db.rs"
-Line = 17
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "modified_at"
-Type = "datetime"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "auto_create_time"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "auto_update_time"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/club/db.rs"
-Line = 20
-Column = 9
-
-[[Migration.Operations.Fields]]
-Name = "created_at"
-Type = "datetime"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "auto_create_time"
-
-[[Migration.Operations.Fields.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Fields.SourceDefinedAt]
-File = "webserver/src/models/club/db.rs"
-Line = 22
+Line = 77
 Column = 9
 
 [[Migration.Operations]]
@@ -653,7 +866,7 @@ Value = 255
 Type = "primary_key"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "/usr/local/cargo/git/checkouts/galvyn-f52542b4eef301aa/4ad3aad/galvyn-core/src/session.rs"
+File = "/usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/galvyn-core-0.2.1/src/session.rs"
 Line = 40
 Column = 5
 
@@ -665,7 +878,7 @@ Type = "datetime"
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "/usr/local/cargo/git/checkouts/galvyn-f52542b4eef301aa/4ad3aad/galvyn-core/src/session.rs"
+File = "/usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/galvyn-core-0.2.1/src/session.rs"
 Line = 41
 Column = 5
 
@@ -677,35 +890,113 @@ Type = "binary"
 Type = "not_null"
 
 [Migration.Operations.Fields.SourceDefinedAt]
-File = "/usr/local/cargo/git/checkouts/galvyn-f52542b4eef301aa/4ad3aad/galvyn-core/src/session.rs"
+File = "/usr/local/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/galvyn-core-0.2.1/src/session.rs"
 Line = 42
 Column = 5
 
 [[Migration.Operations]]
 Type = "CreateField"
-Model = "Domain"
+Model = "OidcAuthenticationToken"
 
 [Migration.Operations.Field]
-Name = "club"
+Name = "client"
 Type = "uuid"
 
 [[Migration.Operations.Field.Annotations]]
 Type = "foreign_key"
 
 [Migration.Operations.Field.Annotations.Value]
-TableName = "Club"
+TableName = "OidcClient"
 ColumnName = "uuid"
-OnDelete = "Restrict"
-OnUpdate = "Restrict"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/domain/db.rs"
-Line = 15
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 27
 Column = 9
 
 [[Migration.Operations]]
 Type = "CreateField"
-Model = "ClubAdminAccount"
+Model = "OidcAuthenticationToken"
+
+[Migration.Operations.Field]
+Name = "account"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "ClubAccount"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/oidc_provider/db.rs"
+Line = 34
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "CredentialResetClubAdmin"
+
+[Migration.Operations.Field]
+Name = "account"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "ClubAdminAccount"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 29
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "CredentialResetClubAccount"
+
+[Migration.Operations.Field]
+Name = "account"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "ClubAccount"
+ColumnName = "uuid"
+OnDelete = "Cascade"
+OnUpdate = "Cascade"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "not_null"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 42
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "ClubAccount"
 
 [Migration.Operations.Field]
 Name = "username"
@@ -732,12 +1023,12 @@ Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
 File = "webserver/src/models/account/db.rs"
-Line = 32
+Line = 53
 Column = 9
 
 [[Migration.Operations]]
 Type = "CreateField"
-Model = "ClubAdminAccount"
+Model = "ClubAccount"
 
 [Migration.Operations.Field]
 Name = "club"
@@ -757,7 +1048,7 @@ Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
 File = "webserver/src/models/account/db.rs"
-Line = 38
+Line = 65
 Column = 9
 
 [[Migration.Operations]]
@@ -848,7 +1139,7 @@ Column = 9
 
 [[Migration.Operations]]
 Type = "CreateField"
-Model = "ClubAccount"
+Model = "ClubAdminAccount"
 
 [Migration.Operations.Field]
 Name = "username"
@@ -875,12 +1166,12 @@ Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
 File = "webserver/src/models/account/db.rs"
-Line = 53
+Line = 32
 Column = 9
 
 [[Migration.Operations]]
 Type = "CreateField"
-Model = "ClubAccount"
+Model = "ClubAdminAccount"
 
 [Migration.Operations.Field]
 Name = "club"
@@ -900,37 +1191,12 @@ Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
 File = "webserver/src/models/account/db.rs"
-Line = 61
+Line = 38
 Column = 9
 
 [[Migration.Operations]]
 Type = "CreateField"
-Model = "OidcAuthenticationToken"
-
-[Migration.Operations.Field]
-Name = "client"
-Type = "uuid"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "foreign_key"
-
-[Migration.Operations.Field.Annotations.Value]
-TableName = "OidcClient"
-ColumnName = "uuid"
-OnDelete = "Cascade"
-OnUpdate = "Cascade"
-
-[[Migration.Operations.Field.Annotations]]
-Type = "not_null"
-
-[Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 27
-Column = 9
-
-[[Migration.Operations]]
-Type = "CreateField"
-Model = "OidcAuthenticationToken"
+Model = "CredentialResetSuperadmin"
 
 [Migration.Operations.Field]
 Name = "account"
@@ -940,7 +1206,7 @@ Type = "uuid"
 Type = "foreign_key"
 
 [Migration.Operations.Field.Annotations.Value]
-TableName = "ClubAccount"
+TableName = "AdministrativeAccount"
 ColumnName = "uuid"
 OnDelete = "Cascade"
 OnUpdate = "Cascade"
@@ -949,6 +1215,28 @@ OnUpdate = "Cascade"
 Type = "not_null"
 
 [Migration.Operations.Field.SourceDefinedAt]
-File = "webserver/src/models/oidc_provider/db.rs"
-Line = 34
+File = "webserver/src/models/credential_reset/db.rs"
+Line = 16
+Column = 9
+
+[[Migration.Operations]]
+Type = "CreateField"
+Model = "Domain"
+
+[Migration.Operations.Field]
+Name = "club"
+Type = "uuid"
+
+[[Migration.Operations.Field.Annotations]]
+Type = "foreign_key"
+
+[Migration.Operations.Field.Annotations.Value]
+TableName = "Club"
+ColumnName = "uuid"
+OnDelete = "Restrict"
+OnUpdate = "Restrict"
+
+[Migration.Operations.Field.SourceDefinedAt]
+File = "webserver/src/models/domain/db.rs"
+Line = 15
 Column = 9

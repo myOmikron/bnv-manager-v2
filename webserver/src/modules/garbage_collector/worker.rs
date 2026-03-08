@@ -5,6 +5,7 @@ use galvyn::rorm::Database;
 use tracing::Instrument;
 use tracing::error;
 
+use crate::models::credential_reset::CredentialReset;
 use crate::models::invite::Invite;
 use crate::utils::worker::Worker;
 
@@ -33,6 +34,7 @@ impl GarbageCollectorWorker {
         let mut tx = Database::global().start_transaction().await?;
 
         Invite::clear_expired(&mut tx).await?;
+        CredentialReset::clear_expired(&mut tx).await?;
 
         tx.commit().await?;
 

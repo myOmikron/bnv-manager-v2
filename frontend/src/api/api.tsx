@@ -7,6 +7,7 @@ import {
     RequiredError,
     UpdateMeRequest,
     SetPasswordRequest,
+    ResetPasswordRequest,
 } from "src/api/generated/common";
 import { ClubAdminApi } from "src/api/api_club_admins";
 import { AdminApi } from "src/api/api_admin";
@@ -31,6 +32,14 @@ export const Api = {
                         AcceptInvite: req,
                     }),
                 ),
+        },
+        credentialReset: {
+            verify: (code: string) => handleError(commonApi.verifyCode({ code })),
+            reset: (code: string, req: ResetPasswordRequest) =>
+                handleError(commonApi.resetPassword({ code, ResetPasswordRequest: req })),
+            verifyUuid: (uuid: UUID) => handleError(commonApi.verifyUuid({ uuid })),
+            resetByUuid: (uuid: UUID, req: ResetPasswordRequest) =>
+                handleError(commonApi.resetPasswordByUuid({ uuid, ResetPasswordRequest: req })),
         },
         me: {
             get: () => commonApi.getMe(),

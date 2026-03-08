@@ -189,6 +189,12 @@ export interface CreateOidcProvider {
  */
 export interface CredentialResetSchema {
     /**
+     * The 6-digit code for the reset
+     * @type {string}
+     * @memberof CredentialResetSchema
+     */
+    code: string;
+    /**
      * Point in time the reset expires
      * @type {string}
      * @memberof CredentialResetSchema
