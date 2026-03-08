@@ -5,7 +5,7 @@ services:
     shm_size: 128mb
     networks: [ net-bnv-manager ]
     volumes:
-      - postgres-vol:/var/lib/postgresql/data/
+      - postgres-vol:/var/lib/postgresql/18/docker
     env_file: [ .env ]
     image: bnv-manager-v2-dev/postgres:${DEV_TAG}
     build:
