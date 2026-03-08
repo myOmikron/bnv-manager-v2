@@ -14,6 +14,7 @@ use galvyn::rorm;
 use galvyn::rorm::Database;
 use galvyn::rorm::DatabaseConfiguration;
 use galvyn::rorm::fields::types::MaxStr;
+use jsonwebtoken::crypto::rust_crypto::DEFAULT_PROVIDER;
 use time::Duration;
 use time::OffsetDateTime;
 use tracing_subscriber::EnvFilter;
@@ -31,7 +32,6 @@ use crate::modules::mailcow::Mailcow;
 use crate::modules::oidc::Oidc;
 use crate::tracing::opentelemetry_layer;
 use crate::utils::links::Link;
-
 mod cli;
 pub mod config;
 pub mod http;
@@ -65,6 +65,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         return Err("Failed to load configuration".into());
     }
+
+    DEFAULT_PROVIDER
+        .install_default()
+        .map_err(|_| "Failed to initialize crypto provider")?;
 
     tracing_subscriber::registry()
         .with(EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("DEBUG")))
