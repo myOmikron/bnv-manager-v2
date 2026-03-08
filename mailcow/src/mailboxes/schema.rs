@@ -17,9 +17,12 @@ pub struct CreateAppPasswordRequest {
     pub app_passwd2: String,
 }
 
+/// Options for get app password responses
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum GetAppPasswordsResponse {
+    /// List of app passwords
     List(Vec<GetAppPasswordSingleResponse>),
+    /// Empty response
     Empty(HashMap<String, String>),
 }
 
