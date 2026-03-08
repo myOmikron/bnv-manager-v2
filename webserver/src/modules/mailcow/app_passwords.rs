@@ -2,17 +2,19 @@ use std::time::Duration;
 
 use anyhow::anyhow;
 use galvyn::core::Module;
-use galvyn::rorm::Database;
 use galvyn::rorm::fields::types::MaxStr;
-use mailcow::MailcowClient;
+use galvyn::rorm::Database;
 use mailcow::mailboxes::schema::CreateAppPasswordRequest;
-use tracing::Instrument;
+use mailcow::MailcowClient;
 use tracing::error;
 use tracing::info;
 use tracing::info_span;
+use tracing::Instrument;
 
 use crate::models::account::ClubAccount;
 use crate::utils::worker::Worker;
+
+const APP_PASSWORD_NAME: &str = "nicht_editieren_bnv_verwaltet";
 
 pub struct AppPasswordInitializer {
     /// Mailcow client
@@ -45,11 +47,22 @@ impl AppPasswordInitializer {
             // before we try to initialize app passwords
             tokio::time::sleep(Duration::from_secs(5)).await;
 
+            let existing = self.sdk.get_app_passwords(self.mailbox.to_string()).await?;
+
+            let mut to_delete = vec![];
+            for existing_app_password in existing {
+                if existing_app_password.app_name == APP_PASSWORD_NAME {
+                    to_delete.push(existing_app_password.id);
+                }
+            }
+
+            self.sdk.delete_app_passwords(to_delete).await?;
+
             let res = self
                 .sdk
                 .create_app_password(CreateAppPasswordRequest {
                     username: self.mailbox.to_string().clone(),
-                    app_name: "manager".to_string(),
+                    app_name: APP_PASSWORD_NAME.to_string(),
                     app_passwd: hashed_pw.clone(),
                     app_passwd2: hashed_pw.clone(),
                 })
