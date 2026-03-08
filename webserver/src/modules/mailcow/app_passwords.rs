@@ -2,14 +2,14 @@ use std::time::Duration;
 
 use anyhow::anyhow;
 use galvyn::core::Module;
-use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::Database;
-use mailcow::mailboxes::schema::CreateAppPasswordRequest;
+use galvyn::rorm::fields::types::MaxStr;
 use mailcow::MailcowClient;
+use mailcow::mailboxes::schema::CreateAppPasswordRequest;
+use tracing::Instrument;
 use tracing::error;
 use tracing::info;
 use tracing::info_span;
-use tracing::Instrument;
 
 use crate::models::account::ClubAccount;
 use crate::utils::worker::Worker;
