@@ -19,6 +19,7 @@ pub struct CreateAppPasswordRequest {
 
 /// Options for get app password responses
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum GetAppPasswordsResponse {
     /// List of app passwords
     List(Vec<GetAppPasswordSingleResponse>),
