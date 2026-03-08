@@ -5,7 +5,7 @@ services:
     shm_size: 128mb
     networks: [ net-bnv-manager ]
     volumes:
-      - postgres-vol:/var/lib/postgresql/18/docker
+      - postgres-vol:/var/lib/postgresql
     env_file: [ .env ]
     image: ghcr.io/myomikron/bnv-manager-v2/postgres:${PROD_TAG:-latest}
     build:
