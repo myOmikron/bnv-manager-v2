@@ -15,7 +15,11 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Command {
     /// Start the server
-    Start,
+    Start {
+        /// Do not try to migrate
+        #[clap(short, long, default_value_t = true)]
+        without_migrations: bool,
+    },
     /// Run the migrations on the database
     Migrate {
         /// The directory where the migration files are located in

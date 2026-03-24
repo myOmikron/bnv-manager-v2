@@ -8,7 +8,7 @@ use std::sync::LazyLock;
 use galvyn::core::stuff::env::EnvError;
 use galvyn::core::stuff::env::EnvVar;
 use galvyn::rorm::DatabaseDriver;
-use webauthn_rs::prelude::Url;
+use url::Url;
 
 /// Load all environment variables declared in this module
 ///

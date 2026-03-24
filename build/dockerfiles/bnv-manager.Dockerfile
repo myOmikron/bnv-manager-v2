@@ -1,13 +1,17 @@
-ARG RUST_VERSION=1.89.0
+ARG RUST_VERSION=1.93.1
 
-FROM rust:${RUST_VERSION}-slim-bookworm AS buildrust
+FROM rust:${RUST_VERSION}-slim-trixie AS buildrust
 
 WORKDIR /app
 
 RUN <<EOF
+set -e
 apt-get update
-apt-get install -y openssl libssl-dev pkg-config
+apt-get install -y --no-install-recommends musl-tools
+rm -rf /var/lib/apt/lists/*
 EOF
+
+RUN rustup target add x86_64-unknown-linux-musl
 
 RUN --mount=type=bind,source=mailcow/,target=mailcow/ \
     --mount=type=bind,source=webserver/,target=webserver/ \
@@ -19,44 +23,18 @@ RUN --mount=type=bind,source=mailcow/,target=mailcow/ \
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     <<EOF
 set -e
-cargo build --locked --release -p webserver
-cp ./target/release/webserver /bin/server
+cargo build --locked --release --target x86_64-unknown-linux-musl -p webserver
+cp ./target/x86_64-unknown-linux-musl/release/webserver /bin/server
 EOF
 
 
-FROM debian:bookworm-slim AS final
+FROM dhi.io/alpine-base:3.23 AS final
 LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
-
-RUN <<EOF
-apt-get update
-apt-get install -y libssl-dev ca-certificates
-EOF
-
-# Copy startup script
-COPY ./build/bnv-manager/startup.sh /
-RUN chmod +x /startup.sh
 
 # Copy the executable from the "build" stage.
 COPY --from=buildrust /bin/server /bin/
-
-# Create a non-privileged user that the app will run under.
-# See https://docs.docker.com/develop/develop-images/dockerfile_best-practices/   #user
-ARG UID=1000
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    appuser
-
-RUN mkdir /var/lib/bnv-manager && chown -R $UID /var/lib/bnv-manager
-
 # Copy migrations
 COPY ./webserver/migrations /migrations
 
-USER appuser
-
 # What the container should run when it is started.
-CMD ["/startup.sh"]
+CMD ["/bin/server", "start"]

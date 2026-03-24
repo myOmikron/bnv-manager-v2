@@ -79,7 +79,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
     match cli.command {
-        Command::Start => {
+        Command::Start { without_migrations } => {
+            if !without_migrations {
+                rorm::cli::migrate::run_migrate_custom(
+                    rorm::config::DatabaseConfig {
+                        driver: DB.clone(),
+                        last_migration_table_name: None,
+                    },
+                    "/migrations".to_string(),
+                    false,
+                    None,
+                )
+                .await?;
+            }
+
             if let Err(err) = start().await {
                 error!("{err}");
                 return Err(err);
