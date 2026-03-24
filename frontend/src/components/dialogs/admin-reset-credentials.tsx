@@ -43,32 +43,47 @@ export default function AdminResetCredentialsDialog(props: AdminResetCredentials
         <Dialog open={props.open} onClose={props.onClose}>
             <DialogTitle>{t("heading.reset-credentials-for", { name: props.account.display_name })}</DialogTitle>
             <DialogBody>
-                <div className={"grid grid-cols-[auto_1fr] gap-x-12 gap-y-4"}>
-                    <Text className={"!text-black dark:!text-white"}>{t("label.code")}</Text>
-                    <Text className={"font-mono text-2xl tracking-widest !text-black dark:!text-white"}>
-                        {reset?.code ?? "------"}
-                    </Text>
-                    <Text className={"!text-black dark:!text-white"}>{t("label.code-expires-at")}</Text>
-                    <Text>
-                        {reset?.code_expires_at
-                            ? new Date(reset.code_expires_at).toLocaleTimeString("de", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                              })
-                            : "-"}
-                    </Text>
-                    <Text className={"!text-black dark:!text-white"}>{t("label.link-expires-at")}</Text>
-                    <Text>
-                        {reset?.link_expires_at
-                            ? new Date(reset.link_expires_at).toLocaleDateString("de", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                              })
-                            : "-"}
-                    </Text>
+                <div className={"flex flex-col gap-6"}>
+                    <Text>{t("description.intro")}</Text>
+
+                    <div className={"flex flex-col gap-2"}>
+                        <Text className={"font-medium !text-black dark:!text-white"}>{t("heading.option-code")}</Text>
+                        <Text>{t("description.code")}</Text>
+                        <div className={"grid grid-cols-[auto_1fr] gap-x-8 gap-y-2"}>
+                            <Text className={"!text-black dark:!text-white"}>{t("label.code")}</Text>
+                            <Text className={"font-mono text-2xl tracking-widest !text-black dark:!text-white"}>
+                                {reset?.code ?? "------"}
+                            </Text>
+                            <Text className={"!text-black dark:!text-white"}>{t("label.code-expires-at")}</Text>
+                            <Text>
+                                {reset?.code_expires_at
+                                    ? new Date(reset.code_expires_at).toLocaleTimeString("de", {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                      })
+                                    : "-"}
+                            </Text>
+                        </div>
+                    </div>
+
+                    <div className={"flex flex-col gap-2"}>
+                        <Text className={"font-medium !text-black dark:!text-white"}>{t("heading.option-link")}</Text>
+                        <Text>{t("description.link")}</Text>
+                        <div className={"grid grid-cols-[auto_1fr] gap-x-8 gap-y-2"}>
+                            <Text className={"!text-black dark:!text-white"}>{t("label.link-expires-at")}</Text>
+                            <Text>
+                                {reset?.link_expires_at
+                                    ? new Date(reset.link_expires_at).toLocaleDateString("de", {
+                                          day: "2-digit",
+                                          month: "2-digit",
+                                          year: "numeric",
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                      })
+                                    : "-"}
+                            </Text>
+                        </div>
+                    </div>
                 </div>
             </DialogBody>
             <DialogActions>
