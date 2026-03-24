@@ -13,6 +13,8 @@ import { Text } from "src/components/base/text";
 export type AdminResetCredentialsDialogProps = DialogProps & {
     /** Account to reset */
     account: SimpleAccountSchema;
+    /** Optional custom reset function. Defaults to the admin API. */
+    resetFn?: (uuid: string) => Promise<CredentialResetSchema>;
 };
 
 /**
@@ -24,8 +26,10 @@ export default function AdminResetCredentialsDialog(props: AdminResetCredentials
 
     const [reset, setReset] = React.useState<CredentialResetSchema>();
 
+    const resetFn = props.resetFn ?? Api.admin.accounts.resetCredentials;
+
     const createReset = async () => {
-        const credentialReset = await Api.admin.accounts.resetCredentials(props.account.uuid);
+        const credentialReset = await resetFn(props.account.uuid);
         setReset(credentialReset);
     };
 

@@ -15,6 +15,7 @@ import {
     DropdownSection,
 } from "src/components/base/dropdown";
 import { ArrowDownTrayIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { KeyIcon } from "@heroicons/react/24/outline";
 import { Button } from "src/components/base/button";
 import { Field, FieldGroup, Fieldset, Label } from "src/components/base/fieldset";
 import { Input } from "src/components/base/input";
@@ -22,6 +23,8 @@ import { downloadFile } from "src/utils/downloader";
 import Form from "src/components/base/form";
 import { useForm } from "@tanstack/react-form";
 import DeleteMemberDialog from "src/components/dialogs/ca-delete-member";
+import AdminResetCredentialsDialog from "src/components/dialogs/admin-reset-credentials";
+import { SimpleMemberAccountSchema } from "src/api/generated/club-admin";
 
 /**
  * The properties for {@link ClubMembers}
@@ -42,6 +45,7 @@ export default function ClubMembers(props: ClubMembersProps) {
     const router = useRouter();
 
     const [openDeleteMemberDialog, setOpenDeleteMemberDialog] = React.useState<UUID>();
+    const [openResetCredentials, setOpenResetCredentials] = React.useState<SimpleMemberAccountSchema>();
 
     const form = useForm({
         defaultValues: {
@@ -154,6 +158,12 @@ export default function ClubMembers(props: ClubMembersProps) {
                                             </DropdownButton>
                                             <DropdownMenu anchor={"bottom end"}>
                                                 <DropdownSection>
+                                                    <DropdownItem onClick={() => setOpenResetCredentials(item)}>
+                                                        <KeyIcon />
+                                                        <DropdownLabel>{t("button.reset-credentials")}</DropdownLabel>
+                                                    </DropdownItem>
+                                                </DropdownSection>
+                                                <DropdownSection>
                                                     <DropdownHeading>{tg("heading.danger-zone")}</DropdownHeading>
                                                     <DropdownItem onClick={() => setOpenDeleteMemberDialog(item.uuid)}>
                                                         <TrashIcon />
@@ -189,6 +199,15 @@ export default function ClubMembers(props: ClubMembersProps) {
                     open={!!openDeleteMemberDialog}
                     club_uuid={params.clubId}
                     member_uuid={openDeleteMemberDialog ?? ""}
+                />
+            </Suspense>
+
+            <Suspense>
+                <AdminResetCredentialsDialog
+                    open={!!openResetCredentials}
+                    onClose={() => setOpenResetCredentials(undefined)}
+                    account={openResetCredentials ?? { uuid: "", display_name: "", username: "" }}
+                    resetFn={(uuid) => Api.clubAdmins.club.resetCredentials(params.clubId, uuid)}
                 />
             </Suspense>
         </div>

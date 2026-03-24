@@ -2,6 +2,7 @@
     "button": {
         "copy-invite-link": "Copy invite link",
         "create-member": "Create member",
+        "reset-credentials": "Reset credentials",
         "retract-invite": "Retract invite"
     },
     "heading": {

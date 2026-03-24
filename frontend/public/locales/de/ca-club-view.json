@@ -2,6 +2,7 @@
     "button": {
         "copy-invite-link": "Einladungslink kopieren",
         "create-member": "Mitglied anlegen",
+        "reset-credentials": "Zugangsdaten zurücksetzen",
         "retract-invite": "Einladung widerrufen"
     },
     "heading": {
