@@ -75,6 +75,19 @@ pub struct UnassociateDomainRequest {
     pub domain: DomainUuid,
 }
 
+/// Storage statistics for a single mailbox
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct MailboxStatsSchema {
+    /// E-Mail address of the mailbox
+    pub email: String,
+    /// Used quota in bytes
+    pub quota_used: u64,
+    /// Quota limit in bytes
+    pub quota: u64,
+    /// Number of messages
+    pub messages: u64,
+}
+
 impl From<Club> for ClubSchema {
     fn from(value: Club) -> Self {
         Self {

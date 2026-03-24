@@ -16,7 +16,12 @@
         "created-at": "Created on",
         "domain": "Domain:",
         "members": "Members",
-        "pending-invites": "Pending Invites"
+        "email": "Email",
+        "mailbox-stats": "Mailbox Storage Usage",
+        "messages": "Messages",
+        "pending-invites": "Pending Invites",
+        "quota": "Quota",
+        "storage-used": "Used"
     },
     "label": {
         "delete-member": "Delete member",

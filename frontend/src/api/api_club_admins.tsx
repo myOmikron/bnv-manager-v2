@@ -19,6 +19,7 @@ export const ClubAdminApi = {
             handleError(clubAdminApi.deleteMember({ member_uuid, club_uuid })),
         resetCredentials: (club_uuid: UUID, member_uuid: UUID) =>
             handleError(clubAdminApi.resetCredentials({ club_uuid, uuid: member_uuid })),
+        getMailboxStats: (club_uuid: UUID) => handleError(clubAdminApi.getMailboxStats({ club_uuid })),
     },
     invites: {
         create: (club_uuid: UUID, req: CreateMemberInviteRequest) =>

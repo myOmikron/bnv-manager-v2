@@ -16,7 +16,12 @@
         "created-at": "Erstellt am",
         "domain": "Domain:",
         "members": "Mitglieder",
-        "pending-invites": "Offene Einladungen"
+        "email": "E-Mail",
+        "mailbox-stats": "Postfach-Speicherverbrauch",
+        "messages": "Nachrichten",
+        "pending-invites": "Offene Einladungen",
+        "quota": "Kontingent",
+        "storage-used": "Belegt"
     },
     "label": {
         "delete-member": "Mitglied l\u00f6schen",

@@ -17,6 +17,18 @@
         "invited": "Eingeladen",
         "members": "Mitglieder"
     },
+    "dashboard": {
+        "admins": "Administratoren",
+        "created-at": "Erstellt am",
+        "domain": "Domain:",
+        "email": "E-Mail",
+        "mailbox-stats": "Postfach-Speicherverbrauch",
+        "members": "Mitglieder",
+        "messages": "Nachrichten",
+        "pending-invites": "Offene Einladungen",
+        "quota": "Kontingent",
+        "storage-used": "Belegt"
+    },
     "label": {
         "display-name": "Anzeigename",
         "domain": "Domain",

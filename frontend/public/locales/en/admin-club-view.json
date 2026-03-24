@@ -17,6 +17,18 @@
         "invited": "Invited",
         "members": "Members"
     },
+    "dashboard": {
+        "admins": "Admins",
+        "created-at": "Created on",
+        "domain": "Domain:",
+        "email": "Email",
+        "mailbox-stats": "Mailbox Storage Usage",
+        "members": "Members",
+        "messages": "Messages",
+        "pending-invites": "Pending Invites",
+        "quota": "Quota",
+        "storage-used": "Used"
+    },
     "label": {
         "display-name": "Display name",
         "domain": "Domain",

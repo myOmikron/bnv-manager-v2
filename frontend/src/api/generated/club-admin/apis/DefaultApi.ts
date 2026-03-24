@@ -21,6 +21,7 @@ import type {
   CredentialResetSchema,
   FormResultForSingleLinkAndCreateInviteError,
   GetInvite,
+  MailboxStatsSchema,
   PageForSimpleMemberAccountSchema,
 } from '../models/index';
 
@@ -47,6 +48,10 @@ export interface GetClubMembersRequest {
     limit?: number;
     offset?: number;
     search?: string | null;
+}
+
+export interface GetMailboxStatsRequest {
+    club_uuid: string;
 }
 
 export interface ResetCredentialsRequest {
@@ -237,6 +242,37 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getClubMembers(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleMemberAccountSchema> {
         const response = await this.getClubMembersRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getMailboxStatsRaw(requestParameters: GetMailboxStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MailboxStatsSchema>>> {
+        if (requestParameters['club_uuid'] == null) {
+            throw new runtime.RequiredError(
+                'club_uuid',
+                'Required parameter "club_uuid" was null or undefined when calling getMailboxStats().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/club-admin/clubs/{club_uuid}/club/mailbox-stats`.replace(`{${"club_uuid"}}`, encodeURIComponent(String(requestParameters['club_uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getMailboxStats(requestParameters: GetMailboxStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<MailboxStatsSchema>> {
+        const response = await this.getMailboxStatsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

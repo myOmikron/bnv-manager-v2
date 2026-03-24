@@ -26,6 +26,7 @@ import type {
   FormResultForClubUuidAndCreateClubError,
   FormResultForSingleLinkAndCreateInviteError,
   GetInvite,
+  MailboxStatsSchema,
   OidcProvider,
   PageForSimpleAccountSchema,
   PageForSimpleMemberAccountSchema,
@@ -86,6 +87,10 @@ export interface GetClubMembersRequest {
     limit?: number;
     offset?: number;
     search?: string | null;
+}
+
+export interface GetMailboxStatsRequest {
+    uuid: string;
 }
 
 export interface ResetCredentialsRequest {
@@ -563,6 +568,37 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getClubs(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ClubSchema>> {
         const response = await this.getClubsRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getMailboxStatsRaw(requestParameters: GetMailboxStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MailboxStatsSchema>>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling getMailboxStats().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs/{uuid}/mailbox-stats`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getMailboxStats(requestParameters: GetMailboxStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<MailboxStatsSchema>> {
+        const response = await this.getMailboxStatsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

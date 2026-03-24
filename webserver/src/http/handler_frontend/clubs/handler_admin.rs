@@ -254,6 +254,41 @@ pub async fn get_club_member_invites(
     Ok(ApiJson(invites))
 }
 
+#[get("/{uuid}/mailbox-stats")]
+#[instrument(name = "Api::admin::get_mailbox_stats")]
+pub async fn get_mailbox_stats(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+) -> ApiResult<ApiJson<Vec<schema::MailboxStatsSchema>>> {
+    let club = Club::find_by_uuid(Database::global(), ClubUuid(uuid))
+        .await?
+        .ok_or(ApiError::bad_request("Club not found"))?;
+
+    let domain: String = club.primary_domain.into_inner();
+
+    let mut mailboxes = Mailcow::global()
+        .sdk
+        .get_all_mailboxes(&domain)
+        .await
+        .map_err(ApiError::map_server_error(
+            "Could not retrieve mailboxes from mailcow",
+        ))?;
+
+    mailboxes.sort_by(|a, b| b.quota_used.cmp(&a.quota_used));
+
+    let stats = mailboxes
+        .into_iter()
+        .take(10)
+        .map(|m| schema::MailboxStatsSchema {
+            email: m.username,
+            quota_used: m.quota_used,
+            quota: m.quota,
+            messages: m.messages,
+        })
+        .collect();
+
+    Ok(ApiJson(stats))
+}
+
 #[get("/{uuid}/domains")]
 #[instrument(name = "Api::admin::get_club_domains")]
 pub async fn get_club_domains(

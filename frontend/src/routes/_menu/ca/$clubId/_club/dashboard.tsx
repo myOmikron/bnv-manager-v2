@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Api } from "src/api/api";
 import { Text, Strong } from "src/components/base/text";
+import { EnvelopeOpenIcon } from "@heroicons/react/24/outline";
 import { UsersIcon, ShieldCheckIcon, EnvelopeIcon, GlobeAltIcon, CalendarIcon } from "@heroicons/react/20/solid";
 import CLUB_ADMIN_SINGLE_CLUB from "src/context/club-admin-single-club";
 
@@ -12,13 +13,24 @@ import CLUB_ADMIN_SINGLE_CLUB from "src/context/club-admin-single-club";
 export type ClubAdminDashboardProps = {};
 
 /**
+ * Format bytes into a human-readable string
+ */
+function formatBytes(bytes: number): string {
+    if (bytes === 0) return "0 B";
+    const units = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    const value = bytes / Math.pow(1024, i);
+    return `${value.toFixed(i > 0 ? 1 : 0)} ${units[i]}`;
+}
+
+/**
  * Dashboard for admins that show a single club
  */
 export default function ClubAdminDashboard(props: ClubAdminDashboardProps) {
     const [t] = useTranslation("ca-club-view");
 
     const ctx = useContext(CLUB_ADMIN_SINGLE_CLUB);
-    const pendingInvites = Route.useLoaderData();
+    const { pendingInvites, mailboxStats } = Route.useLoaderData();
 
     return (
         <div className={"flex flex-col gap-8"}>
@@ -59,6 +71,73 @@ export default function ClubAdminDashboard(props: ClubAdminDashboardProps) {
                     </Text>
                 </div>
             </div>
+
+            {mailboxStats.length > 0 && (
+                <div className={"flex flex-col gap-4"}>
+                    <Strong>{t("dashboard.mailbox-stats")}</Strong>
+                    <div className={"flex flex-col gap-3"}>
+                        {mailboxStats.map((m) => {
+                            const pct = m.quota > 0 ? Math.min((m.quota_used / m.quota) * 100, 100) : 0;
+                            const barColor =
+                                pct > 90 ? "bg-red-500" : pct > 70 ? "bg-amber-500" : "bg-blue-500";
+                            return (
+                                <div
+                                    key={m.email}
+                                    className={
+                                        "rounded-lg border border-zinc-200 p-4 dark:border-zinc-700"
+                                    }
+                                >
+                                    <div className={"flex items-center justify-between"}>
+                                        <div className={"flex items-center gap-2"}>
+                                            <EnvelopeOpenIcon className={"size-4 text-zinc-400"} />
+                                            <span
+                                                className={
+                                                    "text-sm font-medium text-zinc-950 dark:text-white"
+                                                }
+                                            >
+                                                {m.email}
+                                            </span>
+                                        </div>
+                                        <div className={"flex items-center gap-3"}>
+                                            <Text className={"!text-xs"}>
+                                                {m.messages} {t("dashboard.messages")}
+                                            </Text>
+                                            <span
+                                                className={
+                                                    "text-sm font-semibold text-zinc-950 dark:text-white"
+                                                }
+                                            >
+                                                {formatBytes(m.quota_used)}
+                                                {m.quota > 0 && (
+                                                    <span className={"font-normal text-zinc-400"}>
+                                                        {" "}
+                                                        / {formatBytes(m.quota)}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div
+                                        className={
+                                            "mt-3 h-3 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
+                                        }
+                                    >
+                                        <div
+                                            className={`h-full rounded-full transition-all ${barColor}`}
+                                            style={{ width: `${m.quota > 0 ? pct : 0}%` }}
+                                        />
+                                    </div>
+                                    {m.quota > 0 && (
+                                        <Text className={"mt-1 text-right !text-xs"}>
+                                            {pct.toFixed(0)}%
+                                        </Text>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -77,5 +156,11 @@ function StatCard(props: { icon: React.ReactNode; label: string; value: number }
 
 export const Route = createFileRoute("/_menu/ca/$clubId/_club/dashboard")({
     component: ClubAdminDashboard,
-    loader: async ({ params }) => await Api.clubAdmins.club.getInvitedMembers(params.clubId),
+    loader: async ({ params }) => {
+        const [pendingInvites, mailboxStats] = await Promise.all([
+            Api.clubAdmins.club.getInvitedMembers(params.clubId),
+            Api.clubAdmins.club.getMailboxStats(params.clubId),
+        ]);
+        return { pendingInvites, mailboxStats };
+    },
 });

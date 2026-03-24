@@ -251,6 +251,37 @@ export interface GetInvite {
     uuid: string;
 }
 /**
+ * Storage statistics for a single mailbox
+ * @export
+ * @interface MailboxStatsSchema
+ */
+export interface MailboxStatsSchema {
+    /**
+     * E-Mail address of the mailbox
+     * @type {string}
+     * @memberof MailboxStatsSchema
+     */
+    email: string;
+    /**
+     * Number of messages
+     * @type {number}
+     * @memberof MailboxStatsSchema
+     */
+    messages: number;
+    /**
+     * Quota limit in bytes
+     * @type {number}
+     * @memberof MailboxStatsSchema
+     */
+    quota: number;
+    /**
+     * Used quota in bytes
+     * @type {number}
+     * @memberof MailboxStatsSchema
+     */
+    quota_used: number;
+}
+/**
  * A page of items
  * @export
  * @interface PageForSimpleMemberAccountSchema
