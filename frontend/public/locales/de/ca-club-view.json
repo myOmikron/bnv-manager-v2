@@ -11,6 +11,13 @@
         "invited-members": "Eingeladene Mitglieder",
         "members": "Mitglieder"
     },
+    "dashboard": {
+        "admins": "Administratoren",
+        "created-at": "Erstellt am",
+        "domain": "Domain:",
+        "members": "Mitglieder",
+        "pending-invites": "Offene Einladungen"
+    },
     "label": {
         "delete-member": "Mitglied l\u00f6schen",
         "display-name": "Anzeigename",
