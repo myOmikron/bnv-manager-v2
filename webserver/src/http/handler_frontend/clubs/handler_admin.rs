@@ -332,13 +332,14 @@ pub async fn get_domain_stats(
         .map(|d| d.domain.into_inner())
         .collect();
 
-    let all_mailcow_domains = Mailcow::global()
-        .sdk
-        .get_all_domains()
-        .await
-        .map_err(ApiError::map_server_error(
-            "Could not retrieve domains from mailcow",
-        ))?;
+    let all_mailcow_domains =
+        Mailcow::global()
+            .sdk
+            .get_all_domains()
+            .await
+            .map_err(ApiError::map_server_error(
+                "Could not retrieve domains from mailcow",
+            ))?;
 
     let stats = all_mailcow_domains
         .into_iter()

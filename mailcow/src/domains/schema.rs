@@ -37,7 +37,9 @@ where
     use serde::de::Error;
     let value = serde_json::Value::deserialize(deserializer)?;
     match &value {
-        serde_json::Value::Number(n) => n.as_u64().ok_or_else(|| D::Error::custom("invalid number")),
+        serde_json::Value::Number(n) => {
+            n.as_u64().ok_or_else(|| D::Error::custom("invalid number"))
+        }
         serde_json::Value::String(s) => s.parse().map_err(D::Error::custom),
         _ => Err(D::Error::custom("expected number or string")),
     }
