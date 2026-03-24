@@ -16,7 +16,7 @@
         "centuries": "centuries",
         "days": "days",
         "english": "English",
-        "estimated-crack-time": "Estimated time for a brute force attack: {{time}}",
+        "estimated-crack-time": "Estimated time to crack: {{time}}",
         "german": "German",
         "hours": "hours",
         "minutes": "minutes",

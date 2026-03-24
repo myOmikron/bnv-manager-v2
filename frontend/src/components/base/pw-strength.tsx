@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { Text } from "src/components/base/text";
+import { InformationCircleIcon } from "@heroicons/react/20/solid";
 import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import * as zxcvbnEnPackage from "@zxcvbn-ts/language-en";
 import * as zxcvbnDePackage from "@zxcvbn-ts/language-de";
@@ -96,7 +96,16 @@ export default function PasswordStrength(props: PasswordStrengthProps) {
                     )}
                 />
             </div>
-            <Text>{tg("label.estimated-crack-time", { time: display })}</Text>
+            <div className={"group relative w-fit"}>
+                <InformationCircleIcon className={"size-4 text-zinc-400"} />
+                <div
+                    className={
+                        "pointer-events-none absolute bottom-full left-1/2 mb-1 hidden w-max -translate-x-1/2 rounded bg-zinc-800 px-3 py-2 text-xs text-white group-hover:block dark:bg-zinc-700"
+                    }
+                >
+                    {tg("label.estimated-crack-time", { time: display })}
+                </div>
+            </div>
         </div>
     );
 }
