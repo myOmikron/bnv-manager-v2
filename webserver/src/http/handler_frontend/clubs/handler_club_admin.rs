@@ -113,17 +113,13 @@ pub async fn get_dashboard_stats(
     tx.commit().await?;
 
     let primary_domain: String = club.primary_domain.into_inner();
-    let sdk = &Mailcow::global().sdk;
 
-    let (domain_result, mailboxes_result) = tokio::join!(
-        sdk.get_domain(&primary_domain),
-        sdk.get_all_mailboxes(&primary_domain),
-    );
+    let cached = Mailcow::global()
+        .get_cached_domain_stats(&primary_domain)
+        .await
+        .ok_or(ApiError::server_error("Domain stats not yet available"))?;
 
-    let domain = domain_result.map_err(ApiError::map_server_error(
-        "Could not retrieve domain from mailcow",
-    ))?;
-
+    let domain = cached.domain;
     let domain_quota = domain.def_quota_for_mbox;
 
     let domain_stats = vec![schema::DomainStatsSchema {
@@ -135,10 +131,8 @@ pub async fn get_dashboard_stats(
         messages: domain.msgs_total,
     }];
 
-    let mut mailboxes: Vec<_> = mailboxes_result
-        .map_err(ApiError::map_server_error(
-            "Could not retrieve mailboxes from mailcow",
-        ))?
+    let mut mailboxes: Vec<_> = cached
+        .mailboxes
         .into_iter()
         .filter(|m| member_emails.contains(&m.username))
         .collect();
