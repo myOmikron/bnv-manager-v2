@@ -91,7 +91,7 @@ export default function ClubMembers(props: ClubMembersProps) {
                             </Fieldset>
                         </Form>
 
-                        <div className={"flex gap-3"}>
+                        <div className={"flex gap-3 max-md:hidden"}>
                             <Button
                                 className={"h-fit w-fit items-center self-end"}
                                 outline={true}
