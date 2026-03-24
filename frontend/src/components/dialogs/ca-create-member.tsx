@@ -35,7 +35,7 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
             username: "",
             displayName: "",
             validDays: "7",
-            email: "",
+            emailLocal: "",
         },
         validators: {
             onSubmitAsync: async ({ value }) => {
@@ -43,7 +43,7 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
                     username: value.username,
                     display_name: value.displayName,
                     valid_days: parseInt(value.validDays),
-                    email: value.email,
+                    email: value.emailLocal + "@" + props.club.primary_domain,
                 });
 
                 if (res.result === "Err") {
@@ -91,28 +91,21 @@ export default function ClubAdminCreateMemberInviteDialog(props: ClubAdminCreate
                                 )}
                             </form.Field>
 
-                            <form.Field
-                                name={"email"}
-                                validators={{
-                                    onBlur: ({ value }) => {
-                                        if (!value.endsWith(props.club.primary_domain))
-                                            return t("error.invalid-email-domain", {
-                                                domain: props.club.primary_domain,
-                                            });
-                                    },
-                                }}
-                            >
+                            <form.Field name={"emailLocal"}>
                                 {(fieldApi) => (
                                     <Field>
                                         <RequiredLabel>{t("label.email")}</RequiredLabel>
-                                        <Input
-                                            type={"email"}
-                                            required={true}
-                                            value={fieldApi.state.value}
-                                            onChange={(e) => fieldApi.handleChange(e.target.value)}
-                                            onBlur={() => fieldApi.handleBlur()}
-                                            invalid={fieldApi.state.meta.errors.length > 0}
-                                        />
+                                        <div data-slot={"control"} className={"flex items-center gap-1"}>
+                                            <Input
+                                                required={true}
+                                                value={fieldApi.state.value}
+                                                onChange={(e) => fieldApi.handleChange(e.target.value)}
+                                                invalid={fieldApi.state.meta.errors.length > 0}
+                                            />
+                                            <span className={"shrink-0 text-sm text-zinc-500 dark:text-zinc-400"}>
+                                                @{props.club.primary_domain}
+                                            </span>
+                                        </div>
                                         {fieldApi.state.meta.errors.map((err) => (
                                             <ErrorMessage>{err}</ErrorMessage>
                                         ))}
