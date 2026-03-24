@@ -22,12 +22,11 @@ import type {
   CreateInviteRequestAdmin,
   CreateOidcProvider,
   CredentialResetSchema,
+  DashboardStatsSchema,
   DomainSchema,
-  DomainStatsSchema,
   FormResultForClubUuidAndCreateClubError,
   FormResultForSingleLinkAndCreateInviteError,
   GetInvite,
-  MailboxStatsSchema,
   OidcProvider,
   PageForSimpleAccountSchema,
   PageForSimpleMemberAccountSchema,
@@ -90,11 +89,7 @@ export interface GetClubMembersRequest {
     search?: string | null;
 }
 
-export interface GetDomainStatsRequest {
-    uuid: string;
-}
-
-export interface GetMailboxStatsRequest {
+export interface GetDashboardStatsRequest {
     uuid: string;
 }
 
@@ -578,11 +573,11 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getDomainStatsRaw(requestParameters: GetDomainStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<DomainStatsSchema>>> {
+    async getDashboardStatsRaw(requestParameters: GetDashboardStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DashboardStatsSchema>> {
         if (requestParameters['uuid'] == null) {
             throw new runtime.RequiredError(
                 'uuid',
-                'Required parameter "uuid" was null or undefined when calling getDomainStats().'
+                'Required parameter "uuid" was null or undefined when calling getDashboardStats().'
             );
         }
 
@@ -591,7 +586,7 @@ export class DefaultApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/frontend/admin/clubs/{uuid}/domain-stats`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            path: `/api/v1/frontend/admin/clubs/{uuid}/dashboard-stats`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -602,39 +597,8 @@ export class DefaultApi extends runtime.BaseAPI {
 
     /**
      */
-    async getDomainStats(requestParameters: GetDomainStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<DomainStatsSchema>> {
-        const response = await this.getDomainStatsRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async getMailboxStatsRaw(requestParameters: GetMailboxStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<MailboxStatsSchema>>> {
-        if (requestParameters['uuid'] == null) {
-            throw new runtime.RequiredError(
-                'uuid',
-                'Required parameter "uuid" was null or undefined when calling getMailboxStats().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/frontend/admin/clubs/{uuid}/mailbox-stats`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response);
-    }
-
-    /**
-     */
-    async getMailboxStats(requestParameters: GetMailboxStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<MailboxStatsSchema>> {
-        const response = await this.getMailboxStatsRaw(requestParameters, initOverrides);
+    async getDashboardStats(requestParameters: GetDashboardStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DashboardStatsSchema> {
+        const response = await this.getDashboardStatsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -254,11 +254,11 @@ pub async fn get_club_member_invites(
     Ok(ApiJson(invites))
 }
 
-#[get("/{uuid}/mailbox-stats")]
-#[instrument(name = "Api::admin::get_mailbox_stats")]
-pub async fn get_mailbox_stats(
+#[get("/{uuid}/dashboard-stats")]
+#[instrument(name = "Api::admin::get_dashboard_stats")]
+pub async fn get_dashboard_stats(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
-) -> ApiResult<ApiJson<Vec<schema::MailboxStatsSchema>>> {
+) -> ApiResult<ApiJson<schema::DashboardStatsSchema>> {
     let mut tx = Database::global().start_transaction().await?;
 
     let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid))
@@ -275,24 +275,30 @@ pub async fn get_mailbox_stats(
 
     tx.commit().await?;
 
-    let domain: String = club.primary_domain.into_inner();
-
+    let primary_domain: String = club.primary_domain.into_inner();
     let sdk = &Mailcow::global().sdk;
 
-    let domain_quota = sdk
-        .get_all_domains()
-        .await
-        .map_err(ApiError::map_server_error(
-            "Could not retrieve domains from mailcow",
-        ))?
-        .into_iter()
-        .find(|d| d.domain_name == domain)
-        .map(|d| d.def_quota_for_mbox)
-        .unwrap_or(0);
+    let (domain_result, mailboxes_result) = tokio::join!(
+        sdk.get_domain(&primary_domain),
+        sdk.get_all_mailboxes(&primary_domain),
+    );
 
-    let mut mailboxes: Vec<_> = sdk
-        .get_all_mailboxes(&domain)
-        .await
+    let domain = domain_result.map_err(ApiError::map_server_error(
+        "Could not retrieve domain from mailcow",
+    ))?;
+
+    let domain_quota = domain.def_quota_for_mbox;
+
+    let domain_stats = vec![schema::DomainStatsSchema {
+        domain: domain.domain_name,
+        bytes_used: domain.bytes_total,
+        quota: domain.max_quota_for_domain,
+        mailboxes_used: domain.mboxes_in_domain,
+        mailboxes_max: domain.max_num_mboxes_for_domain,
+        messages: domain.msgs_total,
+    }];
+
+    let mut mailboxes: Vec<_> = mailboxes_result
         .map_err(ApiError::map_server_error(
             "Could not retrieve mailboxes from mailcow",
         ))?
@@ -302,7 +308,7 @@ pub async fn get_mailbox_stats(
 
     mailboxes.sort_by(|a, b| b.quota_used.cmp(&a.quota_used));
 
-    let stats = mailboxes
+    let mailbox_stats: Vec<_> = mailboxes
         .into_iter()
         .take(10)
         .map(|m| schema::MailboxStatsSchema {
@@ -313,48 +319,10 @@ pub async fn get_mailbox_stats(
         })
         .collect();
 
-    Ok(ApiJson(stats))
-}
-
-#[get("/{uuid}/domain-stats")]
-#[instrument(name = "Api::admin::get_domain_stats")]
-pub async fn get_domain_stats(
-    Path(SingleUuid { uuid }): Path<SingleUuid>,
-) -> ApiResult<ApiJson<Vec<schema::DomainStatsSchema>>> {
-    let mut tx = Database::global().start_transaction().await?;
-
-    let club_domains = Domain::find_all_by_club(&mut tx, ClubUuid(uuid)).await?;
-
-    tx.commit().await?;
-
-    let domain_names: std::collections::HashSet<String> = club_domains
-        .into_iter()
-        .map(|d| d.domain.into_inner())
-        .collect();
-
-    let all_mailcow_domains =
-        Mailcow::global()
-            .sdk
-            .get_all_domains()
-            .await
-            .map_err(ApiError::map_server_error(
-                "Could not retrieve domains from mailcow",
-            ))?;
-
-    let stats = all_mailcow_domains
-        .into_iter()
-        .filter(|d| domain_names.contains(&d.domain_name))
-        .map(|d| schema::DomainStatsSchema {
-            domain: d.domain_name,
-            bytes_used: d.bytes_total,
-            quota: d.max_quota_for_domain,
-            mailboxes_used: d.mboxes_in_domain,
-            mailboxes_max: d.max_num_mboxes_for_domain,
-            messages: d.msgs_total,
-        })
-        .collect();
-
-    Ok(ApiJson(stats))
+    Ok(ApiJson(schema::DashboardStatsSchema {
+        domains: domain_stats,
+        mailboxes: mailbox_stats,
+    }))
 }
 
 #[get("/{uuid}/domains")]

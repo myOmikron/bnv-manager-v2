@@ -75,6 +75,15 @@ pub struct UnassociateDomainRequest {
     pub domain: DomainUuid,
 }
 
+/// Combined dashboard statistics
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct DashboardStatsSchema {
+    /// Domain statistics
+    pub domains: Vec<DomainStatsSchema>,
+    /// Top mailboxes by usage
+    pub mailboxes: Vec<MailboxStatsSchema>,
+}
+
 /// Statistics for a domain
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct DomainStatsSchema {

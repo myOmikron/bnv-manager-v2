@@ -220,6 +220,25 @@ export interface CredentialResetSchema {
     uuid: string;
 }
 /**
+ * Combined dashboard statistics
+ * @export
+ * @interface DashboardStatsSchema
+ */
+export interface DashboardStatsSchema {
+    /**
+     * Domain statistics
+     * @type {Array<DomainStatsSchema>}
+     * @memberof DashboardStatsSchema
+     */
+    domains: Array<DomainStatsSchema>;
+    /**
+     * Top mailboxes by usage
+     * @type {Array<MailboxStatsSchema>}
+     * @memberof DashboardStatsSchema
+     */
+    mailboxes: Array<MailboxStatsSchema>;
+}
+/**
  * The representation of a domain
  * @export
  * @interface DomainSchema

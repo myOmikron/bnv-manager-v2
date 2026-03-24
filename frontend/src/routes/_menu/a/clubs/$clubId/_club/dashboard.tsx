@@ -33,7 +33,8 @@ export default function AdminClubDashboard(props: AdminClubDashboardProps) {
     const [t] = useTranslation("admin-club-view");
 
     const ctx = useContext(ADMIN_SINGLE_CLUB);
-    const { pendingInvites, mailboxStats, domainStats } = Route.useLoaderData();
+    const { pendingInvites, dashboardStats } = Route.useLoaderData();
+    const { domains: domainStats, mailboxes: mailboxStats } = dashboardStats;
 
     return (
         <div className={"flex flex-col gap-8"}>
@@ -205,11 +206,10 @@ function StatCard(props: StatCardProps) {
 export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/dashboard")({
     component: AdminClubDashboard,
     loader: async ({ params }) => {
-        const [pendingInvites, mailboxStats, domainStats] = await Promise.all([
+        const [pendingInvites, dashboardStats] = await Promise.all([
             Api.admin.clubs.invitedClubMembers(params.clubId),
-            Api.admin.clubs.getMailboxStats(params.clubId),
-            Api.admin.clubs.getDomainStats(params.clubId),
+            Api.admin.clubs.getDashboardStats(params.clubId),
         ]);
-        return { pendingInvites, mailboxStats, domainStats };
+        return { pendingInvites, dashboardStats };
     },
 });

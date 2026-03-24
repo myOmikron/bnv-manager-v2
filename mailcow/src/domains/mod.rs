@@ -17,4 +17,12 @@ impl MailcowClient {
     pub async fn get_all_domains(&self) -> MailcowResult<Vec<MailcowDomain>> {
         self.get("/api/v1/get/domain/all").send().await
     }
+
+    /// Retrieves a single domain from the Mailcow API
+    #[instrument(name = "MailcowClient::get_domain", skip(self))]
+    pub async fn get_domain(&self, domain: &str) -> MailcowResult<MailcowDomain> {
+        self.get(&format!("/api/v1/get/domain/{domain}"))
+            .send()
+            .await
+    }
 }

@@ -224,9 +224,9 @@
                 }
             }
         },
-        "/api/v1/frontend/club-admin/clubs/{club_uuid}/club/mailbox-stats": {
+        "/api/v1/frontend/club-admin/clubs/{club_uuid}/club/dashboard-stats": {
             "get": {
-                "operationId": "get_mailbox_stats",
+                "operationId": "get_dashboard_stats",
                 "parameters": [
                     {
                         "in": "path",
@@ -246,73 +246,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/MailboxStatsSchema"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/frontend/club-admin/clubs/{club_uuid}/club/domain-stats": {
-            "get": {
-                "operationId": "get_domain_stats",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "club_uuid",
-                        "required": true,
-                        "schema": {
-                            "description": "New-type for the primary key of the club",
-                            "type": "string",
-                            "format": "uuid"
-                        },
-                        "style": "simple"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/DomainStatsSchema"
-                                    }
+                                    "$ref": "#/components/schemas/DashboardStatsSchema"
                                 }
                             }
                         }
@@ -804,6 +738,30 @@
                 "description": "Wrapper for uuid",
                 "type": "string",
                 "format": "uuid"
+            },
+            "DashboardStatsSchema": {
+                "description": "Combined dashboard statistics",
+                "type": "object",
+                "properties": {
+                    "domains": {
+                        "description": "Domain statistics",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DomainStatsSchema"
+                        }
+                    },
+                    "mailboxes": {
+                        "description": "Top mailboxes by usage",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MailboxStatsSchema"
+                        }
+                    }
+                },
+                "required": [
+                    "domains",
+                    "mailboxes"
+                ]
             },
             "DomainStatsSchema": {
                 "description": "Statistics for a domain",

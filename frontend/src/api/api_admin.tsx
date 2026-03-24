@@ -32,8 +32,7 @@ export const AdminApi = {
         invitedClubAdmins: (uuid: UUID) => handleError(adminApi.getClubAdminInvites({ uuid })),
         create: (createClub: CreateClubRequest) => handleError(adminApi.createClub({ CreateClubRequest: createClub })),
         delete: (uuid: UUID) => handleError(adminApi.deleteClub({ uuid })),
-        getMailboxStats: (uuid: UUID) => handleError(adminApi.getMailboxStats({ uuid })),
-        getDomainStats: (uuid: UUID) => handleError(adminApi.getDomainStats({ uuid })),
+        getDashboardStats: (uuid: UUID) => handleError(adminApi.getDashboardStats({ uuid })),
         associatedDomains: (uuid: UUID) => handleError(adminApi.getClubDomains({ uuid })),
         associateDomain: (club: UUID, domain: UUID) =>
             handleError(adminApi.associateDomain({ uuid: club, AssociateDomainRequest: { domain } })),
