@@ -5,6 +5,19 @@ use std::collections::HashMap;
 use serde::Deserialize;
 use serde::Serialize;
 
+/// A mailbox retrieved from mailcow
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MailcowMailbox {
+    /// E-Mail address (username) of the mailbox
+    pub username: String,
+    /// Quota limit in bytes
+    pub quota: u64,
+    /// Used quota in bytes
+    pub quota_used: u64,
+    /// Number of messages
+    pub messages: u64,
+}
+
 /// Create a new app password
 pub struct CreateAppPasswordRequest {
     /// Username of the mailbox

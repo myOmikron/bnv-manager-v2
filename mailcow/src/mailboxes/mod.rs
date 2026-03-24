@@ -9,6 +9,19 @@ use crate::mailboxes::schema::GetAppPasswordsResponse;
 pub mod schema;
 
 impl MailcowClient {
+    /// Retrieves all mailboxes for a given domain
+    ///
+    /// **domain**: The domain to retrieve mailboxes for
+    #[instrument(skip(self), name = "MailcowClient::get_all_mailboxes")]
+    pub async fn get_all_mailboxes(
+        &self,
+        domain: &str,
+    ) -> MailcowResult<Vec<schema::MailcowMailbox>> {
+        self.get(&format!("/api/v1/get/mailbox/all/{domain}"))
+            .send()
+            .await
+    }
+
     /// Delete mailboxes
     ///
     /// **mailboxes**: List of mails to delete
