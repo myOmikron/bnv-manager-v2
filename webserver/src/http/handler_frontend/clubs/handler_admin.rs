@@ -259,19 +259,46 @@ pub async fn get_club_member_invites(
 pub async fn get_mailbox_stats(
     Path(SingleUuid { uuid }): Path<SingleUuid>,
 ) -> ApiResult<ApiJson<Vec<schema::MailboxStatsSchema>>> {
-    let club = Club::find_by_uuid(Database::global(), ClubUuid(uuid))
+    let mut tx = Database::global().start_transaction().await?;
+
+    let club = Club::find_by_uuid(&mut tx, ClubUuid(uuid))
         .await?
         .ok_or(ApiError::bad_request("Club not found"))?;
 
+    let member_emails: std::collections::HashSet<String> = club
+        .members_page(&mut tx, i64::MAX as u64, 0, None)
+        .await?
+        .items
+        .into_iter()
+        .map(|m| m.email.into_inner())
+        .collect();
+
+    tx.commit().await?;
+
     let domain: String = club.primary_domain.into_inner();
 
-    let mut mailboxes = Mailcow::global()
-        .sdk
+    let sdk = &Mailcow::global().sdk;
+
+    let domain_quota = sdk
+        .get_all_domains()
+        .await
+        .map_err(ApiError::map_server_error(
+            "Could not retrieve domains from mailcow",
+        ))?
+        .into_iter()
+        .find(|d| d.domain_name == domain)
+        .map(|d| d.def_quota_for_mbox)
+        .unwrap_or(0);
+
+    let mut mailboxes: Vec<_> = sdk
         .get_all_mailboxes(&domain)
         .await
         .map_err(ApiError::map_server_error(
             "Could not retrieve mailboxes from mailcow",
-        ))?;
+        ))?
+        .into_iter()
+        .filter(|m| member_emails.contains(&m.username))
+        .collect();
 
     mailboxes.sort_by(|a, b| b.quota_used.cmp(&a.quota_used));
 
@@ -281,8 +308,48 @@ pub async fn get_mailbox_stats(
         .map(|m| schema::MailboxStatsSchema {
             email: m.username,
             quota_used: m.quota_used,
-            quota: m.quota,
+            quota: if m.quota == 0 { domain_quota } else { m.quota },
             messages: m.messages,
+        })
+        .collect();
+
+    Ok(ApiJson(stats))
+}
+
+#[get("/{uuid}/domain-stats")]
+#[instrument(name = "Api::admin::get_domain_stats")]
+pub async fn get_domain_stats(
+    Path(SingleUuid { uuid }): Path<SingleUuid>,
+) -> ApiResult<ApiJson<Vec<schema::DomainStatsSchema>>> {
+    let mut tx = Database::global().start_transaction().await?;
+
+    let club_domains = Domain::find_all_by_club(&mut tx, ClubUuid(uuid)).await?;
+
+    tx.commit().await?;
+
+    let domain_names: std::collections::HashSet<String> = club_domains
+        .into_iter()
+        .map(|d| d.domain.into_inner())
+        .collect();
+
+    let all_mailcow_domains = Mailcow::global()
+        .sdk
+        .get_all_domains()
+        .await
+        .map_err(ApiError::map_server_error(
+            "Could not retrieve domains from mailcow",
+        ))?;
+
+    let stats = all_mailcow_domains
+        .into_iter()
+        .filter(|d| domain_names.contains(&d.domain_name))
+        .map(|d| schema::DomainStatsSchema {
+            domain: d.domain_name,
+            bytes_used: d.bytes_total,
+            quota: d.max_quota_for_domain,
+            mailboxes_used: d.mboxes_in_domain,
+            mailboxes_max: d.max_num_mboxes_for_domain,
+            messages: d.msgs_total,
         })
         .collect();
 

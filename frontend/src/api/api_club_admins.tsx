@@ -20,6 +20,7 @@ export const ClubAdminApi = {
         resetCredentials: (club_uuid: UUID, member_uuid: UUID) =>
             handleError(clubAdminApi.resetCredentials({ club_uuid, uuid: member_uuid })),
         getMailboxStats: (club_uuid: UUID) => handleError(clubAdminApi.getMailboxStats({ club_uuid })),
+        getDomainStats: (club_uuid: UUID) => handleError(clubAdminApi.getDomainStats({ club_uuid })),
     },
     invites: {
         create: (club_uuid: UUID, req: CreateMemberInviteRequest) =>

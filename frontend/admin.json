@@ -757,6 +757,68 @@
                 }
             }
         },
+        "/api/v1/frontend/admin/clubs/{uuid}/domain-stats": {
+            "get": {
+                "operationId": "get_domain_stats",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DomainStatsSchema"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/frontend/admin/clubs/{uuid}/domains": {
             "get": {
                 "operationId": "get_club_domains",
@@ -1525,6 +1587,54 @@
                     "domain",
                     "is_primary",
                     "uuid"
+                ]
+            },
+            "DomainStatsSchema": {
+                "description": "Statistics for a domain",
+                "type": "object",
+                "properties": {
+                    "bytes_used": {
+                        "description": "Total bytes used across all mailboxes",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "domain": {
+                        "description": "Domain name",
+                        "type": "string"
+                    },
+                    "mailboxes_max": {
+                        "description": "Maximum number of mailboxes allowed",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "mailboxes_used": {
+                        "description": "Number of mailboxes in the domain",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "messages": {
+                        "description": "Total number of messages",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "quota": {
+                        "description": "Maximum quota for the domain in bytes",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    }
+                },
+                "required": [
+                    "bytes_used",
+                    "domain",
+                    "mailboxes_max",
+                    "mailboxes_used",
+                    "messages",
+                    "quota"
                 ]
             },
             "DomainUuid": {

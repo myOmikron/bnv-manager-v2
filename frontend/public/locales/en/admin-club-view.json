@@ -21,13 +21,16 @@
         "admins": "Admins",
         "created-at": "Created on",
         "domain": "Domain:",
+        "domain-stats": "Domain Overview",
+        "mailboxes": "Mailboxes",
         "email": "Email",
         "mailbox-stats": "Mailbox Storage Usage",
         "members": "Members",
         "messages": "Messages",
         "pending-invites": "Pending Invites",
         "quota": "Quota",
-        "storage-used": "Used"
+        "storage-used": "Used",
+        "unlimited": "Unlimited"
     },
     "label": {
         "display-name": "Display name",

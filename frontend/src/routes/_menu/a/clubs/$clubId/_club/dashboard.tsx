@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Api } from "src/api/api";
 import { Text, Strong } from "src/components/base/text";
 import { EnvelopeOpenIcon } from "@heroicons/react/24/outline";
-import { UsersIcon, ShieldCheckIcon, EnvelopeIcon, GlobeAltIcon, CalendarIcon } from "@heroicons/react/20/solid";
+import { UsersIcon, ShieldCheckIcon, EnvelopeIcon, GlobeAltIcon } from "@heroicons/react/20/solid";
 import ADMIN_SINGLE_CLUB from "src/context/admin-single-club";
 
 /**
@@ -33,7 +33,7 @@ export default function AdminClubDashboard(props: AdminClubDashboardProps) {
     const [t] = useTranslation("admin-club-view");
 
     const ctx = useContext(ADMIN_SINGLE_CLUB);
-    const { pendingInvites, mailboxStats } = Route.useLoaderData();
+    const { pendingInvites, mailboxStats, domainStats } = Route.useLoaderData();
 
     return (
         <div className={"flex flex-col gap-8"}>
@@ -55,32 +55,75 @@ export default function AdminClubDashboard(props: AdminClubDashboardProps) {
                 />
             </div>
 
-            <div className={"flex flex-col gap-3"}>
-                <div className={"flex items-center gap-2"}>
-                    <GlobeAltIcon className={"size-4 text-zinc-400"} />
-                    <Text>
-                        <Strong>{t("dashboard.domain")}</Strong> {ctx.data.primary_domain}
-                    </Text>
-                </div>
-                <div className={"flex items-center gap-2"}>
-                    <CalendarIcon className={"size-4 text-zinc-400"} />
-                    <Text>
-                        <Strong>{t("dashboard.created-at")}</Strong>{" "}
-                        {new Date(ctx.data.created_at).toLocaleDateString("de", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
+            {domainStats.length > 0 && (
+                <div className={"flex flex-col gap-4"}>
+                    <Strong>{t("dashboard.domain-stats")}</Strong>
+                    <div className={"flex flex-col gap-3"}>
+                        {domainStats.map((d) => {
+                            const storagePct = d.quota > 0 ? Math.min((d.bytes_used / d.quota) * 100, 100) : 0;
+                            const storageColor =
+                                storagePct > 90 ? "bg-red-500" : storagePct > 70 ? "bg-amber-500" : "bg-blue-500";
+                            return (
+                                <div
+                                    key={d.domain}
+                                    className={"rounded-lg border border-zinc-200 p-4 dark:border-zinc-700"}
+                                >
+                                    <div className={"flex items-center gap-2"}>
+                                        <GlobeAltIcon className={"size-4 text-zinc-400"} />
+                                        <span className={"text-sm font-medium text-zinc-950 dark:text-white"}>
+                                            {d.domain}
+                                        </span>
+                                    </div>
+                                    <div className={"mt-3 grid grid-cols-2 gap-4"}>
+                                        <div>
+                                            <Text className={"!text-xs"}>{t("dashboard.storage-used")}</Text>
+                                            <span className={"text-sm font-semibold text-zinc-950 dark:text-white"}>
+                                                {formatBytes(d.bytes_used)}
+                                                {d.quota > 0 && (
+                                                    <span className={"font-normal text-zinc-400"}>
+                                                        {" "}
+                                                        / {formatBytes(d.quota)}
+                                                    </span>
+                                                )}
+                                            </span>
+                                            {d.quota > 0 && (
+                                                <div
+                                                    className={
+                                                        "mt-1 h-2 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
+                                                    }
+                                                >
+                                                    <div
+                                                        className={`h-full rounded-full ${storageColor}`}
+                                                        style={{ width: `${storagePct}%` }}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <Text className={"!text-xs"}>{t("dashboard.mailboxes")}</Text>
+                                            <span className={"text-sm font-semibold text-zinc-950 dark:text-white"}>
+                                                {d.mailboxes_used}
+                                                <span className={"font-normal text-zinc-400"}>
+                                                    {" "}
+                                                    / {d.mailboxes_max}
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
                         })}
-                    </Text>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {mailboxStats.length > 0 && (
                 <div className={"flex flex-col gap-4"}>
                     <Strong>{t("dashboard.mailbox-stats")}</Strong>
                     <div className={"flex flex-col gap-3"}>
                         {mailboxStats.map((m) => {
-                            const pct = m.quota > 0 ? Math.min((m.quota_used / m.quota) * 100, 100) : 0;
+                            const hasQuota = m.quota > 0;
+                            const pct = hasQuota ? Math.min((m.quota_used / m.quota) * 100, 100) : 0;
                             const barColor = pct > 90 ? "bg-red-500" : pct > 70 ? "bg-amber-500" : "bg-blue-500";
                             return (
                                 <div
@@ -100,27 +143,27 @@ export default function AdminClubDashboard(props: AdminClubDashboardProps) {
                                             </Text>
                                             <span className={"text-sm font-semibold text-zinc-950 dark:text-white"}>
                                                 {formatBytes(m.quota_used)}
-                                                {m.quota > 0 && (
-                                                    <span className={"font-normal text-zinc-400"}>
-                                                        {" "}
-                                                        / {formatBytes(m.quota)}
-                                                    </span>
-                                                )}
+                                                <span className={"font-normal text-zinc-400"}>
+                                                    {" "}
+                                                    / {hasQuota ? formatBytes(m.quota) : t("dashboard.unlimited")}
+                                                </span>
                                             </span>
                                         </div>
                                     </div>
-                                    <div
-                                        className={
-                                            "mt-3 h-3 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
-                                        }
-                                    >
-                                        <div
-                                            className={`h-full rounded-full transition-all ${barColor}`}
-                                            style={{ width: `${m.quota > 0 ? pct : 0}%` }}
-                                        />
-                                    </div>
-                                    {m.quota > 0 && (
-                                        <Text className={"mt-1 text-right !text-xs"}>{pct.toFixed(0)}%</Text>
+                                    {hasQuota && (
+                                        <>
+                                            <div
+                                                className={
+                                                    "mt-3 h-3 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
+                                                }
+                                            >
+                                                <div
+                                                    className={`h-full rounded-full transition-all ${barColor}`}
+                                                    style={{ width: `${pct}%` }}
+                                                />
+                                            </div>
+                                            <Text className={"mt-1 text-right !text-xs"}>{pct.toFixed(0)}%</Text>
+                                        </>
                                     )}
                                 </div>
                             );
@@ -162,10 +205,11 @@ function StatCard(props: StatCardProps) {
 export const Route = createFileRoute("/_menu/a/clubs/$clubId/_club/dashboard")({
     component: AdminClubDashboard,
     loader: async ({ params }) => {
-        const [pendingInvites, mailboxStats] = await Promise.all([
+        const [pendingInvites, mailboxStats, domainStats] = await Promise.all([
             Api.admin.clubs.invitedClubMembers(params.clubId),
             Api.admin.clubs.getMailboxStats(params.clubId),
+            Api.admin.clubs.getDomainStats(params.clubId),
         ]);
-        return { pendingInvites, mailboxStats };
+        return { pendingInvites, mailboxStats, domainStats };
     },
 });

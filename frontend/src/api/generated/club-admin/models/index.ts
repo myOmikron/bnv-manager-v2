@@ -144,6 +144,49 @@ export interface CredentialResetSchema {
     uuid: string;
 }
 /**
+ * Statistics for a domain
+ * @export
+ * @interface DomainStatsSchema
+ */
+export interface DomainStatsSchema {
+    /**
+     * Total bytes used across all mailboxes
+     * @type {number}
+     * @memberof DomainStatsSchema
+     */
+    bytes_used: number;
+    /**
+     * Domain name
+     * @type {string}
+     * @memberof DomainStatsSchema
+     */
+    domain: string;
+    /**
+     * Maximum number of mailboxes allowed
+     * @type {number}
+     * @memberof DomainStatsSchema
+     */
+    mailboxes_max: number;
+    /**
+     * Number of mailboxes in the domain
+     * @type {number}
+     * @memberof DomainStatsSchema
+     */
+    mailboxes_used: number;
+    /**
+     * Total number of messages
+     * @type {number}
+     * @memberof DomainStatsSchema
+     */
+    messages: number;
+    /**
+     * Maximum quota for the domain in bytes
+     * @type {number}
+     * @memberof DomainStatsSchema
+     */
+    quota: number;
+}
+/**
  * @type FormResultForSingleLinkAndCreateInviteError
  * A `Result` with a custom serialization
  * @export

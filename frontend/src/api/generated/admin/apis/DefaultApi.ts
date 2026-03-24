@@ -23,6 +23,7 @@ import type {
   CreateOidcProvider,
   CredentialResetSchema,
   DomainSchema,
+  DomainStatsSchema,
   FormResultForClubUuidAndCreateClubError,
   FormResultForSingleLinkAndCreateInviteError,
   GetInvite,
@@ -87,6 +88,10 @@ export interface GetClubMembersRequest {
     limit?: number;
     offset?: number;
     search?: string | null;
+}
+
+export interface GetDomainStatsRequest {
+    uuid: string;
 }
 
 export interface GetMailboxStatsRequest {
@@ -568,6 +573,37 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getClubs(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ClubSchema>> {
         const response = await this.getClubsRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getDomainStatsRaw(requestParameters: GetDomainStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<DomainStatsSchema>>> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling getDomainStats().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/admin/clubs/{uuid}/domain-stats`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters['uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getDomainStats(requestParameters: GetDomainStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<DomainStatsSchema>> {
+        const response = await this.getDomainStatsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

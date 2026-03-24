@@ -75,6 +75,23 @@ pub struct UnassociateDomainRequest {
     pub domain: DomainUuid,
 }
 
+/// Statistics for a domain
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct DomainStatsSchema {
+    /// Domain name
+    pub domain: String,
+    /// Total bytes used across all mailboxes
+    pub bytes_used: u64,
+    /// Maximum quota for the domain in bytes
+    pub quota: u64,
+    /// Number of mailboxes in the domain
+    pub mailboxes_used: u64,
+    /// Maximum number of mailboxes allowed
+    pub mailboxes_max: u64,
+    /// Total number of messages
+    pub messages: u64,
+}
+
 /// Storage statistics for a single mailbox
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct MailboxStatsSchema {

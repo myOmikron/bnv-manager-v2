@@ -287,6 +287,69 @@
                 }
             }
         },
+        "/api/v1/frontend/club-admin/clubs/{club_uuid}/club/domain-stats": {
+            "get": {
+                "operationId": "get_domain_stats",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "club_uuid",
+                        "required": true,
+                        "schema": {
+                            "description": "New-type for the primary key of the club",
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DomainStatsSchema"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/frontend/club-admin/clubs/{club_uuid}/invites": {
             "post": {
                 "operationId": "create_member_invite",
@@ -741,6 +804,54 @@
                 "description": "Wrapper for uuid",
                 "type": "string",
                 "format": "uuid"
+            },
+            "DomainStatsSchema": {
+                "description": "Statistics for a domain",
+                "type": "object",
+                "properties": {
+                    "bytes_used": {
+                        "description": "Total bytes used across all mailboxes",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "domain": {
+                        "description": "Domain name",
+                        "type": "string"
+                    },
+                    "mailboxes_max": {
+                        "description": "Maximum number of mailboxes allowed",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "mailboxes_used": {
+                        "description": "Number of mailboxes in the domain",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "messages": {
+                        "description": "Total number of messages",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    },
+                    "quota": {
+                        "description": "Maximum quota for the domain in bytes",
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "uint64"
+                    }
+                },
+                "required": [
+                    "bytes_used",
+                    "domain",
+                    "mailboxes_max",
+                    "mailboxes_used",
+                    "messages",
+                    "quota"
+                ]
             },
             "FormResult_for_SingleLink_and_CreateInviteError": {
                 "description": "A `Result` with a custom serialization",

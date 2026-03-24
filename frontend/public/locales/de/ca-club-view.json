@@ -15,13 +15,16 @@
         "admins": "Administratoren",
         "created-at": "Erstellt am",
         "domain": "Domain:",
+        "domain-stats": "Domain-Übersicht",
+        "mailboxes": "Postfächer",
         "members": "Mitglieder",
         "email": "E-Mail",
         "mailbox-stats": "Postfach-Speicherverbrauch",
         "messages": "Nachrichten",
         "pending-invites": "Offene Einladungen",
         "quota": "Kontingent",
-        "storage-used": "Belegt"
+        "storage-used": "Belegt",
+        "unlimited": "Unbegrenzt"
     },
     "label": {
         "delete-member": "Mitglied l\u00f6schen",

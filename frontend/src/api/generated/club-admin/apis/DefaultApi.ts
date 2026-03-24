@@ -19,6 +19,7 @@ import type {
   ClubSchema,
   CreateMemberInviteRequest,
   CredentialResetSchema,
+  DomainStatsSchema,
   FormResultForSingleLinkAndCreateInviteError,
   GetInvite,
   MailboxStatsSchema,
@@ -48,6 +49,10 @@ export interface GetClubMembersRequest {
     limit?: number;
     offset?: number;
     search?: string | null;
+}
+
+export interface GetDomainStatsRequest {
+    club_uuid: string;
 }
 
 export interface GetMailboxStatsRequest {
@@ -242,6 +247,37 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getClubMembers(requestParameters: GetClubMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PageForSimpleMemberAccountSchema> {
         const response = await this.getClubMembersRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getDomainStatsRaw(requestParameters: GetDomainStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<DomainStatsSchema>>> {
+        if (requestParameters['club_uuid'] == null) {
+            throw new runtime.RequiredError(
+                'club_uuid',
+                'Required parameter "club_uuid" was null or undefined when calling getDomainStats().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/frontend/club-admin/clubs/{club_uuid}/club/domain-stats`.replace(`{${"club_uuid"}}`, encodeURIComponent(String(requestParameters['club_uuid']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response);
+    }
+
+    /**
+     */
+    async getDomainStats(requestParameters: GetDomainStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<DomainStatsSchema>> {
+        const response = await this.getDomainStatsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
