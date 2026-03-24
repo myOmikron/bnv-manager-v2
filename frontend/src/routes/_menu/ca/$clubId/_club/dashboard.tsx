@@ -14,6 +14,9 @@ export type ClubAdminDashboardProps = {};
 
 /**
  * Format bytes into a human-readable string
+ *
+ * @param bytes The number of bytes to format
+ * @returns A human-readable string like "1.2 GB"
  */
 function formatBytes(bytes: number): string {
     if (bytes === 0) return "0 B";
@@ -78,23 +81,16 @@ export default function ClubAdminDashboard(props: ClubAdminDashboardProps) {
                     <div className={"flex flex-col gap-3"}>
                         {mailboxStats.map((m) => {
                             const pct = m.quota > 0 ? Math.min((m.quota_used / m.quota) * 100, 100) : 0;
-                            const barColor =
-                                pct > 90 ? "bg-red-500" : pct > 70 ? "bg-amber-500" : "bg-blue-500";
+                            const barColor = pct > 90 ? "bg-red-500" : pct > 70 ? "bg-amber-500" : "bg-blue-500";
                             return (
                                 <div
                                     key={m.email}
-                                    className={
-                                        "rounded-lg border border-zinc-200 p-4 dark:border-zinc-700"
-                                    }
+                                    className={"rounded-lg border border-zinc-200 p-4 dark:border-zinc-700"}
                                 >
                                     <div className={"flex items-center justify-between"}>
                                         <div className={"flex items-center gap-2"}>
                                             <EnvelopeOpenIcon className={"size-4 text-zinc-400"} />
-                                            <span
-                                                className={
-                                                    "text-sm font-medium text-zinc-950 dark:text-white"
-                                                }
-                                            >
+                                            <span className={"text-sm font-medium text-zinc-950 dark:text-white"}>
                                                 {m.email}
                                             </span>
                                         </div>
@@ -102,11 +98,7 @@ export default function ClubAdminDashboard(props: ClubAdminDashboardProps) {
                                             <Text className={"!text-xs"}>
                                                 {m.messages} {t("dashboard.messages")}
                                             </Text>
-                                            <span
-                                                className={
-                                                    "text-sm font-semibold text-zinc-950 dark:text-white"
-                                                }
-                                            >
+                                            <span className={"text-sm font-semibold text-zinc-950 dark:text-white"}>
                                                 {formatBytes(m.quota_used)}
                                                 {m.quota > 0 && (
                                                     <span className={"font-normal text-zinc-400"}>
@@ -128,9 +120,7 @@ export default function ClubAdminDashboard(props: ClubAdminDashboardProps) {
                                         />
                                     </div>
                                     {m.quota > 0 && (
-                                        <Text className={"mt-1 text-right !text-xs"}>
-                                            {pct.toFixed(0)}%
-                                        </Text>
+                                        <Text className={"mt-1 text-right !text-xs"}>{pct.toFixed(0)}%</Text>
                                     )}
                                 </div>
                             );
@@ -142,7 +132,22 @@ export default function ClubAdminDashboard(props: ClubAdminDashboardProps) {
     );
 }
 
-function StatCard(props: { icon: React.ReactNode; label: string; value: number }) {
+/**
+ * The properties for {@link StatCard}
+ */
+type StatCardProps = {
+    /** The icon to display */
+    icon: React.ReactNode;
+    /** The label text */
+    label: string;
+    /** The numeric value */
+    value: number;
+};
+
+/**
+ * A card displaying a single stat with an icon
+ */
+function StatCard(props: StatCardProps) {
     return (
         <div className={"rounded-lg border border-zinc-200 p-4 dark:border-zinc-700"}>
             <div className={"flex items-center gap-2"}>
