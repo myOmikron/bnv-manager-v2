@@ -33,6 +33,11 @@ pub struct WorkerHandle<T> {
     worker: PhantomData<T>,
 }
 impl<T> WorkerHandle<T> {
+    /// Check if the worker is finished
+    pub fn is_finished(&self) -> bool {
+        self.join_handle.is_finished()
+    }
+
     /// Abort the worker
     pub fn abort(&self) {
         self.join_handle.abort();

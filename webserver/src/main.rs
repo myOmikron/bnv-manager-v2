@@ -31,7 +31,9 @@ use crate::modules::garbage_collector::GarbageCollector;
 use crate::modules::mailcow::Mailcow;
 use crate::modules::oidc::Oidc;
 use crate::tracing::opentelemetry_layer;
+use crate::utils::import::import_data;
 use crate::utils::links::Link;
+
 mod cli;
 pub mod config;
 pub mod http;
@@ -165,6 +167,30 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     return Err(err.into());
                 }
             }
+        }
+        Command::ImportData { filename } => {
+            let body = std::fs::read_to_string(filename)?;
+            let db = Database::connect(DatabaseConfiguration::new(DB.clone())).await?;
+
+            Galvyn::builder(GalvynSetup::default())
+                .register_module::<Database>(DatabaseSetup::Custom(DatabaseConfiguration::new(
+                    DB.clone(),
+                )))
+                .register_module::<Mailcow>(())
+                .init_modules()
+                .await?;
+
+            let tx = db.start_transaction().await?;
+            let res = import_data(tx, serde_json::from_str(&body)?).await;
+            db.close().await;
+
+            match res {
+                Ok(_) => println!("Import completed."),
+                Err(err) => {
+                    println!("Import failed: {err}");
+                    return Err(err);
+                }
+            };
         }
     }
 

@@ -8,6 +8,7 @@ use galvyn::core::re_exports::schemars::JsonSchema;
 use galvyn::rorm;
 use galvyn::rorm::db::Executor;
 use galvyn::rorm::fields::types::MaxStr;
+use galvyn::rorm::prelude::ForeignModel;
 use galvyn::rorm::prelude::ForeignModelByField;
 use serde::Deserialize;
 use serde::Serialize;
@@ -20,6 +21,7 @@ use crate::models::account::db::AdministrativeAccountModel;
 use crate::models::account::db::ClubAccountModel;
 use crate::models::account::db::ClubAdminAccountModel;
 use crate::models::club::ClubUuid;
+use crate::models::club::db::ClubModel;
 use crate::models::credential_reset::CredentialReset;
 use crate::models::credential_reset::CredentialResetUuid;
 use crate::models::credential_reset::db::CredentialResetClubAccountModel;
@@ -98,6 +100,17 @@ pub struct ClubAccount {
 /// New-type for the account's primary key
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 pub struct AccountUuid(pub Uuid);
+
+/// Helper to create new club members, used for [`ClubAccountModelInsert`].
+/// It should only be necessary to use this in maintenance features like data imports.
+#[derive(Debug, Clone)]
+pub struct CreateManualClubMember {
+    pub username: MaxStr<255>,
+    pub display_name: MaxStr<255>,
+    pub hashed_password: MaxStr<255>,
+    pub email: MaxStr<255>,
+    pub club: ForeignModel<ClubModel>,
+}
 
 impl Account {
     /// Retrieve the account by its uuid

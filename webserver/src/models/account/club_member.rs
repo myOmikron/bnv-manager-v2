@@ -1,12 +1,19 @@
 use galvyn::rorm;
 use galvyn::rorm::db::Executor;
 use galvyn::rorm::fields::types::MaxStr;
+use galvyn::rorm::prelude::ForeignModel;
+use galvyn::rorm::prelude::ForeignModelByField;
 use tracing::instrument;
+use uuid::Uuid;
 
 use crate::models::account::AccountUuid;
 use crate::models::account::ClubAccount;
+use crate::models::account::CreateManualClubMember;
 use crate::models::account::db::ClubAccountModel;
+use crate::models::account::db::ClubAccountModelInsert;
+use crate::models::account::db::UsernameModel;
 use crate::models::club::ClubUuid;
+use crate::models::club::db::ClubModel;
 
 impl ClubAccount {
     /// Get the account by its uuid
@@ -46,6 +53,42 @@ impl ClubAccount {
             .optional()
             .await?
             .map(Self::from))
+    }
+
+    /// Create a new club account from the provided input
+    ///
+    /// This should only be called from maintenance features like data imports.
+    /// It also creates a new `UsernameModel`. It fails when the username or email is taken.
+    #[instrument(
+        name = "ClubAccount::create_raw",
+        skip_all,
+        fields(username=%new_member.username, display_name=%new_member.display_name, email=%new_member.email)
+    )]
+    pub async fn create_raw(
+        exe: impl Executor<'_>,
+        new_member: CreateManualClubMember,
+    ) -> anyhow::Result<Self> {
+        let mut guard = exe.ensure_transaction().await?;
+
+        let username = rorm::insert(guard.get_transaction(), UsernameModel)
+            .single(&UsernameModel {
+                username: new_member.username,
+            })
+            .await?;
+
+        let model = rorm::insert(guard.get_transaction(), ClubAccountModel)
+            .single(&ClubAccountModelInsert {
+                uuid: Uuid::new_v4(),
+                username: ForeignModelByField(username.username),
+                display_name: new_member.display_name,
+                hashed_password: new_member.hashed_password,
+                email: new_member.email,
+                club: ForeignModelByField(new_member.club.0),
+            })
+            .await?;
+
+        guard.commit().await?;
+        Ok(model.into())
     }
 }
 

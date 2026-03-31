@@ -40,4 +40,9 @@ pub enum Command {
         /// The display name for the user
         display_name: String,
     },
+    /// Import a list of users and clubs from a JSON file
+    ImportData {
+        /// Path to the file where to read the data from
+        filename: String,
+    },
 }

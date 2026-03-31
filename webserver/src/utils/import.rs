@@ -1,0 +1,165 @@
+//! Utility module to allow importing data from JSON strings
+
+use std::collections::HashMap;
+use std::error::Error;
+use std::str::FromStr;
+use std::time::Duration;
+
+use bcrypt::HashParts;
+use galvyn::core::Module;
+use galvyn::rorm::db::transaction::Transaction;
+use galvyn::rorm::fields::types::MaxStr;
+use galvyn::rorm::prelude::ForeignModelByField;
+use serde::Deserialize;
+use tracing::info;
+
+use crate::models::account::ClubAccount;
+use crate::models::account::CreateManualClubMember;
+use crate::models::club::Club;
+use crate::modules::mailcow::Mailcow;
+
+/// Import users from a JSON payload
+///
+/// All clubs must exist for every user that is imported through this endpoint.
+/// If a user that should be imported here can not be matched to an existing club,
+/// the import is aborted. It expects the galvyn registry to be available with Mailcow module.
+pub async fn import_data(mut tx: Transaction, body: ImportBody) -> Result<(), Box<dyn Error>> {
+    let clubs = Club::find_all(&mut tx).await?;
+
+    // Ensure no duplicate usernames or email addresses across all existing members
+    // (it would still break later if collided with the name of a superadmin)
+    for club in &clubs {
+        let members = club
+            .members_page(&mut tx, u32::MAX as u64, 0, None)
+            .await?
+            .items;
+
+        let mut email_taken = vec![];
+        let mut username_taken = vec![];
+        for club_member in &members {
+            for new_member in &body.members {
+                if club_member.email == new_member.email {
+                    email_taken.push(club_member.email.clone());
+                }
+                if club_member.username == new_member.username {
+                    username_taken.push(club_member.username.clone());
+                }
+            }
+        }
+
+        if !email_taken.is_empty() {
+            return Err(format!(
+                "Club {} has some emails already taken: {:?}",
+                club.name,
+                email_taken.join(", ")
+            )
+            .into());
+        }
+        if !username_taken.is_empty() {
+            return Err(format!(
+                "Club {} has some usernames already taken: {:?}",
+                club.name,
+                username_taken.join(", ")
+            )
+            .into());
+        }
+    }
+
+    info!("Preparing import of {} new users...", body.members.len());
+
+    // Create the accounts and track each club individually
+    let mut new_accounts = HashMap::new();
+    for new_member in &body.members {
+        // Ensure the domain exists
+        let domain = match new_member.email.rsplit_once("@") {
+            None => {
+                return Err(format!(
+                    "Malformed email '{}' for user {}",
+                    new_member.email, new_member.username
+                )
+                .into());
+            }
+            Some((_, domain)) => MaxStr::new(domain.to_string())?,
+        };
+        let club = match clubs.iter().find(|c| c.primary_domain == domain) {
+            None => return Err(format!("No club found for domain: {domain}").into()),
+            Some(club) => club,
+        };
+        if !new_accounts.contains_key(&club.uuid) {
+            new_accounts.insert(club.uuid, Vec::new());
+        }
+
+        // Ensure that passwords are actual bcrypt hashes without the need to verify them
+        if let Err(_) = HashParts::from_str(new_member.hashed_password.to_string().as_str()) {
+            return Err(format!(
+                "User '{}' has password in wrong format, expect bcrypt hash",
+                new_member.username
+            )
+            .into());
+        };
+
+        let new_account = ClubAccount::create_raw(
+            &mut tx,
+            CreateManualClubMember {
+                username: new_member.username.clone(),
+                display_name: new_member.display_name.clone(),
+                hashed_password: new_member.hashed_password.clone(),
+                email: new_member.email.clone(),
+                club: ForeignModelByField(club.uuid.0),
+            },
+        )
+        .await
+        .map_err(|e| format!("Club {}: user {}: {}", club.name, new_member.username, e))?;
+        new_accounts
+            .get_mut(&club.uuid)
+            .expect("previously just created")
+            .push(new_account);
+    }
+
+    tx.commit().await?;
+    info!(
+        "Imported {} new accounts, not saved yet, preparing mailcow app password setup",
+        new_accounts.len()
+    );
+
+    let mut ongoing_jobs = vec![];
+    for club in &clubs {
+        if !club.use_xauth {
+            for new_account in new_accounts.get(&club.uuid).expect("just created earlier") {
+                // TODO: access to mailcow galvyn module also without the web server possible?
+                ongoing_jobs.push(Mailcow::global().create_app_password(new_account.email.clone()));
+                tokio::time::sleep(Duration::from_millis(200)).await; // slightly avoid overloading
+            }
+        }
+    }
+    info!(
+        "Waiting for the completion of {} background jobs",
+        ongoing_jobs.len()
+    );
+    while let Some(job) = ongoing_jobs.pop() {
+        if !job.is_finished() {
+            ongoing_jobs.push(job);
+            info!(
+                "Waiting for the completion of {} background jobs",
+                ongoing_jobs.len()
+            );
+            tokio::time::sleep(Duration::from_secs(1)).await;
+        }
+    }
+
+    Ok(())
+}
+
+/// File format for bulk imports of existing users
+#[derive(Debug, Deserialize)]
+pub struct ImportBody {
+    members: Vec<ImportUser>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ImportUser {
+    username: MaxStr<255>,
+    display_name: MaxStr<255>,
+    hashed_password: MaxStr<255>,
+    email: MaxStr<255>,
+}

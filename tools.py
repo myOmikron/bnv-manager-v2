@@ -8,7 +8,7 @@ import signal
 import subprocess
 import sys
 
-DOCKER_COMMANDS = ["up", "down", "pull", "push", "build", "logs", "run", "exec", "ls"]
+DOCKER_COMMANDS = ["up", "down", "pull", "push", "build", "logs", "run", "exec", "ls", "ps"]
 
 
 def signal_handler(_sig, _frame):
