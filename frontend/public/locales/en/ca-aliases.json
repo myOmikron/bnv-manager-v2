@@ -1,0 +1,22 @@
+{
+    "heading": {
+        "aliases": "Email Aliases"
+    },
+    "button": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "delete": "Delete"
+    },
+    "label": {
+        "address": "Address",
+        "member": "Member",
+        "status": "Status",
+        "created-at": "Created at",
+        "no-aliases": "No aliases yet."
+    },
+    "status": {
+        "Pending": "Pending",
+        "Approved": "Approved",
+        "Rejected": "Rejected"
+    }
+}

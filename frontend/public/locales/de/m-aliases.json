@@ -1,0 +1,24 @@
+{
+    "heading": {
+        "my-aliases": "Meine E-Mail-Aliase"
+    },
+    "button": {
+        "propose-alias": "Alias vorschlagen",
+        "delete": "L\u00f6schen"
+    },
+    "label": {
+        "address": "Adresse",
+        "status": "Status",
+        "created-at": "Erstellt am",
+        "no-aliases": "Keine Aliase vorhanden."
+    },
+    "status": {
+        "Pending": "Ausstehend",
+        "Approved": "Genehmigt",
+        "Rejected": "Abgelehnt"
+    },
+    "confirm": {
+        "delete-title": "Alias l\u00f6schen",
+        "delete-description": "Soll der Alias \"{{address}}\" wirklich gel\u00f6scht werden?"
+    }
+}

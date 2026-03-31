@@ -8,6 +8,7 @@ use crate::http::middlewares;
 use crate::http::middlewares::AuthRateLimit;
 
 pub mod accounts;
+pub mod aliases;
 pub mod clubs;
 pub mod credential_reset;
 pub mod domains;
@@ -94,6 +95,15 @@ pub fn router_club_admin() -> GalvynRouter {
                     .handler(clubs::handler_club_admin::delete_member)
                     .handler(accounts::handler_club_admin::reset_credentials),
             )
+            .nest(
+                "/aliases",
+                GalvynRouter::new()
+                    .handler(aliases::handler_club_admin::get_club_aliases)
+                    .handler(aliases::handler_club_admin::get_pending_aliases)
+                    .handler(aliases::handler_club_admin::approve_alias)
+                    .handler(aliases::handler_club_admin::reject_alias)
+                    .handler(aliases::handler_club_admin::delete_alias),
+            )
             .layer(axum::middleware::from_fn(middlewares::auth_club_admin)),
     )
 }
@@ -103,7 +113,14 @@ pub struct ClubMemberApi;
 
 /// Handler for the club members
 pub fn router_club_member() -> GalvynRouter {
-    GalvynRouter::with_openapi_page(ClubMemberApi)
+    GalvynRouter::with_openapi_page(ClubMemberApi).nest(
+        "/aliases",
+        GalvynRouter::new()
+            .handler(aliases::handler_club_member::get_my_aliases)
+            .handler(aliases::handler_club_member::get_my_club_domains)
+            .handler(aliases::handler_club_member::propose_alias)
+            .handler(aliases::handler_club_member::delete_my_alias),
+    )
 }
 
 /// Unauthenticated handler_frontend
@@ -170,4 +187,5 @@ pub fn initialize() -> GalvynRouter {
         .nest("/common", router_common())
         .nest("/admin", router_admin())
         .nest("/club-admin", router_club_admin())
+        .nest("/club-member", router_club_member())
 }

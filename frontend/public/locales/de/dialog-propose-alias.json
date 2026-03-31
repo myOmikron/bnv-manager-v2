@@ -1,0 +1,18 @@
+{
+    "heading": {
+        "propose-alias": "Neuen Alias vorschlagen"
+    },
+    "label": {
+        "local-part": "Lokaler Teil",
+        "domain": "Domain",
+        "preview": "Vorschau"
+    },
+    "error": {
+        "alias-already-taken": "Dieser Alias ist bereits vergeben.",
+        "domain-not-in-club": "Diese Domain geh\u00f6rt nicht zu Ihrem Verein.",
+        "invalid-local-part": "Ung\u00fcltiger lokaler Teil."
+    },
+    "button": {
+        "propose": "Vorschlagen"
+    }
+}

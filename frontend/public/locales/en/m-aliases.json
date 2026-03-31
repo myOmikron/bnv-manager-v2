@@ -1,0 +1,24 @@
+{
+    "heading": {
+        "my-aliases": "My Email Aliases"
+    },
+    "button": {
+        "propose-alias": "Propose Alias",
+        "delete": "Delete"
+    },
+    "label": {
+        "address": "Address",
+        "status": "Status",
+        "created-at": "Created at",
+        "no-aliases": "No aliases yet."
+    },
+    "status": {
+        "Pending": "Pending",
+        "Approved": "Approved",
+        "Rejected": "Rejected"
+    },
+    "confirm": {
+        "delete-title": "Delete Alias",
+        "delete-description": "Are you sure you want to delete the alias \"{{address}}\"?"
+    }
+}

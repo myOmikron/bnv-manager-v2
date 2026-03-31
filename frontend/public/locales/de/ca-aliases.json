@@ -1,0 +1,22 @@
+{
+    "heading": {
+        "aliases": "E-Mail-Aliase"
+    },
+    "button": {
+        "approve": "Genehmigen",
+        "reject": "Ablehnen",
+        "delete": "L\u00f6schen"
+    },
+    "label": {
+        "address": "Adresse",
+        "member": "Mitglied",
+        "status": "Status",
+        "created-at": "Erstellt am",
+        "no-aliases": "Keine Aliase vorhanden."
+    },
+    "status": {
+        "Pending": "Ausstehend",
+        "Approved": "Genehmigt",
+        "Rejected": "Abgelehnt"
+    }
+}

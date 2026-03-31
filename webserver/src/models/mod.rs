@@ -5,4 +5,5 @@ pub mod club;
 pub mod credential_reset;
 pub mod domain;
 pub mod invite;
+pub mod mail_alias;
 pub mod oidc_provider;

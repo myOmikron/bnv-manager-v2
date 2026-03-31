@@ -8,6 +8,7 @@
     "heading": {
         "club": "Verein: {{club}}",
         "club-dashboard": "Dashboard",
+        "aliases": "Aliase",
         "invited-members": "Eingeladene Mitglieder",
         "members": "Mitglieder"
     },

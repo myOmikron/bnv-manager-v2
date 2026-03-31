@@ -1,0 +1,18 @@
+{
+    "heading": {
+        "propose-alias": "Propose New Alias"
+    },
+    "label": {
+        "local-part": "Local Part",
+        "domain": "Domain",
+        "preview": "Preview"
+    },
+    "error": {
+        "alias-already-taken": "This alias is already taken.",
+        "domain-not-in-club": "This domain does not belong to your club.",
+        "invalid-local-part": "Invalid local part."
+    },
+    "button": {
+        "propose": "Propose"
+    }
+}

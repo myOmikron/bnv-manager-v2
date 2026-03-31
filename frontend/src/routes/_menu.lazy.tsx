@@ -19,6 +19,7 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownLabel, DropdownMenu } f
 import {
     ArrowRightStartOnRectangleIcon,
     ChevronUpIcon,
+    EnvelopeIcon,
     FingerPrintIcon,
     HomeIcon,
     PresentationChartBarIcon,
@@ -58,6 +59,10 @@ function Menu(props: MenuProps) {
                                     <SidebarItem href={"/m/dashboard"}>
                                         <HomeIcon />
                                         <SidebarLabel>{t("button.dashboard")}</SidebarLabel>
+                                    </SidebarItem>
+                                    <SidebarItem href={"/m/aliases"}>
+                                        <EnvelopeIcon />
+                                        <SidebarLabel>{t("button.aliases")}</SidebarLabel>
                                     </SidebarItem>
                                 </SidebarSection>
                             </React.Fragment>
