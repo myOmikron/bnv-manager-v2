@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 use std::error::Error;
 use std::str::FromStr;
-use std::time::Duration;
+use std::sync::Arc;
 
 use bcrypt::HashParts;
 use galvyn::core::Module;
@@ -12,6 +12,7 @@ use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::prelude::ForeignModelByField;
 use serde::Deserialize;
 use tracing::info;
+use tracing::warn;
 
 use crate::models::account::ClubAccount;
 use crate::models::account::CreateManualClubMember;
@@ -116,37 +117,59 @@ pub async fn import_data(mut tx: Transaction, body: ImportBody) -> Result<(), Bo
             .push(new_account);
     }
 
+    // Committing the transaction here is required due to the implementation of the
+    // app_password worker, simply hope for the best and that all jobs complete
     tx.commit().await?;
     info!(
-        "Imported {} new accounts, not saved yet, preparing mailcow app password setup",
+        "Imported {} new accounts, now preparing mailcow app password setup, do not quit...",
         new_accounts.len()
     );
 
-    let mut ongoing_jobs = vec![];
+    const MAX_WORKERS: usize = 8;
+
+    // Using a semaphore for limiting max amount of concurrent workers
+    let mut join_set = tokio::task::JoinSet::new();
+    let semaphore = Arc::new(tokio::sync::Semaphore::new(MAX_WORKERS));
     for club in &clubs {
         if !club.use_xauth {
             for new_account in new_accounts.get(&club.uuid).expect("just created earlier") {
-                // TODO: access to mailcow galvyn module also without the web server possible?
-                ongoing_jobs.push(Mailcow::global().create_app_password(new_account.email.clone()));
-                tokio::time::sleep(Duration::from_millis(200)).await; // slightly avoid overloading
+                let semaphore = semaphore.clone();
+                let email = new_account.email.clone();
+                join_set.spawn(async move {
+                    let _permit = semaphore.acquire().await.expect("never closed");
+                    let handle = Mailcow::global().create_app_password(email.clone());
+                    match handle.join().await {
+                        Ok(_) => (),
+                        Err(e) => warn!(
+                            error.display = %e,
+                            error.debug = ?e,
+                            mailbox = %email,
+                            "Failed to complete a job to update app password, continuing anyway..."
+                        ),
+                    };
+                    drop(_permit); // automatically, but for clarity
+                });
             }
         }
     }
-    info!(
-        "Waiting for the completion of {} background jobs",
-        ongoing_jobs.len()
-    );
-    while let Some(job) = ongoing_jobs.pop() {
-        if !job.is_finished() {
-            ongoing_jobs.push(job);
+
+    // Occasionally inform about ongoing/remaining jobs while awaiting all of them
+    let total_jobs = join_set.len();
+    let mut completed = 0;
+    let chunk = (total_jobs / 10).max(1);
+    while let Some(_) = join_set.join_next().await {
+        completed += 1;
+        if completed % chunk == 0 {
             info!(
-                "Waiting for the completion of {} background jobs",
-                ongoing_jobs.len()
+                completed = completed,
+                total = total_jobs,
+                "Waiting for the completion of {} background jobs...",
+                total_jobs - completed
             );
-            tokio::time::sleep(Duration::from_secs(1)).await;
         }
     }
 
+    info!("Completed import");
     Ok(())
 }
 

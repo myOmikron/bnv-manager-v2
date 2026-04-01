@@ -4,6 +4,8 @@
 
 use std::marker::PhantomData;
 
+use tokio::task::JoinError;
+
 /// The `Worker` trait provides a blueprint for creating and managing asynchronous workers.
 /// Each worker must implement the `run` method, defining the worker's processing logic.
 ///
@@ -33,9 +35,9 @@ pub struct WorkerHandle<T> {
     worker: PhantomData<T>,
 }
 impl<T> WorkerHandle<T> {
-    /// Check if the worker is finished
-    pub fn is_finished(&self) -> bool {
-        self.join_handle.is_finished()
+    /// Await the completion of the background job
+    pub async fn join(self) -> Result<(), JoinError> {
+        self.join_handle.await
     }
 
     /// Abort the worker

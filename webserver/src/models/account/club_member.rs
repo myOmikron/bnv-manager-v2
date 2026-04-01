@@ -1,7 +1,6 @@
 use galvyn::rorm;
 use galvyn::rorm::db::Executor;
 use galvyn::rorm::fields::types::MaxStr;
-use galvyn::rorm::prelude::ForeignModel;
 use galvyn::rorm::prelude::ForeignModelByField;
 use tracing::instrument;
 use uuid::Uuid;
@@ -13,7 +12,6 @@ use crate::models::account::db::ClubAccountModel;
 use crate::models::account::db::ClubAccountModelInsert;
 use crate::models::account::db::UsernameModel;
 use crate::models::club::ClubUuid;
-use crate::models::club::db::ClubModel;
 
 impl ClubAccount {
     /// Get the account by its uuid

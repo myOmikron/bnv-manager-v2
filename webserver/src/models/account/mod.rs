@@ -105,10 +105,15 @@ pub struct AccountUuid(pub Uuid);
 /// It should only be necessary to use this in maintenance features like data imports.
 #[derive(Debug, Clone)]
 pub struct CreateManualClubMember {
+    /// Username of the new club member
     pub username: MaxStr<255>,
+    /// Display name of the new club member
     pub display_name: MaxStr<255>,
+    /// Hashed password of the new club member, must be in bcrypt format
     pub hashed_password: MaxStr<255>,
+    /// E-mail address of the new club member, must end with the primary domain of the club
     pub email: MaxStr<255>,
+    /// Referenced club the new user should belong to
     pub club: ForeignModel<ClubModel>,
 }
 
