@@ -8,6 +8,7 @@ use std::sync::Arc;
 use bcrypt::HashParts;
 use galvyn::core::Module;
 use galvyn::rorm::Database;
+use galvyn::rorm::db::transaction::Transaction;
 use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::prelude::ForeignModelByField;
 use serde::Deserialize;
@@ -17,6 +18,7 @@ use tracing::warn;
 use crate::models::account::ClubAccount;
 use crate::models::account::CreateManualClubMember;
 use crate::models::club::Club;
+use crate::models::club::ClubUuid;
 use crate::modules::mailcow::Mailcow;
 
 /// Import users from a JSON payload
@@ -30,18 +32,42 @@ pub async fn import_data(body: ImportBody) -> Result<(), Box<dyn Error>> {
     let mut tx = Database::global().start_transaction().await?;
     let clubs = Club::find_all(&mut tx).await?;
 
-    // Ensure no duplicate usernames or email addresses across all existing members
-    // (it would still break later if collided with the name of a superadmin)
-    for club in &clubs {
+    info!("Validating input data...");
+    validate_club_members(&body.members, &clubs, &mut tx).await?;
+
+    info!("Preparing import of {} new users...", body.members.len());
+    let new_accounts = prepare_db_import(&body.members, &clubs, &mut tx).await?;
+
+    // Committing the transaction here is required due to the implementation of the
+    // app_password worker, simply hope for the best and that all jobs complete
+    tx.commit().await?;
+    info!(
+        "Imported {} new accounts, now preparing mailcow app password setup, do not quit...",
+        new_accounts.values().map(|v| v.len()).sum::<usize>()
+    );
+
+    setup_mailcow_app_passwords(&new_accounts, &clubs).await?;
+    info!("Completed import");
+    Ok(())
+}
+
+/// Ensure no duplicate usernames or email addresses across all existing members
+/// (it would still break later if collided with the name of a superadmin)
+async fn validate_club_members(
+    new_members: &[ImportUser],
+    clubs: &[Club],
+    tx: &mut Transaction,
+) -> Result<(), Box<dyn Error>> {
+    for club in clubs {
         let members = club
-            .members_page(&mut tx, u32::MAX as u64, 0, None)
+            .members_page(&mut *tx, u32::MAX as u64, 0, None)
             .await?
             .items;
 
         let mut email_taken = vec![];
         let mut username_taken = vec![];
         for club_member in &members {
-            for new_member in &body.members {
+            for new_member in new_members {
                 if club_member.email == new_member.email {
                     email_taken.push(club_member.email.clone());
                 }
@@ -68,12 +94,20 @@ pub async fn import_data(body: ImportBody) -> Result<(), Box<dyn Error>> {
             .into());
         }
     }
+    Ok(())
+}
 
-    info!("Preparing import of {} new users...", body.members.len());
-
+/// Create the new member accounts in the database with some additional
+/// validation, but without committing the transaction. The result is a map
+/// of clubs and newly created members in that club.
+async fn prepare_db_import(
+    new_members: &[ImportUser],
+    clubs: &[Club],
+    tx: &mut Transaction,
+) -> Result<HashMap<ClubUuid, Vec<ClubAccount>>, Box<dyn Error>> {
     // Create the accounts and track each club individually
     let mut new_accounts = HashMap::new();
-    for new_member in &body.members {
+    for new_member in new_members {
         // Ensure the domain exists
         let domain = match new_member.email.rsplit_once("@") {
             None => {
@@ -101,7 +135,7 @@ pub async fn import_data(body: ImportBody) -> Result<(), Box<dyn Error>> {
         };
 
         let new_account = ClubAccount::create_raw(
-            &mut tx,
+            &mut *tx,
             CreateManualClubMember {
                 username: new_member.username.clone(),
                 display_name: new_member.display_name.clone(),
@@ -118,21 +152,23 @@ pub async fn import_data(body: ImportBody) -> Result<(), Box<dyn Error>> {
             .expect("previously just created")
             .push(new_account);
     }
+    Ok(new_accounts)
+}
 
-    // Committing the transaction here is required due to the implementation of the
-    // app_password worker, simply hope for the best and that all jobs complete
-    tx.commit().await?;
-    info!(
-        "Imported {} new accounts, now preparing mailcow app password setup, do not quit...",
-        new_accounts.values().map(|v| v.len()).sum::<usize>()
-    );
-
+/// For each newly created account, configure a specific mailcow app password with
+/// the plain password of the user so that the login via POP/IMAP/SMTP works with
+/// the same password as the web login by default. Note that the password is always
+/// hashed (bcrypt), but that mailcow accepts hashed app passwords to make that work.
+async fn setup_mailcow_app_passwords(
+    new_accounts: &HashMap<ClubUuid, Vec<ClubAccount>>,
+    clubs: &[Club],
+) -> Result<(), Box<dyn Error>> {
     const MAX_WORKERS: usize = 8;
 
     // Using a semaphore for limiting max number of concurrent workers
     let mut join_set = tokio::task::JoinSet::new();
     let semaphore = Arc::new(tokio::sync::Semaphore::new(MAX_WORKERS));
-    for club in &clubs {
+    for club in clubs {
         if !club.use_xauth {
             for new_account in new_accounts.get(&club.uuid).unwrap_or(&Vec::new()) {
                 let semaphore = semaphore.clone();
@@ -172,7 +208,6 @@ pub async fn import_data(body: ImportBody) -> Result<(), Box<dyn Error>> {
         }
     }
 
-    info!("Completed import");
     Ok(())
 }
 
