@@ -170,7 +170,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         Command::ImportData { filename } => {
             let body = std::fs::read_to_string(filename)?;
-            let db = Database::connect(DatabaseConfiguration::new(DB.clone())).await?;
 
             Galvyn::builder(GalvynSetup::default())
                 .register_module::<Database>(DatabaseSetup::Custom(DatabaseConfiguration::new(
@@ -180,10 +179,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 .init_modules()
                 .await?;
 
-            let tx = db.start_transaction().await?;
-            let res = import_data(tx, serde_json::from_str(&body)?).await;
-            db.close().await;
-
+            let res = import_data(serde_json::from_str(&body)?).await;
             match res {
                 Ok(_) => println!("Import completed."),
                 Err(err) => {

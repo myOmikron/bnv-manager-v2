@@ -7,7 +7,7 @@ use std::sync::Arc;
 
 use bcrypt::HashParts;
 use galvyn::core::Module;
-use galvyn::rorm::db::transaction::Transaction;
+use galvyn::rorm::Database;
 use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::prelude::ForeignModelByField;
 use serde::Deserialize;
@@ -23,8 +23,11 @@ use crate::modules::mailcow::Mailcow;
 ///
 /// All clubs must exist for every user that is imported through this endpoint.
 /// If a user that should be imported here can not be matched to an existing club,
-/// the import is aborted. It expects the galvyn registry to be available with Mailcow module.
-pub async fn import_data(mut tx: Transaction, body: ImportBody) -> Result<(), Box<dyn Error>> {
+/// the import is aborted.
+///
+/// It expects the galvyn registry to be available with Database and Mailcow modules.
+pub async fn import_data(body: ImportBody) -> Result<(), Box<dyn Error>> {
+    let mut tx = Database::global().start_transaction().await?;
     let clubs = Club::find_all(&mut tx).await?;
 
     // Ensure no duplicate usernames or email addresses across all existing members
@@ -86,12 +89,10 @@ pub async fn import_data(mut tx: Transaction, body: ImportBody) -> Result<(), Bo
             None => return Err(format!("No club found for domain: {domain}").into()),
             Some(club) => club,
         };
-        if !new_accounts.contains_key(&club.uuid) {
-            new_accounts.insert(club.uuid, Vec::new());
-        }
+        new_accounts.entry(club.uuid).or_insert_with(Vec::new);
 
         // Ensure that passwords are actual bcrypt hashes without the need to verify them
-        if let Err(_) = HashParts::from_str(new_member.hashed_password.to_string().as_str()) {
+        if HashParts::from_str(new_member.hashed_password.to_string().as_str()).is_err() {
             return Err(format!(
                 "User '{}' has password in wrong format, expect bcrypt hash",
                 new_member.username
@@ -111,6 +112,7 @@ pub async fn import_data(mut tx: Transaction, body: ImportBody) -> Result<(), Bo
         )
         .await
         .map_err(|e| format!("Club {}: user {}: {}", club.name, new_member.username, e))?;
+        #[allow(clippy::expect_used)]
         new_accounts
             .get_mut(&club.uuid)
             .expect("previously just created")
@@ -122,21 +124,22 @@ pub async fn import_data(mut tx: Transaction, body: ImportBody) -> Result<(), Bo
     tx.commit().await?;
     info!(
         "Imported {} new accounts, now preparing mailcow app password setup, do not quit...",
-        new_accounts.len()
+        new_accounts.values().map(|v| v.len()).sum::<usize>()
     );
 
     const MAX_WORKERS: usize = 8;
 
-    // Using a semaphore for limiting max amount of concurrent workers
+    // Using a semaphore for limiting max number of concurrent workers
     let mut join_set = tokio::task::JoinSet::new();
     let semaphore = Arc::new(tokio::sync::Semaphore::new(MAX_WORKERS));
     for club in &clubs {
         if !club.use_xauth {
-            for new_account in new_accounts.get(&club.uuid).expect("just created earlier") {
+            for new_account in new_accounts.get(&club.uuid).unwrap_or(&Vec::new()) {
                 let semaphore = semaphore.clone();
                 let email = new_account.email.clone();
                 join_set.spawn(async move {
-                    let _permit = semaphore.acquire().await.expect("never closed");
+                    #[allow(clippy::expect_used)]
+                    let permit = semaphore.acquire().await.expect("never closed");
                     let handle = Mailcow::global().create_app_password(email.clone());
                     match handle.join().await {
                         Ok(_) => (),
@@ -147,7 +150,7 @@ pub async fn import_data(mut tx: Transaction, body: ImportBody) -> Result<(), Bo
                             "Failed to complete a job to update app password, continuing anyway..."
                         ),
                     };
-                    drop(_permit); // automatically, but for clarity
+                    drop(permit); // automatically, but for clarity
                 });
             }
         }
@@ -157,7 +160,7 @@ pub async fn import_data(mut tx: Transaction, body: ImportBody) -> Result<(), Bo
     let total_jobs = join_set.len();
     let mut completed = 0;
     let chunk = (total_jobs / 10).max(1);
-    while let Some(_) = join_set.join_next().await {
+    while join_set.join_next().await.is_some() {
         completed += 1;
         if completed % chunk == 0 {
             info!(

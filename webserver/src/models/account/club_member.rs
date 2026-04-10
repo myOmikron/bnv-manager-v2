@@ -86,7 +86,7 @@ impl ClubAccount {
             .await?;
 
         guard.commit().await?;
-        Ok(model.into())
+        Ok(Self::from(model))
     }
 }
 
