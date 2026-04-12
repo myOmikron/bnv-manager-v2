@@ -102,7 +102,7 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     branch = get_branch()
-    os.environ["DEV_TAG"] = branch
+    os.environ["DEV_TAG"] = branch.replace("/", "-")
 
     if args.command == "prod":
         tag = get_tag()
