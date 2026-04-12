@@ -9,51 +9,85 @@ on:
       - "**/*.md"
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   backend-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       CARGO_TERM_COLOR: always
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - uses: moonrepo/setup-rust@abb2d32350334249b178c401e5ec5836e0cd88d3 # v1
         with:
-          components: rustfmt
+          components: rustfmt, clippy
           channel: nightly
           bins: cargo-deny
+          cache: true
 
       - name: Check formatting
         run: cargo +nightly fmt --check
 
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
       - name: Run cargo-deny
         run: cargo deny check --hide-inclusion-graph
-        if: github.ref == 'refs/heads/main'
 
   frontend-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - name: Use Node.js 20
+      - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
         run: npm clean-install
 
+      - name: Build
+        working-directory: frontend
+        run: tsc && vite build --sourcemap true
+
       - name: Prettier
         working-directory: frontend
-        run: npm run ci
+        run: npx prettier --check src/
+
+      - name: ESLint
+        working-directory: frontend
+        run: npx eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0
+
+      - name: Check translations
+        working-directory: frontend
+        run: |
+          missing=$(grep -Er '"(\w|-)+\.(\w|-)+\"' public/locales/ || true)
+          count=$(echo -n "$missing" | grep -c '^' || true)
+          if [ "$count" -gt 0 ]; then
+            echo "$missing"
+            echo "$count untranslated entries found"
+            exit 1
+          fi
 
   build-docker-dev:
     needs:
       - backend-test
       - frontend-test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     concurrency:
       cancel-in-progress: true
       group: "${{ github.ref }}-dev"
@@ -64,17 +98,17 @@ jobs:
       - name: Build docker dev images
         run: python3 tools.py build
 
-
   build-docker:
     needs:
       - backend-test
       - frontend-test
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' ||  startsWith(github.ref, 'refs/tags/') )
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     concurrency:
       cancel-in-progress: true
       group: "${{ github.ref }}-prod"
