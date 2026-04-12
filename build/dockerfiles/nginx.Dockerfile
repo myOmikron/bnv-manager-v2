@@ -1,4 +1,4 @@
-FROM node:23-bookworm-slim AS buildfrontend
+FROM node:24-bookworm-slim@sha256:d8e448a56fc63242f70026718378bd4b00f8c82e78d20eefb199224a4d8e33d8 AS buildfrontend
 
 WORKDIR /app
 
