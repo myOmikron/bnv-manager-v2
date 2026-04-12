@@ -12,7 +12,7 @@ export function RadioGroup({
             className={clsx(
                 className,
                 // Basic groups
-                "**:data-[slot=label]:font-normal space-y-3",
+                "space-y-3 **:data-[slot=label]:font-normal",
                 // With descriptions
                 "has-data-[slot=description]:space-y-6 has-data-[slot=description]:**:data-[slot=label]:font-medium",
             )}
@@ -121,14 +121,14 @@ export function Radio({
         <Headless.Radio
             data-slot="control"
             {...props}
-            className={clsx(className, "focus:outline-hidden group inline-flex")}
+            className={clsx(className, "group inline-flex focus:outline-hidden")}
         >
             <span className={clsx([base, colors[color]])}>
                 <span
                     className={clsx(
-                        "bg-(--radio-indicator) size-full rounded-full border-[4.5px] border-transparent bg-clip-padding",
+                        "size-full rounded-full border-[4.5px] border-transparent bg-(--radio-indicator) bg-clip-padding",
                         // Forced colors mode
-                        "forced-colors:group-data-checked:border-[Highlight] forced-colors:border-[Canvas]",
+                        "forced-colors:border-[Canvas] forced-colors:group-data-checked:border-[Highlight]",
                     )}
                 />
             </span>

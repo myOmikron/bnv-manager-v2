@@ -46,7 +46,7 @@ export default function StepBar(props: StepBarProps) {
                         {idx !== steps.length - 1 && (
                             <div
                                 className={clsx(
-                                    "absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5",
+                                    "absolute top-4 left-4 mt-0.5 -ml-px h-full w-0.5",
                                     step.state === "finished" ? "bg-blue-600" : "bg-zinc-400 dark:bg-zinc-700",
                                 )}
                                 aria-hidden={"true"}

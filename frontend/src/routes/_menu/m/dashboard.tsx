@@ -33,7 +33,7 @@ export default function MemberDashboard(props: MemberDashboardProps) {
                     href={data.mailcow_url + "/?iam_sso=1"}
                     target={"_blank"}
                     className={
-                        "flex items-center gap-8 rounded-lg border bg-zinc-50  p-5 duration-75 hover:border-orange-500 dark:border-zinc-700 dark:bg-zinc-800"
+                        "flex items-center gap-8 rounded-lg border bg-zinc-50 p-5 duration-75 hover:border-orange-500 dark:border-zinc-700 dark:bg-zinc-800"
                     }
                 >
                     <MailcowLogo className={"size-10"} />
