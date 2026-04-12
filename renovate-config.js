@@ -7,4 +7,29 @@ module.exports = {
   executionTimeout: 15,
   repositoryCache: "enabled",
   persistRepoData: true,
+  hostRules: [
+    {
+      hostType: "docker",
+      matchHost: "dhi.io",
+      username: process.env.DHI_REGISTRY_USER,
+      password: process.env.DHI_REGISTRY_PASSWORD,
+    },
+  ],
+  extends: [
+    "config:best-practices",
+    ":separateMajorReleases",
+  ],
+  ignorePresets: ["security:minimumReleaseAgeNpm"],
+  minimumReleaseAge: "7 days",
+  internalChecksFilter: "strict",
+  dependencyDashboard: true,
+  osvVulnerabilityAlerts: true,
+  fetchChangeLogs: "pr",
+  rebaseWhen: "conflicted",
+  automergeType: "branch",
+  platformAutomerge: true,
+  vulnerabilityAlerts: {
+    labels: ["security"],
+    minimumReleaseAge: "0 days",
+  },
 };
