@@ -1,6 +1,4 @@
-ARG RUST_VERSION=1.93.1
-
-FROM rust:${RUST_VERSION}-slim-trixie AS buildrust
+FROM rust:1.93.1-slim-trixie AS buildrust
 
 WORKDIR /app
 
