@@ -26,7 +26,7 @@ cp ./target/x86_64-unknown-linux-musl/debug/webserver /bin/server
 EOF
 
 
-FROM dhi.io/alpine-base:3.23 AS final
+FROM dhi.io/alpine-base:3.23@sha256:27d91b0ae2dbb1bbf89398f4ee4564a0c7a14a82c34c8cffd3b2687033a9d97a AS final
 LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
 
 # Copy the executable from the "build" stage.
