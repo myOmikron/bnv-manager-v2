@@ -29,9 +29,7 @@ export function PaginationPrevious({
         <span className={clsx(className, "grow basis-0")}>
             <Button
                 onClick={onClick}
-                {...(href === null ? { disabled: true } : { href })}
-                params={params}
-                search={search}
+                {...(href === null ? { disabled: true } : { href, params, search })}
                 plain
                 aria-label="Previous page"
             >
@@ -67,9 +65,7 @@ export function PaginationNext({
         <span className={clsx(className, "flex grow basis-0 justify-end")}>
             <Button
                 onClick={onClick}
-                {...(href === null ? { disabled: true } : { href })}
-                params={params}
-                search={search}
+                {...(href === null ? { disabled: true } : { href, params, search })}
                 plain
                 aria-label="Next page"
             >
