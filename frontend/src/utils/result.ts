@@ -146,7 +146,7 @@ export interface ResultInterface<T, E> {
      * or call `unwrapOr` or `unwrapOrElse`.
      *
      * @returns the success value
-     * @throws UnwrapError<E> if the value is an `Err`, with a panic message provided by the `Err`’s `toString()` implementation.
+     * @throws {UnwrapError<E>} if the value is an `Err`, with a panic message provided by the `Err`’s `toString()` implementation.
      */
     unwrap(): T;
 
