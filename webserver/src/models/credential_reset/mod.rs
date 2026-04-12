@@ -45,7 +45,7 @@ pub struct CredentialResetUuid(pub Uuid);
 
 /// Generate a random 6-digit code
 pub(in crate::models) fn generate_code() -> String {
-    let n: u32 = rand::thread_rng().gen_range(0..1_000_000);
+    let n: u32 = rand::rng().random_range(0..1_000_000);
     format!("{n:06}")
 }
 

@@ -10,8 +10,8 @@ use galvyn::rorm::db::Executor;
 use galvyn::rorm::fields::types::Json;
 use galvyn::rorm::fields::types::MaxStr;
 use galvyn::rorm::prelude::ForeignModelByField;
-use rand::distributions::Alphanumeric;
-use rand::distributions::DistString;
+use rand::distr::Alphanumeric;
+use rand::distr::SampleString;
 use serde::Deserialize;
 use serde::Serialize;
 use time::Duration;
@@ -53,7 +53,7 @@ impl OidcClient {
         name: MaxStr<255>,
         redirect_url: Url,
     ) -> anyhow::Result<Self> {
-        let client_secret = MaxStr::new(Alphanumeric.sample_string(&mut rand::thread_rng(), 64))?;
+        let client_secret = MaxStr::new(Alphanumeric.sample_string(&mut rand::rng(), 64))?;
 
         Ok(Self::from(
             rorm::insert(exe, OidcClientModel)
@@ -128,7 +128,7 @@ impl OidcAuthenticationToken {
     ) -> anyhow::Result<Self> {
         let mut guard = exe.ensure_transaction().await?;
 
-        let code = MaxStr::new(Alphanumeric.sample_string(&mut rand::thread_rng(), 64))?;
+        let code = MaxStr::new(Alphanumeric.sample_string(&mut rand::rng(), 64))?;
 
         let token = rorm::insert(guard.get_transaction(), OidcAuthenticationTokenModel)
             .single(&OidcAuthenticationTokenModel {

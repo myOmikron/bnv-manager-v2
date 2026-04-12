@@ -51,7 +51,7 @@ impl Module for Oidc {
             RsaPrivateKey::from_pkcs8_pem(&pem)?
         } else {
             info!("Generating new 2048-bit RSA signing key ..");
-            let key = RsaPrivateKey::new(&mut rand::thread_rng(), 2048)?;
+            let key = RsaPrivateKey::new(&mut rsa::rand_core::OsRng, 2048)?;
             let pem = key.to_pkcs8_pem(rsa::pkcs8::LineEnding::LF)?;
             fs::write(key_path, pem.as_bytes())?;
             key
