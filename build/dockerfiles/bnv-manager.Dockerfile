@@ -15,8 +15,6 @@ RUN rustup target add x86_64-unknown-linux-musl
 
 RUN --mount=type=bind,source=mailcow/,target=mailcow/ \
     --mount=type=bind,source=webserver/,target=webserver/ \
-    --mount=type=bind,source=conf_updater/,target=conf_updater/ \
-    --mount=type=bind,source=conf_updater_common/,target=conf_updater_common/ \
     --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
     --mount=type=bind,source=Cargo.lock,target=Cargo.lock \
     --mount=type=cache,target=/app/target/ \
