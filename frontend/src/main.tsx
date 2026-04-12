@@ -5,7 +5,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import "react-toastify/dist/ReactToastify.css";
 
 // Import i18n to initialize it
-import "src/i18n.ts";
+import "src/i18n";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
