@@ -16,4 +16,6 @@ jobs:
         with:
           configurationFile: renovate-config.js
           token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.RENOVATE_GPG_KEY }}
 
