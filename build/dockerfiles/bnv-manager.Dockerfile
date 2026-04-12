@@ -1,4 +1,4 @@
-FROM rust:1.93.1-slim-trixie AS buildrust
+FROM rust:1.94.0-slim-trixie@sha256:f7bf1c266d9e48c8d724733fd97ba60464c44b743eb4f46f935577d3242d81d0 AS buildrust
 
 WORKDIR /app
 
