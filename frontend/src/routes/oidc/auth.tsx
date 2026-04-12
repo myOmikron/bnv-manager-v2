@@ -37,7 +37,7 @@ export default function OidcAuthentication(props: OidcAuthenticationProps) {
                 const id = toast.loading(t("toast.signing-in"));
                 try {
                     await Api.auth.login(value.username, value.password);
-                } catch (e) {
+                } catch {
                     toast.update(id, {
                         isLoading: false,
                         render: t("toast.sign-in-failed"),

@@ -1,7 +1,6 @@
 // @ts-check
 
 import eslint from "@eslint/js";
-import parser from "@typescript-eslint/parser";
 import jsdoc from "eslint-plugin-jsdoc";
 import tsEslint from "typescript-eslint";
 
@@ -14,7 +13,7 @@ const config = tsEslint.config(
     },
     {
         languageOptions: {
-            parser,
+            parser: tsEslint.parser,
             parserOptions: { project: ["./tsconfig.json"] },
         },
         rules: {
@@ -78,10 +77,7 @@ const config = tsEslint.config(
 
             "@typescript-eslint/ban-ts-comment": ["error", { "ts-ignore": "allow-with-description" }],
 
-            "@typescript-eslint/ban-types": [
-                "error",
-                { extendDefaults: true, types: { "{}": false } }, // its just syntactically nicer and consistent to use `type ...Props = {};` and extend it later
-            ],
+            "@typescript-eslint/no-empty-object-type": "off", // its just syntactically nicer and consistent to use `type ...Props = {};` and extend it later
 
             "@typescript-eslint/no-unused-vars": [
                 "error",

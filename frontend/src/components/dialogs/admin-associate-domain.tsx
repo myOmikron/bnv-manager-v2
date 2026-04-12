@@ -44,7 +44,7 @@ export default function AssociateDomainDialog(props: AssociateDomainDialogProps)
     });
 
     React.useEffect(() => {
-        props.open && form.reset();
+        if (props.open) form.reset();
     }, [props.open]);
 
     return (

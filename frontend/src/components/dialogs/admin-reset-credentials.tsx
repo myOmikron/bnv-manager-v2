@@ -92,7 +92,7 @@ export default function AdminResetCredentialsDialog(props: AdminResetCredentials
                 </Button>
                 <Button
                     onClick={async () => {
-                        reset && (await navigator.clipboard.writeText(reset.link));
+                        if (reset) await navigator.clipboard.writeText(reset.link);
                         toast.success(tg("toast.copied-to-clipboard"));
                     }}
                 >
@@ -100,7 +100,7 @@ export default function AdminResetCredentialsDialog(props: AdminResetCredentials
                 </Button>
                 <PrimaryButton
                     onClick={async () => {
-                        reset && (await navigator.clipboard.writeText(reset.code));
+                        if (reset) await navigator.clipboard.writeText(reset.code);
                         toast.success(tg("toast.copied-to-clipboard"));
                     }}
                 >

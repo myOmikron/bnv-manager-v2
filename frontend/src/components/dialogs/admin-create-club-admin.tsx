@@ -140,7 +140,7 @@ export default function DialogCreateClubAdmin(props: DialogCreateClubAdminProps)
                             <Button
                                 outline={true}
                                 onClick={async () => {
-                                    openShowInvite && (await navigator.clipboard.writeText(openShowInvite));
+                                    if (openShowInvite) await navigator.clipboard.writeText(openShowInvite);
                                     toast.success(tg("toast.copied-to-clipboard"));
                                 }}
                             >
