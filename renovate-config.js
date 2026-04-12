@@ -17,7 +17,7 @@ module.exports = {
   dependencyDashboard: true,
   osvVulnerabilityAlerts: true,
   fetchChangeLogs: "pr",
-  rebaseWhen: "conflicted",
+  rebaseWhen: "auto",
   automergeType: "branch",
   platformAutomerge: true,
   vulnerabilityAlerts: {
