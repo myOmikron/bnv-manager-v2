@@ -300,7 +300,7 @@ pub async fn get_dashboard_stats(
         .filter(|m| member_emails.contains(&m.username))
         .collect();
 
-    mailboxes.sort_by(|a, b| b.quota_used.cmp(&a.quota_used));
+    mailboxes.sort_by_key(|m| std::cmp::Reverse(m.quota_used));
 
     let mailbox_stats: Vec<_> = mailboxes
         .into_iter()
