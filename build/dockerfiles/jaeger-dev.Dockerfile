@@ -1,1 +1,1 @@
-FROM jaegertracing/jaeger:2.4.0 AS final
+FROM jaegertracing/jaeger:2.17.0@sha256:6266573208d665ce5c17483bce0a75d0806480d92c84766d288d0aee885ce708 AS final
