@@ -5,7 +5,7 @@ use galvyn::core::re_exports::schemars::JsonSchema;
 use galvyn::rorm;
 use galvyn::rorm::db::Executor;
 use galvyn::rorm::fields::types::MaxStr;
-use rand::Rng;
+use rand::RngExt;
 use serde::Deserialize;
 use serde::Serialize;
 use time::OffsetDateTime;
