@@ -18,6 +18,4 @@ jobs:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           RENOVATE_GIT_PRIVATE_KEY: ${{ secrets.RENOVATE_GPG_KEY }}
-          DHI_REGISTRY_USER: ${{ secrets.DHI_REGISTRY_USER }}
-          DHI_REGISTRY_PASSWORD: ${{ secrets.DHI_REGISTRY_PASSWORD }}
-
+          RENOVATE_HOST_RULES: '[{"matchHost":"dhi.io","hostType":"docker","username":"${{ secrets.DHI_REGISTRY_USER }}","password":"${{ secrets.DHI_REGISTRY_PASSWORD }}"}]'
