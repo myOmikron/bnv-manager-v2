@@ -59,7 +59,7 @@ jobs:
 
       - name: Build
         working-directory: frontend
-        run: tsc && vite build --sourcemap true
+        run: npx tsc && npx vite build --sourcemap true
 
       - name: Prettier
         working-directory: frontend
