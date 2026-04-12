@@ -7,14 +7,6 @@ module.exports = {
   executionTimeout: 15,
   repositoryCache: "enabled",
   persistRepoData: true,
-  hostRules: [
-    {
-      hostType: "docker",
-      matchHost: "dhi.io",
-      username: process.env.DHI_REGISTRY_USER,
-      password: process.env.DHI_REGISTRY_PASSWORD,
-    },
-  ],
   extends: [
     "config:best-practices",
     ":separateMajorReleases",
