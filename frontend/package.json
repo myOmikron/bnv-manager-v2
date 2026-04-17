@@ -15,7 +15,7 @@
         "@headlessui/react": "^2.2.0",
         "@heroicons/react": "^2.2.0",
         "@tailwindcss/vite": "^4.2.2",
-        "@tanstack/react-form": "~1.28.0",
+        "@tanstack/react-form": "~1.29.0",
         "@tanstack/react-router": "^1.112.0",
         "@tanstack/router-plugin": "^1.112.0",
         "@zxcvbn-ts/core": "^3.0.4",
