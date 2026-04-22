@@ -41,7 +41,7 @@
         "@vitejs/plugin-react-swc": "^4.3.0",
         "eslint": "^10.0.0",
         "eslint-plugin-jsdoc": "^62.7.0",
-        "prettier": "^3.2.5",
+        "prettier": "^3.8.2",
         "prettier-plugin-tailwindcss": "^0.7.0",
         "tailwindcss": "^4.2.1",
         "typescript": "^6.0.0",
