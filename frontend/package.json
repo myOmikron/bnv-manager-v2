@@ -39,7 +39,7 @@
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
         "@vitejs/plugin-react-swc": "^4.3.0",
-        "eslint": "^10.0.0",
+        "eslint": "^10.2.0",
         "eslint-plugin-jsdoc": "^62.7.0",
         "prettier": "^3.8.2",
         "prettier-plugin-tailwindcss": "^0.7.0",
