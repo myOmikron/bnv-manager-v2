@@ -37,9 +37,9 @@ tracing = { workspace = true }
 tracing-forest = { version = "~0.3", git = "https://github.com/myOmikron/tracing-forest", branch = "replace-ansi-term", features = ["smallvec", "ansi", "chrono"] }
 tracing-subscriber = { version = "~0.3", features = ["tracing-log", "env-filter"] }
 tracing-opentelemetry = { version = "0.32" }
-opentelemetry = { version = "0.31" }
-opentelemetry_sdk = { version = "0.31", features = ["rt-tokio"] }
-opentelemetry-otlp = { version = "0.31", features = ["grpc-tonic"] }
+opentelemetry = { version = "0.32" }
+opentelemetry_sdk = { version = "0.32", features = ["rt-tokio"] }
+opentelemetry-otlp = { version = "0.32", features = ["grpc-tonic"] }
 
 # Datatypes
 uuid = { version = "~1", features = ["serde", "v4"] }
