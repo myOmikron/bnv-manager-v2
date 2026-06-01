@@ -300,12 +300,23 @@ pub async fn get_dashboard_stats(
         .filter(|m| member_emails.contains(&m.username))
         .collect();
 
-    mailboxes.sort_by_key(|m| std::cmp::Reverse(m.quota_used));
+    // Use quota-based ordering, so that accounts with high usage quota are sorted first
+    mailboxes.sort_by_key(|m| {
+        let quota = if m.quota == 0 { domain_quota } else { m.quota };
+        std::cmp::Reverse((m.quota_used as f64 / quota as f64 * 10000.0) as u64)
+    });
 
     let mailbox_stats: Vec<_> = mailboxes
         .into_iter()
-        .take(10)
-        .map(|m| schema::MailboxStatsSchema {
+        .enumerate()
+        .take_while(|(count, m)| {
+            // Take at least 10 elements and all elements with exceeded usage
+            // quota, depends on sorting order above
+            let quota = if m.quota == 0 { domain_quota } else { m.quota };
+            let relative_quota = m.quota_used as f64 / quota as f64;
+            *count < 10 || relative_quota >= 1.0
+        })
+        .map(|(_, m)| schema::MailboxStatsSchema {
             email: m.username,
             quota_used: m.quota_used,
             quota: if m.quota == 0 { domain_quota } else { m.quota },
