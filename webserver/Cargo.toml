@@ -15,7 +15,7 @@ anyhow = { version = "~1" }
 # Webframework
 tower = { version = "~0.5", features = ["limit"] }
 tower-http = { version = "~0.6", features = ["trace", "limit"] }
-galvyn = { version = "~0.3", features = ["rorm-postgres-only", "rorm-cli", "rorm-time", "rorm-url", "rorm-uuid"] }
+galvyn = { version = "~0.4", features = ["rorm-postgres-only", "rorm-cli", "rorm-time", "rorm-url", "rorm-uuid"] }
 
 # Account authentication
 # webauthn-rs = { version = "~0.5", features = ["danger-allow-state-serialisation"] } # The feature is necessary as we want to save the state to a database

@@ -9,7 +9,7 @@ use ::tracing::instrument;
 use clap::Parser;
 use galvyn::Galvyn;
 use galvyn::GalvynSetup;
-use galvyn::core::DatabaseSetup;
+use galvyn::core::modules::database::DatabaseSetup;
 use galvyn::rorm;
 use galvyn::rorm::Database;
 use galvyn::rorm::DatabaseConfiguration;
