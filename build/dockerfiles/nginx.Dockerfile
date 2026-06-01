@@ -14,7 +14,7 @@ npm run build
 mv ./dist /frontend
 EOF
 
-FROM debian:bookworm-slim@sha256:4724b8cc51e33e398f0e2e15e18d5ec2851ff0c2280647e1310bc1642182655d AS buildswagger
+FROM debian:trixie-slim@sha256:b6e2a152f22a40ff69d92cb397223c906017e1391a73c952b588e51af8883bf8 AS buildswagger
 
 WORKDIR /app
 
@@ -32,7 +32,7 @@ mv swagger-ui-5.18.2/dist swagger-ui
 EOF
 
 
-FROM  dhi.io/nginx:1.29@sha256:d457a278247531873df03b7fdaabd96de0b530624f8e72c73d41e6b81c4487dd AS final
+FROM  dhi.io/nginx:1.31@sha256:e44f44309ad57c6db303a9a2fe6efc96649a5784a486e5d020b97f96eb584289 AS final
 LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
 
 COPY --from=buildfrontend /frontend /usr/share/nginx/html/frontend
