@@ -3,7 +3,7 @@
         "accept-invite": "Accept invite"
     },
     "description": {
-        "invite": "Please set a password for your new account"
+        "invite": "A new account with the username {{name}} will be created for you. Please set a password for your new account."
     },
     "error": {
         "invite-expired": "Invite has expired",

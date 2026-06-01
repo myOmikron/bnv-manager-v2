@@ -56,7 +56,7 @@ export default function Invite(props: InviteProps) {
         <AuthLayout>
             <Form onSubmit={form.handleSubmit} className={"grid w-full max-w-sm grid-cols-1 gap-8"}>
                 <Heading>{t("heading.invite", { name: data.display_name })}</Heading>
-                <Text>{t("description.invite")}</Text>
+                <Text>{t("description.invite", { name: data.username })}</Text>
                 <FieldGroup>
                     <Field className={"hidden"} key={"username"}>
                         <Label>{t("label.username")}</Label>
