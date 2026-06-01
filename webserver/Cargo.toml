@@ -36,7 +36,7 @@ clap = { version = "~4", features = ["derive"] }
 tracing = { workspace = true }
 tracing-forest = { version = "~0.3", git = "https://github.com/myOmikron/tracing-forest", branch = "replace-ansi-term", features = ["smallvec", "ansi", "chrono"] }
 tracing-subscriber = { version = "~0.3", features = ["tracing-log", "env-filter"] }
-tracing-opentelemetry = { version = "0.32" }
+tracing-opentelemetry = { version = "0.33" }
 opentelemetry = { version = "0.32" }
 opentelemetry_sdk = { version = "0.32", features = ["rt-tokio"] }
 opentelemetry-otlp = { version = "0.32", features = ["grpc-tonic"] }
