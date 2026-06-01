@@ -20,6 +20,7 @@ use crate::http::extractors::session_user::SessionUser;
 use crate::http::handler_auth::auth::schema::AuthQuery;
 use crate::http::handler_auth::auth::schema::SignInRequest;
 use crate::models::account::Account;
+use crate::models::account::ClubAccount;
 use crate::models::oidc_provider::CreateOidcAuthenticationToken;
 use crate::models::oidc_provider::OidcAuthenticationToken;
 use crate::models::oidc_provider::OidcClient;
@@ -99,7 +100,13 @@ pub async fn sign_in(
 ) -> ApiResult<()> {
     let mut tx = Database::global().start_transaction().await?;
 
-    let Some(account) = Account::get_by_username(&mut tx, &username).await? else {
+    let lookup_result = match Account::get_by_username(&mut tx, &username).await? {
+        Some(account) => Some(account),
+        None => ClubAccount::get_by_email(&mut tx, &username)
+            .await?
+            .map(Account::ClubMember),
+    };
+    let Some(account) = lookup_result else {
         // dummy bcrypt to not allow timing attacks for username enumeration
         bcrypt::verify(
             "foo",
