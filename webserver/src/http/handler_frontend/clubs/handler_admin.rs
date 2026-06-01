@@ -310,11 +310,11 @@ pub async fn get_dashboard_stats(
         .into_iter()
         .enumerate()
         .take_while(|(count, m)| {
-            // Take at least 10 elements and all elements with exceeded usage
+            // Take at least 10 elements and all elements with high or exceeded usage
             // quota, depends on sorting order above
             let quota = if m.quota == 0 { domain_quota } else { m.quota };
             let relative_quota = m.quota_used as f64 / quota as f64;
-            *count < 10 || relative_quota >= 1.0
+            *count < 10 || relative_quota >= 0.9
         })
         .map(|(_, m)| schema::MailboxStatsSchema {
             email: m.username,
