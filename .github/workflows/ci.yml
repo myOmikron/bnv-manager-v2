@@ -9,7 +9,7 @@ on:
       - "**/*.md"
   workflow_dispatch:
 
-permissions: {}
+permissions: { }
 
 jobs:
   backend-test:
@@ -121,3 +121,42 @@ jobs:
 
       - name: Build docker images
         run: python3 tools.py prod build --push
+
+  deploy:
+    needs:
+      - build-docker
+    runs-on: ubuntu-latest
+    permissions: { }
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    concurrency:
+      cancel-in-progress: false
+      group: deploy
+    environment: production
+
+    steps:
+      - name: Setup SSH
+        env:
+          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          DEPLOY_SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
+
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy via forced command
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_SSH_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+          DEPLOY_TAG: ${{ github.ref_name }}
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -p "${DEPLOY_PORT}" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "$DEPLOY_TAG"
