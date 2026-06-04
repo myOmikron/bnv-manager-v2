@@ -77,7 +77,7 @@ impl MailcowClient {
         headers.insert("X-API-Key", HeaderValue::try_from(api_key)?);
         Ok(Self {
             client: Client::builder()
-                .timeout(Duration::from_secs(10))
+                .timeout(Duration::from_secs(60))
                 .default_headers(headers)
                 .build()?,
             base_url,
