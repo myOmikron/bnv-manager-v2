@@ -108,17 +108,22 @@ pub async fn reset_password(
     account.set_password(&mut tx, &password).await?;
     CredentialReset::delete_by_uuid(&mut tx, reset.uuid).await?;
 
+    let mut app_password_mailbox = None;
     if let Account::ClubMember(ref member) = account {
         let club = Club::find_by_uuid(&mut tx, member.club)
             .await?
             .ok_or(ApiError::server_error("Club should exist"))?;
 
         if !club.use_xauth {
-            Mailcow::global().create_app_password(member.email.clone());
+            app_password_mailbox = Some(member.email.clone());
         }
     }
 
     tx.commit().await?;
+
+    if let Some(member_mailbox) = app_password_mailbox {
+        Mailcow::global().create_app_password(member_mailbox);
+    }
 
     Ok(ApiJson(FormResult::ok(())))
 }
@@ -171,17 +176,22 @@ pub async fn reset_password_by_uuid(
     account.set_password(&mut tx, &password).await?;
     CredentialReset::delete_by_uuid(&mut tx, reset.uuid).await?;
 
+    let mut app_password_mailbox = None;
     if let Account::ClubMember(ref member) = account {
         let club = Club::find_by_uuid(&mut tx, member.club)
             .await?
             .ok_or(ApiError::server_error("Club should exist"))?;
 
         if !club.use_xauth {
-            Mailcow::global().create_app_password(member.email.clone());
+            app_password_mailbox = Some(member.email.clone());
         }
     }
 
     tx.commit().await?;
+
+    if let Some(member_mailbox) = app_password_mailbox {
+        Mailcow::global().create_app_password(member_mailbox);
+    }
 
     Ok(ApiJson(FormResult::ok(())))
 }
