@@ -31,6 +31,7 @@
         "display-name": "Display Name",
         "download-as-csv": "Export CSV",
         "download-as-json": "Export JSON",
+        "email": "E-mail address",
         "expires-at": "Expires at",
         "no-members": "There are no members yet.",
         "search": "Search",

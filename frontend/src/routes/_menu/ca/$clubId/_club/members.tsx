@@ -140,6 +140,7 @@ export default function ClubMembers(props: ClubMembersProps) {
                         <TableHead>
                             <TableRow>
                                 <TableHeader>{t("label.username")}</TableHeader>
+                                <TableHeader>{t("label.email")}</TableHeader>
                                 <TableHeader>{t("label.display-name")}</TableHeader>
                                 <TableHeader className={"w-0"}>
                                     <span className={"sr-only"}>{tg("accessibility.actions")}</span>
@@ -150,6 +151,7 @@ export default function ClubMembers(props: ClubMembersProps) {
                             {data.items.map((item) => (
                                 <TableRow key={item.uuid}>
                                     <TableCell>{item.username}</TableCell>
+                                    <TableCell>{item.email}</TableCell>
                                     <TableCell>{item.display_name}</TableCell>
                                     <TableCell>
                                         <Dropdown>
