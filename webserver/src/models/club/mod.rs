@@ -288,12 +288,23 @@ impl Club {
         let mut conditions = vec![ClubAccountModel.club.equals(self.uuid.0).boxed()];
         if let Some(search) = search {
             conditions.push(
-                ClubAccountModel
-                    .username
-                    .username
-                    .like_ignore_case(format!("%{search}%"))
-                    .boxed(),
-            )
+                DynamicCollection::or_unchecked(vec![
+                    ClubAccountModel
+                        .username
+                        .username
+                        .like_ignore_case(format!("%{search}%"))
+                        .boxed(),
+                    ClubAccountModel
+                        .email
+                        .like_ignore_case(format!("%{search}%"))
+                        .boxed(),
+                    ClubAccountModel
+                        .display_name
+                        .like_ignore_case(format!("%{search}%"))
+                        .boxed(),
+                ])
+                .boxed(),
+            );
         }
         let cond_collection = DynamicCollection::and_unchecked(conditions);
 
