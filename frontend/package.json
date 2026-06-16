@@ -33,7 +33,7 @@
     },
     "devDependencies": {
         "@eslint/js": "10.0.1",
-        "@openapitools/openapi-generator-cli": "2.34.0",
+        "@openapitools/openapi-generator-cli": "2.38.0",
         "@tanstack/router-devtools": "1.167.0",
         "@tanstack/router-plugin": "1.168.11",
         "@types/react": "^19.0.0",
