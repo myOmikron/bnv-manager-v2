@@ -35,7 +35,7 @@
         "@eslint/js": "10.0.1",
         "@openapitools/openapi-generator-cli": "2.38.0",
         "@tanstack/router-devtools": "1.167.0",
-        "@tanstack/router-plugin": "1.168.11",
+        "@tanstack/router-plugin": "1.168.18",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
         "@vitejs/plugin-react-swc": "4.3.1",
