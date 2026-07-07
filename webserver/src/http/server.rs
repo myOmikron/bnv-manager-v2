@@ -20,25 +20,22 @@ use crate::http::handler_frontend;
 pub async fn run(mut router: RouterBuilder) -> Result<(), GalvynError> {
     let addr = SocketAddr::new(*LISTEN_ADDRESS.get(), *LISTEN_PORT.get());
 
-    router
-        .add_routes(
+    let routes = GalvynRouter::new()
+        .nest(
+            "/api/v1",
             GalvynRouter::new()
-                .nest(
-                    "/api/v1",
-                    GalvynRouter::new()
-                        .nest("/frontend", handler_frontend::initialize())
-                        .nest("/auth", handler_auth::initialize()),
-                )
-                .layer(
-                    ServiceBuilder::new().layer(
-                        TraceLayer::new_for_http()
-                            .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
-                            .on_response(DefaultOnResponse::new().level(Level::INFO))
-                            // Disable automatic failure logger because any handler_frontend returning a 500 should have already logged its reason™
-                            .on_failure(()),
-                    ),
-                ),
+                .nest("/frontend", handler_frontend::initialize())
+                .nest("/auth", handler_auth::initialize()),
         )
-        .start(addr)
-        .await
+        .layer(
+            ServiceBuilder::new().layer(
+                TraceLayer::new_for_http()
+                    .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
+                    .on_response(DefaultOnResponse::new().level(Level::INFO))
+                    // Disable automatic failure logger because any handler_frontend returning a 500 should have already logged its reason™
+                    .on_failure(()),
+            ),
+        );
+
+    router.add_listener(addr, routes).start().await
 }

@@ -89,7 +89,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
                         last_migration_table_name: None,
                     },
                     "/migrations".to_string(),
-                    false,
                     None,
                 )
                 .await?;
@@ -131,7 +130,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     last_migration_table_name: None,
                 },
                 migrations_dir,
-                false,
                 None,
             )
             .await?;

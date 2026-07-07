@@ -388,7 +388,7 @@ version = "4.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2ce8604710f6733aa641a2b3731eaa1e8b3d9973d5e3565da11800813f997a9"
 dependencies = [
- "heck 0.5.0",
+ "heck",
  "proc-macro2",
  "quote",
  "syn",
@@ -793,15 +793,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "envy"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f47e0157f2cb54f5ae1bd371b30a2ae4311e1c028f575cd4e81de7353215965"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "equivalent"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1038,9 +1029,9 @@ dependencies = [
 
 [[package]]
 name = "galvyn"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eef161e795861761b3a41b67be1aa3a420925adaef5d210a76fb0d29f873570c"
+checksum = "cef9e12728ed938d712a7e0c498dd1aa6f4c24de264665cdb7d2e7e6b9cdbd5a"
 dependencies = [
  "axum",
  "futures-lite",
@@ -1055,28 +1046,30 @@ dependencies = [
  "signal-hook-tokio",
  "thiserror 2.0.18",
  "tokio",
+ "tower-http 0.6.11",
  "tracing",
  "tracing-subscriber",
 ]
 
 [[package]]
 name = "galvyn-core"
-version = "0.4.0"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eadc5afc11d66b5ca2fd98adca6fc9aafcb6eac542892d37d467e8b6f30b4721"
+checksum = "f4319c66fecbff0d412c16cb7cda8eca4f8e9ce03266b3993750d836f58b8ff3"
 dependencies = [
  "anyhow",
  "async-trait",
  "axum",
  "base64",
  "bytes",
- "envy",
  "futures-concurrency",
  "futures-lite",
+ "http-body",
  "mime",
  "opentelemetry 0.31.0",
  "opentelemetry-otlp 0.31.1",
  "opentelemetry_sdk 0.31.0",
+ "pin-project-lite",
  "regex",
  "rorm",
  "schemars",
@@ -1094,9 +1087,9 @@ dependencies = [
 
 [[package]]
 name = "galvyn-macros"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab2d01372094f29aac40a4eaddb2f54483a534cf0cfef8301858f0bbd9d6364d"
+checksum = "b4eecaec52762caf9ee870ab7906088b768b7944ffd6aabd9d9511febd827fa8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1211,12 +1204,6 @@ checksum = "7382cf6263419f2d8df38c55d7da83da5c18aef87fc7a7fc1fb1e344edfe14c1"
 dependencies = [
  "hashbrown 0.15.5",
 ]
-
-[[package]]
-name = "heck"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
 name = "heck"
@@ -2581,7 +2568,7 @@ dependencies = [
  "sync_wrapper",
  "tokio",
  "tower",
- "tower-http",
+ "tower-http 0.6.11",
  "tower-service",
  "url",
  "wasm-bindgen",
@@ -2621,7 +2608,7 @@ dependencies = [
  "tokio",
  "tokio-rustls",
  "tower",
- "tower-http",
+ "tower-http 0.6.11",
  "tower-service",
  "url",
  "wasm-bindgen",
@@ -2655,9 +2642,9 @@ dependencies = [
 
 [[package]]
 name = "rorm"
-version = "0.9.7"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1ce7c79b757c2a9f550bdc3b927025560f8e6536e9e25158ee1771e09559750"
+checksum = "eab3fe216e02a6b1a4000905c8fbecac1aaa297bc8b7c7c6f00c0e0c4d5a9eab"
 dependencies = [
  "bit-vec 0.6.3",
  "futures-core",
@@ -2680,9 +2667,9 @@ dependencies = [
 
 [[package]]
 name = "rorm-cli"
-version = "0.9.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c20f0c9b04727cae9fc7334508c0792c0ad66558c4bc4f607094d424ef932157"
+checksum = "96fddea417c3b9d54e414b56532020a2449fce24d6fc3e23d61d5bfc52f177bb"
 dependencies = [
  "anyhow",
  "clap",
@@ -2693,15 +2680,17 @@ dependencies = [
  "rpassword",
  "serde",
  "serde_json",
+ "thiserror 2.0.18",
  "tokio",
  "toml",
+ "tracing",
 ]
 
 [[package]]
 name = "rorm-db"
-version = "0.11.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12b826afa399b57500dcca822909c3c993002ed86f14bf1ff899cf1de00ce963"
+checksum = "bd873c6cd7a6cace88efa3d57d3e10d27b07acbcb0f717fd552fd9b1cae20943"
 dependencies = [
  "futures-core",
  "pin-project",
@@ -2714,20 +2703,19 @@ dependencies = [
 
 [[package]]
 name = "rorm-declaration"
-version = "0.4.2"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1667c132f5da55c31bc7670cb5fbd4f5413ffd17b7675d14aeff16ec16ae112"
+checksum = "eb8ef71a76935b9f2fbe897fd2ce6c1dd5822f431ee03c6d8789f66bd712e1ab"
 dependencies = [
  "ordered-float",
  "serde",
- "strum",
 ]
 
 [[package]]
 name = "rorm-macro"
-version = "0.10.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4895df5ad74d35a8b1791a0f360645f567be659df072c3507b7bb347bcabb8ef"
+checksum = "12396785e96a150b62eda01c0f352057db980ef913a67391a4902439b0efb56f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2737,9 +2725,9 @@ dependencies = [
 
 [[package]]
 name = "rorm-macro-impl"
-version = "0.10.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e783dad31701f627e124382089402d01b43e9b010a697a54e51eb45b9bf636eb"
+checksum = "a5ca398852963675f81135052b8cc6a6a41b87d3267d482527432eaf9c18c7c1"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -2749,9 +2737,9 @@ dependencies = [
 
 [[package]]
 name = "rorm-sql"
-version = "0.10.2"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09230f3f0b46efcca7f6f4459780f3a658705bbed45e06cc48b7479a51a9772a"
+checksum = "391d7494cb14be39344740022fb6781724cf0b125124f318822f6e8f2dcad080"
 dependencies = [
  "bit-vec 0.6.3",
  "chrono",
@@ -3305,7 +3293,7 @@ checksum = "19a9c1841124ac5a61741f96e1d9e2ec77424bf323962dd894bdb93f37d5219b"
 dependencies = [
  "dotenvy",
  "either",
- "heck 0.5.0",
+ "heck",
  "hex",
  "once_cell",
  "proc-macro2",
@@ -3459,28 +3447,6 @@ name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
-
-[[package]]
-name = "strum"
-version = "0.25.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "290d54ea6f91c969195bdbcd7442c8c2a2ba87da8bf60a7ee86a235d4bc1e125"
-dependencies = [
- "strum_macros",
-]
-
-[[package]]
-name = "strum_macros"
-version = "0.25.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23dc1fa9ac9c169a78ba62f0b841814b7abae11bdd047b9c58f893439e309ea0"
-dependencies = [
- "heck 0.4.1",
- "proc-macro2",
- "quote",
- "rustversion",
- "syn",
-]
 
 [[package]]
 name = "subtle"
@@ -3826,13 +3792,30 @@ dependencies = [
  "futures-util",
  "http",
  "http-body",
- "http-body-util",
  "pin-project-lite",
  "tower",
  "tower-layer",
  "tower-service",
  "tracing",
  "url",
+]
+
+[[package]]
+name = "tower-http"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b11f75e912b0c2be01b63d8cf8057b8c3f97cf34abb3d431a3a4c8675498e233"
+dependencies = [
+ "bitflags",
+ "bytes",
+ "http",
+ "http-body",
+ "http-body-util",
+ "percent-encoding",
+ "pin-project-lite",
+ "tower-layer",
+ "tower-service",
+ "tracing",
 ]
 
 [[package]]
@@ -4330,7 +4313,7 @@ dependencies = [
  "time",
  "tokio",
  "tower",
- "tower-http",
+ "tower-http 0.7.0",
  "tracing",
  "tracing-forest",
  "tracing-opentelemetry 0.33.0",
@@ -4372,7 +4355,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.48.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -4688,7 +4671,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ea61de684c3ea68cb082b7a88508a8b27fcc8b797d738bfc99a82facf1d752dc"
 dependencies = [
  "anyhow",
- "heck 0.5.0",
+ "heck",
  "wit-parser",
 ]
 
@@ -4699,7 +4682,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7c566e0f4b284dd6561c786d9cb0142da491f46a9fbed79ea69cdad5db17f21"
 dependencies = [
  "anyhow",
- "heck 0.5.0",
+ "heck",
  "indexmap",
  "prettyplease",
  "syn",
