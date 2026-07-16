@@ -32,7 +32,7 @@ mv swagger-ui-5.18.2/dist swagger-ui
 EOF
 
 
-FROM  dhi.io/nginx:1.31@sha256:e44f44309ad57c6db303a9a2fe6efc96649a5784a486e5d020b97f96eb584289 AS final
+FROM  dhi.io/nginx:1.31@sha256:9c85848a89c938b4c2ce5ea515f1107774cd7aa61a5e430f3fed80790c6ceeb7 AS final
 LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
 
 COPY --from=buildfrontend /frontend /usr/share/nginx/html/frontend
