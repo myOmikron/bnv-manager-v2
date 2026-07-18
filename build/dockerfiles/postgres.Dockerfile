@@ -1,2 +1,2 @@
-FROM dhi.io/postgres:18@sha256:e2f2beada5e76f69453d5533153909f875b48fb021f092df73e182b8325ff2d3 AS final
+FROM dhi.io/postgres:18@sha256:a807e832c1fc9ded731956abcb53dc98ed003fd82e27275eaef8dcf52fb90236 AS final
 LABEL org.opencontainers.image.source=https://github.com/myOmikron/bnv-manager-v2
