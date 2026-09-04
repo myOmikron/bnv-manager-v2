@@ -15,7 +15,7 @@ tar xf v5.18.2.tar.gz
 mv swagger-ui-5.18.2/dist swagger-ui
 EOF
 
-FROM  dhi.io/nginx:1.31@sha256:e44f44309ad57c6db303a9a2fe6efc96649a5784a486e5d020b97f96eb584289 AS final
+FROM  dhi.io/nginx:1.31@sha256:a7437d28bd9e71884845c7f6e560463de7b061e6efc889df237bc937b1eb18cd AS final
 
 COPY --from=build /app/swagger-ui /usr/share/nginx/html/swagger-ui
 COPY ./build/nginx/swagger-initializer.js /usr/share/nginx/html/swagger-ui/
