@@ -1,3 +1,8 @@
+# Deployment stack for bnv-manager-v2.
+#
+# The images are built and published from myOmikron/code by pushing the tag
+# bnv-manager-v2/vX.Y.Z (see docker/bnv-manager-v2.yaml there), so nothing is
+# built here — pin the tag in .env via PROD_TAG.
 services:
   postgres:
     restart: unless-stopped
@@ -7,23 +12,29 @@ services:
     volumes:
       - postgres-vol:/var/lib/postgresql
     env_file: [ .env ]
-    image: ghcr.io/myomikron/bnv-manager-v2/postgres:${PROD_TAG:-latest}
-    build:
-      dockerfile: ./build/dockerfiles/postgres.Dockerfile
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres}" ]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+    image: postgres:18
 
   webserver:
     restart: unless-stopped
-    depends_on: [ postgres ]
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks: [ net-bnv-manager ]
     volumes:
+      # The OIDC module generates its RSA signing key on first start and reads
+      # it back on every one after.
       - bnv-manager-vol:/var/lib/bnv-manager
     env_file: [ .env ]
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4173
-      - RUST_LOG=${RUST_LOG-info,webserver=debug,galvyn=debug}
-    image: ghcr.io/myomikron/bnv-manager-v2/bnv-manager:${PROD_TAG:-latest}
-    build:
-      dockerfile: ./build/dockerfiles/bnv-manager.Dockerfile
+      # An empty OTLP endpoint disables trace export.
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      - RUST_LOG=${RUST_LOG-info,bnv_manager_v2=debug,galvyn=debug}
+    image: ghcr.io/myomikron/bnv-manager-v2/webserver:${PROD_TAG:-latest}
 
   nginx:
     restart: unless-stopped
@@ -32,11 +43,11 @@ services:
     depends_on: [ webserver ]
     ports:
       - "127.0.0.1:8080:80"
+    # The image ships a config that only serves the SPA — this stack has no
+    # reverse proxy in front of it, so /api has to be proxied here.
     volumes:
       - ./data/conf/nginx/bnv-manager.conf:/etc/nginx/conf.d/default.conf
     image: ghcr.io/myomikron/bnv-manager-v2/nginx:${PROD_TAG:-latest}
-    build:
-      dockerfile: ./build/dockerfiles/nginx.Dockerfile
 
 networks:
   net-bnv-manager:
